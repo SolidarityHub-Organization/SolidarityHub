@@ -1,6 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 using DapperPostgresDemo.Api.Repositories;
 
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+var envFile = $".env.{environment.ToLowerInvariant()}";
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), envFile);
+
+if (File.Exists(envPath)) {
+    Env.Load(envPath);
+} else {
+    throw new FileNotFoundException($"Environment file not found: {envPath}");
+}
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
