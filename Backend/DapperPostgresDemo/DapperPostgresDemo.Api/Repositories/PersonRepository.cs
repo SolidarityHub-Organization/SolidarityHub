@@ -12,7 +12,12 @@ public class PersonRepository : IPersonRepository
     public PersonRepository(IConfiguration config)
     {
         _config = config;
-        _connectionString = _config.GetConnectionString("default");
+        string CONNECTION_STRING = $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
+                        $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
+                        $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
+                        $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
+                        $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+        _connectionString = CONNECTION_STRING;
     }
     
     public async Task<Person> CreatePersonAsync(Person person)

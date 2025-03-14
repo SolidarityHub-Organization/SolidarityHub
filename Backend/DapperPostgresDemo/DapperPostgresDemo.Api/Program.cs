@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using DapperPostgresDemo.Api.Repositories;
+using System;
+using DotNetEnv;
 
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
@@ -11,6 +13,9 @@ if (File.Exists(envPath)) {
 } else {
     throw new FileNotFoundException($"Environment file not found: {envPath}");
 }
+
+Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRES_HOST"));
+
 
 
 var builder = WebApplication.CreateBuilder(args);
