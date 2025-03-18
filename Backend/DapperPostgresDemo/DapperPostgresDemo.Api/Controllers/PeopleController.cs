@@ -16,7 +16,7 @@ namespace DapperPostgresDemo.Api.Controllers
             _personRepository = personRepository;
         }
 
-        [HttpPost]
+        [HttpPost("create-person")]
         public async Task<IActionResult> CreatePerson(PersonCreateDto personCreateDto)
         {
             try
@@ -91,7 +91,7 @@ namespace DapperPostgresDemo.Api.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("get-all-people")]
         public async Task<IActionResult> GetPeople()
         {
             try

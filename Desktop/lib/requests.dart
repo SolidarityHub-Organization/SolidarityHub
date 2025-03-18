@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 
 class Requests {
   Future<String> fetchTest() async {
-    final url = Uri.parse("https://localhost:7138/api/v1/get-example-data");
+    final url = Uri.parse(
+      "http://localhost:5170/api/WeatherForecast/get-forecast",
+    );
 
     try {
       final response = await http.get(url);
@@ -20,7 +22,7 @@ class Requests {
   }
 
   Future<String> addUser() async {
-    final url = Uri.parse("https://localhost:7138/api/v1/insert-user-test");
+    final url = Uri.parse("http://localhost:5170/api/People/create-person");
 
     try {
       final response = await http.post(url);
@@ -36,7 +38,7 @@ class Requests {
   }
 
   Future<String> getUsers() async {
-    final url = Uri.parse("https://localhost:7138/api/v1/get-users-test");
+    final url = Uri.parse("http://localhost:5170/api/People/get-all-people");
 
     try {
       final response = await http.get(url);

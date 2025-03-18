@@ -14,10 +14,6 @@ if (File.Exists(envPath)) {
     throw new FileNotFoundException($"Environment file not found: {envPath}");
 }
 
-Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRES_HOST"));
-
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
