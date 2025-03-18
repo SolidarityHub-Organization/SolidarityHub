@@ -25,9 +25,17 @@ class Requests {
     final url = Uri.parse("http://localhost:5170/api/People/create-person");
 
     try {
-      final response = await http.post(url);
-
-      if (response.statusCode == 200) {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          "name": "John Doe",
+          "email": "jondoe@example.com"
+        })
+      );
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return "User has been added";
       } else {
         return "Error requesting the endpoint: ${response.statusCode}";
