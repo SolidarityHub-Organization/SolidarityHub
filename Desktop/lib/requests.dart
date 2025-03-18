@@ -27,7 +27,7 @@ class Requests {
     try {
       final response = await http.post(
         url,
-        headers: {
+        headers: {                                    // The header defines the type of data being sent.
           'Content-Type': 'application/json',
         },
         body: json.encode({

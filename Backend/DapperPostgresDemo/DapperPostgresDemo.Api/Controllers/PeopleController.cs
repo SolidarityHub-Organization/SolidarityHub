@@ -16,6 +16,9 @@ namespace DapperPostgresDemo.Api.Controllers
             _personRepository = personRepository;
         }
 
+
+        // The DTOs are the JSONs we are sending and recieveing from the database that are processed by the backend.
+
         [HttpPost("create-person")]
         public async Task<IActionResult> CreatePerson(PersonCreateDto personCreateDto)
         {
