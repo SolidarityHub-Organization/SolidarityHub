@@ -1,7 +1,10 @@
-using DapperPostgresDemo.Api.Mappers;
 using DapperPostgresDemo.Api.Models.DTOs;
-using DapperPostgresDemo.Api.Repositories;
+using DapperPostgresDemo.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+
+
+// The controller is the entry point for the API. It is responsible for handling the incoming HTTP requests and sending the response back to the client.
+// It must be attached to the service to be able to perform the necessary operations on the database, and to use the application's logic.
 
 namespace DapperPostgresDemo.Api.Controllers
 {
@@ -9,24 +12,35 @@ namespace DapperPostgresDemo.Api.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private readonly IPersonRepository _personRepository;
+        private readonly IPersonServices _personServices;
 
-        public PeopleController(IPersonRepository personRepository)
+        public PeopleController(IPersonServices personServices)
         {
-            _personRepository = personRepository;
+            _personServices = personServices;
         }
 
 
         // The DTOs are the JSONs we are sending and recieveing from the database that are processed by the backend.
+
+
+        //TODO: Change REST call names to standard REST conventions.
+        //      Don't give verbose errors to the client. Instead, give a generic error message. Move the error messages from Services to Contoller.
 
         [HttpPost("create-person")]
         public async Task<IActionResult> CreatePerson(PersonCreateDto personCreateDto)
         {
             try
             {
-                var person = await _personRepository.CreatePersonAsync(personCreateDto.ToPerson());
-
-                return CreatedAtRoute(nameof(GetPersonByIdAsync), new { id = person.Id }, person.ToPersonDisplayDto());
+                var person = await _personServices.CreatePerson(personCreateDto);
+                return CreatedAtRoute(nameof(GetPersonByIdAsync), new { id = person.Id }, person);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             catch (Exception ex)
             {
@@ -39,12 +53,12 @@ namespace DapperPostgresDemo.Api.Controllers
         {
             try
             {
-                var person = await _personRepository.GetPersonByIdAsync(id);
-                if (person == null)
-                {
-                    return NotFound("Person with id " + id + " not found");
-                }
+                var person = await _personServices.GetPersonByIdAsync(id);
                 return Ok(person);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -57,17 +71,16 @@ namespace DapperPostgresDemo.Api.Controllers
         {
             try
             {
-                if (id != personUpdateDto.Id)
-                {
-                    return BadRequest("Ids mismatch");
-                }
-                var existingPerson = await _personRepository.GetPersonByIdAsync(id);
-                if (existingPerson == null)
-                {
-                    return NotFound("Person with id " + id + " not found");
-                }
-                await _personRepository.UpdatePersonAsync(personUpdateDto.ToPerson());
-                return NoContent();
+                var result = await _personServices.UpdatePersonAsync(id, personUpdateDto);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -80,13 +93,12 @@ namespace DapperPostgresDemo.Api.Controllers
         {
             try
             {
-                var existingPerson = await _personRepository.GetPersonByIdAsync(id);
-                if (existingPerson == null)
-                {
-                    return NotFound("Person with id " + id + " not found");
-                }
-                await _personRepository.DeletePersonAsync(id);
+                await _personServices.DeletePersonAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -99,8 +111,12 @@ namespace DapperPostgresDemo.Api.Controllers
         {
             try
             {
-                var people = await _personRepository.GetAllPersonAsync();
+                var people = await _personServices.GetPeopleAsync();
                 return Ok(people);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             catch (Exception ex)
             {

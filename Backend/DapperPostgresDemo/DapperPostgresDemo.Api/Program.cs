@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using DapperPostgresDemo.Api.Repositories;
+using DapperPostgresDemo.Api.Services;
 using System;
 using DotNetEnv;
 
@@ -24,6 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IPersonServices, PersonServices>();
 
 var app = builder.Build();
 
