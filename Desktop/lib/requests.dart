@@ -22,18 +22,16 @@ class Requests {
   }
 
   Future<String> addUser() async {
-    final url = Uri.parse("http://localhost:5170/api/People/create-person");
+    final url = Uri.parse("http://localhost:5170/api/v1/users");
 
     try {
       final response = await http.post(
         url,
-        headers: {                                    // The header defines the type of data being sent.
+        headers: {
+          // The header defines the type of data being sent.
           'Content-Type': 'application/json',
         },
-        body: json.encode({
-          "name": "John Doe",
-          "email": "jondoe@example.com"
-        })
+        body: json.encode({"name": "John Doe", "email": "jondoe@example.com"}),
       );
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return "User has been added";
@@ -46,7 +44,7 @@ class Requests {
   }
 
   Future<String> getUsers() async {
-    final url = Uri.parse("http://localhost:5170/api/People/get-all-people");
+    final url = Uri.parse("http://localhost:5170/api/v1/users");
 
     try {
       final response = await http.get(url);

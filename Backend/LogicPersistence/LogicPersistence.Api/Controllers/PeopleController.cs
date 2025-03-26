@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogicPersistence.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class PeopleController : ControllerBase
     {
@@ -26,7 +26,7 @@ namespace LogicPersistence.Api.Controllers
         //TODO: Change REST call names to standard REST conventions.
         //      Don't give verbose errors to the client. Instead, give a generic error message. Move the error messages from Services to Contoller.
 
-        [HttpPost("create-person")]
+        [HttpPost("users")]
         public async Task<IActionResult> CreatePerson(PersonCreateDto personCreateDto)
         {
             try
@@ -40,7 +40,7 @@ namespace LogicPersistence.Api.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetPersonByIdAsync")]
+        [HttpGet("users/{id}", Name = "GetUserById")]
         public async Task<IActionResult> GetPersonByIdAsync(int id)
         {
             try
@@ -66,7 +66,7 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("users/{id}")]
         public async Task<IActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
         {
             try
@@ -88,7 +88,7 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("users/{id}")]
         public async Task<IActionResult> DeletePersonAsync(int id)
         {
             try
@@ -106,7 +106,7 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("get-all-people")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetPeople()
         {
             try
