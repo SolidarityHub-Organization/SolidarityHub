@@ -1,12 +1,12 @@
-using DapperPostgresDemo.Api.Models.DTOs;
-using DapperPostgresDemo.Api.Services;
+using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 
 // The controller is the entry point for the API. It is responsible for handling the incoming HTTP requests and sending the response back to the client.
 // It must be attached to the service to be able to perform the necessary operations on the database, and to use the application's logic.
 
-namespace DapperPostgresDemo.Api.Controllers
+namespace LogicPersistence.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

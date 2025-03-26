@@ -1,6 +1,6 @@
-namespace DapperPostgresDemo.Api.Repositories;
+namespace LogicPersistence.Api.Repositories;
 
-using DapperPostgresDemo.Api.Models;
+using LogicPersistence.Api.Models;
 
 public interface IPersonRepository {
     Task<Person> CreatePersonAsync(Person person);

@@ -1,13 +1,13 @@
-using DapperPostgresDemo.Api.Mappers;
-using DapperPostgresDemo.Api.Models;
-using DapperPostgresDemo.Api.Models.DTOs;
-using DapperPostgresDemo.Api.Repositories;
+using LogicPersistence.Api.Mappers;
+using LogicPersistence.Api.Models;
+using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Repositories;
 
 
 // The services are the classes that contain the business logic of the application. They are responsible for processing the data and performing the necessary operations to fulfill the requests from the client passed from the controllers.
 // It must be attached to the repository to be able to perform the necessary operations on the database.
 
-namespace DapperPostgresDemo.Api.Services
+namespace LogicPersistence.Api.Services
 {
     public class PersonServices : IPersonServices
     {

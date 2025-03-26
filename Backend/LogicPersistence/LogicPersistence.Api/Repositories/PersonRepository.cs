@@ -1,8 +1,8 @@
 using Dapper;
-using DapperPostgresDemo.Api.Models;
+using LogicPersistence.Api.Models;
 using Npgsql;
 
-namespace DapperPostgresDemo.Api.Repositories;
+namespace LogicPersistence.Api.Repositories;
 
 public class PersonRepository : IPersonRepository
 {

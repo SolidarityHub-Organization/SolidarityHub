@@ -1,6 +1,6 @@
 using System;
 
-namespace DapperPostgresDemo.Api.Models;
+namespace LogicPersistence.Api.Models;
 
 public class Person {
     public int Id {get; set;}

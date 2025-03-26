@@ -1,9 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DapperPostgresDemo.Api.Models.DTOs;
+namespace LogicPersistence.Api.Models.DTOs;
 
-public class PersonCreateDto {
+public class PersonUpdateDto {
+    public int Id {get; set;}
+
     [Required]
     [MaxLength(30)]
     public string Name {get; set;} = string.Empty;

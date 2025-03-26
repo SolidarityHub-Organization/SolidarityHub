@@ -1,8 +1,8 @@
-namespace DapperPostgresDemo.Api.Mappers;
+namespace LogicPersistence.Api.Mappers;
 
-using DapperPostgresDemo.Api.Mappers;
-using DapperPostgresDemo.Api.Models;
-using DapperPostgresDemo.Api.Models.DTOs;
+using LogicPersistence.Api.Mappers;
+using LogicPersistence.Api.Models;
+using LogicPersistence.Api.Models.DTOs;
 
 public static class PersonMapper {
     public static Person ToPerson(this PersonCreateDto personCreateDto) {

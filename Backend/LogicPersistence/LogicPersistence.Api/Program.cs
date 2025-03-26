@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using DapperPostgresDemo.Api.Repositories;
-using DapperPostgresDemo.Api.Services;
+using LogicPersistence.Api.Repositories;
+using LogicPersistence.Api.Services;
 using System;
 using DotNetEnv;
 
