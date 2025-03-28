@@ -1,5 +1,3 @@
-using FluentMigrator.Runner;
-
 public class App {
 
 	public static void Main(string[] args) {
@@ -12,15 +10,7 @@ public class App {
 
 		var app = builder.Build();
 
-		// Executing migrations at app startup
-		using (var scope = app.Services.CreateScope()) {
-			var migrator = scope.ServiceProvider.GetService<IMigrationRunner>();
-
-			if (migrator != null) {
-				migrator.MigrateUp();
-			}
-		}
-
+		BackendConfiguration.ExecuteAllMigrations(app);
 		BackendConfiguration.SetGlobalExceptionHandlerConfiguration(app);
 		BackendConfiguration.SetHTTPRequestPipelineConfiguration(app);
 

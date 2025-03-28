@@ -55,6 +55,12 @@ public static class BackendConfiguration {
 		});
 	}
 
+	public static void ExecuteAllMigrations(WebApplication app) {
+		using var scope = app.Services.CreateScope();
+		var migrator = scope.ServiceProvider.GetService<IMigrationRunner>();
+		migrator?.MigrateUp();
+	}
+
 	public static void SetGlobalExceptionHandlerConfiguration(WebApplication app) {
 		if (app.Environment.IsDevelopment()) {
 			app.UseDeveloperExceptionPage();
