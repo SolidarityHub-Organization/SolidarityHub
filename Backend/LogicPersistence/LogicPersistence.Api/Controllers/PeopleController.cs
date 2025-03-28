@@ -111,6 +111,7 @@ namespace LogicPersistence.Api.Controllers
         {
             try
             {
+                throw new OverflowException();
                 var people = await _personServices.GetPeopleAsync();
                 return Ok(people);
             }
