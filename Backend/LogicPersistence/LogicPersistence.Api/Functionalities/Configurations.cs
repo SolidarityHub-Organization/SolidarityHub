@@ -3,106 +3,87 @@ using FluentMigrator.Runner;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Services;
 
-public static class DatabaseConfiguration
-{
-    public static string GetConnectionString()
-    {
-        return $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
-               $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
-               $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
-               $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
-               $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
-    }
+public static class DatabaseConfiguration {
+	public static string GetConnectionString() {
+		return $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
+			   $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
+			   $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
+			   $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
+			   $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+	}
 }
 
-public static class BackendConfiguration
-{
+public static class BackendConfiguration {
 
-    public static void SetEnvironmentVariablesConfiguration()
-    {
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-        var envFile = $".env.{environment.ToLowerInvariant()}";
-        var envPath = Path.Combine(Directory.GetCurrentDirectory(), envFile);
+	public static void SetEnvironmentVariablesConfiguration() {
+		var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+		var envFile = $".env.{environment.ToLowerInvariant()}";
+		var envPath = Path.Combine(Directory.GetCurrentDirectory(), envFile);
 
-        if (File.Exists(envPath))
-        {
-            Env.Load(envPath);
-        }
-        else
-        {
-            throw new FileNotFoundException($"Environment variables file not found: {envPath}");
-        }
-    }
+		if (File.Exists(envPath)) {
+			Env.Load(envPath);
+		} else {
+			throw new FileNotFoundException($"Environment variables file not found: {envPath}");
+		}
+	}
 
-    public static void SetBuilderConfiguration(WebApplicationBuilder builder)
-    {
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddControllers().AddNewtonsoftJson();
-        SetMigrationConfiguration(builder);
-    }
+	public static void SetBuilderConfiguration(WebApplicationBuilder builder) {
+		builder.Services.AddControllers();
+		builder.Services.AddEndpointsApiExplorer();
+		builder.Services.AddSwaggerGen();
+		builder.Services.AddControllers().AddNewtonsoftJson();
+		SetMigrationConfiguration(builder);
+	}
 
-    private static void SetMigrationConfiguration(WebApplicationBuilder builder)
-    {
-        builder.Services.AddFluentMigratorCore()
-        .ConfigureRunner(rb => rb
-            .AddPostgres()
-            .WithGlobalConnectionString(DatabaseConfiguration.GetConnectionString())
-            .ScanIn(typeof(DatabaseConfiguration).Assembly).For.Migrations())
-        .AddLogging(lb => lb.AddFluentMigratorConsole());
-    }
+	private static void SetMigrationConfiguration(WebApplicationBuilder builder) {
+		builder.Services.AddFluentMigratorCore()
+		.ConfigureRunner(rb => rb
+			.AddPostgres()
+			.WithGlobalConnectionString(DatabaseConfiguration.GetConnectionString())
+			.ScanIn(typeof(DatabaseConfiguration).Assembly).For.Migrations())
+		.AddLogging(lb => lb.AddFluentMigratorConsole());
+	}
 
-    public static void SetCORSConfiguration(WebApplicationBuilder builder)
-    {
-        // TODO: In production, restrict the CORS policy to not allow every source, it's ok for development
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader();
-            });
-        });
-    }
+	public static void SetCORSConfiguration(WebApplicationBuilder builder) {
+		// TODO: In production, restrict the CORS policy to not allow every source, it's ok for development
+		builder.Services.AddCors(options => {
+			options.AddPolicy("AllowAll", policy => {
+				policy.AllowAnyOrigin()
+					  .AllowAnyMethod()
+					  .AllowAnyHeader();
+			});
+		});
+	}
 
-    public static void SetGlobalExceptionHandlerConfiguration(WebApplication app)
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseExceptionHandler("/error");
-            app.UseHsts();
-        }
+	public static void SetGlobalExceptionHandlerConfiguration(WebApplication app) {
+		if (app.Environment.IsDevelopment()) {
+			app.UseDeveloperExceptionPage();
+		} else {
+			app.UseExceptionHandler("/error");
+			app.UseHsts();
+		}
 
-        app.UseHttpsRedirection();
-        app.UseRouting();
-        app.UseMiddleware<GlobalExceptionMiddleware>();
-        app.UseAuthorization();
-        app.MapControllers();
-    }
+		app.UseHttpsRedirection();
+		app.UseRouting();
+		app.UseMiddleware<GlobalExceptionMiddleware>();
+		app.UseAuthorization();
+		app.MapControllers();
+	}
 
-    public static void SetHTTPRequestPipelineConfiguration(WebApplication app)
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+	public static void SetHTTPRequestPipelineConfiguration(WebApplication app) {
+		if (app.Environment.IsDevelopment()) {
+			app.UseSwagger();
+			app.UseSwaggerUI();
+		}
 
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
-    }
+		app.UseHttpsRedirection();
+		app.UseAuthorization();
+		app.MapControllers();
+	}
 
-    public static void SetScopesConfiguration(WebApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<IPersonRepository, PersonRepository>();
-        builder.Services.AddScoped<IPersonServices, PersonServices>();
-    }
+	public static void SetScopesConfiguration(WebApplicationBuilder builder) {
+		builder.Services.AddScoped<IVictimRepository, VictimRepository>();
+		builder.Services.AddScoped<IVictimServices, VictimServices>();
+	}
 
 }

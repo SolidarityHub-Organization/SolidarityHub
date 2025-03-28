@@ -1,4 +1,3 @@
 {
-	"dotnet.defaultSolution": "Backend.sln",
-	"cmake.sourceDirectory": "C:/Users/Carlos/Documents/Repositories/SolidarityHub/App/linux"
+	"dotnet.defaultSolution": "Backend/LogicPersistence/LogicPersistence.sln"
 }
