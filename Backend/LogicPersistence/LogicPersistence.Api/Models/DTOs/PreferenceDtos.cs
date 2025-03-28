@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class PersonCreateDto 
+public class PreferenceCreateDto 
 {
     [Required]
     [MaxLength(30)]
     public string name {get; set;} = string.Empty;
 }
 
-public class PersonUpdateDto 
+public class PreferenceUpdateDto 
 {
     public int id {get; set;}
     
@@ -19,7 +19,7 @@ public class PersonUpdateDto
     public string name {get; set;} = string.Empty;
 }
 
-public class PersonDisplayDto
+public class PreferenceDisplayDto
 {
     public int id {get; set;}
     public string name {get; set;} = string.Empty;
