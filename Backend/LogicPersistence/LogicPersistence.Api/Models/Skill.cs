@@ -9,7 +9,7 @@ public enum SkillLevel {
 public class Skill {
 	public int id { get; set; }
 
-	public string name { get; set; }
+	public required string name { get; set; }
 
 	public SkillLevel level { get; set; }
 }

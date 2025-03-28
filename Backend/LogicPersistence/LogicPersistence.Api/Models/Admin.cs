@@ -1,5 +1,5 @@
 namespace LogicPersistence.Api.Models;
 
 public class Admin {
-	public string jurisdiction { get; set; }
+	public required string jurisdiction { get; set; }
 }

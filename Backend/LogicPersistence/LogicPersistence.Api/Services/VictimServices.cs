@@ -38,7 +38,7 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<Victim> UpdateVictimAsync(int id, VictimUpdateDto victimUpdateDto) {
-			if (id != victimUpdateDto.Id) {
+			if (id != victimUpdateDto.id) {
 				throw new ArgumentException("Ids do not match.");
 			}
 			var existingVictim = await _victimRepository.GetVictimByIdAsync(id);
@@ -59,12 +59,12 @@ namespace LogicPersistence.Api.Services {
 			await _victimRepository.DeleteVictimAsync(id);
 		}
 
-		public async Task<IEnumerable<Victim>> GetVictimAsync() {
-			var victim = await _victimRepository.GetAllVictimAsync();
-			if (victim == null) {
-				throw new InvalidOperationException("Failed to retrieve victim.");
+		public async Task<IEnumerable<Victim>> GetAllVictimsAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
 			}
-			return victim;
+			return victims;
 		}
 	}
 }

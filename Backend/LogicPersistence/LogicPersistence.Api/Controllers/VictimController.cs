@@ -18,9 +18,9 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpPost("victim")]
-		public async Task<IActionResult> CreateVictim(VictimCreateDto victimCreateDto) {
+		public async Task<IActionResult> CreateVictimAsync(VictimCreateDto victimCreateDto) {
 			try {
-				var victim = await _victimServices.CreateVictim(victimCreateDto);
+				var victim = await _victimServices.CreateVictimAsync(victimCreateDto);
 				return CreatedAtRoute(nameof(GetVictimByIdAsync), new { id = victim.id }, victim);
 			} catch (ArgumentNullException ex) {
 				return BadRequest(ex.Message);
@@ -30,8 +30,6 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
-
-		fgcfc
 
 		[HttpGet("victim/{id}", Name = "GetVictimById")]
 		public async Task<IActionResult> GetVictimByIdAsync(int id) {
@@ -72,9 +70,9 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpGet("victims")]
-		public async Task<IActionResult> GetVictims() {
+		public async Task<IActionResult> GetAllVictimsAsync() {
 			try {
-				var victims = await _victimServices.GetVictimsAsync();
+				var victims = await _victimServices.GetAllVictimsAsync();
 				return Ok(victims);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

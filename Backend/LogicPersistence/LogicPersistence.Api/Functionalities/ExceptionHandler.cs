@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -11,6 +8,12 @@ public class CustomException : Exception {
 }
 
 public class GlobalExceptionMiddleware {
+	private readonly RequestDelegate _next;
+
+	public GlobalExceptionMiddleware(RequestDelegate next) {
+		_next = next;
+	}
+
 	public async Task InvokeAsync(HttpContext context, Func<Task> next) {
 		try {
 			await next();
