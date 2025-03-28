@@ -14,9 +14,9 @@ public class GlobalExceptionMiddleware {
 		_next = next;
 	}
 
-	public async Task InvokeAsync(HttpContext context, Func<Task> next) {
+	public async Task InvokeAsync(HttpContext context) {
 		try {
-			await next();
+			await _next(context);
 		} catch (Exception ex) {
 			await HandleExceptionAsync(context, ex);
 		}

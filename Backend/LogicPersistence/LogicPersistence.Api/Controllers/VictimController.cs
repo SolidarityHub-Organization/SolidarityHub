@@ -17,7 +17,7 @@ namespace LogicPersistence.Api.Controllers {
 			_victimServices = victimServices;
 		}
 
-		[HttpPost("victim")]
+		[HttpPost("victims")]
 		public async Task<IActionResult> CreateVictimAsync(VictimCreateDto victimCreateDto) {
 			try {
 				var victim = await _victimServices.CreateVictimAsync(victimCreateDto);
@@ -31,7 +31,7 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		[HttpGet("victim/{id}", Name = "GetVictimById")]
+		[HttpGet("victims/{id}", Name = "GetVictimById")]
 		public async Task<IActionResult> GetVictimByIdAsync(int id) {
 			try {
 				var victim = await _victimServices.GetVictimByIdAsync(id);
@@ -43,7 +43,7 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		[HttpPut("victim/{id}")]
+		[HttpPut("victims/{id}")]
 		public async Task<IActionResult> UpdateVictimAsync(int id, VictimUpdateDto victimUpdateDto) {
 			try {
 				var result = await _victimServices.UpdateVictimAsync(id, victimUpdateDto);
@@ -57,7 +57,7 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		[HttpDelete("victim/{id}")]
+		[HttpDelete("victims/{id}")]
 		public async Task<IActionResult> DeleteVictimAsync(int id) {
 			try {
 				await _victimServices.DeleteVictimAsync(id);
