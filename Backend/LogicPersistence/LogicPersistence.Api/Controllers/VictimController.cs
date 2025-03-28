@@ -3,26 +3,30 @@ using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
+// The controller is the entry point for the API. It is responsible for handling the incoming HTTP requests and sending the response back to the client.
+// It must be attached to the service to be able to perform the necessary operations on the database, and to use the application's logic.
+
 namespace LogicPersistence.Api.Controllers
 {
+
     [Route("api/v1")]
     [ApiController]
-    public class SkillController : ControllerBase
+    public class VictimController : ControllerBase
     {
-        private readonly ISkillServices _skillServices;
+        private readonly IVictimServices _victimServices;
 
-        public SkillController(ISkillServices skillServices)
+        public VictimController(IVictimServices victimServices)
         {
-            _skillServices = skillServices;
+            _victimServices = victimServices;
         }
 
-        [HttpPost("skill")]
-        public async Task<IActionResult> CreateSkill(SkillCreateDto skillCreateDto)
+        [HttpPost("victim")]
+        public async Task<IActionResult> CreateVictim(VictimCreateDto victimCreateDto)
         {
             try
             {
-                var skill = await _skillServices.CreateSkill(skillCreateDto);
-                return CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = skill.id }, skill);
+                var victim = await _victimServices.CreateVictim(victimCreateDto);
+                return CreatedAtRoute(nameof(GetVictimByIdAsync), new { id = victim.id }, victim);
             }
             catch (ArgumentNullException ex)
             {
@@ -38,13 +42,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("skill/{id}", Name = "GetSkillById")]
-        public async Task<IActionResult> GetSkillByIdAsync(int id)
+        [HttpGet("victim/{id}", Name = "GetVictimById")]
+        public async Task<IActionResult> GetVictimByIdAsync(int id)
         {
             try
             {
-                var skill = await _skillServices.GetSkillByIdAsync(id);
-                return Ok(skill);
+                var victim = await _victimServices.GetVictimByIdAsync(id);
+                return Ok(victim);
             }
             catch (KeyNotFoundException ex)
             {
@@ -56,12 +60,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpPut("skill/{id}")]
-        public async Task<IActionResult> UpdateSkillAsync(int id, SkillUpdateDto skillUpdateDto)
+        [HttpPut("victim/{id}")]
+        public async Task<IActionResult> UpdateVictimAsync(int id, VictimUpdateDto victimUpdateDto)
         {
             try
             {
-                var result = await _skillServices.UpdateSkillAsync(id, skillUpdateDto);
+                var result = await _victimServices.UpdateVictimAsync(id, victimUpdateDto);
                 return Ok(result);
             }
             catch (ArgumentException ex)
@@ -78,12 +82,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpDelete("skill/{id}")]
-        public async Task<IActionResult> DeleteSkillAsync(int id)
+        [HttpDelete("victim/{id}")]
+        public async Task<IActionResult> DeleteVictimAsync(int id)
         {
             try
             {
-                await _skillServices.DeleteSkillAsync(id);
+                await _victimServices.DeleteVictimAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -96,13 +100,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("skill")]
-        public async Task<IActionResult> GetSkills()
+        [HttpGet("victims")]
+        public async Task<IActionResult> GetVictims()
         {
             try
             {
-                var skills = await _skillServices.GetSkillsAsync();
-                return Ok(skills);
+                var victims = await _victimServices.GetVictimsAsync();
+                return Ok(victims);
             }
             catch (InvalidOperationException ex)
             {

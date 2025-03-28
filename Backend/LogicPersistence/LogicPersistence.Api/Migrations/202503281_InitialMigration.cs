@@ -1,5 +1,8 @@
 using FluentMigrator;
 
+// When modifying the structure of the database, another file similar to this one must be created,
+// the method Up() implements the modifications, and the method Down() deletes those modifications
+
 [Migration(202503281)]
 public class InitialMigration : Migration
 {
@@ -7,19 +10,25 @@ public class InitialMigration : Migration
     {
         Execute.Sql("CREATE SCHEMA IF NOT EXISTS public;");
 
-        Execute.Sql("CREATE TYPE user_type_enum AS ENUM ('volunteer', 'victim');");
-
-        Create.Table("user")
+        Create.Table("victim")
             .WithColumn("id").AsInt32().PrimaryKey().Identity()
             .WithColumn("email").AsString(50).NotNullable()
-            .WithColumn("password").AsString(50).NotNullable();
-
-        Create.Table("person")
+            .WithColumn("password").AsString(50).NotNullable()
             .WithColumn("name").AsString(50).NotNullable()
             .WithColumn("surname").AsString(50).NotNullable()
             .WithColumn("prefix").AsInt32().NotNullable()
             .WithColumn("phone").AsInt32().NotNullable()
-            .WithColumn("user_type").AsCustom("user_type_enum").NotNullable()
+            .WithColumn("address").AsString(100).NotNullable()
+            .WithColumn("dni").AsString(20).NotNullable();
+
+        Create.Table("volunteer")
+            .WithColumn("id").AsInt32().PrimaryKey().Identity()
+            .WithColumn("email").AsString(50).NotNullable()
+            .WithColumn("password").AsString(50).NotNullable()
+            .WithColumn("name").AsString(50).NotNullable()
+            .WithColumn("surname").AsString(50).NotNullable()
+            .WithColumn("prefix").AsInt32().NotNullable()
+            .WithColumn("phone").AsInt32().NotNullable()
             .WithColumn("address").AsString(100).NotNullable()
             .WithColumn("dni").AsString(20).NotNullable();
 
@@ -29,9 +38,9 @@ public class InitialMigration : Migration
 
     public override void Down()
     {
-        Delete.Table("user");
-        Delete.Table("person");
-        Execute.Sql("DROP TYPE IF EXISTS user_type_enum;");
+        Delete.Table("victim");
+        Delete.Table("volunteer");
+        Delete.Table("admin");
         Execute.Sql("DROP SCHEMA IF EXISTS public CASCADE;");
     }
 }

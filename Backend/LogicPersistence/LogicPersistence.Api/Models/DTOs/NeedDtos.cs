@@ -41,5 +41,5 @@ public class NeedDisplayDto
     public int id { get; set; }
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
-    public int urgencyLevel { get; set; } = string.empty //aqui se muestra como string
+    public string urgencyLevel { get; set; } = string.Empty; //aqui se muestra como string
 }

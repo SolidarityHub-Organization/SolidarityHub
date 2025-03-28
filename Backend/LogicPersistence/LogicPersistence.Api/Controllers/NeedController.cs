@@ -1,38 +1,26 @@
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-
-
-// The controller is the entry point for the API. It is responsible for handling the incoming HTTP requests and sending the response back to the client.
-// It must be attached to the service to be able to perform the necessary operations on the database, and to use the application's logic.
+using Microsoft.AspNetCore.Http;
 
 namespace LogicPersistence.Api.Controllers
 {
-    [Route("api/v1")]
-    [ApiController]
-    public class PeopleController : ControllerBase
+    public class NeedController : ControllerBase
     {
-        private readonly IPersonServices _personServices;
+        private readonly INeedServices _needServices;
 
-        public PeopleController(IPersonServices personServices)
+        public NeedController(INeedServices needServices)
         {
-            _personServices = personServices;
+            _needServices = needServices;
         }
 
-
-        // The DTOs are the JSONs we are sending and recieveing from the database that are processed by the backend.
-
-
-        //TODO: Change REST call names to standard REST conventions.
-        //      Don't give verbose errors to the client. Instead, give a generic error message. Move the error messages from Services to Contoller.
-
-        [HttpPost("users")]
-        public async Task<IActionResult> CreatePerson(PersonCreateDto personCreateDto)
+        [HttpPost("need")]
+        public async Task<IActionResult> CreateNeed(NeedCreateDto needCreateDto)
         {
             try
             {
-                var person = await _personServices.CreatePerson(personCreateDto);
-                return CreatedAtRoute(nameof(GetPersonByIdAsync), new { id = person.Id }, person);
+                var need = await _needServices.CreateNeed(needCreateDto);
+                return CreatedAtRoute(nameof(GetNeedByIdAsync), new { id = need.id }, need);
             }
             catch (ArgumentNullException ex)
             {
@@ -48,13 +36,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("users/{id}", Name = "GetUserById")]
-        public async Task<IActionResult> GetPersonByIdAsync(int id)
+        [HttpGet("need/{id}", Name = "GetNeedById")]
+        public async Task<IActionResult> GetNeedByIdAsync(int id)
         {
             try
             {
-                var person = await _personServices.GetPersonByIdAsync(id);
-                return Ok(person);
+                var need = await _needServices.GetNeedByIdAsync(id);
+                return Ok(need);
             }
             catch (KeyNotFoundException ex)
             {
@@ -66,12 +54,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpPut("users/{id}")]
-        public async Task<IActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
+        [HttpPut("need/{id}")]
+        public async Task<IActionResult> UpdateNeedAsync(int id, NeedUpdateDto needUpdateDto)
         {
             try
             {
-                var result = await _personServices.UpdatePersonAsync(id, personUpdateDto);
+                var result = await _needServices.UpdateNeedAsync(id, needUpdateDto);
                 return Ok(result);
             }
             catch (ArgumentException ex)
@@ -88,13 +76,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpDelete("users/{id}")]
-        public async Task<IActionResult> DeletePersonAsync(int id)
+        [HttpDelete("need/{id}")]
+        public async Task<IActionResult> DeleteNeedAsync(int id)
         {
             try
             {
-                await _personServices.DeletePersonAsync(id);
-                return NoContent();
+                var result = await _needServices.DeleteNeedAsync(id);
+                return Ok(result);
             }
             catch (KeyNotFoundException ex)
             {
@@ -106,14 +94,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("users")]
-        public async Task<IActionResult> GetPeople()
+        [HttpGet("needs")]
+        public async Task<IActionResult> GetNeeds()
         {
             try
             {
-                throw new OverflowException();
-                var people = await _personServices.GetPeopleAsync();
-                return Ok(people);
+                var needs = await _needServices.GetNeedsAsync();
+                return Ok(needs);
             }
             catch (InvalidOperationException ex)
             {
@@ -124,6 +111,5 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
     }
 }
