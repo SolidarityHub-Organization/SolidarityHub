@@ -6,7 +6,7 @@ An app that eases the process of people and resource management in case of a dis
 
 1. Install flutter (follow the tutorial [here](https://docs.flutter.dev/get-started/install/windows/mobile))
 2. Create a file called `.env.development` following the same structure as `.env.example` with the real Postgres credentials
-3. Open a terminal and move to `./Backend` folder
+3. Open a terminal and move to `./Backend/LogicPersistence/LogicPersistence.Api/` folder
 4. Run `dotnet run`
 5. Open another terminal and move to `./Desktop` folder
 6. Run `flutter run`
