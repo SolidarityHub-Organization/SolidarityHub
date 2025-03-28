@@ -9,6 +9,9 @@
   <ItemGroup>
     <PackageReference Include="dapper" Version="2.1.66" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="FluentMigrator" Version="7.0.0" />
+    <PackageReference Include="FluentMigrator.Runner" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.14" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
