@@ -4,42 +4,32 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Net;
 
-public class CustomException : Exception
-{
-    public CustomException(string message) : base(message)
-    {
-    }
+public class CustomException : Exception {
+	public CustomException(string message) : base(message) {
+	}
 
 }
 
-public class GlobalExceptionMiddleware
-{
-    public async Task InvokeAsync(HttpContext context, Func<Task> next)
-    {
-        try
-        {
-            await next();
-        }
-        catch (Exception ex)
-        {
-            await HandleExceptionAsync(context, ex);
-        }
-    }
+public class GlobalExceptionMiddleware {
+	public async Task InvokeAsync(HttpContext context, Func<Task> next) {
+		try {
+			await next();
+		} catch (Exception ex) {
+			await HandleExceptionAsync(context, ex);
+		}
+	}
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
-    {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+	private static Task HandleExceptionAsync(HttpContext context, Exception ex) {
+		context.Response.ContentType = "application/json";
+		context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        var response = new
-        {
-            error = new
-            {
-                message = "An error occurred while processing your request.",
-                details = ex.Message
-            }
-        };
+		var response = new {
+			error = new {
+				message = "An error occurred while processing your request.",
+				details = ex.Message
+			}
+		};
 
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
-    }
+		return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+	}
 }
