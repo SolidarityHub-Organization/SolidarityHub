@@ -2,10 +2,10 @@ namespace LogicPersistence.Api.Models;
 
 public enum UrgencyLevel
 {
-    Low,
-    Medium,
-    High,
-    Critical
+    Bajo = 0,
+    Medio = 1,
+    Alto = 2,
+    Critico = 3
 }
 
 public class Need

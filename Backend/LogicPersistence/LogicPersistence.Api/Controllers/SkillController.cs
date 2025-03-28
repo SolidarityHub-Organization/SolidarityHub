@@ -2,37 +2,26 @@ using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-
-// The controller is the entry point for the API. It is responsible for handling the incoming HTTP requests and sending the response back to the client.
-// It must be attached to the service to be able to perform the necessary operations on the database, and to use the application's logic.
-
 namespace LogicPersistence.Api.Controllers
 {
     [Route("api/v1")]
     [ApiController]
-    public class PeopleController : ControllerBase
+    public class SkillController : ControllerBase
     {
-        private readonly IAbilityServices _AbilityServices;
+        private readonly ISkillServices _skillServices;
 
-        public PeopleController(IAbilityServices AbilityServices)
+        public SkillController(ISkillServices skillServices)
         {
-            _AbilityServices = AbilityServices;
+            _skillServices = skillServices;
         }
 
-
-        // The DTOs are the JSONs we are sending and recieveing from the database that are processed by the backend.
-
-
-        //TODO: Change REST call names to standard REST conventions.
-        //      Don't give verbose errors to the client. Instead, give a generic error message. Move the error messages from Services to Contoller.
-
-        [HttpPost("ability")]
-        public async Task<IActionResult> CreateAbility(AbilityCreateDto AbilityCreateDto)
+        [HttpPost("skill")]
+        public async Task<IActionResult> CreateSkill(SkillCreateDto skillCreateDto)
         {
             try
             {
-                var Ability = await _AbilityServices.CreateAbility(AbilityCreateDto);
-                return CreatedAtRoute(nameof(GetAbilityByIdAsync), new { id = Ability.Id }, Ability);
+                var skill = await _skillServices.CreateSkill(skillCreateDto);
+                return CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = skill.id }, skill);
             }
             catch (ArgumentNullException ex)
             {
@@ -48,13 +37,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("ability/{id}", Name = "GetAbilityById")]
-        public async Task<IActionResult> GetAbilityByIdAsync(int id)
+        [HttpGet("skill/{id}", Name = "GetSkillById")]
+        public async Task<IActionResult> GetSkillByIdAsync(int id)
         {
             try
             {
-                var Ability = await _AbilityServices.GetAbilityByIdAsync(id);
-                return Ok(Ability);
+                var skill = await _skillServices.GetSkillByIdAsync(id);
+                return Ok(skill);
             }
             catch (KeyNotFoundException ex)
             {
@@ -66,12 +55,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpPut("ability/{id}")]
-        public async Task<IActionResult> UpdateAbilityAsync(int id, AbilityUpdateDto AbilityUpdateDto)
+        [HttpPut("skill/{id}")]
+        public async Task<IActionResult> UpdateSkillAsync(int id, SkillUpdateDto skillUpdateDto)
         {
             try
             {
-                var result = await _AbilityServices.UpdateAbilityAsync(id, AbilityUpdateDto);
+                var result = await _skillServices.UpdateSkillAsync(id, skillUpdateDto);
                 return Ok(result);
             }
             catch (ArgumentException ex)
@@ -88,12 +77,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpDelete("ability/{id}")]
-        public async Task<IActionResult> DeleteAbilityAsync(int id)
+        [HttpDelete("skill/{id}")]
+        public async Task<IActionResult> DeleteSkillAsync(int id)
         {
             try
             {
-                await _AbilityServices.DeleteAbilityAsync(id);
+                await _skillServices.DeleteSkillAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -106,13 +95,13 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("ability")]
-        public async Task<IActionResult> GetPeople()
+        [HttpGet("skill")]
+        public async Task<IActionResult> GetSkills()
         {
             try
             {
-                var people = await _AbilityServices.GetPeopleAsync();
-                return Ok(people);
+                var skills = await _skillServices.GetSkillsAsync();
+                return Ok(skills);
             }
             catch (InvalidOperationException ex)
             {
@@ -123,6 +112,5 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
     }
 }

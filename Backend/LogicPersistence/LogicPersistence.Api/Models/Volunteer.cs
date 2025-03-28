@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace LogicPersistence.Api.Models;
 
 public class Volunteer
@@ -11,4 +13,5 @@ public class Volunteer
     public int phone_number { get; set; }
     public string address { get; set; } = string.Empty;
     public string volunteer_id { get; set; } = string.Empty;
+    public TimePreference time_preference { get; set; }
 }
