@@ -35,6 +35,9 @@ public class VolunteerCreateDto {
 	[Required]
 	[MaxLength(20)]
 	public string volunteer_id { get; set; } = string.Empty;
+
+	[Required]
+    public int time_preference_id { get; set; }
 }
 
 public class VolunteerUpdateDto {
@@ -72,6 +75,9 @@ public class VolunteerUpdateDto {
 	[Required]
 	[MaxLength(20)]
 	public string volunteer_id { get; set; } = string.Empty;
+
+	[Required]
+    public int time_preference_id { get; set; }
 }
 
 public class VolunteerDisplayDto {
@@ -84,4 +90,8 @@ public class VolunteerDisplayDto {
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string volunteer_id { get; set; } = string.Empty;
+
+	public int time_preference_id { get; set; }
+	public TimeSlot time_slot { get; set; }
+	public string day { get; set; } = string.Empty;
 }

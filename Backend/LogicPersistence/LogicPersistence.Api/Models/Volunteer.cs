@@ -12,5 +12,6 @@ public class Volunteer {
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string volunteer_id { get; set; } = string.Empty;
-	public required TimePreference time_preference { get; set; }
+
+	public int? time_preference_id { get; set; }
 }
