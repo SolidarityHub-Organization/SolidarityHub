@@ -63,7 +63,9 @@ namespace LogicPersistence.Api.Controllers {
 				return NoContent();
 			} catch (KeyNotFoundException ex) {
 				return NotFound(ex.Message);
-			} catch (Exception ex) {
+			} catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}

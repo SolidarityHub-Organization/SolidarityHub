@@ -15,8 +15,7 @@ public static class VolunteerMapper {
             prefix = volunteerCreateDto.prefix,
             phone_number = volunteerCreateDto.phone_number,
             address = volunteerCreateDto.address,
-            volunteer_id = volunteerCreateDto.volunteer_id,
-            time_preference_id = volunteerCreateDto.time_preference_id
+            identification = volunteerCreateDto.identification
         };
     }
 
@@ -30,12 +29,11 @@ public static class VolunteerMapper {
             prefix = volunteerUpdateDto.prefix,
             phone_number = volunteerUpdateDto.phone_number,
             address = volunteerUpdateDto.address,
-            volunteer_id = volunteerUpdateDto.volunteer_id,
-            time_preference_id = volunteerUpdateDto.time_preference_id
+            identification = volunteerUpdateDto.identification
         };
     }
 
-    public static VolunteerDisplayDto ToVolunteerDisplayDto(this Volunteer volunteer, TimePreference? timePreference = null) {
+    public static VolunteerDisplayDto ToVolunteerDisplayDto(this Volunteer volunteer) {
         return new VolunteerDisplayDto {
             id = volunteer.id,
             email = volunteer.email,
@@ -44,10 +42,7 @@ public static class VolunteerMapper {
             prefix = volunteer.prefix,
             phone_number = volunteer.phone_number,
             address = volunteer.address,
-            volunteer_id = volunteer.volunteer_id,
-            time_preference_id = volunteer.time_preference_id ?? 0,
-            time_slot = timePreference?.time_slot ?? default,
-            day = timePreference?.day ?? string.Empty
+            identification = volunteer.identification
         };
     }
 }

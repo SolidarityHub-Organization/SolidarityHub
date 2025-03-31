@@ -9,14 +9,17 @@ public class VictimRepository : IVictimRepository {
 
 	public async Task<Victim> CreateVictimAsync(Victim victim) {
 		using var connection = new NpgsqlConnection(connectionString);
-		int id = await connection.ExecuteScalarAsync<int>("INSERT INTO victim (email, password, name, surname, prefix, phone, address, dni) VALUES (@email, @password, @name, @surname, @prefix, @phone, @address, @dni); select lastval();", victim);
+		int id = await connection.ExecuteScalarAsync<int>("INSERT INTO victim (email, password, name, surname, prefix, phone, address, identification) VALUES (@email, @password, @name, @surname, @prefix, @phone, @address, @identification); select lastval();", victim);
 		victim.id = id;
 		return victim;
 	}
 
-	public async Task DeleteVictimAsync(int id) {
+	public async Task<bool> DeleteVictimAsync(int id) {
 		using var connection = new NpgsqlConnection(connectionString);
-		await connection.ExecuteAsync("DELETE FROM victim WHERE id = @id", new { id });
+		const string sql = "DELETE FROM victim WHERE id = @id";
+
+		int rowsAffected = await connection.ExecuteAsync(sql, new { id });
+        return rowsAffected > 0;
 	}
 
 	public async Task<IEnumerable<Victim>> GetAllVictimsAsync() {
@@ -31,7 +34,7 @@ public class VictimRepository : IVictimRepository {
 
 	public async Task<Victim> UpdateVictimAsync(Victim victim) {
 		using var connection = new NpgsqlConnection(connectionString);
-		await connection.ExecuteAsync("UPDATE victim SET email = @email, password = @password, name = @name, surname = @surname, prefix = @prefix, phone = @phone, address = @address, dni = @dni,  WHERE id = @id", victim);
+		await connection.ExecuteAsync("UPDATE victim SET email = @email, password = @password, name = @name, surname = @surname, prefix = @prefix, phone = @phone, address = @address, identification = @identification,  WHERE id = @id", victim);
 		return victim;
 	}
 }

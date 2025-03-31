@@ -6,7 +6,7 @@ namespace LogicPersistence.Api.Services {
 		Task<Victim> CreateVictimAsync(VictimCreateDto victimCreateDto);
 		Task<Victim> GetVictimByIdAsync(int id);
 		Task<Victim> UpdateVictimAsync(int id, VictimUpdateDto victimUpdateDto);
-		Task DeleteVictimAsync(int id);
+		System.Threading.Tasks.Task DeleteVictimAsync(int id);
 		Task<IEnumerable<Victim>> GetAllVictimsAsync();
 	}
 }

@@ -5,7 +5,7 @@ using LogicPersistence.Api.Models;
 public interface IVictimRepository {
 	Task<Victim> CreateVictimAsync(Victim victim);
 	Task<Victim> UpdateVictimAsync(Victim victim);
-	Task DeleteVictimAsync(int id);
+	Task<bool> DeleteVictimAsync(int id);
 	Task<IEnumerable<Victim>> GetAllVictimsAsync();
 	Task<Victim?> GetVictimByIdAsync(int id);
 }

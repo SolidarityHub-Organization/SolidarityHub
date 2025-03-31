@@ -37,13 +37,31 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("volunteers/{id}", Name = "GetVolunteerById")]
+        [HttpGet("volunteers/{id}/full", Name = "GetVolunteerById")]
         public async Task<IActionResult> GetVolunteerByIdAsync(int id) 
         {
             try 
             {
                 var volunteer = await _volunteerServices.GetVolunteerByIdAsync(id);
                 return Ok(volunteer);
+            }
+            catch (KeyNotFoundException ex) 
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("volunteers/{id}", Name = "GetVolunteerDisplayByIdAsync")]
+        public async Task<IActionResult> GetVolunteerDisplayByIdAsync(int id) 
+        {
+            try 
+            {
+                var volunteerDisplay = await _volunteerServices.GetVolunteerDisplayByIdAsync(id);
+                return Ok(volunteerDisplay);
             }
             catch (KeyNotFoundException ex) 
             {
@@ -88,6 +106,10 @@ namespace LogicPersistence.Api.Controllers
             catch (KeyNotFoundException ex) 
             {
                 return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
             catch (Exception ex) 
             {

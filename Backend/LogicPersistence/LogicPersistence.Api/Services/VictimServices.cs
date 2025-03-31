@@ -50,13 +50,17 @@ namespace LogicPersistence.Api.Services {
 			return updatedVictim;
 		}
 
-		public async Task DeleteVictimAsync(int id) {
+		public async System.Threading.Tasks.Task DeleteVictimAsync(int id) {
 			var existingVictim = await _victimRepository.GetVictimByIdAsync(id);
 			if (existingVictim == null) {
 				throw new KeyNotFoundException($"Victim with id {id} not found.");
 			}
 
-			await _victimRepository.DeleteVictimAsync(id);
+			var deletionSuccesful = await _victimRepository.DeleteVictimAsync(id);
+            if (!deletionSuccesful) 
+            {
+                throw new InvalidOperationException($"Failed to delete victim with id {id}.");
+            }
 		}
 
 		public async Task<IEnumerable<Victim>> GetAllVictimsAsync() {

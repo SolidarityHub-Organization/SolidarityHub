@@ -6,6 +6,10 @@ using LogicPersistence.Api.Models.DTOs;
 // Mappers transform data between DTOs and domain models.
 
 public static class VictimMapper {
+	/* The combination of static and this in ToVictim allows us to call the method as:
+	var victim = victimCreateDto.ToVictim() or
+	var victim = VictimMapper.ToVictim(victimCreateDto),
+	the former allows us to skip instantiating a VictimMapper and to call the method directly on the DTO object. */
 	public static Victim ToVictim(this VictimCreateDto victimCreateDto) {
 		return new Victim {
 			email = victimCreateDto.email,
@@ -15,7 +19,7 @@ public static class VictimMapper {
 			prefix = victimCreateDto.prefix,
 			phone_number = victimCreateDto.phone_number,
 			address = victimCreateDto.address,
-			victim_id = victimCreateDto.victim_id
+			identification = victimCreateDto.identification
 		};
 	}
 
@@ -29,7 +33,7 @@ public static class VictimMapper {
 			prefix = victimUpdateDto.prefix,
 			phone_number = victimUpdateDto.phone_number,
 			address = victimUpdateDto.address,
-			victim_id = victimUpdateDto.victim_id
+			identification = victimUpdateDto.identification
 		};
 	}
 
@@ -42,7 +46,7 @@ public static class VictimMapper {
 			prefix = victim.prefix,
 			phone_number = victim.phone_number,
 			address = victim.address,
-			victim_id = victim.victim_id
+			identification = victim.identification
 		};
 	}
 }

@@ -34,7 +34,7 @@ public class VictimCreateDto {
 
 	[Required]
 	[MaxLength(20)]
-	public string victim_id { get; set; } = string.Empty;
+	public string identification { get; set; } = string.Empty;
 }
 
 public class VictimUpdateDto {
@@ -71,7 +71,7 @@ public class VictimUpdateDto {
 
 	[Required]
 	[MaxLength(20)]
-	public string victim_id { get; set; } = string.Empty;
+	public string identification { get; set; } = string.Empty;
 }
 
 public class VictimDisplayDto {
@@ -83,5 +83,5 @@ public class VictimDisplayDto {
 	public int prefix { get; set; }
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
-	public string victim_id { get; set; } = string.Empty;
+	public string identification { get; set; } = string.Empty;
 }

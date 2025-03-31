@@ -9,5 +9,13 @@ public class Victim {
 	public int prefix { get; set; }
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
-	public string victim_id { get; set; } = string.Empty;
+	public string identification { get; set; } = string.Empty;
+
+	// FKs
+	public int location_id { get; set; }
+
+	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
+	//public virtual Location Location { get; set; }
+	//public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
+	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

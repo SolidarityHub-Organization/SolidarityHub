@@ -40,6 +40,14 @@ namespace LogicPersistence.Api.Services
             return volunteer;
         }
 
+        public async Task<VolunteerDisplayDto> GetVolunteerDisplayByIdAsync(int id) 
+        {
+            var volunteer = await GetVolunteerByIdAsync(id);
+            // convert Volunteer to VolunteerDisplayDto to remove sensitive data
+            var volunteerDto = volunteer.ToVolunteerDisplayDto();
+            return volunteerDto;
+        }
+
         public async Task<Volunteer> UpdateVolunteerAsync(int id, VolunteerUpdateDto volunteerUpdateDto) 
         {
             if (id != volunteerUpdateDto.id) 
@@ -56,7 +64,7 @@ namespace LogicPersistence.Api.Services
             return updatedVolunteer;
         }
 
-        public async Task DeleteVolunteerAsync(int id) 
+        public async System.Threading.Tasks.Task DeleteVolunteerAsync(int id) 
         {
             var existingVolunteer = await _volunteerRepository.GetVolunteerByIdAsync(id);
             if (existingVolunteer == null) 
@@ -64,7 +72,11 @@ namespace LogicPersistence.Api.Services
                 throw new KeyNotFoundException($"Volunteer with id {id} not found.");
             }
 
-            await _volunteerRepository.DeleteVolunteerAsync(id);
+            var deletionSuccesful = await _volunteerRepository.DeleteVolunteerAsync(id);
+            if (!deletionSuccesful) 
+            {
+                throw new InvalidOperationException($"Failed to delete volunteer with id {id}.");
+            }
         }
 
         public async Task<IEnumerable<Volunteer>> GetAllVolunteersAsync() 
