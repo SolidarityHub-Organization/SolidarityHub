@@ -1,9 +1,8 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class NeedCreateDto 
+public class AffectedZoneCreateDto 
 {
     [Required]
     [MaxLength(50)]
@@ -14,12 +13,13 @@ public class NeedCreateDto
     public string description { get; set; } = string.Empty;
 
     [Required]
-    public UrgencyLevel urgencyLevel { get; set; }
+    public HazardLevel hazard_level { get; set; }
 
+    [Required]
     public int admin_id { get; set; }
 }
 
-public class NeedUpdateDto 
+public class AffectedZoneUpdateDto 
 {
     [Required]
     public int id { get; set; }
@@ -30,16 +30,16 @@ public class NeedUpdateDto
     [MaxLength(200)]
     public string? description { get; set; }
 
-    public UrgencyLevel? urgencyLevel { get; set; }
-
-	public int admin_id { get; set; }
+    public HazardLevel? hazard_level { get; set; }
+    
+    public int admin_id { get; set; }
 }
 
-public class NeedDisplayDto 
+public class AffectedZoneDisplayDto 
 {
     public int id { get; set; }
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
-    public UrgencyLevel urgencyLevel { get; set; }
+    public HazardLevel hazard_level { get; set; }
     public int admin_id { get; set; }
 }

@@ -9,7 +9,7 @@ public class VolunteerCreateDto {
 	public string email { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(128)]
 	public string password { get; set; } = string.Empty;
 
 	[Required]
@@ -35,49 +35,37 @@ public class VolunteerCreateDto {
 	[Required]
 	[MaxLength(20)]
 	public string identification { get; set; } = string.Empty;
-
-	[Required]
-    public int time_preference_id { get; set; }
 }
 
 public class VolunteerUpdateDto {
+	[Required]
 	public int id { get; set; }
 
-	[Required]
+	
 	[EmailAddress]
 	[MaxLength(50)]
 	public string email { get; set; } = string.Empty;
 
-	[Required]
-	[MaxLength(50)]
+	[MaxLength(128)]
 	public string password { get; set; } = string.Empty;
 
-	[Required]
 	[MaxLength(50)]
 	public string name { get; set; } = string.Empty;
 
-	[Required]
 	[MaxLength(50)]
 	public string surname { get; set; } = string.Empty;
 
-	[Required]
 	[Range(1, 99999)]
 	public int prefix { get; set; }
 
-	[Required]
 	[Range(100000000, 99999999999)]
 	public int phone_number { get; set; }
 
-	[Required]
 	[MaxLength(100)]
 	public string address { get; set; } = string.Empty;
 
-	[Required]
 	[MaxLength(20)]
 	public string identification { get; set; } = string.Empty;
-
-	[Required]
-    public int time_preference_id { get; set; }
 }
 
 public class VolunteerDisplayDto {
@@ -90,6 +78,4 @@ public class VolunteerDisplayDto {
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
-
-	public int time_preference_id { get; set; }
 }

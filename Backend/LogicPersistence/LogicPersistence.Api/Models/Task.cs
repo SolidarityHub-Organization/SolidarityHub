@@ -10,6 +10,7 @@ public enum TaskType {
 
 public class Task {
 	public int id { get; set; }
+    public required string name { get; set; }
 
 	public required string description { get; set; }
 

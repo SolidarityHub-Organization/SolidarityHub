@@ -1,6 +1,7 @@
 namespace LogicPersistence.Api.Models;
 
 public class Location {
+    // primary key is latitude and longitude
 	public double latitude { get; set; }
     public double longitude { get; set; }
 

@@ -9,7 +9,7 @@ public class VictimCreateDto {
 	public string email { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(128)]
 	public string password { get; set; } = string.Empty;
 
 	[Required]
@@ -38,40 +38,34 @@ public class VictimCreateDto {
 }
 
 public class VictimUpdateDto {
+	[Required]
 	public int id { get; set; }
 
-	[Required]
 	[EmailAddress]
 	[MaxLength(50)]
-	public string email { get; set; } = string.Empty;
+	public string? email { get; set; }
 
 	[Required]
+	[MaxLength(128)]
+	public string? password { get; set; }
+
 	[MaxLength(50)]
-	public string password { get; set; } = string.Empty;
+	public string? name { get; set; }
 
-	[Required]
 	[MaxLength(50)]
-	public string name { get; set; } = string.Empty;
+	public string? surname { get; set; }
 
-	[Required]
-	[MaxLength(50)]
-	public string surname { get; set; } = string.Empty;
-
-	[Required]
 	[Range(1, 99999)]
-	public int prefix { get; set; }
+	public int? prefix { get; set; }
 
-	[Required]
 	[Range(100000000, 99999999999)]
-	public int phone_number { get; set; }
+	public int? phone_number { get; set; }
 
-	[Required]
 	[MaxLength(100)]
-	public string address { get; set; } = string.Empty;
+	public string? address { get; set; }
 
-	[Required]
 	[MaxLength(20)]
-	public string identification { get; set; } = string.Empty;
+	public string? identification { get; set; }
 }
 
 public class VictimDisplayDto {
