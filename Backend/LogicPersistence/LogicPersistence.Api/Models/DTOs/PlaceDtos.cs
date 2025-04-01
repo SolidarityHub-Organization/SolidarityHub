@@ -17,8 +17,12 @@ public class PlaceUpdateDto
     [Required]
     public int id { get; set; }
 
+    [Required]
     [MaxLength(50)]
-    public string? name { get; set; }
+    public string name { get; set; } = string.Empty;
+
+    [Required]
+    public int admin_id { get; set; }
 }
 
 public class PlaceDisplayDto 

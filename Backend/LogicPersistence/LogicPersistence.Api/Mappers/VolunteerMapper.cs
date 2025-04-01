@@ -43,6 +43,7 @@ public static class VolunteerMapper {
             phone_number = volunteer.phone_number,
             address = volunteer.address,
             identification = volunteer.identification
+            // Password is intentionally omitted.
         };
     }
 }

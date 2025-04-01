@@ -12,9 +12,8 @@ public class TaskCreateDto
     [MaxLength(500)]
     public string description { get; set; } = string.Empty;
 
-    // Only one of these should be provided to determine task type
+    [Required]
     public int? admin_id { get; set; }
-    public int? victim_id { get; set; }
 }
 
 public class TaskUpdateDto 
@@ -22,14 +21,16 @@ public class TaskUpdateDto
     [Required]
     public int id { get; set; }
 
+    [Required]
     [MaxLength(50)]
     public string name { get; set; } = string.Empty;
 
+    [Required]
     [MaxLength(500)]
-    public string? description { get; set; }
+    public string description { get; set; } = string.Empty;
 
+    [Required]
     public int? admin_id { get; set; }
-    public int? victim_id { get; set; }
 }
 
 public class TaskDisplayDto 
@@ -38,6 +39,4 @@ public class TaskDisplayDto
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
     public int? admin_id { get; set; }
-    public int? victim_id { get; set; }
-    // Type can be determined by which ID is not null
 }

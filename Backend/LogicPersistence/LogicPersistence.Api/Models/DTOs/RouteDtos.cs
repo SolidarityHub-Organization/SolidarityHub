@@ -19,7 +19,8 @@ public class RouteCreateDto
     [Required]
     public TransportType transport_type { get; set; }
 
-    public int admin_id { get; set; }
+    [Required]
+    public int? admin_id { get; set; }
 
     [Required]
     public int start_location_id { get; set; }
@@ -33,21 +34,28 @@ public class RouteUpdateDto
     [Required]
     public int id { get; set; }
 
+    [Required]
     [MaxLength(50)]
-    public string? name { get; set; }
+    public string name { get; set; } = string.Empty;
 
+    [Required]
     [MaxLength(200)]
-    public string? description { get; set; }
+    public string description { get; set; } = string.Empty;
 
-    public HazardLevel? hazard_level { get; set; }
+    [Required]
+    public HazardLevel hazard_level { get; set; }
     
-    public TransportType? transport_type { get; set; }
+    [Required]
+    public TransportType transport_type { get; set; }
 
-    public int? start_location_id { get; set; }
+    [Required]
+    public int start_location_id { get; set; }
     
-    public int? end_location_id { get; set; }
+    [Required]
+    public int end_location_id { get; set; }
 
-    public int admin_id { get; set; }
+    [Required]
+    public int? admin_id { get; set; }
 }
 
 public class RouteDisplayDto 
@@ -57,7 +65,7 @@ public class RouteDisplayDto
     public string description { get; set; } = string.Empty;
     public HazardLevel hazard_level { get; set; }
     public TransportType transport_type { get; set; }
-    public int admin_id { get; set; }
+    public int? admin_id { get; set; }
     public int start_location_id { get; set; }
     public int end_location_id { get; set; }
 }

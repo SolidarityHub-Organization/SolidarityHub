@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace LogicPersistence.Api.Models;
 
 public class Volunteer {

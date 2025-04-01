@@ -2,7 +2,7 @@ namespace LogicPersistence.Api.Models;
 
 public class Admin {
 	public int id { get; set; }
-	public required string jurisdiction { get; set; }
+	public string jurisdiction { get; set; } = string.Empty;
 	public string email { get; set; } = string.Empty;
 	public string password { get; set; } = string.Empty;
 	public string name { get; set; } = string.Empty;

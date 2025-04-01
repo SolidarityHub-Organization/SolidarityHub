@@ -47,6 +47,7 @@ public static class VictimMapper {
 			phone_number = victim.phone_number,
 			address = victim.address,
 			identification = victim.identification
+			// Password is intentionally omitted.
 		};
 	}
 }

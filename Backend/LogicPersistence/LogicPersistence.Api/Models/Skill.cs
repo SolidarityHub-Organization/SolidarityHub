@@ -1,15 +1,22 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LogicPersistence.Api.Models;
 
 public enum SkillLevel {
-	Principiante = 0,
-	Intermedio = 1,
-	Avanzado = 2
+	[Display(Name = "Desconocido")]
+	Unknown = -1,
+	[Display(Name = "Principiante")]
+    Beginner = 0,
+    [Display(Name = "Intermedio")]
+    Intermediate = 1,
+    [Display(Name = "Experto")]
+    Expert = 2
 }
 
 public class Skill {
 	public int id { get; set; }
 
-	public required string name { get; set; }
+	public string name { get; set; } = string.Empty;
 
 	// volunteer can pick which skill level they have, or task can require a skill level
 	public SkillLevel level { get; set; }

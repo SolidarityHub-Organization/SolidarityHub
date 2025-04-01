@@ -16,7 +16,8 @@ public class NeedCreateDto
     [Required]
     public UrgencyLevel urgencyLevel { get; set; }
 
-    public int admin_id { get; set; }
+	[Required]
+    public int? admin_id { get; set; }
 }
 
 public class NeedUpdateDto 
@@ -24,15 +25,19 @@ public class NeedUpdateDto
     [Required]
     public int id { get; set; }
 
+	[Required]
     [MaxLength(50)]
-    public string? name { get; set; }
+    public string name { get; set; } = string.Empty;
 
+	[Required]
     [MaxLength(200)]
-    public string? description { get; set; }
+    public string description { get; set; } = string.Empty;
 
-    public UrgencyLevel? urgencyLevel { get; set; }
+	[Required]
+    public UrgencyLevel urgencyLevel { get; set; }
 
-	public int admin_id { get; set; }
+	[Required]
+	public int? admin_id { get; set; }
 }
 
 public class NeedDisplayDto 
@@ -41,5 +46,5 @@ public class NeedDisplayDto
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
     public UrgencyLevel urgencyLevel { get; set; }
-    public int admin_id { get; set; }
+    public int? admin_id { get; set; }
 }

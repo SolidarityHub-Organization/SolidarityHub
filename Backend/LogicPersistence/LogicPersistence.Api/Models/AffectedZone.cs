@@ -1,18 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LogicPersistence.Api.Models;
 
 public enum HazardLevel {
-    Descinocido = -1,
-    Bajo = 0,
-    Medio = 1,
-    Alto = 2,
-    Critico = 3
+    [Display(Name = "Desconocido")]
+    Unknown = -1,
+    [Display(Name = "Bajo")]
+    Low = 0,
+    [Display(Name = "Medio")]
+    Medium = 1,
+    [Display(Name = "Alto")]
+    High = 2,
+    [Display(Name = "Crítico")]
+    Critical = 3
 }
 
 public class AffectedZone {
     public int id { get; set; }
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
-    public required HazardLevel hazard_level { get; set; }
+    public HazardLevel hazard_level { get; set; }
 
     // FKs
     public int admin_id { get; set; }

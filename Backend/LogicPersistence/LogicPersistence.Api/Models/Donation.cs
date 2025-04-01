@@ -1,44 +1,58 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LogicPersistence.Api.Models;
 
-public enum DonationType {
-    Physical,
-    Monetary
-}
-
 public enum PhysicalDonationType {
-    Comida,
-    Herramientas,
-    Ropa,
-    Medicamentos,
-    Muebles,
-    Otro
+    [Display(Name = "Otro")]
+    Other,
+    [Display(Name = "Comida")]
+    Food,
+    [Display(Name = "Herramientas")]
+    Tools,
+    [Display(Name = "Ropa")]
+    Clothes,
+    [Display(Name = "Medicamentos")]
+    Medicine,
+    [Display(Name = "Muebles")]
+    Furniture
 }
 
 public enum Currency {
+    [Display(Name = "Otro")]
+    Other,
+    [Display(Name = "Dólares")]
     USD,
-    EUR,
-    Otro
+    [Display(Name = "Euros")]
+    EUR
 }
 
 public enum PaymentStatus {
-    Pendiente,
-    Completado,
-    Fallido,
-    Reembolsado
+    [Display(Name = "Pendiente")]
+    Pending,
+    [Display(Name = "Completado")]
+    Completed,
+    [Display(Name = "Fallido")]
+    Failed,
+    [Display(Name = "Reembolsado")]
+    Refunded
 }
 
 public enum PaymentService {
+    [Display(Name = "PayPal")]
     PayPal,
+    [Display(Name = "Stripe")]
     Stripe,
-    TransferenciaBancaria,
-    TarjetaCredito,
-    Otro
+    [Display(Name = "Transferencia Bancaria")]
+    BankTransfer,
+    [Display(Name = "Tarjeta de Crédito")]
+    CreditCard,
+    [Display(Name = "Otro")]
+    Other
 }
 
 public class Donation {
     public int id { get; set; }
     public DateTime donation_date { get; set; }
-    public required DonationType type { get; set; }
 
     // FKs
     // donations can be done by volunteers or admins
@@ -53,7 +67,7 @@ public class Donation {
 }
 
 public class PhysicalDonation : Donation {
-    public required string item_name { get; set; }
+    public string item_name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
     public int quantity { get; set; }
     public PhysicalDonationType item_type { get; set; }

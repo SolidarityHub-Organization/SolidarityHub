@@ -1,12 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LogicPersistence.Api.Models;
 
 public enum TransportType {
-    Car = 1,
-    Bike = 2,
-    Foot = 3,
-    Boat = 4,
-    Plane = 5,
-    Train = 6
+    [Display(Name = "Coche")]
+    Car = 0,
+    [Display(Name = "Bicicleta")]
+    Bike = 1,
+    [Display(Name = "A pie")]
+    Foot = 2,
+    [Display(Name = "Barco")]
+    Boat = 3,
+    [Display(Name = "Avión")]
+    Plane = 4,
+    [Display(Name = "Tren")]
+    Train = 5
 }
 
 public class Route {
@@ -15,7 +23,7 @@ public class Route {
     public string description { get; set; } = string.Empty;
     // if an admin sets the route and it isn't auto genereated, they should set a hazard_level
     public HazardLevel hazard_level { get; set; }
-    public required TransportType transport_type { get; set; }
+    public TransportType transport_type { get; set; }
 
     // FKs
     public int admin_id { get; set; }

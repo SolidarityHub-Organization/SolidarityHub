@@ -21,11 +21,14 @@ public class SkillUpdateDto
     [Required]
     public int id { get; set; }
 
+	[Required]
     [MaxLength(50)]
-    public string? name { get; set; }
+    public string name { get; set; } = string.Empty;
 
-    public SkillLevel? level { get; set; }
+	[Required]
+    public SkillLevel level { get; set; }
 
+	[Required]
 	public int admin_id { get; set; }
 }
 

@@ -8,6 +8,7 @@ public class PhysicalDonationCreateDto
     [MaxLength(50)]
     public string item_name { get; set; } = string.Empty;
 
+    [Required]
     [MaxLength(200)]
     public string description { get; set; } = string.Empty;
 
@@ -21,9 +22,7 @@ public class PhysicalDonationCreateDto
     // One of these must be set to identify the donor
     public int? volunteer_id { get; set; }
     public int? admin_id { get; set; }
-
-    [Required]
-    public int victim_id { get; set; }
+    public int? victim_id { get; set; }
 }
 
 public class MonetaryDonationCreateDto 
@@ -41,9 +40,7 @@ public class MonetaryDonationCreateDto
     // One of these must be set to identify the donor
     public int? volunteer_id { get; set; }
     public int? admin_id { get; set; }
-
-    [Required]
-    public int victim_id { get; set; }
+    public int? victim_id { get; set; }
 }
 
 public class PhysicalDonationUpdateDto 
@@ -51,16 +48,30 @@ public class PhysicalDonationUpdateDto
     [Required]
     public int id { get; set; }
 
+    [Required]
     [MaxLength(50)]
-    public string? item_name { get; set; }
+    public string item_name { get; set; } = string.Empty;
     
+    [Required]
     [MaxLength(200)]
-    public string? description { get; set; }
+    public string description { get; set; } = string.Empty;
     
+    [Required]
     [Range(1, int.MaxValue)]
-    public int? quantity { get; set; }
+    public int quantity { get; set; }
 
-    public PhysicalDonationType? item_type { get; set; }
+    [Required]
+    public PhysicalDonationType item_type { get; set; }
+
+    // One of these must be set to identify the donor
+    [Required]
+    public int? volunteer_id { get; set; }
+    [Required]
+    public int? admin_id { get; set; }
+
+
+    [Required]
+    public int? victim_id { get; set; }
 }
 
 public class MonetaryDonationUpdateDto 
@@ -68,14 +79,28 @@ public class MonetaryDonationUpdateDto
     [Required]
     public int id { get; set; }
 
+    [Required]
     [Range(0.01, double.MaxValue)]
-    public decimal? amount { get; set; }
+    public decimal amount { get; set; }
 
-    public Currency? currency { get; set; }
+    [Required]
+    public Currency currency { get; set; }
     
-    public PaymentService? payment_service { get; set; }
+    [Required]
+    public PaymentService payment_service { get; set; }
     
-    public PaymentStatus? payment_status { get; set; }
+    [Required]
+    public PaymentStatus payment_status { get; set; }
+
+    // One of these must be set to identify the donor
+    [Required]
+    public int? volunteer_id { get; set; }
+    [Required]
+    public int? admin_id { get; set; }
+
+
+    [Required]
+    public int? victim_id { get; set; }
 }
 
 public class PhysicalDonationDisplayDto 
