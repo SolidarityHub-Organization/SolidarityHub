@@ -16,7 +16,7 @@ public class Admin {
 
 	//public virtual ICollection<AffectedZone> AffectedZones { get; set; } = new List<AffectedZone>();
 	//public virtual ICollection<Route> Routes { get; set; } = new List<Route>();
-	//public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
+	//public virtual ICollection<MonetaryDonation/PhysicalDonation> Donations { get; set; } = new List<MonetaryDonation/PhysicalDonation>();
 	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
 	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();

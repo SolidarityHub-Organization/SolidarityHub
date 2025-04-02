@@ -18,6 +18,7 @@ public static class LocationMapper
     public static Location ToLocation(this LocationUpdateDto locationUpdateDto) 
     {
         return new Location {
+            id = locationUpdateDto.id,
             latitude = locationUpdateDto.latitude,
             longitude = locationUpdateDto.longitude,
             victim_id = locationUpdateDto.victim_id ?? -1,
@@ -28,6 +29,7 @@ public static class LocationMapper
     public static LocationDisplayDto ToLocationDisplayDto(this Location location) 
     {
         return new LocationDisplayDto {
+            id = location.id,
             latitude = location.latitude,
             longitude = location.longitude,
             victim_id = location.victim_id,

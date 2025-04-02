@@ -26,5 +26,5 @@ public class Task {
     //public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
     //public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
     //public virtual Admin Admin { get; set; }
-    //public virtual ICollection<Time> Times { get; set; } = new List<Time>();
+    //public virtual ICollection<TaskTime> TaskTimes { get; set; } = new List<TaskTime>();
 }

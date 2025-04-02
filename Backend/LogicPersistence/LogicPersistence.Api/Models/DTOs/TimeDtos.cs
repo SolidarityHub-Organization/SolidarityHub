@@ -2,26 +2,67 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class TimeCreateDto 
+public abstract class TimeBaseDto
 {
     [Required]
-    public TimeSlot time_slot { get; set; }
+    public TimeOnly start_time { get; set; }
 
     [Required]
-    public DayOfWeek day { get; set; }
+    public TimeOnly end_time { get; set; }
 }
 
-public class TimeUpdateDto 
+public class TaskTimeCreateDto : TimeBaseDto 
 {
     [Required]
-    public TimeSlot time_slot { get; set; }
+    public DateOnly date { get; set; }
 
     [Required]
-    public DayOfWeek day { get; set; }
+    public int task_id { get; set; }
 }
 
-public class TimeDisplayDto 
+public class TaskTimeUpdateDto : TimeBaseDto 
 {
-    public TimeSlot time_slot { get; set; }
+    [Required]
+    public int id { get; set; }
+
+    [Required]
+    public DateOnly date { get; set; }
+
+    [Required]
+    public int task_id { get; set; }
+}
+
+public class TaskTimeDisplayDto : TimeBaseDto
+{
+    public int id { get; set; }
+    public DateOnly date { get; set; }
+    public int task_id { get; set; }
+}
+
+public class VolunteerTimeCreateDto : TimeBaseDto
+{
+    [Required]
     public DayOfWeek day { get; set; }
+
+    [Required]
+    public int volunteer_id { get; set; }
+}
+
+public class VolunteerTimeUpdateDto : TimeBaseDto
+{
+    [Required]
+    public int id { get; set; }
+
+    [Required]
+    public DayOfWeek day { get; set; }
+
+    [Required]
+    public int volunteer_id { get; set; }
+}
+
+public class VolunteerTimeDisplayDto : TimeBaseDto
+{
+    public int id { get; set; }
+    public DayOfWeek day { get; set; }
+    public int volunteer_id { get; set; }
 }

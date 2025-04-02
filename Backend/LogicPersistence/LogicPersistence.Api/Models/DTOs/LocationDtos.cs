@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class LocationCreateDto 
+public class LocationCreateDto
 {
     [Required]
     [Range(-90, 90)]
@@ -22,6 +22,9 @@ public class LocationCreateDto
 public class LocationUpdateDto 
 {
     [Required]
+    public int id { get; set; }
+
+    [Required]
     [Range(-90, 90)]
     public double latitude { get; set; }
 
@@ -37,6 +40,7 @@ public class LocationUpdateDto
 
 public class LocationDisplayDto 
 {
+    public int id { get; set; }
     public double latitude { get; set; }
     public double longitude { get; set; }
     public int? victim_id { get; set; }

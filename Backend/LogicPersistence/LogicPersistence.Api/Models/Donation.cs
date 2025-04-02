@@ -4,53 +4,54 @@ namespace LogicPersistence.Api.Models;
 
 public enum PhysicalDonationType {
 	[Display(Name = "Otro")]
-	Other,
+	Other = -1,
 	[Display(Name = "Comida")]
-	Food,
+	Food = 0,
 	[Display(Name = "Herramientas")]
-	Tools,
+	Tools = 1,
 	[Display(Name = "Ropa")]
-	Clothes,
+	Clothes = 2,
 	[Display(Name = "Medicamentos")]
-	Medicine,
+	Medicine = 3,
 	[Display(Name = "Muebles")]
-	Furniture
+	Furniture = 4
 }
 
 public enum Currency {
 	[Display(Name = "Otro")]
-	Other,
+	Other = -1,
 	[Display(Name = "Dólares")]
-	USD,
+	USD = 0,
 	[Display(Name = "Euros")]
-	EUR
+	EUR = 1
 }
 
 public enum PaymentStatus {
 	[Display(Name = "Pendiente")]
-	Pending,
+	Pending = 0,
 	[Display(Name = "Completado")]
-	Completed,
+	Completed = 1,
 	[Display(Name = "Fallido")]
-	Failed,
+	Failed = 2,
 	[Display(Name = "Reembolsado")]
-	Refunded
+	Refunded = 3
 }
 
 public enum PaymentService {
-	[Display(Name = "PayPal")]
-	PayPal,
-	[Display(Name = "Transferencia Bancaria")]
-	BankTransfer,
-	[Display(Name = "Tarjeta de Crédito")]
-	CreditCard,
 	[Display(Name = "Otro")]
-	Other
+	Other = -1,
+	[Display(Name = "PayPal")]
+	PayPal = 0,
+	[Display(Name = "Transferencia Bancaria")]
+	BankTransfer = 1,
+	[Display(Name = "Tarjeta de Crédito")]
+	CreditCard = 2
 }
 
-public class Donation {
+public abstract class Donation {
 	public int id { get; set; }
 	public DateTime donation_date { get; set; }
+
 
 	// FKs
 	// donations can be done by volunteers or admins

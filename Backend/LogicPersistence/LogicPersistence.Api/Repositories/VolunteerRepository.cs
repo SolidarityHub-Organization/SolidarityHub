@@ -17,7 +17,7 @@ public class VolunteerRepository : IVolunteerRepository
             VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @time_preference_id)
             RETURNING *";  // Return all columns instead of just id
 
-        return await connection.QuerySingleAsync<Volunteer>(sql, volunteer);  // Get the complete record back with QuerySingleAsync
+        return await connection.QuerySingleAsync<Volunteer>(sql, volunteer);  // Get the complete record back with QuerySingleAsync (works with RETURNING *)
     }
 
     public async Task<Volunteer> UpdateVolunteerAsync(Volunteer volunteer)

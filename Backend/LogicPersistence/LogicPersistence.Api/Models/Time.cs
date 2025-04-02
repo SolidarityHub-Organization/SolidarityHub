@@ -4,30 +4,45 @@ namespace LogicPersistence.Api.Models;
 
 public enum DayOfWeek {
 	[Display(Name = "Lunes")]
-	Monday,
+	Monday = 0,
 	[Display(Name = "Martes")]
-	Tuesday,
+	Tuesday = 1,
 	[Display(Name = "Miércoles")]
-	Wednesday,
+	Wednesday = 2,
 	[Display(Name = "Jueves")]
-	Thursday,
+	Thursday = 3,
 	[Display(Name = "Viernes")]
-	Friday,
+	Friday = 4,
 	[Display(Name = "Sábado")]
-	Saturday,
+	Saturday = 5,
 	[Display(Name = "Domingo")]
-	Sunday
+	Sunday = 6
 }
 
-public class Time {
-	// time_slot and day form primary key, we must be able to pick amongst all time combinatios (with a combo box for example)
-	public DateTime start_time { get; set; }
-	public DateTime end_time { get; set; }
-	public DayOfWeek day { get; set; }  // lunes, martes, miércoles, jueves, viernes, sábado, domingo
+public abstract class Time {
+	public int id { get; set; }
+	public TimeOnly start_time { get; set; }
+	public TimeOnly end_time { get; set; }
+}
+
+public class TaskTime : Time 
+{
+    public DateOnly date { get; set; }
+    public int task_id { get; set; }
+
 
 	// FKs
 
-	// instead of using the volunteer list below, we query the database for the volunteers that have this time preference when needed to avoid keeping a giant list of volunteers in memory
-	//public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
-	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+	//public virtual Task Task { get; set; }
+}
+
+public class VolunteerTime : Time 
+{
+    public DayOfWeek day { get; set; }
+    public int volunteer_id { get; set; }
+
+
+	// FKs
+
+	//public virtual Volunteer Volunteer { get; set; }
 }

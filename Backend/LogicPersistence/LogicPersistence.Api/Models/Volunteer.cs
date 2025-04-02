@@ -17,9 +17,9 @@ public class Volunteer {
 	public int location_id { get; set; }
 
 	// we don't use this navigation property to maintain consistency with not using the massive navigation property lists, we get time preference through another query instead, even if this one wouldn't occupy much memory
-	//public virtual ICollection<Time> Times { get; set; } = new List<Time>();
+	//public virtual ICollection<VolunteerTime> VolunteerTimes { get; set; } = new List<VolunteerTime>();
 	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
 	//public virtual Location Location { get; set; }
 	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
-	//public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
+	//public virtual ICollection<MonetaryDonation/PhysicalDonation> Donations { get; set; } = new List<MonetaryDonation/PhysicalDonation>();
 }
