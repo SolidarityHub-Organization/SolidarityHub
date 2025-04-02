@@ -24,6 +24,9 @@ public class AffectedZone {
     // FKs
     public int admin_id { get; set; }
 
+
+    // Navigation properties
+
     // 1 location with a radius or more than 3 connected locations can be a zone
     //public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
     //public virtual Admin Admin { get; set; }

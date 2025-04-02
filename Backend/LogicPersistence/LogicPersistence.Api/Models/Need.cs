@@ -26,8 +26,12 @@ public class Need {
 	public UrgencyLevel urgencyLevel { get; set; }
 
 	// FKs
-	public int victim_id { get; set;}
-	public int admin_id { get; set; }
+	// a need can be set by an admin or a victim (one is null)
+	public int? victim_id { get; set;}
+	public int? admin_id { get; set; }
+
+
+	// Navigation properties
 
 	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 	//public virtual Victim Victim { get; set; }

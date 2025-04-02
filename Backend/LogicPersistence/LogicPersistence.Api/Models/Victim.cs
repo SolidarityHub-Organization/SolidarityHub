@@ -12,7 +12,10 @@ public class Victim {
 	public string identification { get; set; } = string.Empty;
 
 	// FKs
-	public int location_id { get; set; }
+	public int? location_id { get; set; }
+
+
+	// Navigation properties
 
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
 	//public virtual Location Location { get; set; }

@@ -13,8 +13,8 @@ public class TaskRepository : ITaskRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            INSERT INTO tasks (name, description, location, start_time, end_time, date, task_type_id)
-            VALUES (@name, @description, @location, @start_time, @end_time, @date, @task_type_id)
+            INSERT INTO tasks (name, description, location, start_time, end_time, date, admin_id, location_id)
+            VALUES (@name, @description, @location, @start_time, @end_time, @date, @admin_id, @location_id)
             RETURNING *";
 
         return await connection.QuerySingleAsync<Task>(sql, task);
@@ -31,7 +31,8 @@ public class TaskRepository : ITaskRepository
                 start_time = @start_time, 
                 end_time = @end_time, 
                 date = @date, 
-                task_type_id = @task_type_id
+                admin_id = @admin_id,,
+                location_id = @location_id
             WHERE id = @id
             RETURNING *";
 

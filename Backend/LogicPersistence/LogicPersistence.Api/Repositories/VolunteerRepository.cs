@@ -13,8 +13,8 @@ public class VolunteerRepository : IVolunteerRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            INSERT INTO volunteers (email, password, name, surname, prefix, phone_number, address, identification, time_preference_id)
-            VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @time_preference_id)
+            INSERT INTO volunteers (email, password, name, surname, prefix, phone_number, address, identification, time_preference_id, location_id)
+            VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @time_preference_id, @location_id)
             RETURNING *";  // Return all columns instead of just id
 
         return await connection.QuerySingleAsync<Volunteer>(sql, volunteer);  // Get the complete record back with QuerySingleAsync (works with RETURNING *)
@@ -33,7 +33,8 @@ public class VolunteerRepository : IVolunteerRepository
                 phone_number = @phone_number,
                 address = @address,
                 identification = @identification,
-                time_preference_id = @time_preference_id
+                time_preference_id = @time_preference_id,
+                location_id = @location_id
             WHERE id = @id
             RETURNING *";
 

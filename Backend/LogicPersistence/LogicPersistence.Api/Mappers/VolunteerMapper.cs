@@ -15,7 +15,9 @@ public static class VolunteerMapper {
             prefix = volunteerCreateDto.prefix,
             phone_number = volunteerCreateDto.phone_number,
             address = volunteerCreateDto.address,
-            identification = volunteerCreateDto.identification
+            identification = volunteerCreateDto.identification,
+
+            location_id = volunteerCreateDto.location_id
         };
     }
 
@@ -29,7 +31,9 @@ public static class VolunteerMapper {
             prefix = volunteerUpdateDto.prefix,
             phone_number = volunteerUpdateDto.phone_number,
             address = volunteerUpdateDto.address,
-            identification = volunteerUpdateDto.identification
+            identification = volunteerUpdateDto.identification,
+
+            location_id = volunteerUpdateDto.location_id
         };
     }
 
@@ -42,8 +46,10 @@ public static class VolunteerMapper {
             prefix = volunteer.prefix,
             phone_number = volunteer.phone_number,
             address = volunteer.address,
-            identification = volunteer.identification
+            identification = volunteer.identification,
             // Password is intentionally omitted.
+
+            location_id = volunteer.location_id
         };
     }
 }

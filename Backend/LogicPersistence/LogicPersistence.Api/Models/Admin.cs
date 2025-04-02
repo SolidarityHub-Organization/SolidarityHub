@@ -14,6 +14,9 @@ public class Admin {
 
 	// FKs
 
+
+	// Navigation properties
+
 	//public virtual ICollection<AffectedZone> AffectedZones { get; set; } = new List<AffectedZone>();
 	//public virtual ICollection<Route> Routes { get; set; } = new List<Route>();
 	//public virtual ICollection<MonetaryDonation/PhysicalDonation> Donations { get; set; } = new List<MonetaryDonation/PhysicalDonation>();

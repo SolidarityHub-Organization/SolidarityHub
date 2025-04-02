@@ -26,9 +26,12 @@ public class Route {
     public TransportType transport_type { get; set; }
 
     // FKs
-    public int admin_id { get; set; }
+    public int? admin_id { get; set; }
     public int start_location_id { get; set; }
     public int end_location_id { get; set; }
+
+
+    // Navigation properties
 
     //public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
     //public virtual Location StartLocation { get; set; }

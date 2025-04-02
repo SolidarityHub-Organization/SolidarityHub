@@ -28,10 +28,12 @@ public abstract class Time {
 public class TaskTime : Time 
 {
     public DateOnly date { get; set; }
+
+	// FKs
     public int task_id { get; set; }
 
 
-	// FKs
+	// Navigation properties
 
 	//public virtual Task Task { get; set; }
 }
@@ -39,10 +41,11 @@ public class TaskTime : Time
 public class VolunteerTime : Time 
 {
     public DayOfWeek day { get; set; }
-    public int volunteer_id { get; set; }
-
 
 	// FKs
+    public int volunteer_id { get; set; }
+
+	// Navigation properties
 
 	//public virtual Volunteer Volunteer { get; set; }
 }

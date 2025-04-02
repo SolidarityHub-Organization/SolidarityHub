@@ -7,6 +7,9 @@ public class Place {
 	// FKs
 	public int admin_id { get; set; }
 
+
+	// Navigation properties
+
     //public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
     //public virtual ICollection<AffectedZone> AffectedZones { get; set; } = new List<AffectedZone>();
 	

@@ -35,6 +35,8 @@ public class VolunteerCreateDto {
 	[Required]
 	[MaxLength(20)]
 	public string identification { get; set; } = string.Empty;
+
+	public int? location_id { get; set; }
 }
 
 public class VolunteerUpdateDto {
@@ -73,6 +75,8 @@ public class VolunteerUpdateDto {
 	[Required]
 	[MaxLength(20)]
 	public string identification { get; set; } = string.Empty;
+
+	public int? location_id { get; set; }
 }
 
 public class VolunteerDisplayDto {
@@ -85,4 +89,6 @@ public class VolunteerDisplayDto {
 	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
+
+	public int? location_id { get; set; }
 }

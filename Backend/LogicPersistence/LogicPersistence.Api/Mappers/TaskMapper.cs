@@ -10,7 +10,8 @@ public static class TaskMapper
         return new Task {
             name = taskCreateDto.name,
             description = taskCreateDto.description,
-            admin_id = taskCreateDto.admin_id ?? -1,
+            admin_id = taskCreateDto.admin_id,
+            location_id = taskCreateDto.location_id
         };
     }
 
@@ -20,7 +21,8 @@ public static class TaskMapper
             id = taskUpdateDto.id,
             name = taskUpdateDto.name,
             description = taskUpdateDto.description,
-            admin_id = taskUpdateDto.admin_id ?? -1,
+            admin_id = taskUpdateDto.admin_id,
+            location_id = taskUpdateDto.location_id
         };
     }
 
@@ -31,6 +33,7 @@ public static class TaskMapper
             name = task.name,
             description = task.description,
             admin_id = task.admin_id,
+            location_id = task.location_id
         };
     }
 }

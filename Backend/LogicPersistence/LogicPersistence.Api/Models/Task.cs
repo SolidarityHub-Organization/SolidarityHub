@@ -17,8 +17,10 @@ public class Task {
 
     //we connect to Skill to tell what skills are needed to do the task
 
+
     // FKs
-    public int admin_id { get; set; }
+    public int? admin_id { get; set; }
+    public int location_id { get; set; }
 
     //public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
     //public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();

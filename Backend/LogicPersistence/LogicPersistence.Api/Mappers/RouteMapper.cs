@@ -12,7 +12,7 @@ public static class RouteMapper
             description = routeCreateDto.description,
             hazard_level = routeCreateDto.hazard_level,
             transport_type = routeCreateDto.transport_type,
-            admin_id = routeCreateDto.admin_id ?? -1,
+            admin_id = routeCreateDto.admin_id,
             start_location_id = routeCreateDto.start_location_id,
             end_location_id = routeCreateDto.end_location_id
         };
@@ -26,7 +26,7 @@ public static class RouteMapper
             description = routeUpdateDto.description,
             hazard_level = routeUpdateDto.hazard_level,
             transport_type = routeUpdateDto.transport_type,
-            admin_id = routeUpdateDto.admin_id ?? -1,
+            admin_id = routeUpdateDto.admin_id,
             start_location_id = routeUpdateDto.start_location_id,
             end_location_id = routeUpdateDto.end_location_id
         };

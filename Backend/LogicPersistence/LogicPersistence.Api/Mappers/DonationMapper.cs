@@ -12,9 +12,9 @@ public static class DonationMapper
             description = donationCreateDto.description,
             quantity = donationCreateDto.quantity,
             item_type = donationCreateDto.item_type,
-            volunteer_id = donationCreateDto.volunteer_id ?? -1,
-            admin_id = donationCreateDto.admin_id ?? -1,
-            victim_id = donationCreateDto.victim_id ?? -1
+            volunteer_id = donationCreateDto.volunteer_id,
+            admin_id = donationCreateDto.admin_id,
+            victim_id = donationCreateDto.victim_id
         };
     }
 
@@ -26,9 +26,9 @@ public static class DonationMapper
             description = donationUpdateDto.description,
             quantity = donationUpdateDto.quantity,
             item_type = donationUpdateDto.item_type,
-            volunteer_id = donationUpdateDto.volunteer_id ?? -1,
-            admin_id = donationUpdateDto.admin_id ?? -1,
-            victim_id = donationUpdateDto.victim_id ?? -1
+            volunteer_id = donationUpdateDto.volunteer_id,
+            admin_id = donationUpdateDto.admin_id,
+            victim_id = donationUpdateDto.victim_id
         };
     }
 
@@ -39,9 +39,9 @@ public static class DonationMapper
             currency = donationCreateDto.currency,
             payment_service = donationCreateDto.payment_service,
             payment_status = PaymentStatus.Pending,  // always starts as pending
-            volunteer_id = donationCreateDto.volunteer_id ?? -1,
-            admin_id = donationCreateDto.admin_id ?? -1,
-            victim_id = donationCreateDto.victim_id ?? -1
+            volunteer_id = donationCreateDto.volunteer_id,
+            admin_id = donationCreateDto.admin_id,
+            victim_id = donationCreateDto.victim_id
         };
     }
 
@@ -53,9 +53,9 @@ public static class DonationMapper
             currency = donationUpdateDto.currency,
             payment_service = donationUpdateDto.payment_service,
             payment_status = donationUpdateDto.payment_status,
-            volunteer_id = donationUpdateDto.volunteer_id ?? -1,
-            admin_id = donationUpdateDto.admin_id ?? -1,
-            victim_id = donationUpdateDto.victim_id ?? -1
+            volunteer_id = donationUpdateDto.volunteer_id,
+            admin_id = donationUpdateDto.admin_id,
+            victim_id = donationUpdateDto.victim_id
         };
     }
 

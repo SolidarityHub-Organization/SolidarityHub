@@ -25,6 +25,9 @@ public class Skill {
 	// FKs
 	public int admin_id { get; set; }
 
+
+	// Navigation properties
+
 	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 	//public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();

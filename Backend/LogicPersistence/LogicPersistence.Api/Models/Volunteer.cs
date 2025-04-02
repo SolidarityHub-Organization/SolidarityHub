@@ -14,7 +14,10 @@ public class Volunteer {
 
 	// FKs
 	// connections to other tables/entities that aren't many to many
-	public int location_id { get; set; }
+	public int? location_id { get; set; }
+
+
+	// Navigation properties
 
 	// we don't use this navigation property to maintain consistency with not using the massive navigation property lists, we get time preference through another query instead, even if this one wouldn't occupy much memory
 	//public virtual ICollection<VolunteerTime> VolunteerTimes { get; set; } = new List<VolunteerTime>();

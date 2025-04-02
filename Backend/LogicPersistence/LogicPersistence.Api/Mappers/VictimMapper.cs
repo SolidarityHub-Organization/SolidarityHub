@@ -19,7 +19,9 @@ public static class VictimMapper {
 			prefix = victimCreateDto.prefix,
 			phone_number = victimCreateDto.phone_number,
 			address = victimCreateDto.address,
-			identification = victimCreateDto.identification
+			identification = victimCreateDto.identification,
+
+			location_id = victimCreateDto.location_id
 		};
 	}
 
@@ -33,7 +35,9 @@ public static class VictimMapper {
 			prefix = victimUpdateDto.prefix,
 			phone_number = victimUpdateDto.phone_number,
 			address = victimUpdateDto.address,
-			identification = victimUpdateDto.identification
+			identification = victimUpdateDto.identification,
+
+			location_id = victimUpdateDto.location_id
 		};
 	}
 
@@ -46,8 +50,10 @@ public static class VictimMapper {
 			prefix = victim.prefix,
 			phone_number = victim.phone_number,
 			address = victim.address,
-			identification = victim.identification
+			identification = victim.identification,
 			// Password is intentionally omitted.
+
+			location_id = victim.location_id
 		};
 	}
 }

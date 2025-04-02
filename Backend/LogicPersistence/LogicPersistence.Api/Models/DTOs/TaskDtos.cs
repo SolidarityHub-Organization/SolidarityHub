@@ -14,6 +14,9 @@ public class TaskCreateDto
 
     [Required]
     public int? admin_id { get; set; }
+
+    [Required]
+    public int location_id { get; set; }
 }
 
 public class TaskUpdateDto 
@@ -31,6 +34,9 @@ public class TaskUpdateDto
 
     [Required]
     public int? admin_id { get; set; }
+
+    [Required]
+    public int location_id { get; set; }
 }
 
 public class TaskDisplayDto 
@@ -39,4 +45,5 @@ public class TaskDisplayDto
     public string name { get; set; } = string.Empty;
     public string description { get; set; } = string.Empty;
     public int? admin_id { get; set; }
+    public int location_id { get; set; }
 }

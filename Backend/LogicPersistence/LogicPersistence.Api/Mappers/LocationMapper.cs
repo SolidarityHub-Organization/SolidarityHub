@@ -10,8 +10,8 @@ public static class LocationMapper
         return new Location {
             latitude = locationCreateDto.latitude,
             longitude = locationCreateDto.longitude,
-            victim_id = locationCreateDto.victim_id ?? -1,
-            volunteer_id = locationCreateDto.volunteer_id ?? -1
+            victim_id = locationCreateDto.victim_id,
+            volunteer_id = locationCreateDto.volunteer_id
         };
     }
 
@@ -21,8 +21,8 @@ public static class LocationMapper
             id = locationUpdateDto.id,
             latitude = locationUpdateDto.latitude,
             longitude = locationUpdateDto.longitude,
-            victim_id = locationUpdateDto.victim_id ?? -1,
-            volunteer_id = locationUpdateDto.volunteer_id ?? -1
+            victim_id = locationUpdateDto.victim_id,
+            volunteer_id = locationUpdateDto.volunteer_id
         };
     }
 

@@ -55,9 +55,13 @@ public abstract class Donation {
 
 	// FKs
 	// donations can be done by volunteers or admins
-	public int volunteer_id { get; set; }
-	public int victim_id { get; set; }
-	public int admin_id { get; set; }
+	public int? volunteer_id { get; set; }
+	public int? admin_id { get; set; }
+	
+	public int? victim_id { get; set; }
+
+
+	// Navigation properties
 
 	//public virtual Volunteer Volunteer { get; set; }
 	//public virtual Victim Victim { get; set; }
