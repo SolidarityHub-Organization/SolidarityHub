@@ -10,6 +10,7 @@ public class Location {
 
 
     // Navigation properties
+    
     // 0..1 to 0..1 relationship held by victim and volunteer, we could remove these columns from the location table, but they might be useful for queries
     // these for now serve as naviagtion properties essentially (they shouldn't be marked as FKs, but they are used to navigate the relationship)
     public int? victim_id { get; set; }

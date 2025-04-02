@@ -22,6 +22,9 @@ public class Task {
     public int? admin_id { get; set; }
     public int location_id { get; set; }
 
+
+    // Navigation properties
+
     //public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
     //public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
     //public virtual Location Location { get; set; }
