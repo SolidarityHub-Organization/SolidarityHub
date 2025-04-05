@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/requests.dart';
-import 'package:solidarityhub/dashboard/dashboard.dart';
+import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 
 void main() {
   runApp(const MyApp());

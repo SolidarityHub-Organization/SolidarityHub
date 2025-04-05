@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../common_widgets.dart';
 
-class VoluntariosTab extends StatelessWidget {
+class VolunteersTab extends StatelessWidget {
   final String selectedPeriod;
 
-  const VoluntariosTab({Key? key, required this.selectedPeriod})
+  const VolunteersTab({Key? key, required this.selectedPeriod})
     : super(key: key);
 
   @override

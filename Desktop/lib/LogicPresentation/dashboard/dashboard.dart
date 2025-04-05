@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'tables/general.dart';
-import 'tables/affected.dart';
-import 'tables/resources.dart';
-import 'tables/volunteers.dart';
+import 'tables/generalTable.dart';
+import 'tables/victimTable.dart';
+import 'tables/resourceTable.dart';
+import 'tables/volunteerTable.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -115,9 +115,9 @@ class _DashboardState extends State<Dashboard>
               controller: _tabController,
               children: [
                 GeneralTab(selectedPeriod: _selectedPeriod),
-                AfectadosTab(selectedPeriod: _selectedPeriod),
+                VictimsTab(selectedPeriod: _selectedPeriod),
                 const RecursosTab(),
-                VoluntariosTab(selectedPeriod: _selectedPeriod),
+                VolunteersTab(selectedPeriod: _selectedPeriod),
               ],
             ),
           ),
