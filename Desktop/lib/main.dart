@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/requests.dart';
+import 'package:solidarityhub/dashboard/dashboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,6 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: _getUsers,
               child: const Text("Get all the users in the database"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Dashboard()),
+                );
+              },
+              child: const Text("Go to Dashboard"),
             ),
 
             Text(data.isNotEmpty ? data : "Press a button to fetch data"),
