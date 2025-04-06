@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'interface/loginUI.dart'; // Importamos la pantalla de login
+import 'interface/register.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red, // Color principal de la app
       ),
+      //home: Register(), // Inicia la app con la pantalla de login
       home: loginUI(), // Inicia la app con la pantalla de login
+
     );
   }
 }

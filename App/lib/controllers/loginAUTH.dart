@@ -10,7 +10,21 @@ class AuthController {
 
     print("Email: $email");
     print("Contraseña: $password");
-
+  }
     // Aquí puedes añadir validaciones o conectar con Firebase o un backend
+
+  void onLoginTabPressed(BuildContext context) {
+    print("Pulsado Log In");
+    // Navigator.pushNamed(context, '/login');
+  }
+
+  void onRegisterTabPressed(BuildContext context) {
+    print("Pulsado Registro");
+    Navigator.pushNamed(context, '/register.dart');
+  }
+
+  void onForgotPasswordPressed(BuildContext context) {
+    print("Pulsado '¿Has olvidado la contraseña?'");
+    // Navigator.pushNamed(context, '/recover');
   }
 }

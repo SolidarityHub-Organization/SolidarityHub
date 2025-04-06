@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 
-class AuthController {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class RegisterController {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final repeatPasswordController = TextEditingController();
 
-  void Register() {
-    String email = emailController.text;
-    String password = passwordController.text;
+  bool validatePasswords() {
+    return passwordController.text == repeatPasswordController.text;
+  }
+
+  void register() {
+    final email = emailController.text;
+    final password = passwordController.text;
 
     print("Email: $email");
     print("Contraseña: $password");
+    print("Registro exitoso");
+  }
 
-    // Aquí puedes añadir validaciones o conectar con Firebase o un backend
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    repeatPasswordController.dispose();
   }
 }
+
+

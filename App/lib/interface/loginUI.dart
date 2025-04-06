@@ -33,30 +33,35 @@ class _LoginScreenState extends State<loginUI> {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(40),
+                        child: ElevatedButton(
+                          onPressed: () => authController.onLoginTabPressed(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Center(
-                            child: Text("Log In"),
+                          child: const Text(
+                            "Log In",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Registro",
-                              style: TextStyle(color: Colors.white),
+                        child: ElevatedButton(
+                          onPressed: () => authController.onRegisterTabPressed(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
                             ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Text(
+                            "Registro",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),

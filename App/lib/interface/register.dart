@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
+import '../controllers/registerController.dart'; // Importamos el controlador
 
-void main() {
-  runApp(MaterialApp(home: register()));
-}
-
-class register extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
   _RegisterState createState() => _RegisterState();
 }
 
-class _RegisterState extends State<register> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _repeatPasswordController = TextEditingController();
+class _RegisterState extends State<Register> {
+  final RegisterController registerController = RegisterController();
   bool _showError = false;
+
+  @override
+  void dispose() {
+    registerController.dispose();
+    super.dispose();
+  }
 
   void _register() {
     setState(() {
-      _showError = _passwordController.text != _repeatPasswordController.text;
+      _showError = !registerController.validatePasswords();
     });
 
     if (!_showError) {
-      // Aquí podrías enviar los datos al backend o navegar
-      print("Registro exitoso");
+      registerController.register(); // Imprime los datos
+      // Aquí puedes agregar navegación o lógica de backend
     }
   }
 
@@ -36,7 +37,7 @@ class _RegisterState extends State<register> {
             const SizedBox(height: 40),
             const Center(
               child: Text(
-                'S', // Aquí podrías poner una imagen/logo
+                'S',
                 style: TextStyle(
                   fontSize: 80,
                   color: Colors.white,
@@ -54,7 +55,6 @@ class _RegisterState extends State<register> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Tabs
                   Row(
                     children: [
                       Expanded(
@@ -95,26 +95,20 @@ class _RegisterState extends State<register> {
                   ),
                   const SizedBox(height: 24),
                   TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                    ),
+                    controller: registerController.emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: _passwordController,
+                    controller: registerController.passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Contraseña',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Contraseña'),
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: _repeatPasswordController,
+                    controller: registerController.repeatPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Repite Contraseña',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Repite Contraseña'),
                   ),
                   if (_showError)
                     const Padding(
