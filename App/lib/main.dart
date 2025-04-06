@@ -1,3 +1,4 @@
+import 'package:app/interface/pantallaInicio.dart';
 import 'package:flutter/material.dart';
 import 'interface/loginUI.dart'; // Importamos la pantalla de login
 import 'interface/register.dart';
@@ -15,9 +16,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red, // Color principal de la app
       ),
-      //home: Register(), // Inicia la app con la pantalla de login
-      home: loginUI(), // Inicia la app con la pantalla de login
-
+      initialRoute: '/inicio',
+      routes: {
+        '/inicio': (context) => SplashScreen(), // Pantalla principal
+        '/login': (context) => loginUI(), // Ruta nombrada para LogIn
+        '/register': (context) => Register(), // Ruta nombrada para registro
+      }
     );
   }
 }

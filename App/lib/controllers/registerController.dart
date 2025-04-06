@@ -23,6 +23,16 @@ class RegisterController {
     passwordController.dispose();
     repeatPasswordController.dispose();
   }
+
+  void onLogInTabPressed(BuildContext context) {
+    print("Pulsado LogIn");
+    Navigator.pushNamed(context, '/login');
+  }
+
+  void onRegisterTabPressed(BuildContext context) {
+    print("Pulsado Register");
+    Navigator.pushNamed(context, '/register');
+  }
 }
 
 

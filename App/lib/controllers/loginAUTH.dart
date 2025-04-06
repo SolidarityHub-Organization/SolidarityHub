@@ -15,12 +15,12 @@ class AuthController {
 
   void onLoginTabPressed(BuildContext context) {
     print("Pulsado Log In");
-    // Navigator.pushNamed(context, '/login');
+    Navigator.pushNamed(context, '/');
   }
 
   void onRegisterTabPressed(BuildContext context) {
     print("Pulsado Registro");
-    Navigator.pushNamed(context, '/register.dart');
+    Navigator.pushNamed(context, '/register');
   }
 
   void onForgotPasswordPressed(BuildContext context) {

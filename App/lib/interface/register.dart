@@ -22,89 +22,79 @@ class _RegisterState extends State<Register> {
     });
 
     if (!_showError) {
-      registerController.register(); // Imprime los datos
-      // Aquí puedes agregar navegación o lógica de backend
+      registerController.register();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red[600],
-      body: SafeArea(
+      backgroundColor: Colors.red,
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'S',
-                style: TextStyle(
-                  fontSize: 80,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const Spacer(),
+            Image.asset('assets/logo.png', height: 100), // Logo superior
+            SizedBox(height: 20),
             Container(
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                borderRadius: BorderRadius.circular(20),
               ),
-              padding: const EdgeInsets.all(24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(40),
+                        child: ElevatedButton(
+                          onPressed: () => registerController.onLogInTabPressed(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Center(
-                            child: Text("Log In"),
-                          ),
+                          child: const Text("Log In", style: TextStyle(color: Colors.white)),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Registro",
-                              style: TextStyle(color: Colors.white),
+                        child: ElevatedButton(
+                          onPressed: () => registerController.onRegisterTabPressed(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
                             ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
+                          child: const Text("Registro", style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 20),
                   const Text(
                     "Bienvenido a Solidary Hub",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 10),
                   TextField(
                     controller: registerController.emailController,
                     decoration: const InputDecoration(labelText: 'Email'),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 10),
                   TextField(
                     controller: registerController.passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(labelText: 'Contraseña'),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 10),
                   TextField(
                     controller: registerController.repeatPasswordController,
                     obscureText: true,
@@ -118,21 +108,21 @@ class _RegisterState extends State<Register> {
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: _register,
+                    onPressed: registerController.register,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text("Registro"),
+                    child: Text('Registro', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
