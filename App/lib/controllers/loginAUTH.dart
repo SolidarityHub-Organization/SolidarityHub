@@ -15,7 +15,7 @@ class AuthController {
 
   void onLoginTabPressed(BuildContext context) {
     print("Pulsado Log In");
-    Navigator.pushNamed(context, '/');
+    Navigator.pushNamed(context, '/login');
   }
 
   void onRegisterTabPressed(BuildContext context) {
