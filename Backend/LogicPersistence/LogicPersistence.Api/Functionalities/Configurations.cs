@@ -1,6 +1,7 @@
 using DotNetEnv;
 using FluentMigrator.Runner;
 using LogicPersistence.Api.Repositories;
+using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services;
 
 public static class DatabaseConfiguration {
@@ -91,6 +92,10 @@ public static class BackendConfiguration {
 	public static void SetScopesConfiguration(WebApplicationBuilder builder) {
 		builder.Services.AddScoped<IVictimRepository, VictimRepository>();
 		builder.Services.AddScoped<IVictimServices, VictimServices>();
+		builder.Services.AddScoped<IVolunteerRepository, VolunteerRepository>();
+    	builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
+		builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+		builder.Services.AddScoped<ISkillServices, SkillService>();
 	}
 
 }

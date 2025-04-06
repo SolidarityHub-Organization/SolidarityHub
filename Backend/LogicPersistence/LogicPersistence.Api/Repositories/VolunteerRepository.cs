@@ -13,7 +13,7 @@ public class VolunteerRepository : IVolunteerRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            INSERT INTO volunteers (email, password, name, surname, prefix, phone_number, address, identification, time_preference_id, location_id)
+            INSERT INTO volunteer (email, password, name, surname, prefix, phone_number, address, identification, time_preference_id, location_id)
             VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @time_preference_id, @location_id)
             RETURNING *";  // Return all columns instead of just id
 
@@ -24,7 +24,7 @@ public class VolunteerRepository : IVolunteerRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            UPDATE volunteers 
+            UPDATE volunteer 
             SET email = @email,
                 password = @password,
                 name = @name,
@@ -44,7 +44,7 @@ public class VolunteerRepository : IVolunteerRepository
     public async Task<bool> DeleteVolunteerAsync(int id)
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "DELETE FROM volunteers WHERE id = @id";
+        const string sql = "DELETE FROM volunteer WHERE id = @id";
 
         int rowsAffected = await connection.ExecuteAsync(sql, new { id });
         return rowsAffected > 0;
@@ -53,7 +53,7 @@ public class VolunteerRepository : IVolunteerRepository
     public async Task<IEnumerable<Volunteer>> GetAllVolunteersAsync()
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM volunteers";
+        const string sql = "SELECT * FROM volunteer";
 
         return await connection.QueryAsync<Volunteer>(sql);
     }
@@ -61,7 +61,7 @@ public class VolunteerRepository : IVolunteerRepository
     public async Task<Volunteer?> GetVolunteerByIdAsync(int id)
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM volunteers WHERE id = @id";
+        const string sql = "SELECT * FROM volunteer WHERE id = @id";
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { id });
     }
@@ -69,7 +69,7 @@ public class VolunteerRepository : IVolunteerRepository
     public async Task<Volunteer?> GetVolunteerByEmailAsync(string email)
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM volunteers WHERE email = @email";
+        const string sql = "SELECT * FROM volunteer WHERE email = @email";
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { email });
     }

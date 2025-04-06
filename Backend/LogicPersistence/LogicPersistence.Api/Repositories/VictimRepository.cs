@@ -10,8 +10,8 @@ public class VictimRepository : IVictimRepository {
 	public async Task<Victim> CreateVictimAsync(Victim victim) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-            INSERT INTO victim (email, password, name, surname, prefix, phone, address, identification, location_id) 
-            VALUES (@email, @password, @name, @surname, @prefix, @phone, @address, @identification, @location_id)
+            INSERT INTO victim (email, password, name, surname, prefix, phone_number, address, identification, location_id) 
+            VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @location_id)
             RETURNING *";
 		
 		return await connection.QuerySingleAsync<Victim>(sql, victim);
@@ -44,7 +44,7 @@ public class VictimRepository : IVictimRepository {
                 name = @name, 
                 surname = @surname, 
                 prefix = @prefix, 
-                phone = @phone, 
+                phone_number = @phone_number, 
                 address = @address, 
                 identification = @identification,
 				location_id = @location_id

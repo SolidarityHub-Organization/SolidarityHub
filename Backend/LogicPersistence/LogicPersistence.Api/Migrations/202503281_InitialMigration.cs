@@ -77,7 +77,8 @@ public class InitialMigration : Migration {
 			.WithColumn("prefix").AsInt32().NotNullable()
 			.WithColumn("phone_number").AsInt64().NotNullable()
 			.WithColumn("address").AsString(100).NotNullable()
-			.WithColumn("identification").AsString(20).NotNullable();
+			.WithColumn("identification").AsString(20).NotNullable()
+			.WithColumn("location_id").AsInt32().Nullable();
 
 		Create.Table("admin")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
@@ -201,9 +202,14 @@ public class InitialMigration : Migration {
 			.WithColumn("affected_zone_id").AsInt32().NotNullable();
 
 		// Create foreign key relations for the tables
-		Create.ForeignKey("FK_Admin_AffectedZone")
-			.FromTable("help_request").ForeignColumn("victim_id")
-			.ToTable("victim").PrimaryColumn("id");
+		
+		//Create.ForeignKey("FK_Admin_AffectedZone")
+			//.FromTable("help_request").ForeignColumn("victim_id")
+			//.ToTable("victim").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_Volunteer_Location")
+			.FromTable("volunteer").ForeignColumn("location_id")
+			.ToTable("location").PrimaryColumn("id");
 	}
 
 	public override void Down() {
