@@ -27,13 +27,13 @@ public class Route {
 	public HazardLevel hazard_level { get; set; }	// can still be unkown if auto generated
 	public TransportType transport_type { get; set; }
 
-    // FKs
-    public int? admin_id { get; set; }
-    public int start_location_id { get; set; }
-    public int end_location_id { get; set; }
+	// FKs
+	public int? admin_id { get; set; }
+	public int start_location_id { get; set; }
+	public int end_location_id { get; set; }
 
 
-    // Navigation properties
+	// Navigation properties
 
     //public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
     //public virtual Location StartLocation { get; set; }

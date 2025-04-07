@@ -96,6 +96,8 @@ public static class BackendConfiguration {
     	builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
 		builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 		builder.Services.AddScoped<ISkillServices, SkillService>();
+		builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+		builder.Services.AddScoped<ITaskServices, TaskServices>();
 	}
 
 }
