@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 
@@ -88,6 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text("Go to Dashboard"),
+            ),
+
+            ElevatedButton (
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateTask()),
+                );
+              },
+              child: const Text("Create Task"),
             ),
 
             Text(data.isNotEmpty ? data : "Press a button to fetch data"),
