@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
+import 'package:solidarityhub/LogicPresentation/admin/admin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -88,6 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text("Go to Dashboard"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Admin()),
+                );
+              },
+              child: const Text("Log in admin"),
             ),
 
             Text(data.isNotEmpty ? data : "Press a button to fetch data"),
