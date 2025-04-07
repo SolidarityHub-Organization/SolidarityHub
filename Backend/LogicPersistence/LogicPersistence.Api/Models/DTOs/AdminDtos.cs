@@ -7,23 +7,23 @@ public class AdminCreateDto
 {
     [Required]
     [EmailAddress]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string email { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(128)]
+    [MaxLength(255)]
     public string password { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string jurisdiction { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string surname { get; set; } = string.Empty;
 
     [Required]
@@ -35,11 +35,11 @@ public class AdminCreateDto
     public int phone_number { get; set; }
 
     [Required]
-    [MaxLength(100)]
+    [MaxLength(255)]
     public string address { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(20)]
+    [MaxLength(255)]
     public string identification { get; set; } = string.Empty;
 }
 
@@ -50,23 +50,23 @@ public class AdminUpdateDto
 
 	[Required]
     [EmailAddress]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string email { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(128)]
+    [MaxLength(255)]
     public string password { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string jurisdiction { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string surname { get; set; } = string.Empty;
 
 	[Required]
@@ -78,11 +78,11 @@ public class AdminUpdateDto
     public int phone_number { get; set; }
 
 	[Required]
-    [MaxLength(100)]
+    [MaxLength(255)]
     public string address { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(20)]
+    [MaxLength(255)]
     public string identification { get; set; } = string.Empty;
 }
 

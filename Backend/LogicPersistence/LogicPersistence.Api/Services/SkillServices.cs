@@ -99,7 +99,7 @@ namespace LogicPersistence.Api.Services
             {
                 throw new InvalidOperationException("Failed to retrieve skills.");
             }
-            var res = new List<(string skillName, int volunteerCount)>();
+            var res = new List<(string skillName, int count)>();
             foreach (Skill skill in skills)
             {
                 var count = await _skillRepository.GetVolunteerCountById(skill.id);

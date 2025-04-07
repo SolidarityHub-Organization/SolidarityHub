@@ -19,11 +19,11 @@ public abstract class DonationBaseDto {
 // Physical Donation DTOs
 public class PhysicalDonationCreateDto : DonationBaseDto {
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string item_name { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(200)]
+	[MaxLength(1000)]
 	public string description { get; set; } = string.Empty;
 
 	[Required]
@@ -39,11 +39,11 @@ public class PhysicalDonationUpdateDto : DonationBaseDto {
 	public int id { get; set; }
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string item_name { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(200)]
+	[MaxLength(1000)]
 	public string description { get; set; } = string.Empty;
 
 	[Required]

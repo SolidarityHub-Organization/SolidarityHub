@@ -6,7 +6,7 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class SkillCreateDto 
 {
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
@@ -22,7 +22,7 @@ public class SkillUpdateDto
     public int id { get; set; }
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
 	[Required]

@@ -151,10 +151,21 @@ public class InitialMigration : Migration {
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("start_time").AsTime().NotNullable()
 			.WithColumn("end_time").AsTime().NotNullable();
+		
+		Create.Table("need_type")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("name").AsString(50).NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable();
 
+		Create.Table("need_need_type")
+			.WithColumn("need_id").AsInt32().NotNullable()
+			.WithColumn("need_type_id").AsInt32().NotNullable();
+
+		/* @carlos carloseando
 		Create.Table("task_time")
 			.WithColumn("date").AsDate().NotNullable()
 			.WithColumn("task_id").AsInt32().NotNullable();
+		*/
 
 		Create.Table("volunteer_time")
 			.WithColumn("day").AsCustom("day_of_week").NotNullable()
@@ -210,6 +221,18 @@ public class InitialMigration : Migration {
 		Create.ForeignKey("FK_Volunteer_Location")
 			.FromTable("volunteer").ForeignColumn("location_id")
 			.ToTable("location").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_Admin_Need_Type")
+			.FromTable("need_type").ForeignColumn("admin_id")
+			.ToTable("admin").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_Need_NeedType")
+			.FromTable("need_need_type").ForeignColumn("need_id")
+			.ToTable("need").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_NeedType_Need")
+			.FromTable("need_need_type").ForeignColumn("need_type_id")
+			.ToTable("need_type").PrimaryColumn("id");
 	}
 
 	public override void Down() {

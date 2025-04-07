@@ -24,7 +24,7 @@ public class Route {
 	public string name { get; set; } = string.Empty;
 	public string description { get; set; } = string.Empty;
 	// if an admin sets the route and it isn't auto genereated, they should set a hazard_level
-	public HazardLevel hazard_level { get; set; }
+	public HazardLevel hazard_level { get; set; }	// can still be unkown if auto generated
 	public TransportType transport_type { get; set; }
 
     // FKs

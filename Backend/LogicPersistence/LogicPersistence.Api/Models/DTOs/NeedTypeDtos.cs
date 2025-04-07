@@ -6,7 +6,7 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class NeedTypeCreateDto
 {
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
@@ -19,9 +19,16 @@ public class NeedTypeUpdateDto
     public int id { get; set; }
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
 	public int admin_id { get; set; }
+}
+
+public class NeedTypeDisplayDto
+{
+    public int id { get; set; }
+    public string name { get; set; } = string.Empty;
+    public int admin_id { get; set; }
 }
