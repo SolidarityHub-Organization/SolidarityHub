@@ -179,12 +179,12 @@ public class InitialMigration : Migration {
 			.WithColumn("need_id").AsInt32().NotNullable()
 			.WithColumn("need_type_id").AsInt32().NotNullable();
 
-		/* @carlos carloseando
+		// @carlos carloseando
 		Create.Table("task_time")
 			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_TaskTime_Time", "time", "id")
 			.WithColumn("date").AsDate().NotNullable()
 			.WithColumn("task_id").AsInt32().NotNullable();
-		*/
+		
 
 		Create.Table("volunteer_time")
 			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_VolunteerTime_Time", "time", "id")

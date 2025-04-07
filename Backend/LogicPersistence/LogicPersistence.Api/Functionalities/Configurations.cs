@@ -98,6 +98,8 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<ISkillServices, SkillService>();
 		builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 		builder.Services.AddScoped<ITaskServices, TaskServices>();
+		builder.Services.AddScoped<INeedRepository, NeedRepository>();
+    	builder.Services.AddScoped<INeedServices, NeedServices>();
 	}
 
 }
