@@ -27,16 +27,16 @@ public class Route {
 	public HazardLevel hazard_level { get; set; }
 	public TransportType transport_type { get; set; }
 
-    // FKs
-    public int? admin_id { get; set; }
-    public int start_location_id { get; set; }
-    public int end_location_id { get; set; }
+	// FKs
+	public int? admin_id { get; set; }
+	public int start_location_id { get; set; }
+	public int end_location_id { get; set; }
 
 
-    // Navigation properties
+	// Navigation properties
 
-    //public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
-    //public virtual Location StartLocation { get; set; }
-    //public virtual Location EndLocation { get; set; }
-    //public virtual Admin admin { get; set; }
+	public virtual ICollection<Location> Locations { get; set; } = [];
+	public virtual Location? StartLocation { get; set; }
+	public virtual Location? EndLocation { get; set; }
+	public virtual Admin? Admin { get; set; }
 }

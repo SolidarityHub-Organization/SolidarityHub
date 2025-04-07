@@ -57,16 +57,16 @@ public abstract class Donation {
 	// donations can be done by volunteers or admins
 	public int? volunteer_id { get; set; }
 	public int? admin_id { get; set; }
-	
+
 	public int? victim_id { get; set; }
 
 
 	// Navigation properties
 
-	//public virtual Volunteer Volunteer { get; set; }
-	//public virtual Victim Victim { get; set; }
-	//public virtual Admin Admin { get; set; }
-	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+	public virtual Volunteer? Volunteer { get; set; }
+	public virtual Victim? Victim { get; set; }
+	public virtual Admin? Admin { get; set; }
+	public virtual ICollection<Task> Tasks { get; set; } = [];
 }
 
 public class PhysicalDonation : Donation {

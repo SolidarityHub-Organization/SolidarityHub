@@ -6,11 +6,11 @@ public enum SkillLevel {
 	[Display(Name = "Desconocido")]
 	Unknown = -1,
 	[Display(Name = "Principiante")]
-    Beginner = 0,
-    [Display(Name = "Intermedio")]
-    Intermediate = 1,
-    [Display(Name = "Experto")]
-    Expert = 2
+	Beginner = 0,
+	[Display(Name = "Intermedio")]
+	Intermediate = 1,
+	[Display(Name = "Experto")]
+	Expert = 2
 }
 
 public class Skill {
@@ -28,10 +28,10 @@ public class Skill {
 
 	// Navigation properties
 
-	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
-	//public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
-	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
+	public virtual ICollection<Task> Tasks { get; set; } = [];
+	public virtual ICollection<Volunteer> Volunteers { get; set; } = [];
+	public virtual ICollection<Need> Needs { get; set; } = [];
 
 	// admins set the skills you can pick from
-	//public virtual Admin Admin { get; set; }
+	public virtual Admin? Admin { get; set; }
 }

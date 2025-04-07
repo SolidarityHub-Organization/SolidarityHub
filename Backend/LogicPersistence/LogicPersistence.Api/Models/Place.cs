@@ -10,9 +10,9 @@ public class Place {
 
 	// Navigation properties
 
-    //public virtual ICollection<Volunteer> Volunteers { get; set; } = new List<Volunteer>();
-    //public virtual ICollection<AffectedZone> AffectedZones { get; set; } = new List<AffectedZone>();
-	
+	public virtual ICollection<Volunteer> Volunteers { get; set; } = [];
+	public virtual ICollection<AffectedZone> AffectedZones { get; set; } = [];
+
 	// admins can set places
-	//public virtual Admin Admin { get; set; } = new Admin();
+	public virtual Admin Admin { get; set; } = new Admin();
 }

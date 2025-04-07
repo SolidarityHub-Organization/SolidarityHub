@@ -17,11 +17,11 @@ public class Admin {
 
 	// Navigation properties
 
-	//public virtual ICollection<AffectedZone> AffectedZones { get; set; } = new List<AffectedZone>();
-	//public virtual ICollection<Route> Routes { get; set; } = new List<Route>();
-	//public virtual ICollection<MonetaryDonation/PhysicalDonation> Donations { get; set; } = new List<MonetaryDonation/PhysicalDonation>();
-	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
-	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
-	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
-	//public virtual ICollection<Place> Places { get; set; } = new List<Place>();
+	public virtual ICollection<AffectedZone> AffectedZones { get; set; } = [];
+	public virtual ICollection<Route> Routes { get; set; } = [];
+	public virtual ICollection<Donation> Donations { get; set; } = [];
+	public virtual ICollection<Task> Tasks { get; set; } = [];
+	public virtual ICollection<Need> Needs { get; set; } = [];
+	public virtual ICollection<Skill> Skills { get; set; } = [];
+	public virtual ICollection<Place> Places { get; set; } = [];
 }
