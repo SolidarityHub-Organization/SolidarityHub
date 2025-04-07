@@ -66,7 +66,8 @@ public class InitialMigration : Migration {
 			.WithColumn("prefix").AsInt32().NotNullable()
 			.WithColumn("phone_number").AsInt64().NotNullable()
 			.WithColumn("address").AsString(100).NotNullable()
-			.WithColumn("identification").AsString(20).NotNullable();
+			.WithColumn("identification").AsString(20).NotNullable()
+			.WithColumn("location_id").AsInt32().Nullable();
 
 		Create.Table("volunteer")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
@@ -96,11 +97,15 @@ public class InitialMigration : Migration {
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
 			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable();
+			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable();
 
 		Create.Table("donation")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("donation_date").AsDate().NotNullable();
+			.WithColumn("donation_date").AsDate().NotNullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable()
+			.WithColumn("admin_id").AsInt32().Nullable()
+			.WithColumn("victim_id").AsInt32().Nullable();
 
 		Create.Table("physical_donation")
 			.WithColumn("item_name").AsString(50).NotNullable()
@@ -118,35 +123,44 @@ public class InitialMigration : Migration {
 		Create.Table("location")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("latitude").AsDouble().NotNullable()
-			.WithColumn("longitude").AsDouble().NotNullable();
+			.WithColumn("longitude").AsDouble().NotNullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable()
+			.WithColumn("victim_id").AsInt32().Nullable();
 
 		Create.Table("need")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
 			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable();
+			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable()
+			.WithColumn("admin_id").AsInt32().Nullable()
+			.WithColumn("victim_id").AsInt32().Nullable();
 
 		Create.Table("place")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable();
+			.WithColumn("name").AsString(50).NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable();
 
 		Create.Table("route")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
 			.WithColumn("description").AsString(200).NotNullable()
 			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
-			.WithColumn("transport_type").AsCustom("transport_type").NotNullable();
+			.WithColumn("transport_type").AsCustom("transport_type").NotNullable()
+			.WithColumn("admin_id").AsInt32().Nullable()
+			.WithColumn("start_location_id").AsInt32().NotNullable()
+			.WithColumn("end_location_id").AsInt32().NotNullable();
 
 		Create.Table("skill")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("level").AsCustom("skill_level").NotNullable();
+			.WithColumn("level").AsCustom("skill_level").NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable();
 
 		Create.Table("task")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
 			.WithColumn("description").AsString(500).NotNullable()
-			.WithColumn("admin_id").AsInt32().NotNullable()
+			.WithColumn("admin_id").AsInt32().Nullable()
 			.WithColumn("location_id").AsInt32().NotNullable();
 
 		Create.Table("time")
@@ -204,9 +218,17 @@ public class InitialMigration : Migration {
 			.WithColumn("affected_zone_id").AsInt32().NotNullable();
 
 		// Create foreign key relations for the tables
-		
-		//Create.ForeignKey("FK_Admin_AffectedZone")
-			//.FromTable("help_request").ForeignColumn("victim_id")
+
+		//Create.ForeignKey("FK_Victim_Location")
+			.FromTable("victim").ForeignColumn("location_id")
+			.ToTable("location").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_Need_Victim")
+			//.FromTable("need").ForeignColumn("victim_id")
+			.ToTable("victim").PrimaryColumn("id");
+
+		Create.ForeignKey("FK_Donation_Victim")
+			.FromTable("donation").ForeignColumn("victim_id")
 			//.ToTable("victim").PrimaryColumn("id");
 
 		Create.ForeignKey("FK_Volunteer_Location")
@@ -215,6 +237,11 @@ public class InitialMigration : Migration {
 	}
 
 	public override void Down() {
+		// Delete foreign keys first (in order to avoid problems with restrictions)
+		Delete.ForeignKey("FK_Donation_Victim");
+		Delete.ForeignKey("FK_Need_Victim");
+		Delete.ForeignKey("FK_Victim_Location");
+
 		// Delete tables (in inverse order with respect to creation)
 		Delete.Table("place_affected_zone");
 		Delete.Table("need_task");
