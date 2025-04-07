@@ -145,7 +145,9 @@ public class InitialMigration : Migration {
 		Create.Table("task")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(500).NotNullable();
+			.WithColumn("description").AsString(500).NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable()
+			.WithColumn("location_id").AsInt32().NotNullable();
 
 		Create.Table("time")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
