@@ -5,7 +5,7 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class PlaceCreateDto 
 {
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
@@ -18,7 +18,7 @@ public class PlaceUpdateDto
     public int id { get; set; }
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]

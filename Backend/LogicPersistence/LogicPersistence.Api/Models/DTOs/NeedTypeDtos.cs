@@ -3,20 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class SkillCreateDto 
+public class NeedTypeCreateDto
 {
     [Required]
     [MaxLength(255)]
     public string name { get; set; } = string.Empty;
-
-    [Required]
-    public SkillLevel level { get; set; }
 
     [Required]
     public int admin_id { get; set; }
 }
 
-public class SkillUpdateDto 
+public class NeedTypeUpdateDto
 {
     [Required]
     public int id { get; set; }
@@ -25,17 +22,13 @@ public class SkillUpdateDto
     [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
-	[Required]
-    public SkillLevel level { get; set; }
-
-	[Required]
+    [Required]
 	public int admin_id { get; set; }
 }
 
-public class SkillDisplayDto 
+public class NeedTypeDisplayDto
 {
     public int id { get; set; }
     public string name { get; set; } = string.Empty;
-    public SkillLevel level { get; set; }
     public int admin_id { get; set; }
 }

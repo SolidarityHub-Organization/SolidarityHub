@@ -6,16 +6,12 @@ namespace LogicPersistence.Api.Services
     public interface ISkillServices
     {
         Task<Skill> CreateSkillAsync(SkillCreateDto skillCreateDto);
-
         Task<Skill> GetSkillByIdAsync(int id);  
-
         Task<Skill> UpdateSkillAsync(int id, SkillUpdateDto skillUpdateDto);
-
         System.Threading.Tasks.Task DeleteSkillAsync(int id);
-    
         Task<int> GetVolunteerCountById(int id);
-    
         Task<IEnumerable<Skill>> GetAllSkillsAsync();
+        Task<IEnumerable<(string skillName, int count)>> GetSkillsWithVolunteerCountAsync();
     }
     
 }

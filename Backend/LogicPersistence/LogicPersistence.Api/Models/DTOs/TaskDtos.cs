@@ -5,11 +5,11 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class TaskCreateDto 
 {
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
+    [MaxLength(1000)]
     public string description { get; set; } = string.Empty;
 
     [Required]
@@ -25,11 +25,11 @@ public class TaskUpdateDto
     public int id { get; set; }
 
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
+    [MaxLength(1000)]
     public string description { get; set; } = string.Empty;
 
     [Required]

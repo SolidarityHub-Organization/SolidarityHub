@@ -6,11 +6,11 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class NeedCreateDto 
 {
     [Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(200)]
+    [MaxLength(1000)]
     public string description { get; set; } = string.Empty;
 
     [Required]
@@ -29,11 +29,11 @@ public class NeedUpdateDto
     public int id { get; set; }
 
 	[Required]
-    [MaxLength(50)]
+    [MaxLength(255)]
     public string name { get; set; } = string.Empty;
 
 	[Required]
-    [MaxLength(200)]
+    [MaxLength(1000)]
     public string description { get; set; } = string.Empty;
 
 	[Required]

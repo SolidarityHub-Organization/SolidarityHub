@@ -6,11 +6,11 @@ public enum SkillLevel {
 	[Display(Name = "Desconocido")]
 	Unknown = -1,
 	[Display(Name = "Principiante")]
-    Beginner = 0,
-    [Display(Name = "Intermedio")]
-    Intermediate = 1,
-    [Display(Name = "Experto")]
-    Expert = 2
+	Beginner = 0,
+	[Display(Name = "Intermedio")]
+	Intermediate = 1,
+	[Display(Name = "Experto")]
+	Expert = 2
 }
 
 public class Skill {

@@ -5,19 +5,19 @@ namespace LogicPersistence.Api.Models.DTOs;
 public class VolunteerCreateDto {
 	[Required]
 	[EmailAddress]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string email { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(128)]
+	[MaxLength(255)]
 	public string password { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string name { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string surname { get; set; } = string.Empty;
 
 	[Required]
@@ -29,11 +29,11 @@ public class VolunteerCreateDto {
 	public int phone_number { get; set; }
 
 	[Required]
-	[MaxLength(100)]
+	[MaxLength(255)]
 	public string address { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(20)]
+	[MaxLength(255)]
 	public string identification { get; set; } = string.Empty;
 
 	public int? location_id { get; set; }
@@ -45,19 +45,19 @@ public class VolunteerUpdateDto {
 
 	[Required]
 	[EmailAddress]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string email { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(128)]
+	[MaxLength(255)]
 	public string password { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string name { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(50)]
+	[MaxLength(255)]
 	public string surname { get; set; } = string.Empty;
 
 	[Required]
@@ -69,11 +69,11 @@ public class VolunteerUpdateDto {
 	public int phone_number { get; set; }
 
 	[Required]
-	[MaxLength(100)]
+	[MaxLength(255)]
 	public string address { get; set; } = string.Empty;
 
 	[Required]
-	[MaxLength(20)]
+	[MaxLength(255)]
 	public string identification { get; set; } = string.Empty;
 
 	public int? location_id { get; set; }

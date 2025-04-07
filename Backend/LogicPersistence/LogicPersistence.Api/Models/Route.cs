@@ -24,16 +24,16 @@ public class Route {
 	public string name { get; set; } = string.Empty;
 	public string description { get; set; } = string.Empty;
 	// if an admin sets the route and it isn't auto genereated, they should set a hazard_level
-	public HazardLevel hazard_level { get; set; }
+	public HazardLevel hazard_level { get; set; }	// can still be unkown if auto generated
 	public TransportType transport_type { get; set; }
 
-    // FKs
-    public int? admin_id { get; set; }
-    public int start_location_id { get; set; }
-    public int end_location_id { get; set; }
+	// FKs
+	public int? admin_id { get; set; }
+	public int start_location_id { get; set; }
+	public int end_location_id { get; set; }
 
 
-    // Navigation properties
+	// Navigation properties
 
     //public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
     //public virtual Location StartLocation { get; set; }
