@@ -15,7 +15,7 @@ public enum UrgencyLevel {
     Critical = 3
 }
 
-public class Need {
+public class Need {	// these specific needs that can be of a certain need type
 	// a victim can set a task for themselves might be able to create a task through a need?
 	public int id { get; set; }
 
@@ -36,6 +36,7 @@ public class Need {
 	//public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 	//public virtual Victim Victim { get; set; }
 	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
+	//public virtual ICollection<NeedType> NeedTypes { get; set; } = new List<NeedType>();
 
 	// admins can set needs unrelated to victims
 	//public virtual Admin Admin { get; set; }

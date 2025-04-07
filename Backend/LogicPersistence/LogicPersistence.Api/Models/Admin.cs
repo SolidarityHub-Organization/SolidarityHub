@@ -24,4 +24,5 @@ public class Admin {
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
 	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
 	//public virtual ICollection<Place> Places { get; set; } = new List<Place>();
+	//public virtual ICollection<NeedType> NeedTypes { get; set; } = new List<NeedType>();
 }
