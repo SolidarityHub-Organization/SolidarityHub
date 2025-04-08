@@ -105,15 +105,16 @@ public class NeedRepository : INeedRepository
 
     public async Task<int> GetVictimCountById(int id)
     {
+        
+  
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT COUNT (DISTINCT n.victim_id)
+            SELECT COUNT(DISTINCT n.victim_id)
             FROM need_type nt
             LEFT JOIN need_need_type nnt ON nt.id = nnt.need_type_id
             LEFT JOIN need n ON nnt.need_id = n.id
             WHERE nt.id = @id
             AND n.victim_id IS NOT NULL";
-
         return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id });
     }
 #endregion

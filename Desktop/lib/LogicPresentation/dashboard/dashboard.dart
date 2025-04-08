@@ -117,7 +117,7 @@ class _DashboardState extends State<Dashboard>
                 GeneralTab(selectedPeriod: _selectedPeriod),
                 VictimsTab(selectedPeriod: _selectedPeriod),
                 const RecursosTab(),
-                VolunteersTab(selectedPeriod: _selectedPeriod),
+                VolunteerTab(selectedPeriod: _selectedPeriod),
               ],
             ),
           ),

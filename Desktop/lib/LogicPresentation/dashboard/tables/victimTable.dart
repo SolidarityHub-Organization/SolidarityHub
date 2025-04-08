@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../LogicBusiness/services/victimServices.dart';
-import '../../../LogicPersistence/models/victimNeedsData.dart';
 
 class VictimsTab extends StatefulWidget {
   final String selectedPeriod;
@@ -12,20 +11,18 @@ class VictimsTab extends StatefulWidget {
 }
 
 class _VictimsTabState extends State<VictimsTab> {
-  late Future<List<VictimNeedsData>> _victimNeedsFuture;
-  final VictimService _victimService = VictimService(
-    'http://backend-url',
-  ); // Replace
+  late Future<List<Map<String, dynamic>>> _victimNeedsFuture;
+  final VictimService _victimService = VictimService('http://localhost:5170');
 
   @override
   void initState() {
     super.initState();
-    _victimNeedsFuture = _victimService.fetchVictimNeeds();
+    _victimNeedsFuture = _victimService.fetchVictimNeedsCount();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<VictimNeedsData>>(
+    return FutureBuilder<List<Map<String, dynamic>>>(
       future: _victimNeedsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -36,20 +33,38 @@ class _VictimsTabState extends State<VictimsTab> {
           return const Center(child: Text('No data available'));
         } else {
           final data = snapshot.data!;
+
           return Column(
             children: [
-              const Text(
-                'Comparison of Victims and Their Needs',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Dashboard: Victimas y sus necesidades',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               Expanded(
                 child: ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final item = data[index];
-                    return ListTile(
-                      title: Text(item.need),
-                      trailing: Text(item.count.toString()),
+                    final need = item['item1'] as String;
+                    final count = item['item2'] as int;
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          need,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        trailing: Text(
+                          count.toString(),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
                     );
                   },
                 ),
