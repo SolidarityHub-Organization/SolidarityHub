@@ -1,3 +1,4 @@
+using System.Data;
 using FluentMigrator;
 
 // When modifying the structure of the database, another file similar to this one must be created,
@@ -11,403 +12,283 @@ public class InitialMigration : Migration {
 
 		// Create the required types (enums) for some parameters in the tables
 		Execute.Sql(@"
-			DO $$
-			BEGIN
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'hazard_level') THEN
-					CREATE TYPE hazard_level AS ENUM('unknown', 'low', 'medium', 'high', 'critical');
-				END IF;
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'hazard_level') THEN
+                    CREATE TYPE hazard_level AS ENUM('Unknown', 'Low', 'Medium', 'High', 'Critical');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'physical_donation_type') THEN
-					CREATE TYPE physical_donation_type AS ENUM('other', 'food', 'tools', 'clothes', 'medicine', 'furniture');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN
+                    CREATE TYPE item_type AS ENUM('Other', 'Food', 'Tools', 'Clothes', 'Medicine', 'Furniture');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'currency') THEN
-					CREATE TYPE currency AS ENUM('other', 'usd', 'eur');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'currency') THEN
+                    CREATE TYPE currency AS ENUM('Other', 'USD', 'EUR');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
-					CREATE TYPE payment_status AS ENUM('pending', 'completed', 'failed', 'refunded');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
+                    CREATE TYPE payment_status AS ENUM('Pending', 'Completed', 'Failed', 'Refunded');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_service') THEN
-					CREATE TYPE payment_service AS ENUM('paypal', 'bank_transfer', 'credit_card', 'other');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_service') THEN
+                    CREATE TYPE payment_service AS ENUM('Other', 'PayPal', 'BankTransfer', 'CreditCard');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'urgency_level') THEN
-					CREATE TYPE urgency_level AS ENUM('unknown', 'low', 'medium', 'high', 'critical');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'urgency_level') THEN
+                    CREATE TYPE urgency_level AS ENUM('Unknown', 'Low', 'Medium', 'High', 'Critical');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transport_type') THEN
-					CREATE TYPE transport_type AS ENUM('other', 'car', 'bike', 'foot', 'boat', 'plane', 'train');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transport_type') THEN
+                    CREATE TYPE transport_type AS ENUM('Other', 'Car', 'Bike', 'Foot', 'Boat', 'Plane', 'Train');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'skill_level') THEN
-					CREATE TYPE skill_level AS ENUM('unknown', 'beginner', 'intermediate', 'expert');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'skill_level') THEN
+                    CREATE TYPE skill_level AS ENUM('Unknown', 'Beginner', 'Intermediate', 'Expert');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'day_of_week') THEN
-					CREATE TYPE day_of_week AS ENUM('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
-				END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'day_of_week') THEN
+                    CREATE TYPE day_of_week AS ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+                END IF;
 
-				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'state') THEN
-					CREATE TYPE state AS ENUM('assigned', 'pending', 'completed', 'cancelled');
-				END IF;
-			END
-			$$;
-		");
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'state') THEN
+                    CREATE TYPE state AS ENUM('Assigned', 'Pending', 'Completed', 'Cancelled');
+                END IF;
+            END
+            $$;
+        ");
 
-		// Create every table in the database
-		Create.Table("victim")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("email").AsString(50).NotNullable()
-			.WithColumn("password").AsString(128).NotNullable()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("surname").AsString(50).NotNullable()
-			.WithColumn("prefix").AsInt32().NotNullable()
-			.WithColumn("phone_number").AsInt64().NotNullable()
-			.WithColumn("address").AsString(100).NotNullable()
-			.WithColumn("identification").AsString(20).NotNullable()
-			.WithColumn("location_id").AsInt32().Nullable();
-
-		Create.Table("volunteer")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("email").AsString(50).NotNullable()
-			.WithColumn("password").AsString(128).NotNullable()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("surname").AsString(50).NotNullable()
-			.WithColumn("prefix").AsInt32().NotNullable()
-			.WithColumn("phone_number").AsInt64().NotNullable()
-			.WithColumn("address").AsString(100).NotNullable()
-			.WithColumn("identification").AsString(20).NotNullable()
-			.WithColumn("location_id").AsInt32().Nullable();
-
-		Create.Table("admin")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("jurisdiction").AsString(50).NotNullable()
-			.WithColumn("email").AsString(50).NotNullable()
-			.WithColumn("password").AsString(128).NotNullable()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("surname").AsString(50).NotNullable()
-			.WithColumn("prefix").AsInt32().NotNullable()
-			.WithColumn("phone_number").AsInt64().NotNullable()
-			.WithColumn("address").AsString(100).NotNullable()
-			.WithColumn("identification").AsString(20).NotNullable();
-
-		Create.Table("affected_zone")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
-			.WithColumn("admin_id").AsInt32().NotNullable();
-
-		Create.Table("donation")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("donation_date").AsDate().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable()
-			.WithColumn("admin_id").AsInt32().Nullable()
-			.WithColumn("victim_id").AsInt32().Nullable();
-
-		Create.Table("physical_donation")
-			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_PhysicalDonation_Donation", "donation", "id")
-			.WithColumn("item_name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("quantity").AsInt32().NotNullable()
-			.WithColumn("item_type").AsCustom("physical_donation_type").NotNullable();
-
-		Create.Table("monetary_donation")
-			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_MonetaryDonation_Donation", "donation", "id")
-			.WithColumn("amount").AsDecimal().NotNullable()
-			.WithColumn("currency").AsCustom("currency").NotNullable()
-			.WithColumn("payment_status").AsCustom("payment_status").NotNullable()
-			.WithColumn("transaction_id").AsString(20).NotNullable()
-			.WithColumn("payment_service").AsCustom("payment_service").NotNullable();
-
+		// Create location table first as it's referenced by many other tables
 		Create.Table("location")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("latitude").AsDouble().NotNullable()
 			.WithColumn("longitude").AsDouble().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable()
-			.WithColumn("victim_id").AsInt32().Nullable();
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
-		Create.Table("need")
+		// Create tables in proper order to maintain references
+		Create.Table("victim")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable()
-			.WithColumn("admin_id").AsInt32().Nullable()
-			.WithColumn("victim_id").AsInt32().Nullable();
+			.WithColumn("email").AsString(255).NotNullable().Unique()
+			.WithColumn("password").AsString(255).NotNullable()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("surname").AsString(255).NotNullable()
+			.WithColumn("prefix").AsInt32().NotNullable()
+			.WithColumn("phone_number").AsInt64().NotNullable()
+			.WithColumn("address").AsString(255).NotNullable()
+			.WithColumn("identification").AsString(255).NotNullable()
+			.WithColumn("location_id").AsInt32().Nullable().ForeignKey("FK_Victim_Location", "location", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Create.Table("volunteer")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("email").AsString(255).NotNullable().Unique()
+			.WithColumn("password").AsString(255).NotNullable()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("surname").AsString(255).NotNullable()
+			.WithColumn("prefix").AsInt32().NotNullable()
+			.WithColumn("phone_number").AsInt64().NotNullable()
+			.WithColumn("address").AsString(255).NotNullable()
+			.WithColumn("identification").AsString(255).NotNullable()
+			.WithColumn("location_id").AsInt32().Nullable().ForeignKey("FK_Volunteer_Location", "location", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Create.Table("admin")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("email").AsString(255).NotNullable().Unique()
+			.WithColumn("password").AsString(255).NotNullable()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("surname").AsString(255).NotNullable()
+			.WithColumn("prefix").AsInt32().NotNullable()
+			.WithColumn("phone_number").AsInt64().NotNullable()
+			.WithColumn("address").AsString(255).NotNullable()
+			.WithColumn("identification").AsString(255).NotNullable()
+			.WithColumn("jurisdiction").AsString(255).NotNullable()
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Create.Table("affected_zone")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable().ForeignKey("FK_AffectedZone_Admin", "admin", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Create.Table("physical_donation")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("item_name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("quantity").AsInt32().NotNullable()
+			.WithColumn("item_type").AsCustom("item_type").NotNullable()
+			.WithColumn("donation_date").AsDateTime().NotNullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Volunteer", "volunteer", "id")
+			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Admin", "admin", "id")
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Victim", "victim", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Execute.Sql("ALTER TABLE physical_donation ADD CONSTRAINT CK_physical_donation_quantity CHECK (quantity > 0);");
+
+		Create.Table("monetary_donation")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("amount").AsDecimal(18, 2).NotNullable()
+			.WithColumn("currency").AsCustom("currency").NotNullable()
+			.WithColumn("payment_status").AsCustom("payment_status").NotNullable()
+			.WithColumn("transaction_id").AsString(255).NotNullable()
+			.WithColumn("payment_service").AsCustom("payment_service").NotNullable()
+			.WithColumn("donation_date").AsDateTime().NotNullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Volunteer", "volunteer", "id")
+			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Admin", "admin", "id")
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Victim", "victim", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
+		Execute.Sql("ALTER TABLE monetary_donation ADD CONSTRAINT CK_monetary_donation_amount CHECK (amount > 0);");
 
 		Create.Table("place")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("admin_id").AsInt32().NotNullable();
-
-		Create.Table("route")
-			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(200).NotNullable()
-			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
-			.WithColumn("transport_type").AsCustom("transport_type").NotNullable()
-			.WithColumn("admin_id").AsInt32().Nullable()
-			.WithColumn("start_location_id").AsInt32().NotNullable()
-			.WithColumn("end_location_id").AsInt32().NotNullable();
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable().ForeignKey("FK_Place_Admin", "admin", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
 		Create.Table("skill")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
+			.WithColumn("name").AsString(255).NotNullable()
 			.WithColumn("level").AsCustom("skill_level").NotNullable()
-			.WithColumn("admin_id").AsInt32().NotNullable();
+			.WithColumn("admin_id").AsInt32().NotNullable().ForeignKey("FK_Skill_Admin", "admin", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
 		Create.Table("task")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("description").AsString(500).NotNullable()
-			.WithColumn("admin_id").AsInt32().Nullable()
-			.WithColumn("location_id").AsInt32().NotNullable();
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Task_Admin", "admin", "id")
+			.WithColumn("location_id").AsInt32().NotNullable().ForeignKey("FK_Task_Location", "location", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
-		Create.Table("time")
+		Create.Table("need")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("start_time").AsTime().NotNullable()
-			.WithColumn("end_time").AsTime().NotNullable();
-		
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable()
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_Need_Victim", "victim", "id")
+			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Need_Admin", "admin", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+
 		Create.Table("need_type")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
-			.WithColumn("name").AsString(50).NotNullable()
-			.WithColumn("admin_id").AsInt32().NotNullable();
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("admin_id").AsInt32().NotNullable().ForeignKey("FK_NeedType_Admin", "admin", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
-		Create.Table("need_need_type")
-			.WithColumn("need_id").AsInt32().NotNullable()
-			.WithColumn("need_type_id").AsInt32().NotNullable();
+		Create.Table("route")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("hazard_level").AsCustom("hazard_level").NotNullable()
+			.WithColumn("transport_type").AsCustom("transport_type").NotNullable()
+			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Route_Admin", "admin", "id")
+			.WithColumn("start_location_id").AsInt32().NotNullable().ForeignKey("FK_Route_StartLocation", "location", "id")
+			.WithColumn("end_location_id").AsInt32().NotNullable().ForeignKey("FK_Route_EndLocation", "location", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
-		// @carlos carloseando
+		// Create the time tables
 		Create.Table("task_time")
-			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_TaskTime_Time", "time", "id")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("start_time").AsTime().NotNullable()
+			.WithColumn("end_time").AsTime().NotNullable()
 			.WithColumn("date").AsDate().NotNullable()
-			.WithColumn("task_id").AsInt32().NotNullable();
-		
+			.WithColumn("task_id").AsInt32().NotNullable().ForeignKey("FK_TaskTime_Task", "task", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
 		Create.Table("volunteer_time")
-			.WithColumn("id").AsInt32().PrimaryKey().ForeignKey("FK_VolunteerTime_Time", "time", "id")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("start_time").AsTime().NotNullable()
+			.WithColumn("end_time").AsTime().NotNullable()
 			.WithColumn("day").AsCustom("day_of_week").NotNullable()
-			.WithColumn("volunteer_id").AsInt32().NotNullable();
+			.WithColumn("volunteer_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerTime_Volunteer", "volunteer", "id")
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
-		Create.Table("route_location")
-			.WithColumn("route_id").AsInt32().NotNullable()
-			.WithColumn("location_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_RouteLocation").OnTable("route_location")
-			.Columns(["route_id", "location_id"]);
-
-		Create.Table("task_donation")
-			.WithColumn("task_id").AsInt32().NotNullable()
-			.WithColumn("donation_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_TaskDonation").OnTable("task_donation")
-			.Columns(["task_id", "donation_id"]);
-
-		Create.Table("volunteer_place_preference")
-			.WithColumn("volunteer_id").AsInt32().NotNullable()
-			.WithColumn("place_preference_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_VolunteerPlacePreference").OnTable("volunteer_place_preference")
-			.Columns(["volunteer_id", "place_preference_id"]);
-
-		Create.Table("task_skill")
-			.WithColumn("task_id").AsInt32().NotNullable()
-			.WithColumn("skill_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_TaskSkill").OnTable("task_skill")
-			.Columns(["task_id", "skill_id"]);
-
+		// Create intermediate tables
 		Create.Table("volunteer_skill")
-			.WithColumn("volunteer_id").AsInt32().NotNullable()
-			.WithColumn("skill_id").AsInt32().NotNullable();
+			.WithColumn("volunteer_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerSkill_Volunteer", "volunteer", "id").OnDelete(Rule.Cascade)
+			.WithColumn("skill_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerSkill_Skill", "skill", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Create.PrimaryKey("PK_VolunteerSkill").OnTable("volunteer_skill")
 			.Columns(["volunteer_id", "skill_id"]);
 
 		Create.Table("volunteer_task")
-			.WithColumn("volunteer_id").AsInt32().NotNullable()
-			.WithColumn("task_id").AsInt32().NotNullable()
-			.WithColumn("state").AsCustom("state").NotNullable();
+			.WithColumn("volunteer_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerTask_Volunteer", "volunteer", "id").OnDelete(Rule.Cascade)
+			.WithColumn("task_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerTask_Task", "task", "id").OnDelete(Rule.Cascade)
+			.WithColumn("state").AsCustom("state").NotNullable()
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Create.PrimaryKey("PK_VolunteerTask").OnTable("volunteer_task")
 			.Columns(["volunteer_id", "task_id"]);
 
-		Create.Table("affected_zone_location")
-			.WithColumn("location_id").AsInt32().NotNullable()
-			.WithColumn("affected_zone_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_AffectedZoneLocation").OnTable("affected_zone_location")
-			.Columns(["affected_zone_id", "location_id"]);
+		Create.Table("volunteer_place_preference")
+			.WithColumn("volunteer_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerPlacePreference_Volunteer", "volunteer", "id").OnDelete(Rule.Cascade)
+			.WithColumn("place_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerPlacePreference_Place", "place", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_VolunteerPlacePreference").OnTable("volunteer_place_preference")
+			.Columns(["volunteer_id", "place_id"]);
 
-		Create.Table("need_skill")
-			.WithColumn("need_id").AsInt32().NotNullable()
-			.WithColumn("skill_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_NeedSkill").OnTable("need_skill")
-			.Columns(["need_id", "skill_id"]);
+		Create.Table("task_skill")
+			.WithColumn("task_id").AsInt32().NotNullable().ForeignKey("FK_TaskSkill_Task", "task", "id").OnDelete(Rule.Cascade)
+			.WithColumn("skill_id").AsInt32().NotNullable().ForeignKey("FK_TaskSkill_Skill", "skill", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_TaskSkill").OnTable("task_skill")
+			.Columns(["task_id", "skill_id"]);
 
-		Create.Table("need_task")
-			.WithColumn("need_id").AsInt32().NotNullable()
-			.WithColumn("task_id").AsInt32().NotNullable();
-		Create.PrimaryKey("PK_NeedTask").OnTable("need_task")
-			.Columns(["need_id", "task_id"]);
+		Create.Table("task_donation")
+			.WithColumn("task_id").AsInt32().NotNullable().ForeignKey("FK_TaskDonation_Task", "task", "id").OnDelete(Rule.Cascade)
+			.WithColumn("donation_id").AsInt32().NotNullable().ForeignKey("FK_TaskDonation_PhysicalDonation", "physical_donation", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_TaskDonation").OnTable("task_donation")
+			.Columns(["task_id", "donation_id"]);
+
+		Create.Table("route_location")
+			.WithColumn("route_id").AsInt32().NotNullable().ForeignKey("FK_RouteLocation_Route", "route", "id").OnDelete(Rule.Cascade)
+			.WithColumn("location_id").AsInt32().NotNullable().ForeignKey("FK_RouteLocation_Location", "location", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_RouteLocation").OnTable("route_location")
+			.Columns(["route_id", "location_id"]);
 
 		Create.Table("place_affected_zone")
-			.WithColumn("place_id").AsInt32().NotNullable()
-			.WithColumn("affected_zone_id").AsInt32().NotNullable();
+			.WithColumn("place_id").AsInt32().NotNullable().ForeignKey("FK_PlaceAffectedZone_Place", "place", "id").OnDelete(Rule.Cascade)
+			.WithColumn("affected_zone_id").AsInt32().NotNullable().ForeignKey("FK_PlaceAffectedZone_AffectedZone", "affected_zone", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Create.PrimaryKey("PK_PlaceAffectedZone").OnTable("place_affected_zone")
 			.Columns(["place_id", "affected_zone_id"]);
 
-		// Create foreign key relations for the tables
-		Create.ForeignKey("FK_Victim_Location")
-			.FromTable("victim").ForeignColumn("location_id")
-			.ToTable("location").PrimaryColumn("id");
+		Create.Table("need_task")
+			.WithColumn("need_id").AsInt32().NotNullable().ForeignKey("FK_NeedTask_Need", "need", "id").OnDelete(Rule.Cascade)
+			.WithColumn("task_id").AsInt32().NotNullable().ForeignKey("FK_NeedTask_Task", "task", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_NeedTask").OnTable("need_task")
+			.Columns(["need_id", "task_id"]);
 
-		Create.ForeignKey("FK_Need_Victim")
-			.FromTable("need").ForeignColumn("victim_id")
-			.ToTable("victim").PrimaryColumn("id");
+		Create.Table("need_skill")
+			.WithColumn("need_id").AsInt32().NotNullable().ForeignKey("FK_NeedSkill_Need", "need", "id").OnDelete(Rule.Cascade)
+			.WithColumn("skill_id").AsInt32().NotNullable().ForeignKey("FK_NeedSkill_Skill", "skill", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_NeedSkill").OnTable("need_skill")
+			.Columns(["need_id", "skill_id"]);
 
-		Create.ForeignKey("FK_Donation_Victim")
-			.FromTable("donation").ForeignColumn("victim_id")
-			.ToTable("victim").PrimaryColumn("id");
+		Create.Table("need_need_type")
+			.WithColumn("need_id").AsInt32().NotNullable().ForeignKey("FK_NeedNeedType_Need", "need", "id").OnDelete(Rule.Cascade)
+			.WithColumn("need_type_id").AsInt32().NotNullable().ForeignKey("FK_NeedNeedType_NeedType", "need_type", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_NeedNeedType").OnTable("need_need_type")
+			.Columns(["need_id", "need_type_id"]);
 
-		Create.ForeignKey("FK_Volunteer_Location")
-			.FromTable("volunteer").ForeignColumn("location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerSkill_Volunteer")
-			.FromTable("volunteer_skill").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerSkill_Skill")
-			.FromTable("volunteer_skill").ForeignColumn("skill_id")
-			.ToTable("skill").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerTask_Volunteer")
-			.FromTable("volunteer_task").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerTask_Task")
-			.FromTable("volunteer_task").ForeignColumn("task_id")
-			.ToTable("task").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Donation_Volunteer")
-			.FromTable("donation").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_AffectedZone_Admin")
-			.FromTable("affected_zone").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Route_Admin")
-			.FromTable("route").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Donation_Admin")
-			.FromTable("donation").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Task_Admin")
-			.FromTable("task").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Need_Admin")
-			.FromTable("need").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Skill_Admin")
-			.FromTable("skill").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Place_Admin")
-			.FromTable("place").ForeignColumn("admin_id")
-			.ToTable("admin").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_AffectedZoneLocation_AffectedZone")
-			.FromTable("affected_zone_location").ForeignColumn("affected_zone_id")
-			.ToTable("affected_zone").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_AffectedZoneLocation_Location")
-			.FromTable("affected_zone_location").ForeignColumn("location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_PlaceAffectedZone_Place")
-			.FromTable("place_affected_zone").ForeignColumn("place_id")
-			.ToTable("place").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_PlaceAffectedZone_AffectedZone")
-			.FromTable("place_affected_zone").ForeignColumn("affected_zone_id")
-			.ToTable("affected_zone").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_TaskDonation_Task")
-			.FromTable("task_donation").ForeignColumn("task_id")
-			.ToTable("task").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_TaskDonation_Donation")
-			.FromTable("task_donation").ForeignColumn("donation_id")
-			.ToTable("donation").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Task_Location")
-			.FromTable("task").ForeignColumn("location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Location_Victim")
-			.FromTable("location").ForeignColumn("victim_id")
-			.ToTable("victim").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Location_Volunteer")
-			.FromTable("location").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_NeedSkill_Need")
-			.FromTable("need_skill").ForeignColumn("need_id")
-			.ToTable("need").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_NeedSkill_Skill")
-			.FromTable("need_skill").ForeignColumn("skill_id")
-			.ToTable("skill").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_NeedTask_Need")
-			.FromTable("need_task").ForeignColumn("need_id")
-			.ToTable("need").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_NeedTask_Task")
-			.FromTable("need_task").ForeignColumn("task_id")
-			.ToTable("task").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerPlacePreference_Volunteer")
-			.FromTable("volunteer_place_preference").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerPlacePreference_Place")
-			.FromTable("volunteer_place_preference").ForeignColumn("place_preference_id")
-			.ToTable("place").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Route_StartLocation")
-			.FromTable("route").ForeignColumn("start_location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_Route_EndLocation")
-			.FromTable("route").ForeignColumn("end_location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_RouteLocation_Route")
-			.FromTable("route_location").ForeignColumn("route_id")
-			.ToTable("route").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_RouteLocation_Location")
-			.FromTable("route_location").ForeignColumn("location_id")
-			.ToTable("location").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_TaskTime_Task")
-			.FromTable("task_time").ForeignColumn("task_id")
-			.ToTable("task").PrimaryColumn("id");
-
-		Create.ForeignKey("FK_VolunteerTime_Volunteer")
-			.FromTable("volunteer_time").ForeignColumn("volunteer_id")
-			.ToTable("volunteer").PrimaryColumn("id");
+		Create.Table("affected_zone_location")
+			.WithColumn("affected_zone_id").AsInt32().NotNullable().ForeignKey("FK_AffectedZoneLocation_AffectedZone", "affected_zone", "id").OnDelete(Rule.Cascade)
+			.WithColumn("location_id").AsInt32().NotNullable().ForeignKey("FK_AffectedZoneLocation_Location", "location", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Create.PrimaryKey("PK_AffectedZoneLocation").OnTable("affected_zone_location")
+			.Columns(["affected_zone_id", "location_id"]);
 	}
 
 	public override void Down() {
 		// Delete foreign keys first (in order to avoid problems with restrictions)
 		Delete.ForeignKey("FK_TaskTime_Task");
 		Delete.ForeignKey("FK_VolunteerTime_Volunteer");
-		Delete.ForeignKey("FK_TaskTime_Time");
-		Delete.ForeignKey("FK_VolunteerTime_Time");
 		Delete.ForeignKey("FK_RouteLocation_Location");
 		Delete.ForeignKey("FK_RouteLocation_Route");
 		Delete.ForeignKey("FK_Route_EndLocation");
@@ -418,36 +299,40 @@ public class InitialMigration : Migration {
 		Delete.ForeignKey("FK_NeedTask_Need");
 		Delete.ForeignKey("FK_NeedSkill_Skill");
 		Delete.ForeignKey("FK_NeedSkill_Need");
-		Delete.ForeignKey("FK_Location_Volunteer");
-		Delete.ForeignKey("FK_Location_Victim");
 		Delete.ForeignKey("FK_Task_Location");
 		Delete.ForeignKey("FK_PlaceAffectedZone_AffectedZone");
 		Delete.ForeignKey("FK_PlaceAffectedZone_Place");
 		Delete.ForeignKey("FK_AffectedZoneLocation_Location");
 		Delete.ForeignKey("FK_AffectedZoneLocation_AffectedZone");
+		Delete.ForeignKey("FK_NeedNeedType_NeedType");
+		Delete.ForeignKey("FK_NeedNeedType_Need");
+		Delete.ForeignKey("FK_NeedType_Admin");
 		Delete.ForeignKey("FK_Place_Admin");
 		Delete.ForeignKey("FK_Skill_Admin");
 		Delete.ForeignKey("FK_Need_Admin");
 		Delete.ForeignKey("FK_Task_Admin");
-		Delete.ForeignKey("FK_Donation_Admin");
+		Delete.ForeignKey("FK_MonetaryDonation_Admin");
+		Delete.ForeignKey("FK_PhysicalDonation_Admin");
 		Delete.ForeignKey("FK_Route_Admin");
 		Delete.ForeignKey("FK_AffectedZone_Admin");
-		Delete.ForeignKey("FK_Donation_Volunteer");
+		Delete.ForeignKey("FK_MonetaryDonation_Volunteer");
+		Delete.ForeignKey("FK_PhysicalDonation_Volunteer");
+		Delete.ForeignKey("FK_TaskSkill_Skill");
+		Delete.ForeignKey("FK_TaskSkill_Task");
+		Delete.ForeignKey("FK_TaskDonation_PhysicalDonation");
+		Delete.ForeignKey("FK_TaskDonation_Task");
 		Delete.ForeignKey("FK_VolunteerTask_Task");
 		Delete.ForeignKey("FK_VolunteerTask_Volunteer");
 		Delete.ForeignKey("FK_VolunteerSkill_Skill");
 		Delete.ForeignKey("FK_VolunteerSkill_Volunteer");
-		Delete.ForeignKey("FK_VolunteerTime_Volunteer");
-		Delete.ForeignKey("FK_Volunteer_Location");
-		Delete.ForeignKey("FK_Donation_Victim");
 		Delete.ForeignKey("FK_Need_Victim");
+		Delete.ForeignKey("FK_MonetaryDonation_Victim");
+		Delete.ForeignKey("FK_PhysicalDonation_Victim");
+		Delete.ForeignKey("FK_Volunteer_Location");
 		Delete.ForeignKey("FK_Victim_Location");
-		Delete.ForeignKey("FK_PhysicalDonation_Donation");
-		Delete.ForeignKey("FK_MonetaryDonation_Donation");
 
 		//Delete composed primary keys
-		Delete.PrimaryKey("PK_TaskTime").FromTable("task_time");
-		Delete.PrimaryKey("PK_VolunteerTime").FromTable("volunteer_time");
+		Delete.PrimaryKey("PK_NeedNeedType").FromTable("need_need_type");
 		Delete.PrimaryKey("PK_NeedSkill").FromTable("need_skill");
 		Delete.PrimaryKey("PK_NeedTask").FromTable("need_task");
 		Delete.PrimaryKey("PK_TaskSkill").FromTable("task_skill");
@@ -461,31 +346,31 @@ public class InitialMigration : Migration {
 
 		// Delete tables (in inverse order with respect to creation)
 		Delete.Table("place_affected_zone");
-		Delete.Table("need_task");
-		Delete.Table("need_skill");
 		Delete.Table("affected_zone_location");
-		Delete.Table("volunteer_task");
-		Delete.Table("volunteer_skill");
+		Delete.Table("need_need_type");
+		Delete.Table("need_skill");
+		Delete.Table("need_task");
+		Delete.Table("route_location");
+		Delete.Table("task_donation");
 		Delete.Table("task_skill");
 		Delete.Table("volunteer_place_preference");
-		Delete.Table("task_donation");
-		Delete.Table("route_location");
-		Delete.Table("task_time");
+		Delete.Table("volunteer_task");
+		Delete.Table("volunteer_skill");
 		Delete.Table("volunteer_time");
-		Delete.Table("time");
+		Delete.Table("task_time");
+		Delete.Table("route");
+		Delete.Table("need_type");
+		Delete.Table("need");
 		Delete.Table("task");
 		Delete.Table("skill");
-		Delete.Table("route");
 		Delete.Table("place");
-		Delete.Table("need");
-		Delete.Table("location");
 		Delete.Table("monetary_donation");
 		Delete.Table("physical_donation");
-		Delete.Table("donation");
 		Delete.Table("affected_zone");
 		Delete.Table("admin");
 		Delete.Table("volunteer");
 		Delete.Table("victim");
+		Delete.Table("location");
 
 		// Delete types (enums) created (in inverse order with respect to creation)
 		Execute.Sql("DROP TYPE IF EXISTS state CASCADE;");
@@ -493,10 +378,10 @@ public class InitialMigration : Migration {
 		Execute.Sql("DROP TYPE IF EXISTS skill_level CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS transport_type CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS urgency_level CASCADE;");
-		Execute.Sql("DROP TYPE IF EXISTS currency CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS payment_service CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS payment_status CASCADE;");
-		Execute.Sql("DROP TYPE IF EXISTS physical_donation_type CASCADE;");
+		Execute.Sql("DROP TYPE IF EXISTS currency CASCADE;");
+		Execute.Sql("DROP TYPE IF EXISTS item_type CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS hazard_level CASCADE;");
 
 		// Delete schema
