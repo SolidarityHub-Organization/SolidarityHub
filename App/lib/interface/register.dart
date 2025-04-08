@@ -110,7 +110,7 @@ class _RegisterState extends State<Register> {
                     ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: registerController.register,
+                    onPressed: () => registerController.continueRegister(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),

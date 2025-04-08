@@ -34,10 +34,10 @@ class RegisterController {
     Navigator.pushNamed(context, '/register');
   }
 
-  /*void continueRegister(BuildContext context) {
+  void continueRegister(BuildContext context) {
     print("Continua Registro");
-    Navigator.pushNamed(context, '/register');
-  }*/
+    Navigator.pushNamed(context, '/registerChoose');
+  }
 }
 
 

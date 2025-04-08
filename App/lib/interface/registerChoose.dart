@@ -12,65 +12,68 @@ class _RegisterChooseState extends State<RegisterChoose> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red[600],
-      body: SafeArea(
+      backgroundColor: Colors.red,
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'S', // Aquí podrías poner una imagen/logo
-                style: TextStyle(
-                  fontSize: 80,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const Spacer(),
+            Image.asset('assets/logo.png', height: 100), // Logo igual que loginUI
+            SizedBox(height: 20),
             Container(
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                borderRadius: BorderRadius.circular(20),
               ),
-              padding: const EdgeInsets.all(24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
+                  Text(
                     "Bienvenido a Solidary Hub",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: _controller.nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Nombre'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _controller.surnameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Apellidos',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Apellidos'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _controller.birthDateController,
-                    decoration: const InputDecoration(
-                      labelText: 'Fecha de nacimiento',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Fecha de nacimiento'),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (pickedDate != null) {
+                        String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/"
+                            "${pickedDate.month.toString().padLeft(2, '0')}/"
+                            "${pickedDate.year}";
+                        setState(() {
+                          _controller.birthDateController.text = formattedDate;
+                        });
+                      }
+                    },
                   ),
-                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 10),
                   TextField(
                     controller: _controller.phoneController,
-                    decoration: const InputDecoration(
-                      labelText: 'Teléfono',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Teléfono'),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
@@ -78,33 +81,33 @@ class _RegisterChooseState extends State<RegisterChoose> {
                           onPressed: () => _controller.submitForm('Afectado'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32),
+                              borderRadius: BorderRadius.circular(40),
                             ),
                           ),
-                          child: const Text("Afectado"),
+                          child: const Text("Afectado", style: TextStyle(color: Colors.white)),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () => _controller.submitForm('Voluntario'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32),
+                              borderRadius: BorderRadius.circular(40),
                             ),
                           ),
-                          child: const Text("Voluntario"),
+                          child: const Text("Voluntario", style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
