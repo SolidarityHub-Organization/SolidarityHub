@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../services/auth_service.dart';
 
 class AuthController {
   final TextEditingController emailController = TextEditingController();
@@ -14,16 +15,7 @@ class AuthController {
     print("Contraseña: $password");
 
     try {
-      final url = Uri.parse('https://tuservidor.com/api/login'); // Cambia esta URL por la real
-
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      );
+      final response = await AuthService.login(email, password); // Llamada al servicio
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
