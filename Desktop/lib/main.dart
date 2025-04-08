@@ -3,6 +3,7 @@ import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
+import 'package:solidarityhub/populate_database.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +35,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Requests _requests = Requests();
   String data = '';
+
+  Future<void> _populateDatabase() async {
+    final result = await PopulateDatabase.populateAsync();
+    setState(() {
+      data = result;
+    });
+  }
+
+  Future<void> _clearDatabase() async {
+    final result = await PopulateDatabase.clearDatabase();
+    setState(() {
+      data = result;
+    });
+  }
 
   Future<void> _fetchTest() async {
     final result = await _requests.fetchTest();
@@ -67,6 +82,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: _populateDatabase,
+              child: const Text("Populate database (Inacabado)"),
+            ),
+
+            ElevatedButton(
+              onPressed: _clearDatabase,
+              child: const Text("Clear database (Inacabado)"),
+            ),
+            
             ElevatedButton(
               onPressed: _fetchTest,
               child: const Text("Get example data"),
