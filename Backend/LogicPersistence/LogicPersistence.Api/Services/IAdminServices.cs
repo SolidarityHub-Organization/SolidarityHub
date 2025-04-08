@@ -12,6 +12,7 @@ namespace LogicPersistence.Api.Services
         Task<IEnumerable<Admin>> GetAllAdminsAsync();
         Task<Admin?> GetAdminByEmailAsync(string email);
         Task<Admin?> GetAdminByJurisdictionAsync(string jurisdiction);
+        Task<(bool signIn, string returnMessage)> LogInAdminAsync(string email, string password);
         
     }
 }

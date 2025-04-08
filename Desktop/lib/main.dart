@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/admin_mainPage/main_page.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
-import 'package:solidarityhub/LogicPresentation/admin/admin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Admin()),
+                  MaterialPageRoute(builder: (context) => const Loginadmin()),
                 );
               },
               child: const Text("Log in Admin"),

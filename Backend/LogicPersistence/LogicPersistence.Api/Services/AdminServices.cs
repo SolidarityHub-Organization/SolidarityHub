@@ -102,5 +102,19 @@ namespace LogicPersistence.Api.Services
             }
             return admin;
         }
+
+        public async Task<(bool signIn, string returnMessage)> LogInAdminAsync(string email, string password)
+        {
+            var admin = await _adminRepository.GetAdminByEmailAsync(email);
+            if (admin == null)
+            {
+                return (false, "No existe el correo");
+            }
+            else if (admin.password != password)
+            {
+                return (false, "La contraseña es incorrecta");
+            }
+            else {return (true, "");}
+        }
     }
 }

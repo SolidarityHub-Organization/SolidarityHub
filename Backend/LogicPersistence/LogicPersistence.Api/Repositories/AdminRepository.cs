@@ -1,6 +1,5 @@
 namespace LogicPersistence.Api.Repositories;
 
-using System.Data;
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
@@ -10,7 +9,11 @@ public class AdminRepository : IAdminRepository
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
     public async Task<Admin> CreateAdminAsync(Admin admin)
-    {
+    {;
+        if (await EmailExistsAsync(admin.email))
+        {
+            throw new Exception("El email ya está en uso.");
+        }
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO admin (jurisdiction, email, password, name, surname, prefix, phone_number, address, identification)
@@ -21,7 +24,11 @@ public class AdminRepository : IAdminRepository
     }
 
     public async Task<Admin> UpdateAdminAsync(Admin admin)
-    {
+    {      
+        if (await EmailExistsAsync(admin.email))
+        {
+            throw new Exception("El email ya está en uso.");
+        }
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             UPDATE admin
@@ -82,4 +89,12 @@ public class AdminRepository : IAdminRepository
         return await connection.QuerySingleOrDefaultAsync<Admin>(sql, new { jurisdiction });
     }
 
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = "SELECT COUNT(1) FROM admin WHERE email = @Email";
+
+        int count = await connection.ExecuteScalarAsync<int>(sql, new { Email = email });
+        return count > 0;
+    }
 }

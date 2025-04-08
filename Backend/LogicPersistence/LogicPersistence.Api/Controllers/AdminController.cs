@@ -17,7 +17,7 @@ namespace LogicPersistence.Api.Controllers
         [ActionName(nameof(CreateAdminAsync))]
         public async Task<IActionResult> CreateAdminAsync(AdminCreateDto adminCreateDto) {
             try {
-                var admin = await _adminServices.CreateAdminAsync(adminCreateDto);
+                var admin = await _adminServices.CreateAdminAsync(adminCreateDto);               
                 return CreatedAtAction(nameof(CreateAdminAsync), new { id = admin.id }, admin);
             } catch (ArgumentNullException ex) {
                 return BadRequest(ex.Message);
@@ -93,6 +93,22 @@ namespace LogicPersistence.Api.Controllers
             try {
                 var admin = await _adminServices.GetAdminByJurisdictionAsync(jurisdiction);
                 return Ok(admin);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("admins/LogInAdmin/{email},{password}", Name = "LogInAdmin")]
+        public async Task<IActionResult> LogInAdminAsync(string email, string password) {
+            try {
+                var res = await _adminServices.LogInAdminAsync(email, password);
+                if (!res.signIn)
+                {
+                    return Unauthorized(res);
+                }
+                return Ok(res);
             } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);
             } catch (Exception ex) {
