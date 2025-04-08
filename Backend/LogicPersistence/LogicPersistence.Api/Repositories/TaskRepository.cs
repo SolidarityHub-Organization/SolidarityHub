@@ -8,14 +8,38 @@ using Npgsql;
 public class TaskRepository : ITaskRepository {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
-    public async Task<Task> CreateTaskAsync(Task task) {
+    public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds) {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = @"
+        await connection.OpenAsync();
+        using var transaction = await connection.BeginTransactionAsync();
+
+        const string taskSql = @"
             INSERT INTO task (name, description, admin_id, location_id)
             VALUES (@name, @description, @admin_id, @location_id)
             RETURNING *";
 
-        return await connection.QuerySingleAsync<Task>(sql, task);
+        const string volunteerTaskSql = @"
+            INSERT INTO volunteer_task (volunteer_id, task_id, state)
+            VALUES (@volunteer_id, @task_id, @state::state)";
+
+        try {
+            var createdTask = await connection.QuerySingleAsync<Task>(taskSql, task, transaction);
+
+            Console.WriteLine($"Created task: {createdTask.id}");
+
+            if (volunteerIds.Length > 0) {
+                var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = createdTask.id, state = "Assigned" });
+                await connection.ExecuteAsync(volunteerTaskSql, volunteerTasks, transaction);
+            }
+
+            Console.WriteLine($"Assigned volunteers to task: {createdTask.id}");
+
+            await transaction.CommitAsync();
+            return createdTask;
+        } catch {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<Task> UpdateTaskAsync(Task task) {

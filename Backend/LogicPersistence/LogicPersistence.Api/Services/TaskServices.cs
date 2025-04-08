@@ -16,7 +16,7 @@ namespace LogicPersistence.Api.Services {
                 throw new ArgumentNullException(nameof(taskCreateDto));
             }
 
-            var task = await _taskRepository.CreateTaskAsync(taskCreateDto.ToTask());
+            var task = await _taskRepository.CreateTaskAsync(taskCreateDto.ToTask(), taskCreateDto.volunteer_ids);
             if (task == null) {
                 throw new InvalidOperationException("Failed to create task.");
             }

@@ -1,10 +1,10 @@
 namespace LogicPersistence.Api.Models;
 
 public enum State {
-	Asignado = 0,
-	Pendiente = 1,
-	Completado = 2,
-	Cancelado = 3
+	Assigned = 0,
+	Pending = 1,
+	Completed = 2,
+	Cancelled = 3
 }
 
 // volunteers can sign up for tasks

@@ -25,8 +25,11 @@ Future<String> createTask(
         "description": description,
         "admin_id": 1,
         "location_id": 1,
+        "volunteer_ids": selectedVolunteers,
       }),
     );
+
+    print(response.body);
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       return "Task has been added";
     } else {
