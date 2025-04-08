@@ -2,6 +2,7 @@ using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
+using LogicPersistence.Api.Repositories.Interfaces;
 
 
 // The services are the classes that contain the business logic of the application. They are responsible for processing the data and performing the necessary operations to fulfill the requests from the client passed from the controllers.
@@ -10,9 +11,11 @@ using LogicPersistence.Api.Repositories;
 namespace LogicPersistence.Api.Services {
 	public class VictimServices : IVictimServices {
 		private readonly IVictimRepository _victimRepository;
+		private readonly ILocationRepository _locationRepository;
 
-		public VictimServices(IVictimRepository victimRepository) {
+		public VictimServices(IVictimRepository victimRepository, ILocationRepository locationRepository) {
 			_victimRepository = victimRepository;
+			_locationRepository = locationRepository;
 		}
 
 
@@ -69,6 +72,25 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve victims.");
 			}
 			return victims;
+		}
+
+		public async Task<IEnumerable<VictimLocationDTO>> GetAllVictimsWithLocationAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
+			}
+			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
+			var result = new List<VictimLocationDTO>();
+			foreach (var victim in victimsWithLocation) {
+				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
+				result.Add(new VictimLocationDTO {
+					id = victim.id,
+					name = victim.name,
+					latitude = location.latitude,
+					longitude = location.longitude,
+				});
+			}
+			return result;
 		}
 	}
 }
