@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class GeneralTab extends StatelessWidget {
-  const GeneralTab({Key? key}) : super(key: key);
+class Taskstable extends StatelessWidget {
+  const Taskstable({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

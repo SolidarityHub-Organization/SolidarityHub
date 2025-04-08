@@ -5,6 +5,6 @@ class RecursosTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Contenido de Recursos'));
+    return const Center(child: Text('Se desarrollará en el Sprint 2'));
   }
 }
