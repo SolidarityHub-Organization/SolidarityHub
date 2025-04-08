@@ -3,6 +3,7 @@ import 'tables/generalTable.dart';
 import 'tables/victimTable.dart';
 import 'tables/resourceTable.dart';
 import 'tables/volunteerTable.dart';
+import 'tables/tasksTable.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _DashboardState extends State<Dashboard>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -61,6 +62,7 @@ class _DashboardState extends State<Dashboard>
                             Tab(text: 'Afectados'),
                             Tab(text: 'Recursos'),
                             Tab(text: 'Voluntarios'),
+                            Tab(text: 'Tareas',)
                           ],
                         ),
                       ),
@@ -115,6 +117,7 @@ class _DashboardState extends State<Dashboard>
                 VictimsTab(selectedPeriod: _selectedPeriod),
                 const RecursosTab(),
                 VolunteerTab(selectedPeriod: _selectedPeriod),
+                const Taskstable(),
               ],
             ),
           ),
