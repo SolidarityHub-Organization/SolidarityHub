@@ -5,7 +5,7 @@ class AuthService {
   static Future<http.Response> login(String email, String password) async {
     final url = Uri.parse('https://tuservidor.com/api/login'); // ← Cambia esta URL por la tuya
 
-    final response = await http.post(
+    return await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -13,7 +13,18 @@ class AuthService {
         'password': password,
       }),
     );
+  }
 
-    return response;
+  static Future<http.Response> register(String email, String password) async {
+    final url = Uri.parse('https://tuservidor.com/api/register');
+
+    return await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
   }
 }
