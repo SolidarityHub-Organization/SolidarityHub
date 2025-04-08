@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS "monetary_donation" (
     "admin_id" INT,
     "victim_id" INT,
 
-    "amount" DECIMAL(15, 2) NOT NULL CHECK (amount > 0),
+    "amount" DECIMAL(18, 2) NOT NULL CHECK (amount > 0),
     "currency" currency NOT NULL,
     "payment_status" payment_status NOT NULL,
     "transaction_id" VARCHAR(255) NOT NULL,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
-import 'package:solidarityhub/LogicPresentation/admin_mainPage/main_page.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
@@ -101,16 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text("Create Task"),
-            ),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AdminMainPage()),
-                );
-              },
-              child: const Text("Admin Page "),
             ),
 
             ElevatedButton(

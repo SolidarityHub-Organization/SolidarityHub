@@ -104,7 +104,7 @@ namespace LogicPersistence.Api.Controllers
         public async Task<IActionResult> LogInAdminAsync(string email, string password) {
             try {
                 var res = await _adminServices.LogInAdminAsync(email, password);
-                if (!res.signIn)
+                if (!res)
                 {
                     return Unauthorized(res);
                 }
