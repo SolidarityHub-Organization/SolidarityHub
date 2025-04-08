@@ -72,34 +72,31 @@ class _DashboardState extends State<Dashboard>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _selectedPeriod,
-                            icon: const Icon(Icons.keyboard_arrow_down),
-                            items: const [
-                              DropdownMenuItem(
-                                value: '24h',
-                                child: Text('Últimas 24 horas'),
-                              ),
-                              DropdownMenuItem(
-                                value: '7dias',
-                                child: Text('Últimos 7 días'),
-                              ),
-                              DropdownMenuItem(
-                                value: '30dias',
-                                child: Text('Últimos 30 días'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'total',
-                                child: Text('Total'),
-                              ),
-                            ],
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  _selectedPeriod = newValue;
-                                });
-                              }
-                            },
+                          child: Tooltip(
+                            message: 'Se desarrollará en el Sprint 2',
+                            child: DropdownButton<String>(
+                              value: _selectedPeriod,
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: '24h',
+                                  child: Text('Últimas 24 horas'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '7dias',
+                                  child: Text('Últimos 7 días'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '30dias',
+                                  child: Text('Últimos 30 días'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'total',
+                                  child: Text('Total'),
+                                ),
+                              ],
+                              onChanged: null, // Deshabilitar el botón
+                            ),
                           ),
                         ),
                       ),
@@ -114,7 +111,7 @@ class _DashboardState extends State<Dashboard>
             child: TabBarView(
               controller: _tabController,
               children: [
-                GeneralTab(selectedPeriod: _selectedPeriod),
+                const GeneralTab(),
                 VictimsTab(selectedPeriod: _selectedPeriod),
                 const RecursosTab(),
                 VolunteerTab(selectedPeriod: _selectedPeriod),

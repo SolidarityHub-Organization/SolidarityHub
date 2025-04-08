@@ -11,11 +11,6 @@ class VolunteerService {
       Uri.parse('$baseUrl/api/v1/skills/volunteer-counts'),
     );
 
-    // Imprime el código de estado y el cuerpo de la respuesta
-    print("Voluntarios");
-    print("Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
-
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       return data.cast<Map<String, dynamic>>();

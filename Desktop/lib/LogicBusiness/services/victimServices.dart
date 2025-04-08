@@ -37,10 +37,6 @@ class VictimService {
       Uri.parse('$baseUrl/api/v1/need-types/victim-counts'),
     );
 
-    print("Afectados");
-    print("Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
-
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       return data.cast<Map<String, dynamic>>();
