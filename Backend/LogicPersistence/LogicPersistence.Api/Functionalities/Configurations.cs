@@ -102,6 +102,7 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<ITaskServices, TaskServices>();
 		builder.Services.AddScoped<INeedRepository, NeedRepository>();
     	builder.Services.AddScoped<INeedServices, NeedServices>();
+		builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 	}
 
 }
