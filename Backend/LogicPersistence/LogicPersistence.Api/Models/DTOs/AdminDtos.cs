@@ -45,7 +45,7 @@ public class AdminCreateDto
 
 public class AdminUpdateDto 
 {
-    [Required]
+   [Required]
     public int id { get; set; }
 
 	[Required]
