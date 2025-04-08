@@ -5,7 +5,7 @@ class AuthController {
   final TextEditingController passwordController = TextEditingController();
 
   void login() {
-    String email = emailController.text;
+    String email = emailController.text.trim();
     String password = passwordController.text;
 
     print("Email: $email");
