@@ -65,7 +65,7 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpGet("locations")]
-		public async Task<IActionResult> GetAllLocationAsync() {
+		public async Task<IActionResult> GetAllLocationsAsync() {
 			try {
 				var locations = await _locationServices.GetAllLocationsAsync();
 				return Ok(locations);

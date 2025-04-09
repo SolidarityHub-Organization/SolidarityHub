@@ -89,10 +89,7 @@ class _TaskstableState extends State<Taskstable> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CreateTask()),
-                  );
+                  showCreateTaskModal(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

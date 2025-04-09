@@ -93,7 +93,7 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IVictimRepository, VictimRepository>();
 		builder.Services.AddScoped<IVictimServices, VictimServices>();
 		builder.Services.AddScoped<IVolunteerRepository, VolunteerRepository>();
-    	builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
+		builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
 		builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 		builder.Services.AddScoped<ISkillServices, SkillService>();
 		builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -101,8 +101,9 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 		builder.Services.AddScoped<ITaskServices, TaskServices>();
 		builder.Services.AddScoped<INeedRepository, NeedRepository>();
-    	builder.Services.AddScoped<INeedServices, NeedServices>();
+		builder.Services.AddScoped<INeedServices, NeedServices>();
 		builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+		builder.Services.AddScoped<ILocationServices, LocationServices>();
 	}
 
 }
