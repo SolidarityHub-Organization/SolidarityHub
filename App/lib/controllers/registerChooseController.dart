@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
+import '../services/auth_service.dart';
+import '../interface/schedules.dart';
+import 'dart:convert';
 
 class RegisterChooseController {
   final TextEditingController nameController = TextEditingController();
@@ -12,7 +15,7 @@ class RegisterChooseController {
 
   RegisterChooseController(this.userData);
 
-  void submitForm(String role) {
+  void submitForm(String role, BuildContext context) async {
     String name = nameController.text.trim();
     String surname = surnameController.text.trim();
     String birthDate = birthDateController.text.trim();
@@ -42,8 +45,13 @@ class RegisterChooseController {
 
     print("[RegisterChooseController] Datos personales guardados:");
     print(userData.toJson());
+    if (role.toLowerCase() == "voluntario") {
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => Schedules(userData: userData),),);
+    }
+    //Falta hacer el de afectado
   }
-
   bool _isValidPhone(String phone) {
     final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');
     return phoneRegex.hasMatch(phone);

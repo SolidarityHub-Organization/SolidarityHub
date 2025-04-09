@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
-import '../services/auth_service.dart';
+
+import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
+import '/interface/registerChoose.dart';
+import '../services/auth_service.dart';
 
 class RegisterController {
   final TextEditingController emailController = TextEditingController();
@@ -16,12 +18,13 @@ class RegisterController {
     return passwordController.text == repeatPasswordController.text;
   }
 
-  void register() {
+  void register(BuildContext context) async{
     userData.email = emailController.text.trim();
     userData.password = passwordController.text;
 
     print("Datos de login guardados en el modelo:");
-    print(userData.toJson());
+    print("Continua Registro");
+    Navigator.push(context, MaterialPageRoute( builder: (context) => RegisterChoose(userData),),);
   }
 
   void dispose() {
@@ -40,10 +43,6 @@ class RegisterController {
     Navigator.pushNamed(context, '/register');
   }
 
-  void continueRegister(BuildContext context) {
-    print("Continua Registro");
-    Navigator.pushNamed(context, '/registerChoose');
-  }
 }
 
 

@@ -1,22 +1,20 @@
 class UserRegistrationData {
-  // Datos de login
   String? email;
   String? password;
-
-  // Datos personales
   String? name;
   String? surname;
   String? birthDate;
   String? phone;
   String? role;
 
-  // Dirección
   String? addressLine1;
   String? addressLine2;
   String? country;
   String? province;
   String? city;
   String? postalCode;
+  String? schedule;
+  String? preferences;
 
   Map<String, dynamic> toJson() {
     return {
@@ -25,16 +23,22 @@ class UserRegistrationData {
       'name': name,
       'surname': surname,
       'birth_date': birthDate,
-      'phone': phone,
+      'prefix': "34",
+      'phone_number': phone,
       'role': role,
-      'address': {
+      'address': "calle",
+      'identification':2,
+      'schedule':schedule,
+      'preferences':preferences,
+      /*{
         'line1': addressLine1,
         'line2': addressLine2,
         'country': country,
         'province': province,
         'city': city,
         'postal_code': postalCode,
-      }
+      }*/
     };
   }
 }
+
