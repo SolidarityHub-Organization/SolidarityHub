@@ -35,7 +35,14 @@ public class VictimRepository : IVictimRepository {
 		return await connection.QueryFirstOrDefaultAsync<Victim>("SELECT * FROM victim where id = @id", new { id });
 	}
 
-	public async Task<Victim> UpdateVictimAsync(Victim victim) {
+	public async Task<Victim?> GetVictimByEmailAsync(string email) {
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = "SELECT * FROM victim WHERE email = @email";
+
+		return await connection.QuerySingleOrDefaultAsync<Victim>(sql, new { email });
+		
+	}
+		public async Task<Victim> UpdateVictimAsync(Victim victim) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
             UPDATE victim 
