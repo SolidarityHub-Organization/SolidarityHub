@@ -1,6 +1,8 @@
+using LogicPersistence.Api.Logic;
+
 namespace LogicPersistence.Api.Models;
 
-public class Volunteer {
+public class Volunteer : IUser{
 	// this id is used for many to many relationships (as volunteer_id) as a connection
 	public int id { get; set; }
 	public string email { get; set; } = string.Empty;

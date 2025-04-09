@@ -1,6 +1,8 @@
+using LogicPersistence.Api.Logic;
+
 namespace LogicPersistence.Api.Models;
 
-public class Victim {
+public class Victim : IUser{
 	public int id { get; set; }
 	public string email { get; set; } = string.Empty;
 	public string password { get; set; } = string.Empty;
