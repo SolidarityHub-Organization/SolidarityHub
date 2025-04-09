@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import '../models/user_registration_data.dart';
 
 class RegisterChooseController {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  String? selectedRole;
+
+  final UserRegistrationData userData;
+
+  RegisterChooseController(this.userData);
 
   void submitForm(String role) {
     String name = nameController.text.trim();
@@ -27,6 +33,15 @@ class RegisterChooseController {
     print('Fecha de nacimiento: $birthDate');
     print('Teléfono: $phone');
     print('Rol seleccionado: $role');
+
+    userData.name = nameController.text.trim();
+    userData.surname = surnameController.text.trim();
+    userData.birthDate = birthDateController.text.trim();
+    userData.phone = phoneController.text.trim();
+    userData.role = role;
+
+    print("[RegisterChooseController] Datos personales guardados:");
+    print(userData.toJson());
   }
 
   bool _isValidPhone(String phone) {

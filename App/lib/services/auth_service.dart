@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
   static Future<http.Response> login(String email, String password) async {
-    final url = Uri.parse('https://tuservidor.com/api/login');
+    final url = Uri.parse('https://localhost:50936/api/v1/login');
 
     return await http.post(
       url,
@@ -16,7 +16,7 @@ class AuthService {
   }
 
   static Future<http.Response> register(String email, String password) async {
-    final url = Uri.parse('https://tuservidor.com/api/register');
+    final url = Uri.parse('https://localhost:50936/api/v1/');
 
     return await http.post(
       url,

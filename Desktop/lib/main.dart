@@ -4,6 +4,7 @@ import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 import 'package:solidarityhub/populate_database.dart';
+import 'package:solidarityhub/LogicPresentation/map/map.dart';
 
 void main() {
   runApp(const MyApp());
@@ -209,12 +210,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CreateTask(),
+                        builder: (context) => const Loginadmin(),
                       ),
                     );
                   },
-                  icon: const Icon(Icons.task),
-                  label: const Text("Create Task"),
+                  icon: const Icon(Icons.login),
+                  label: const Text("Log in Admin"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -230,12 +231,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Loginadmin(),
+                        builder: (context) => const MapScreen(),
                       ),
                     );
                   },
-                  icon: const Icon(Icons.login),
-                  label: const Text("Log in Admin"),
+                  icon: const Icon(Icons.map),
+                  label: const Text("Open Map"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,

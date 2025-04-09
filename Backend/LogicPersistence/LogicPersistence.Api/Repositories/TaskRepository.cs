@@ -4,6 +4,8 @@ using LogicPersistence.Api.Repositories.Interfaces;
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
+using LogicPersistence.Api.Models.DTOs;
+using Newtonsoft.Json;
 
 public class TaskRepository : ITaskRepository {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
@@ -75,5 +77,41 @@ public class TaskRepository : ITaskRepository {
         return await connection.QueryAsync<Task>("SELECT * FROM task");
     }
 
+    public async Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync() {
+        using var connection = new NpgsqlConnection(connectionString);
+
+        const string sql = @"
+        SELECT 
+            t.id, 
+            t.name, 
+            t.description, 
+            t.admin_id, 
+            t.location_id, 
+            COALESCE(json_agg(json_build_object(
+                'id', v.id,
+                'email', v.email,
+                'name', v.name,
+                'surname', v.surname,
+                'prefix', v.prefix,
+                'phone_number', v.phone_number,
+                'address', v.address,
+                'identification', v.identification,
+                'location_id', v.location_id
+            )) FILTER (WHERE v.id IS NOT NULL), '[]') AS assigned_volunteersJson
+        FROM task t
+        LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+        LEFT JOIN volunteer v ON vt.volunteer_id = v.id
+        GROUP BY t.id";
+
+
+        var tasks = await connection.QueryAsync<TaskWithDetailsDto>(sql);
+
+        foreach (var task in tasks) {
+            task.assigned_volunteers = JsonConvert.DeserializeObject<IEnumerable<VolunteerDisplayDto>>(task.assigned_volunteersJson) ?? [];
+            task.assigned_volunteersJson = "";
+        }
+
+        return tasks;
+    }
 
 }

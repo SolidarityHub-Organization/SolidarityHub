@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../services/auth_service.dart';
+import '../models/user_registration_data.dart';
 
 class RegisterController {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final repeatPasswordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repeatPasswordController = TextEditingController();
+
+  final UserRegistrationData userData;
+
+  RegisterController(this.userData);
 
   bool validatePasswords() {
     return passwordController.text == repeatPasswordController.text;
   }
 
-  void register() async{
-    final email = emailController.text.trim();
-    final password = passwordController.text;
+  void register() {
+    userData.email = emailController.text.trim();
+    userData.password = passwordController.text;
 
-    print("Email: $email");
-    print("Contraseña: $password");
-    try {
-      final response = await AuthService.login(email, password); // Llamada al servicio
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print('Login exitoso');
-        print('Token recibido: ${data['token']}');
-      } else {
-        print('Error de login: ${response.statusCode}');
-        print('Mensaje: ${response.body}');
-      }
-    } catch (e) {
-      print('Error de conexión con el servidor: $e');
-    }
+    print("Datos de login guardados en el modelo:");
+    print(userData.toJson());
   }
 
   void dispose() {
