@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '/interface/registerChoose.dart';
+import '../services/auth_service.dart';
 
 class RegisterController {
   final TextEditingController emailController = TextEditingController();
@@ -20,7 +23,6 @@ class RegisterController {
     userData.password = passwordController.text;
 
     print("Datos de login guardados en el modelo:");
-
     print("Continua Registro");
     Navigator.push(context, MaterialPageRoute( builder: (context) => RegisterChoose(userData),),);
   }
