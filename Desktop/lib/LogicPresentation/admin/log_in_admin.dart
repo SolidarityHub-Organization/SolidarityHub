@@ -39,6 +39,39 @@ class _LoginadminState extends State<Loginadmin> {
     });
   }
 
+  Future<void> _attemptLogin() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://localhost:5170/api/v1/admins/LogInAdmin/${_emailController.text.trim()},${_passwordController.text}',
+        ),
+      );
+
+      if (!mounted) return; // make sure widget is still in the tree
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Dashboard(),
+          ),
+        );
+      } else if (response.statusCode == 401) {
+        setState(() {
+          _errorMessage = 'Credenciales inválidas';
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Error en el servidor';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error de conexión';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,76 +79,90 @@ class _LoginadminState extends State<Loginadmin> {
         backgroundColor: Color(0xFFF44336),
         body: Center(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  height: 100,
-                  alignment: Alignment.center,
-                ),
-                Text(
-                  "Solidarity Hub",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 100),
-
-                Container(
-                  height: 400,
-                  width: 500,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        Text(
-                          "Log in Admin",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFF44336),
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          "Bienvenido a Solidarity Hub",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        _userTextField(),
-                        SizedBox(height: 20),
-                        _passwordTextField(),
-                        SizedBox(height: 40),
-                        if (_errorMessage.isNotEmpty)
-                          Text(
-                            _errorMessage,
-                            style: TextStyle(
-                              color: Color(0xFFF44336),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        SizedBox(height: 20),
-                        _loginButton(),
-                      ],
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    //Spacer(),
+                    
+                    Image.asset(
+                      'assets/images/logo.png',
+                      height: 100,
+                      alignment: Alignment.center,
                     ),
-                  ),
+                    Text(
+                      "Solidarity Hub",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    
+                    //SizedBox(height: 100),
+                    Spacer(),
+
+                    Container(
+                      height: 400,
+                      width: 500,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            Text(
+                              "Log in Admin",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFF44336),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              "Bienvenido a Solidarity Hub",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            _userTextField(),
+                            SizedBox(height: 20),
+                            _passwordTextField(),
+                            SizedBox(height: 40),
+                            if (_errorMessage.isNotEmpty)
+                              Text(
+                                _errorMessage,
+                                style: TextStyle(
+                                  color: Color(0xFFF44336),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            SizedBox(height: 20),
+                            _loginButton(),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Spacer(),
+
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -140,6 +187,11 @@ class _LoginadminState extends State<Loginadmin> {
               labelText: 'Correo electronico',
             ),
             onChanged: (value) {},
+              onSubmitted: (_) {
+              if (_isFormValid) {
+                _attemptLogin();
+              }
+            },
           ),
         );
       },
@@ -164,6 +216,11 @@ class _LoginadminState extends State<Loginadmin> {
               labelText: 'Contraseña',
             ),
             onChanged: (value) {},
+            onSubmitted: (_) {
+              if (_isFormValid) {
+                _attemptLogin();
+              }
+            },
           ),
         );
       },
@@ -185,36 +242,7 @@ class _LoginadminState extends State<Loginadmin> {
           onPressed:
               !_isFormValid
                   ? null
-                  : () async {
-                    try {
-                      final response = await http.get(
-                        Uri.parse(
-                          'http://localhost:5170/api/v1/admins/LogInAdmin/${_emailController.text},${_passwordController.text}',
-                        ),
-                      );
-
-                      if (response.statusCode == 200) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Dashboard(),
-                          ),
-                        );
-                      } else if (response.statusCode == 401) {
-                        setState(() {
-                          _errorMessage = 'Credenciales inválidas';
-                        });
-                      } else {
-                        setState(() {
-                          _errorMessage = 'Error en el servidor';
-                        });
-                      }
-                    } catch (e) {
-                      setState(() {
-                        _errorMessage = 'Error de conexión';
-                      });
-                    }
-                  },
+                  : _attemptLogin,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
             child: Text(
