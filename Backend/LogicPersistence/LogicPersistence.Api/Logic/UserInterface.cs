@@ -1,4 +1,6 @@
 using LogicPersistence.Api.Models;
+using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Services;
 
 namespace LogicPersistence.Api.Logic
 {
@@ -14,41 +16,41 @@ namespace LogicPersistence.Api.Logic
 	    public string address { get; set; }
         public string identification { get; set; }
         public int? location_id { get; set; }
+
+		public Task<IUser> Save(ISignupServices _SignupServices);
     }
 
     public static class UserFactory
     {
-        public static IUser CreateUser(string role, int id, string email, string password, string name, string surname, int prefix, int phoneNumber, string address, string identification, int? locationId)
+        public static IUser CreateUser(SignupDto user)
         {
-            return role switch
+            return user.role switch
             {
                 "Victim" => new Victim
                 {
-                    id = id,
-                    email = email,
-                    password = password,
-                    name = name,
-                    surname = surname,
-                    prefix = prefix,
-                    phone_number = phoneNumber,
-                    address = address,
-                    identification = identification,
-                    location_id = locationId
+                    email = user.email,
+                    password = user.password,
+                    name = user.name,
+                    surname = user.surname,
+                    prefix = user.prefix,
+                    phone_number = user.phone_number,
+                    address = user.address,
+                    identification = user.identification,
+                    location_id = user.location_id
                 },
                 "Volunteer" => new Volunteer
                 {
-                    id = id,
-                    email = email,
-                    password = password,
-                    name = name,
-                    surname = surname,
-                    prefix = prefix,
-                    phone_number = phoneNumber,
-                    address = address,
-                    identification = identification,
-                    location_id = locationId
+                    email = user.email,
+                    password = user.password,
+                    name = user.name,
+                    surname = user.surname,
+                    prefix = user.prefix,
+                    phone_number = user.phone_number,
+                    address = user.address,
+                    identification = user.identification,
+                    location_id = user.location_id
                 },
-                _ => throw new ArgumentException("Invalid role type", nameof(role))
+                _ => throw new ArgumentException("Invalid role type", nameof(user.role))
             };
         }
     }

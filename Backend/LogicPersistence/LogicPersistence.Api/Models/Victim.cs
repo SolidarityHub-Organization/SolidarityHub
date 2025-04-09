@@ -1,4 +1,5 @@
 using LogicPersistence.Api.Logic;
+using LogicPersistence.Api.Services;
 
 namespace LogicPersistence.Api.Models;
 
@@ -22,4 +23,8 @@ public class Victim : IUser{
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
 	//public virtual Location Location { get; set; }
 	//public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
+
+	public async Task<IUser> Save(ISignupServices _signupServices) {
+		return await _signupServices.CreateVictimAsync(this);
+	}
 }
