@@ -1,16 +1,12 @@
 class UserRegistrationData {
-  // Datos de login
   String? email;
   String? password;
-
-  // Datos personales
   String? name;
   String? surname;
   String? birthDate;
   String? phone;
   String? role;
 
-  // Dirección
   String? addressLine1;
   String? addressLine2;
   String? country;

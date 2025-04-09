@@ -15,16 +15,15 @@ class AuthService {
     );
   }
 
-  static Future<http.Response> register(String email, String password) async {
+  static Future<http.Response> register(Map<String, dynamic> data) async {
     final url = Uri.parse('https://localhost:50936/api/v1/');
 
-    return await http.post(
+    final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
+      body: jsonEncode(data),
     );
+
+    return response;
   }
 }

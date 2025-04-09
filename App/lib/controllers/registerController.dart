@@ -16,12 +16,27 @@ class RegisterController {
     return passwordController.text == repeatPasswordController.text;
   }
 
-  void register() {
+  void register() async{
     userData.email = emailController.text.trim();
     userData.password = passwordController.text;
 
     print("Datos de login guardados en el modelo:");
     print(userData.toJson());
+
+    try {
+      final response = await AuthService.register(userData.toJson());
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        print("Registro exitoso");
+        print("Respuesta del servidor: $data");
+      } else {
+        print("Error en el registro: ${response.statusCode}");
+        print("Mensaje: ${response.body}");
+      }
+    } catch (e) {
+      print("Error de conexión con el servidor: $e");
+    }
   }
 
   void dispose() {
