@@ -32,7 +32,7 @@ Future<String> createTask(
       body: json.encode({
         "name": name,
         "description": description,
-        "admin_id": 1,
+        "admin_id": null,
         "location_id": selectedLocation,
         "volunteer_ids": selectedVolunteers,
       }),
@@ -160,7 +160,6 @@ class _CreateTaskModalState extends State<CreateTaskModal>
                     : Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Left column - Task details
                         Expanded(
                           flex: 2,
                           child: Column(
@@ -208,7 +207,6 @@ class _CreateTaskModalState extends State<CreateTaskModal>
                                         selectedLocation,
                                       );
 
-                                      // Close the modal and show a message
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(
                                         context,
@@ -234,13 +232,11 @@ class _CreateTaskModalState extends State<CreateTaskModal>
                           ),
                         ),
                         const SizedBox(width: 16),
-                        // Right column - Selections
                         Expanded(
                           flex: 1,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Location section
                               const Text(
                                 'Ubicación',
                                 style: TextStyle(
@@ -305,7 +301,6 @@ class _CreateTaskModalState extends State<CreateTaskModal>
                                         ),
                               ),
                               const SizedBox(height: 16),
-                              // Volunteers section
                               const Text(
                                 'Voluntarios disponibles',
                                 style: TextStyle(
