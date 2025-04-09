@@ -1,3 +1,5 @@
+using LogicPersistence.Api.Models;
+
 namespace LogicPersistence.Api.Logic
 {
     public interface IUser
@@ -16,12 +18,36 @@ namespace LogicPersistence.Api.Logic
 
     public static class UserFactory
     {
-        public static IUser CreateUser(string role, int id, string name, string email)
+        public static IUser CreateUser(string role, int id, string email, string password, string name, string surname, int prefix, int phoneNumber, string address, string identification, int? locationId)
         {
             return role switch
             {
-                "Victim" => new VictimUser { Id = id, Name = name, Email = email },
-                "Volunteer" => new VolunteerUser { Id = id, Name = name, Email = email },
+                "Victim" => new Victim
+                {
+                    id = id,
+                    email = email,
+                    password = password,
+                    name = name,
+                    surname = surname,
+                    prefix = prefix,
+                    phone_number = phoneNumber,
+                    address = address,
+                    identification = identification,
+                    location_id = locationId
+                },
+                "Volunteer" => new Volunteer
+                {
+                    id = id,
+                    email = email,
+                    password = password,
+                    name = name,
+                    surname = surname,
+                    prefix = prefix,
+                    phone_number = phoneNumber,
+                    address = address,
+                    identification = identification,
+                    location_id = locationId
+                },
                 _ => throw new ArgumentException("Invalid role type", nameof(role))
             };
         }
