@@ -1,6 +1,6 @@
 import 'package:app/interface/pantallaInicio.dart';
 import 'package:flutter/material.dart';
-import 'interface/loginUI.dart'; // Importamos la pantalla de login
+import 'interface/loginUI.dart';
 import 'interface/register.dart';
 import 'interface/registerChoose.dart';
 
