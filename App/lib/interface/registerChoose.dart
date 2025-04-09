@@ -88,7 +88,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _controller.submitForm('Afectado'),
+                          onPressed: () => _controller.submitForm('Afectado', context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -102,7 +102,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _controller.submitForm('Voluntario'),
+                          onPressed: () => _controller.submitForm('Voluntario',context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),

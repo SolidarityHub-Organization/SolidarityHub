@@ -43,13 +43,6 @@ class RegisterController {
     Navigator.pushNamed(context, '/register');
   }
 
-/*  void continueRegister(BuildContext context) {
-
-    userData.email = emailController.text;
-    userData.password = passwordController.text;
-
-  }
-  */
 }
 
 

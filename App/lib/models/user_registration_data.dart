@@ -13,6 +13,8 @@ class UserRegistrationData {
   String? province;
   String? city;
   String? postalCode;
+  String? schedule;
+  String? preferences;
 
   Map<String, dynamic> toJson() {
     return {
@@ -26,6 +28,8 @@ class UserRegistrationData {
       'role': role,
       'address': "calle",
       'identification':2,
+      'schedule':schedule,
+      'preferences':preferences,
       /*{
         'line1': addressLine1,
         'line2': addressLine2,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
+import '../interface/schedules.dart';
 import 'dart:convert';
 
 class RegisterChooseController {
@@ -14,7 +15,7 @@ class RegisterChooseController {
 
   RegisterChooseController(this.userData);
 
-  void submitForm(String role) async {
+  void submitForm(String role, BuildContext context) async {
     String name = nameController.text.trim();
     String surname = surnameController.text.trim();
     String birthDate = birthDateController.text.trim();
@@ -44,24 +45,13 @@ class RegisterChooseController {
 
     print("[RegisterChooseController] Datos personales guardados:");
     print(userData.toJson());
-
-    try {
-      final response = await AuthService.register(userData.toJson());
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        print("Registro exitoso");
-        print("Respuesta del servidor: $data");
-      } else {
-        print("Error en el registro: ${response.statusCode}");
-        print("Mensaje: ${response.body}");
-      }
-    } catch (e) {
-      print("Error de conexión con el servidor: $e");
+    if (role.toLowerCase() == "voluntario") {
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => Schedules(userData: userData),),);
     }
-
+    //Falta hacer el de afectado
   }
-
   bool _isValidPhone(String phone) {
     final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');
     return phoneRegex.hasMatch(phone);
