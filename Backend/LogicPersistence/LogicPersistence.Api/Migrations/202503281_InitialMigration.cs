@@ -62,7 +62,11 @@ public class InitialMigration : Migration {
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
 			.WithColumn("latitude").AsDouble().NotNullable()
 			.WithColumn("longitude").AsDouble().NotNullable()
+			.WithColumn("victim_id").AsInt32().Nullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable()
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Execute.Sql("CREATE UNIQUE INDEX unique_location_victim_not_null ON location(victim_id) WHERE victim_id IS NOT NULL;");
+		Execute.Sql("CREATE UNIQUE INDEX unique_location_volunteer_not_null ON location(volunteer_id) WHERE volunteer_id IS NOT NULL;");
 
 		// Create tables in proper order to maintain references
 		Create.Table("victim")
@@ -77,6 +81,7 @@ public class InitialMigration : Migration {
 			.WithColumn("identification").AsString(255).NotNullable()
 			.WithColumn("location_id").AsInt32().Nullable().ForeignKey("FK_Victim_Location", "location", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Execute.Sql("CREATE UNIQUE INDEX unique_victim_location_not_null ON victim(location_id) WHERE location_id IS NOT NULL;");
 
 		Create.Table("volunteer")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
@@ -90,6 +95,7 @@ public class InitialMigration : Migration {
 			.WithColumn("identification").AsString(255).NotNullable()
 			.WithColumn("location_id").AsInt32().Nullable().ForeignKey("FK_Volunteer_Location", "location", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Execute.Sql("CREATE UNIQUE INDEX unique_volunteer_location_not_null ON volunteer(location_id) WHERE location_id IS NOT NULL;");
 
 		Create.Table("admin")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
@@ -123,7 +129,6 @@ public class InitialMigration : Migration {
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Admin", "admin", "id")
 			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Victim", "victim", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
-
 		Execute.Sql("ALTER TABLE physical_donation ADD CONSTRAINT CK_physical_donation_quantity CHECK (quantity > 0);");
 
 		Create.Table("monetary_donation")
@@ -138,7 +143,6 @@ public class InitialMigration : Migration {
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Admin", "admin", "id")
 			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Victim", "victim", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
-
 		Execute.Sql("ALTER TABLE monetary_donation ADD CONSTRAINT CK_monetary_donation_amount CHECK (amount > 0);");
 
 		Create.Table("place")

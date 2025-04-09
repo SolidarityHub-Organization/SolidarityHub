@@ -11,4 +11,5 @@ public interface IAdminRepository
     Task<Admin?> GetAdminByIdAsync(int id);
     Task<Admin?> GetAdminByEmailAsync(string email);
     Task<Admin?> GetAdminByJurisdictionAsync(string jurisdiction);
+    Task<bool> EmailExistsAsync(string email);
 }

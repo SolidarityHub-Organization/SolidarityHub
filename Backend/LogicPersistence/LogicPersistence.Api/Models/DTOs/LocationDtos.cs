@@ -13,9 +13,7 @@ public class LocationCreateDto
     public double longitude { get; set; }
 
     // Only one of these should be provided
-    [Required]
     public int? victim_id { get; set; }
-    [Required]
     public int? volunteer_id { get; set; }
 }
 
@@ -32,9 +30,7 @@ public class LocationUpdateDto
     [Range(-180, 180)]
     public double longitude { get; set; }
 
-    [Required]
     public int? victim_id { get; set; }
-    [Required]
     public int? volunteer_id { get; set; }
 }
 

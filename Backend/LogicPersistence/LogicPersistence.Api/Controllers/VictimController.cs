@@ -30,7 +30,7 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		[HttpGet("victims/{id}", Name = "GetVictimById")]
+		[HttpGet("victims/{id}", Name = "GetVictimByIdAsync")]
 		public async Task<IActionResult> GetVictimByIdAsync(int id) {
 			try {
 				var victim = await _victimServices.GetVictimByIdAsync(id);

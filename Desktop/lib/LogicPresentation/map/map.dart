@@ -27,6 +27,7 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _fetchVictimLocations() async {
     try {
       final locations = await _userServices.fetchLocations();
+      print(locations);
       setState(() {
         _markers =
             locations.map((location) {

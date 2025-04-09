@@ -23,7 +23,13 @@ namespace LogicPersistence.Api.Services
                 throw new ArgumentNullException(nameof(adminCreateDto));
             }
 
-            var admin = await _adminRepository.CreateAdminAsync(adminCreateDto.ToAdmin());
+            var admin = adminCreateDto.ToAdmin();
+            if (await _adminRepository.EmailExistsAsync(admin.email))
+            {
+                throw new Exception("Email already in use.");
+            }
+
+            admin = await _adminRepository.CreateAdminAsync(admin);
             if (admin == null)
             {
                 throw new InvalidOperationException("Failed to create admin.");
@@ -53,9 +59,14 @@ namespace LogicPersistence.Api.Services
             {
                 throw new KeyNotFoundException($"Admin with id {id} not found.");
             }
-            var updatedAdmin = adminUpdateDto.ToAdmin();
-            await _adminRepository.UpdateAdminAsync(updatedAdmin);
-            return updatedAdmin;
+
+            var admin = adminUpdateDto.ToAdmin();
+            if (await _adminRepository.EmailExistsAsync(admin.email))
+            {
+                throw new Exception("Email already in use.");
+            }
+            await _adminRepository.UpdateAdminAsync(admin);
+            return admin;
         }
 
         public async System.Threading.Tasks.Task DeleteAdminAsync(int id)

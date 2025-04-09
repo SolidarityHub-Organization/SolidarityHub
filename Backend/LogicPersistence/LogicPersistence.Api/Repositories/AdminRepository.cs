@@ -9,11 +9,7 @@ public class AdminRepository : IAdminRepository
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
     public async Task<Admin> CreateAdminAsync(Admin admin)
-    {;
-        if (await EmailExistsAsync(admin.email))
-        {
-            throw new Exception("El email ya está en uso.");
-        }
+    {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO admin (jurisdiction, email, password, name, surname, prefix, phone_number, address, identification)
@@ -24,11 +20,7 @@ public class AdminRepository : IAdminRepository
     }
 
     public async Task<Admin> UpdateAdminAsync(Admin admin)
-    {      
-        if (await EmailExistsAsync(admin.email))
-        {
-            throw new Exception("El email ya está en uso.");
-        }
+    {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             UPDATE admin

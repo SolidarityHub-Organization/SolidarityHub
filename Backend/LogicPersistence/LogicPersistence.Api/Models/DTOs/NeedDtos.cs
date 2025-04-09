@@ -16,10 +16,8 @@ public class NeedCreateDto
     [Required]
     public UrgencyLevel urgencyLevel { get; set; }
 
-    [Required]
     public int? victim_id { get; set; }
 
-	[Required]
     public int? admin_id { get; set; }
 }
 
@@ -39,10 +37,8 @@ public class NeedUpdateDto
 	[Required]
     public UrgencyLevel urgencyLevel { get; set; }
 
-    [Required]
     public int? victim_id { get; set; }
 
-	[Required]
 	public int? admin_id { get; set; }
 }
 

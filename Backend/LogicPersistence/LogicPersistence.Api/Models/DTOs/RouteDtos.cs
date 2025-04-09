@@ -19,7 +19,6 @@ public class RouteCreateDto
     [Required]
     public TransportType transport_type { get; set; }
 
-    [Required]
     public int? admin_id { get; set; }
 
     [Required]
@@ -54,7 +53,6 @@ public class RouteUpdateDto
     [Required]
     public int end_location_id { get; set; }
 
-    [Required]
     public int? admin_id { get; set; }
 }
 

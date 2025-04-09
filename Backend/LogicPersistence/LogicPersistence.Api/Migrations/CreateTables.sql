@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS "volunteer" (
 
     FOREIGN KEY ("location_id") REFERENCES "location"("id")
 );
+CREATE UNIQUE INDEX unique_volunteer_location_not_null ON volunteer(location_id) WHERE location_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS "victim" (
     "id" SERIAL PRIMARY KEY,
@@ -97,6 +98,7 @@ CREATE TABLE IF NOT EXISTS "victim" (
 
     FOREIGN KEY ("location_id") REFERENCES "location"("id")
 );
+CREATE UNIQUE INDEX unique_victim_location_not_null ON victim(location_id) WHERE location_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS "admin" (
     "id" SERIAL PRIMARY KEY,
@@ -116,8 +118,12 @@ CREATE TABLE IF NOT EXISTS "location" (
     "id" SERIAL PRIMARY KEY,
     "latitude" DOUBLE PRECISION NOT NULL,
     "longitude" DOUBLE PRECISION NOT NULL,
+    "victim_id" INT,
+    "volunteer_id" INT,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE UNIQUE INDEX unique_location_victim_not_null ON location(victim_id) WHERE victim_id IS NOT NULL;
+CREATE UNIQUE INDEX unique_location_volunteer_not_null ON location(volunteer_id) WHERE volunteer_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS "affected_zone" (
     "id" SERIAL PRIMARY KEY,
