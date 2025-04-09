@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../controllers/registerController.dart'; // Importamos el controlador
+import '../controllers/registerController.dart';
+import '../models/user_registration_data.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -7,8 +8,16 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final RegisterController registerController = RegisterController();
+  late UserRegistrationData userData;
+  late RegisterController registerController;
   bool _showError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    userData = UserRegistrationData();
+    registerController = RegisterController(userData);
+  }
 
   @override
   void dispose() {
@@ -22,7 +31,7 @@ class _RegisterState extends State<Register> {
     });
 
     if (!_showError) {
-      registerController.register();
+      registerController.register(context);
     }
   }
 
@@ -110,7 +119,7 @@ class _RegisterState extends State<Register> {
                     ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => registerController.continueRegister(context),
+                    onPressed: () => registerController.register(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
