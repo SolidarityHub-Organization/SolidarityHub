@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import '../controllers/registerChooseController.dart';
+import '../models/user_registration_data.dart';
 
 class RegisterChoose extends StatefulWidget {
+  final UserRegistrationData userData;
+  RegisterChoose(this.userData);
+
   @override
   _RegisterChooseState createState() => _RegisterChooseState();
 }
 
 class _RegisterChooseState extends State<RegisterChoose> {
-  final RegisterChooseController _controller = RegisterChooseController();
+  late RegisterChooseController _controller = RegisterChooseController(userData: UserRegistrationData());
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = RegisterChooseController(widget.userData);
+  }
 
   @override
   Widget build(BuildContext context) {
