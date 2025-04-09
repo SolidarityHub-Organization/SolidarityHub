@@ -47,3 +47,15 @@ public class TaskDisplayDto {
     public int? admin_id { get; set; }
     public int location_id { get; set; }
 }
+
+public class TaskWithDetailsDto {
+    public int id { get; set; }
+    public string name { get; set; } = string.Empty;
+    public string description { get; set; } = string.Empty;
+    public int? admin_id { get; set; }
+    public int location_id { get; set; }
+    // Temporaryly using string to store JSON data as dapper
+    // does not support deserializing JSON to a list of objects directly.
+    public string assigned_volunteersJson { get; set; } = "[]";
+    public IEnumerable<VolunteerDisplayDto> assigned_volunteers { get; set; } = [];
+}

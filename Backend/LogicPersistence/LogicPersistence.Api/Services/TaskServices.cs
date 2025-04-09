@@ -64,5 +64,13 @@ namespace LogicPersistence.Api.Services {
             }
             return victims;
         }
+
+        public async Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync() {
+            var tasks = await _taskRepository.GetAllTasksWithDetailsAsync();
+            if (tasks == null) {
+                throw new InvalidOperationException("Failed to retrieve tasks with details.");
+            }
+            return tasks;
+        }
     }
 }

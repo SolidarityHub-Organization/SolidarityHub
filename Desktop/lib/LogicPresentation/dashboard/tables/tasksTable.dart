@@ -24,13 +24,14 @@ class _TaskstableState extends State<Taskstable> {
   Future<void> _fetchTasks() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5170/api/v1/tasks'),
+        Uri.parse('http://localhost:5170/api/v1/tasksWithDetails'),
       ); // Ajusta la URL según tu API
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
           tasks =
               data.map((task) {
+                print(task);
                 return {
                   'title':
                       task['name'] ??
@@ -41,8 +42,14 @@ class _TaskstableState extends State<Taskstable> {
                   'description': task['description'] ?? 'Sin descripción',
                   'skills': task['skills'] ?? [], // Lista vacía si es null
                   'volunteer':
-                      task['volunteer_name'] ??
-                      'No asignado', // Valor predeterminado
+                        (task['assigned_volunteers'] as List).isNotEmpty
+                          ? (task['assigned_volunteers'] as List)
+                              .map(
+                                (volunteer) =>
+                                    '${volunteer['name']} ${volunteer['surname']}',
+                              )
+                              .join(', ')
+                          : 'No asignado',
                   'priority':
                       task['priority'] ??
                       'Sin prioridad', // Valor predeterminado
