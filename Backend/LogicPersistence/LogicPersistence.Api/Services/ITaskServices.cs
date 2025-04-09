@@ -7,5 +7,6 @@ namespace LogicPersistence.Api.Services {
 		Task<Models.Task> UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto);
 		Task DeleteTaskAsync(int id);
 		Task<IEnumerable<Models.Task>> GetAllTasksAsync();
+		Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync();
 	}
 }

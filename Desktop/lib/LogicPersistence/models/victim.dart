@@ -7,6 +7,7 @@ class Victim {
   final int phoneNumber;
   final String address;
   final String identification;
+  final int locationId;
 
   Victim({
     required this.id,
@@ -17,6 +18,7 @@ class Victim {
     required this.phoneNumber,
     required this.address,
     required this.identification,
+    required this.locationId,
   });
 
   factory Victim.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Victim {
       phoneNumber: json['phone_number'],
       address: json['address'],
       identification: json['identification'],
+      locationId: json['location_id'],
     );
   }
 }
