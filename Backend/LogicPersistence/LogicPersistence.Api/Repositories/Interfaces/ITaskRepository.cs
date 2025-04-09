@@ -1,3 +1,5 @@
+using LogicPersistence.Api.Models.DTOs;
+
 namespace LogicPersistence.Api.Repositories;
 
 public interface ITaskRepository {
@@ -6,4 +8,5 @@ public interface ITaskRepository {
     Task<bool> DeleteTaskAsync(int id);
     Task<IEnumerable<Models.Task>> GetAllTasksAsync();
     Task<Models.Task?> GetTaskByIdAsync(int id);
+    Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync();
 }

@@ -16,7 +16,7 @@ class AuthService {
   }
 
   static Future<http.Response> register(String email, String password) async {
-    final url = Uri.parse('https://localhost:50936/api/v1/login');
+    final url = Uri.parse('https://localhost:50936/api/v1/');
 
     return await http.post(
       url,
