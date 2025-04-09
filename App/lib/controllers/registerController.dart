@@ -18,7 +18,7 @@ class RegisterController {
     print("Email: $email");
     print("Contraseña: $password");
     try {
-      final response = await AuthService.login(email, password); // Llamada al servicio
+      final response = await AuthService.register(email, password); // Llamada al servicio
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
