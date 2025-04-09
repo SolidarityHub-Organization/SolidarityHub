@@ -33,8 +33,9 @@ class _LoginadminState extends State<Loginadmin> {
 
   void _validateForm() {
     setState(() {
-      _isFormValid = _emailController.text.isNotEmpty && 
-                     _passwordController.text.isNotEmpty;
+      _isFormValid =
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
     });
   }
 
@@ -42,7 +43,7 @@ class _LoginadminState extends State<Loginadmin> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromARGB(255, 197, 50, 50),
+        backgroundColor: Color(0xFFF44336),
         body: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -78,7 +79,7 @@ class _LoginadminState extends State<Loginadmin> {
                           "Log in Admin",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color.fromARGB(255, 197, 50, 50),
+                            color: Color(0xFFF44336),
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
                           ),
@@ -102,13 +103,13 @@ class _LoginadminState extends State<Loginadmin> {
                           Text(
                             _errorMessage,
                             style: TextStyle(
-                              color: Colors.red,
+                              color: Color(0xFFF44336),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 20),
+                        SizedBox(height: 20),
                         _loginButton(),
                       ],
                     ),
@@ -181,34 +182,39 @@ class _LoginadminState extends State<Loginadmin> {
             ),
             disabledBackgroundColor: Colors.grey,
           ),
-          onPressed: !_isFormValid ? null : () async {
-            try {
-              final response = await http.get(
-                Uri.parse(
-                  'http://localhost:5170/api/v1/admins/LogInAdmin/${_emailController.text},${_passwordController.text}',
-                ),
-              );
+          onPressed:
+              !_isFormValid
+                  ? null
+                  : () async {
+                    try {
+                      final response = await http.get(
+                        Uri.parse(
+                          'http://localhost:5170/api/v1/admins/LogInAdmin/${_emailController.text},${_passwordController.text}',
+                        ),
+                      );
 
-              if (response.statusCode == 200) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Dashboard()),
-                );
-              } else if (response.statusCode == 401) {
-                setState(() {
-                  _errorMessage = 'Credenciales inválidas';
-                });
-              } else {
-                setState(() {
-                  _errorMessage = 'Error en el servidor';
-                });
-              }
-            } catch (e) {
-              setState(() {
-                _errorMessage = 'Error de conexión';
-              });
-            }
-          },
+                      if (response.statusCode == 200) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Dashboard(),
+                          ),
+                        );
+                      } else if (response.statusCode == 401) {
+                        setState(() {
+                          _errorMessage = 'Credenciales inválidas';
+                        });
+                      } else {
+                        setState(() {
+                          _errorMessage = 'Error en el servidor';
+                        });
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _errorMessage = 'Error de conexión';
+                      });
+                    }
+                  },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
             child: Text(
