@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import '../services/auth_service.dart';
 import '../models/user_registration_data.dart';
+import '/interface/registerChoose.dart';
 
 class RegisterController {
   final TextEditingController emailController = TextEditingController();
@@ -16,27 +15,14 @@ class RegisterController {
     return passwordController.text == repeatPasswordController.text;
   }
 
-  void register() async{
+  void register(BuildContext context) async{
     userData.email = emailController.text.trim();
     userData.password = passwordController.text;
 
     print("Datos de login guardados en el modelo:");
-    print(userData.toJson());
 
-    try {
-      final response = await AuthService.register(userData.toJson());
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        print("Registro exitoso");
-        print("Respuesta del servidor: $data");
-      } else {
-        print("Error en el registro: ${response.statusCode}");
-        print("Mensaje: ${response.body}");
-      }
-    } catch (e) {
-      print("Error de conexión con el servidor: $e");
-    }
+    print("Continua Registro");
+    Navigator.push(context, MaterialPageRoute( builder: (context) => RegisterChoose(userData),),);
   }
 
   void dispose() {
@@ -55,10 +41,13 @@ class RegisterController {
     Navigator.pushNamed(context, '/register');
   }
 
-  void continueRegister(BuildContext context) {
-    print("Continua Registro");
-    Navigator.pushNamed(context, '/registerChoose');
+/*  void continueRegister(BuildContext context) {
+
+    userData.email = emailController.text;
+    userData.password = passwordController.text;
+
   }
+  */
 }
 
 

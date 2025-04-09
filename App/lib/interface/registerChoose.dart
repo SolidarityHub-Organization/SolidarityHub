@@ -11,7 +11,7 @@ class RegisterChoose extends StatefulWidget {
 }
 
 class _RegisterChooseState extends State<RegisterChoose> {
-  late RegisterChooseController _controller = RegisterChooseController(userData: UserRegistrationData());
+  late RegisterChooseController _controller;
 
   @override
   void initState() {

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         '/inicio': (context) => SplashScreen(), // Pantalla principal
         '/login': (context) => loginUI(), // Ruta nombrada para LogIn
         '/register': (context) => Register(), // Ruta nombrada para registro
-        '/registerChoose': (context) => RegisterChoose(), // Ruta nombrada para registro especifico
+        //'/registerChoose': (context) => RegisterChoose(), // Ruta nombrada para registro especifico
       }
     );
   }
