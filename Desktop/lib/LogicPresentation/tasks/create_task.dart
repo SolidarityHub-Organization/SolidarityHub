@@ -2,22 +2,33 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicPersistence/models/location.dart';
+import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
 Future<void> showCreateTaskModal(
   BuildContext context,
   VoidCallback onTaskCreated,
+  TaskWithDetails? taskToEdit,
 ) {
   return showDialog(
     context: context,
-    builder: (context) => CreateTaskModal(onTaskCreated: onTaskCreated),
+    builder:
+        (context) => CreateTaskModal(
+          onTaskCreated: onTaskCreated,
+          taskToEdit: taskToEdit,
+        ),
   );
 }
 
 class CreateTaskModal extends StatefulWidget {
   final VoidCallback onTaskCreated;
+  final TaskWithDetails? taskToEdit;
 
-  const CreateTaskModal({super.key, required this.onTaskCreated});
+  const CreateTaskModal({
+    super.key,
+    required this.onTaskCreated,
+    this.taskToEdit,
+  });
 
   @override
   State<CreateTaskModal> createState() => _CreateTaskModalState();
@@ -28,26 +39,38 @@ Future<String> createTask({
   required String description,
   required List<int> selectedVolunteers,
   required int selectedLocation,
+  int? taskId,
 }) async {
-  final url = Uri.parse("http://localhost:5170/api/v1/tasks");
+  final url =
+      taskId == null
+          ? Uri.parse("http://localhost:5170/api/v1/tasks")
+          : Uri.parse("http://localhost:5170/api/v1/tasks/$taskId");
 
   try {
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        "name": name,
-        "description": description,
-        "admin_id": null,
-        "location_id": selectedLocation,
-        "volunteer_ids": selectedVolunteers,
-      }),
-    );
+    final Map<String, dynamic> taskData = {
+      "name": name,
+      "description": description,
+      "admin_id": null,
+      "location_id": selectedLocation,
+      "volunteer_ids": selectedVolunteers,
+    };
 
-    if (response.statusCode >= 200 && response.statusCode <= 299) {
+    if (taskId != null) {
+      taskData['id'] = taskId;
+    }
+
+    final response =
+        http.Request(taskId == null ? 'POST' : 'PUT', url)
+          ..headers.addAll({'Content-Type': 'application/json'})
+          ..body = json.encode(taskData);
+
+    final streamedResponse = await response.send();
+    final responseBody = await http.Response.fromStream(streamedResponse);
+
+    if (responseBody.statusCode >= 200 && responseBody.statusCode <= 299) {
       return "Task has been added";
     } else {
-      return "Error: ${response.statusCode} - ${response.body}";
+      return "Error: ${responseBody.statusCode} - ${responseBody.body}";
     }
   } catch (error) {
     return "Error: $error";
@@ -88,6 +111,16 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   void initState() {
     super.initState();
     _loadData();
+
+    if (widget.taskToEdit != null) {
+      nameController.text = widget.taskToEdit!.name;
+      descriptionController.text = widget.taskToEdit!.description;
+      selectedLocation = widget.taskToEdit!.locationId;
+      selectedVolunteers =
+          widget.taskToEdit!.assignedVolunteers
+              .map((volunteer) => volunteer.id)
+              .toList();
+    }
   }
 
   Future<void> _loadData() async {
@@ -99,7 +132,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       setState(() {
         volunteers = results[0] as List<Volunteer>;
         locations = results[1] as List<Location>;
-        if (locations.isNotEmpty) {
+        if (locations.isNotEmpty && widget.taskToEdit == null) {
           selectedLocation = locations[0].id;
         }
         isLoading = false;
@@ -132,6 +165,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       description: description,
       selectedVolunteers: selectedVolunteers,
       selectedLocation: selectedLocation,
+      taskId: widget.taskToEdit?.id,
     );
 
     if (result == "Task has been added") {
@@ -166,7 +200,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       ),
       child: Column(
         children: [
-          _buildHeader(),
+          _buildHeader(widget.taskToEdit != null),
           const Divider(),
           Expanded(
             child:
@@ -179,13 +213,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isEditing) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'Crear Tarea',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        Text(
+          isEditing ? 'Editar Tarea' : 'Crear Tarea',
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         IconButton(
           icon: const Icon(Icons.close),
@@ -212,7 +246,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 maxLines: 3,
               ),
               const Spacer(),
-              _buildCreateButton(),
+              _buildCreateButton(widget.taskToEdit != null),
             ],
           ),
         ),
@@ -258,7 +292,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     );
   }
 
-  Widget _buildCreateButton() {
+  Widget _buildCreateButton(bool isEditing) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -268,7 +302,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         onPressed: _handleCreateTask,
-        child: const Text('Crear Tarea'),
+        child: Text(isEditing ? 'Editar Tarea' : 'Crear Tarea'),
       ),
     );
   }
@@ -279,6 +313,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     required int selectedValue,
     required ValueChanged<int?> onChanged,
   }) {
+    print(selectedValue);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

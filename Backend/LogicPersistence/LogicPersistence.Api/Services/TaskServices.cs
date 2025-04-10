@@ -41,7 +41,7 @@ namespace LogicPersistence.Api.Services {
                 throw new KeyNotFoundException($"Task with id {id} not found.");
             }
             var updatedTask = taskUpdateDto.ToTask();
-            await _taskRepository.UpdateTaskAsync(updatedTask);
+            await _taskRepository.UpdateTaskAsync(updatedTask, taskUpdateDto.volunteer_ids);
             return updatedTask;
         }
 

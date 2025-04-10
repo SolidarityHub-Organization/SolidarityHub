@@ -36,6 +36,9 @@ public class TaskUpdateDto {
 
 	[Required]
 	public int location_id { get; set; }
+	
+	[Required]
+	public int[] volunteer_ids { get; set; } = [];
 }
 
 public class TaskDisplayDto {

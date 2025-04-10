@@ -76,7 +76,7 @@ class _TaskstableState extends State<Taskstable> {
                 onPressed: () {
                   showCreateTaskModal(context, () {
                     _fetchTasks();
-                  });
+                  }, null);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -183,7 +183,7 @@ class _TaskstableState extends State<Taskstable> {
                                       '- $skill',
                                       style: const TextStyle(fontSize: 14),
                                     );
-                                  }).toList(),
+                                  }),
                                   const SizedBox(height: 8),
                                   Column(
                                     crossAxisAlignment:
@@ -200,8 +200,7 @@ class _TaskstableState extends State<Taskstable> {
                                         task.assignedVolunteers.isNotEmpty
                                             ? task.assignedVolunteers
                                                 .map(
-                                                  (volunteer) =>
-                                                      volunteer['name'],
+                                                  (volunteer) => volunteer.name,
                                                 )
                                                 .join(', ')
                                             : 'Sin asignar',
@@ -228,7 +227,9 @@ class _TaskstableState extends State<Taskstable> {
                                 const SizedBox(height: 8),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Acción para editar
+                                    showCreateTaskModal(context, () {
+                                      _fetchTasks();
+                                    }, task);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
