@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'dart:convert';
 
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 
 class Taskstable extends StatefulWidget {
-  const Taskstable({Key? key}) : super(key: key);
+  const Taskstable({super.key});
 
   @override
   State<Taskstable> createState() => _TaskstableState();
 }
 
 class _TaskstableState extends State<Taskstable> {
-  List<Map<String, dynamic>> tasks = [];
+  List<Task> tasks = [];
   bool isLoading = true;
 
   @override
@@ -25,45 +26,19 @@ class _TaskstableState extends State<Taskstable> {
     try {
       final response = await http.get(
         Uri.parse('http://localhost:5170/api/v1/tasksWithDetails'),
-      ); // Ajusta la URL según tu API
+      );
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
+
         setState(() {
-          tasks =
-              data.map((task) {
-                print(task);
-                return {
-                  'title':
-                      task['name'] ??
-                      'Sin título', // Valor predeterminado si es null
-                  'location':
-                      task['location_name'] ??
-                      'Ubicación desconocida', // Valor predeterminado
-                  'description': task['description'] ?? 'Sin descripción',
-                  'skills': task['skills'] ?? [], // Lista vacía si es null
-                  'volunteer':
-                      (task['assigned_volunteers'] as List).isNotEmpty
-                          ? (task['assigned_volunteers'] as List)
-                              .map(
-                                (volunteer) =>
-                                    '${volunteer['name']} ${volunteer['surname']}',
-                              )
-                              .join(', ')
-                          : 'No asignado',
-                  'priority':
-                      task['priority'] ??
-                      'Sin prioridad', // Valor predeterminado
-                  'status':
-                      task['status'] ?? 'Sin estado', // Valor predeterminado
-                };
-              }).toList();
+          tasks = data.map((taskJson) => Task.fromJson(taskJson)).toList();
           isLoading = false;
         });
       } else {
         throw Exception('Error al obtener las tareas: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error al obtener las tareas: $e');
       setState(() {
         isLoading = false;
       });
@@ -150,7 +125,7 @@ class _TaskstableState extends State<Taskstable> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        task['title'],
+                                        task.name,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -159,7 +134,7 @@ class _TaskstableState extends State<Taskstable> {
                                       Row(
                                         children: [
                                           Text(
-                                            task['priority'],
+                                            "Sin prioridad",
                                             style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -168,7 +143,7 @@ class _TaskstableState extends State<Taskstable> {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            task['status'],
+                                            "Sin estado",
                                             style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -181,7 +156,7 @@ class _TaskstableState extends State<Taskstable> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    task['location'],
+                                    "Ubicación desconocida",
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
@@ -189,7 +164,7 @@ class _TaskstableState extends State<Taskstable> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    task['description'],
+                                    task.description,
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                   const SizedBox(height: 8),
@@ -200,31 +175,37 @@ class _TaskstableState extends State<Taskstable> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  ...task['skills'].map<Widget>((skill) {
+                                  ...[].map<Widget>((skill) {
                                     return Text(
                                       '- $skill',
                                       style: const TextStyle(fontSize: 14),
                                     );
                                   }).toList(),
                                   const SizedBox(height: 8),
-                                  if (task['volunteer'] != null)
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Asignado a:',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Asignado a:',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        Text(
-                                          task['volunteer'],
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      Text(
+                                        task.assignedVolunteers.isNotEmpty
+                                            ? task.assignedVolunteers
+                                                .map(
+                                                  (volunteer) =>
+                                                      volunteer['name'],
+                                                )
+                                                .join(', ')
+                                            : 'Sin asignar',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
