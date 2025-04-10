@@ -34,7 +34,7 @@ class _LoginadminState extends State<Loginadmin> {
   void _validateForm() {
     setState(() {
       _isFormValid =
-          _emailController.text.isNotEmpty &&
+          _emailController.text.trim().isNotEmpty &&
           _passwordController.text.isNotEmpty;
     });
   }
@@ -77,94 +77,109 @@ class _LoginadminState extends State<Loginadmin> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFF44336),
-        body: Center(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  children: [
-                    //Spacer(),
-                    
-                    Image.asset(
-                      'assets/images/logo.png',
-                      height: 100,
-                      alignment: Alignment.center,
-                    ),
-                    Text(
-                      "Solidarity Hub",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    
-                    //SizedBox(height: 100),
-                    Spacer(),
-
-                    Container(
-                      height: 400,
-                      width: 500,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 20),
-                            Text(
-                              "Log in Admin",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFF44336),
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              "Bienvenido a Solidarity Hub",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            _userTextField(),
-                            SizedBox(height: 20),
-                            _passwordTextField(),
-                            SizedBox(height: 40),
-                            if (_errorMessage.isNotEmpty)
-                              Text(
-                                _errorMessage,
-                                style: TextStyle(
-                                  color: Color(0xFFF44336),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            SizedBox(height: 20),
-                            _loginButton(),
-                          ],
+        body: Stack(
+          children: [
+            Center(
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        //Spacer(),
+                        
+                        Image.asset(
+                          'assets/images/logo.png',
+                          height: 100,
+                          alignment: Alignment.center,
                         ),
-                      ),
+                        Text(
+                          "Solidarity Hub",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        
+                        //SizedBox(height: 100),
+                        Spacer(),
+
+                        Container(
+                          height: 400,
+                          width: 500,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 20),
+                                Text(
+                                  "Log in Admin",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFFF44336),
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                  "Bienvenido a Solidarity Hub",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                _userTextField(),
+                                SizedBox(height: 20),
+                                _passwordTextField(),
+                                SizedBox(height: 40),
+                                if (_errorMessage.isNotEmpty)
+                                  Text(
+                                    _errorMessage,
+                                    style: TextStyle(
+                                      color: Color(0xFFF44336),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                SizedBox(height: 20),
+                                _loginButton(),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        Spacer(),
+
+                      ],
                     ),
-
-                    Spacer(),
-
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          
+            Positioned(
+              top: 8,
+              left: 8,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
