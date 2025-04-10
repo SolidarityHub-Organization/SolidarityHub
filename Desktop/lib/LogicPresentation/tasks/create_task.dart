@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicPersistence/models/location.dart';
+import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
 Future<void> showCreateTaskModal(
   BuildContext context,
@@ -25,7 +27,7 @@ Future<String> createTask({
   required String name,
   required String description,
   required List<int> selectedVolunteers,
-  required String selectedLocation,
+  required int selectedLocation,
 }) async {
   final url = Uri.parse("http://localhost:5170/api/v1/tasks");
 
@@ -52,13 +54,19 @@ Future<String> createTask({
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchData(String endpoint) async {
+Future<List<T>> fetchData<T>(
+  String endpoint,
+  T Function(Map<String, dynamic>) fromJson,
+) async {
   final url = Uri.parse("http://localhost:5170/api/v1/$endpoint");
 
   try {
     final response = await http.get(url);
     if (response.statusCode >= 200 && response.statusCode <= 299) {
-      return List<Map<String, dynamic>>.from(json.decode(response.body));
+      final List<dynamic> data = json.decode(response.body);
+      return data
+          .map((item) => fromJson(item as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception("Error fetching $endpoint: ${response.statusCode}");
     }
@@ -70,10 +78,10 @@ Future<List<Map<String, dynamic>>> fetchData(String endpoint) async {
 class _CreateTaskModalState extends State<CreateTaskModal> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  List<Map<String, dynamic>> volunteers = [];
-  List<Map<String, dynamic>> locations = [];
+  List<Volunteer> volunteers = [];
+  List<Location> locations = [];
   List<int> selectedVolunteers = [];
-  String selectedLocation = "";
+  int selectedLocation = 0;
   bool isLoading = true;
 
   @override
@@ -85,14 +93,14 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _loadData() async {
     try {
       final results = await Future.wait([
-        fetchData("volunteers"),
-        fetchData("locations"),
+        fetchData("volunteers", Volunteer.fromJson),
+        fetchData("locations", Location.fromJson),
       ]);
       setState(() {
-        volunteers = results[0];
-        locations = results[1];
+        volunteers = results[0] as List<Volunteer>;
+        locations = results[1] as List<Location>;
         if (locations.isNotEmpty) {
-          selectedLocation = locations[0]['id'].toString();
+          selectedLocation = locations[0].id;
         }
         isLoading = false;
       });
@@ -114,7 +122,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
 
-    if (name.isEmpty || description.isEmpty || selectedLocation.isEmpty) {
+    if (name.isEmpty || description.isEmpty || selectedLocation == 0) {
       _showSnackBar('Por favor, complete todos los campos.');
       return;
     }
@@ -267,9 +275,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   Widget _buildDropdown({
     required String label,
-    required List<Map<String, dynamic>> items,
-    required String selectedValue,
-    required ValueChanged<String?> onChanged,
+    required List<Location> items,
+    required int selectedValue,
+    required ValueChanged<int?> onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,18 +302,19 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                   : DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      value: selectedValue,
+                      value: selectedValue.toString(),
                       items:
                           items.map((item) {
-                            final id = item['id']?.toString() ?? "";
-                            final name =
-                                item['name']?.toString() ?? "Sin nombre";
+                            final id = item.id.toString();
+                            final name = "${item.latitude}, ${item.longitude}";
                             return DropdownMenuItem<String>(
                               value: id,
                               child: Text(name),
                             );
                           }).toList(),
-                      onChanged: onChanged,
+                      onChanged: (value) {
+                        onChanged(value != null ? int.tryParse(value) : null);
+                      },
                     ),
                   ),
         ),
@@ -328,17 +337,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               itemCount: volunteers.length,
               itemBuilder: (context, index) {
                 final volunteer = volunteers[index];
-                final isSelected = selectedVolunteers.contains(volunteer['id']);
+                final isSelected = selectedVolunteers.contains(volunteer.id);
                 return ListTile(
-                  title: Text('${volunteer['name']} ${volunteer['surname']}'),
+                  title: Text('${volunteer.name} ${volunteer.surname}'),
                   trailing: Checkbox(
                     value: isSelected,
                     onChanged: (value) {
                       setState(() {
                         if (value == true) {
-                          selectedVolunteers.add(volunteer['id']);
+                          selectedVolunteers.add(volunteer.id);
                         } else {
-                          selectedVolunteers.remove(volunteer['id']);
+                          selectedVolunteers.remove(volunteer.id);
                         }
                       });
                     },

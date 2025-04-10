@@ -1,4 +1,4 @@
-class Task {
+class TaskWithDetails {
   final int id;
   final String name;
   final String description;
@@ -6,7 +6,7 @@ class Task {
   final int locationId;
   final List<dynamic> assignedVolunteers;
 
-  Task({
+  TaskWithDetails({
     required this.id,
     required this.name,
     required this.description,
@@ -15,8 +15,8 @@ class Task {
     required this.assignedVolunteers,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
+  factory TaskWithDetails.fromJson(Map<String, dynamic> json) {
+    return TaskWithDetails(
       id: json['id'],
       name: json['name'],
       description: json['description'],

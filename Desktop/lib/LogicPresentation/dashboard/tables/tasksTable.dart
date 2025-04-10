@@ -13,7 +13,7 @@ class Taskstable extends StatefulWidget {
 }
 
 class _TaskstableState extends State<Taskstable> {
-  List<Task> tasks = [];
+  List<TaskWithDetails> tasks = [];
   bool isLoading = true;
 
   @override
@@ -32,7 +32,10 @@ class _TaskstableState extends State<Taskstable> {
         final List<dynamic> data = json.decode(response.body);
 
         setState(() {
-          tasks = data.map((taskJson) => Task.fromJson(taskJson)).toList();
+          tasks =
+              data
+                  .map((taskJson) => TaskWithDetails.fromJson(taskJson))
+                  .toList();
           isLoading = false;
         });
       } else {
