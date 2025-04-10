@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
-import 'package:solidarityhub/LogicPersistence/models/location.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
@@ -44,7 +43,6 @@ Future<String> createTask({
   required double longitude,
   int? taskId,
 }) async {
-  // First create the location
   final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
   final locationData = {"latitude": latitude, "longitude": longitude};
 
@@ -58,7 +56,6 @@ Future<String> createTask({
     return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
   }
 
-  // Get the new location ID
   final locationResult = json.decode(locationResponse.body);
   final int locationId = locationResult['id'];
 

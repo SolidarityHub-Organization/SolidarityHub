@@ -43,7 +43,7 @@ class GeneralService {
       AppSnackBar.show(
         context: context,
         message: 'Error fetching address: $e',
-        type: SnackBarType.success,
+        type: SnackBarType.error,
       );
       return 'Address not available';
     }
