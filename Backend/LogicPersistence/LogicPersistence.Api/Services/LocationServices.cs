@@ -1,13 +1,16 @@
 using LogicPersistence.Api.Mappers;
-using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Models;
+using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
 
 namespace LogicPersistence.Api.Services {
 	public class LocationServices : ILocationServices {
 		private readonly ILocationRepository _locationRepository;
+		private readonly IVictimRepository _victimRepository;
 
-		public LocationServices(ILocationRepository locationRepository) {
+		public LocationServices(ILocationRepository locationRepository, IVictimRepository victimRepository) {
+			_victimRepository = victimRepository;
 			_locationRepository = locationRepository;
 		}
 
@@ -64,6 +67,26 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve locations.");
 			}
 			return locations;
+		}
+
+		public async Task<IEnumerable<UserLocationDTO>> GetAllVictimsWithLocationAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
+			}
+			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
+			var result = new List<UserLocationDTO>();
+			foreach (var victim in victimsWithLocation) {
+				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
+				result.Add(new UserLocationDTO {
+					id = victim.id,
+					name = victim.name,
+					role = "victim",
+					latitude = location.latitude,
+					longitude = location.longitude,
+				});
+			}
+			return result;
 		}
 	}
 }

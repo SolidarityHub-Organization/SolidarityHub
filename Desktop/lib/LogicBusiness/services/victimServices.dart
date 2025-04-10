@@ -23,7 +23,7 @@ class VictimService {
   Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/v1/victims/with-location'),
+        Uri.parse('$baseUrl/api/v1/locations/victims-with-location'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

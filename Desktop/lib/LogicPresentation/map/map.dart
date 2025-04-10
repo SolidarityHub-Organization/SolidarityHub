@@ -17,6 +17,7 @@ class _MapScreenState extends State<MapScreen> {
   final VictimService _userServices = VictimService(
     'http://localhost:5170',
   ); // Corrige el símbolo '>' en la URL
+  final MapController _mapController = MapController();
 
   @override
   void initState() {
@@ -127,18 +128,57 @@ class _MapScreenState extends State<MapScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: FlutterMap(
-                    options: MapOptions(
-                      initialCenter: LatLng(39.47391, -0.37966),
-                      initialZoom: 13,
-                    ),
+                  child: Stack(
                     children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                        subdomains: ['a', 'b', 'c', 'd'],
+                      FlutterMap(
+                        mapController: _mapController,
+                        options: MapOptions(
+                          initialCenter: LatLng(39.47391, -0.37966),
+                          initialZoom: 13,
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                            subdomains: ['a', 'b', 'c', 'd'],
+                          ),
+                          MarkerLayer(markers: _markers),
+                        ],
                       ),
-                      MarkerLayer(markers: _markers), // Muestra los marcadores
+                      Positioned(
+                        bottom: 16.0,
+                        right: 16.0,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                final zoom = _mapController.zoom + 1;
+                                _mapController.move(_mapController.center, zoom);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                              ),
+                              child: const Icon(Icons.add, color: Colors.white),
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                final zoom = _mapController.zoom - 1;
+                                _mapController.move(_mapController.center, zoom);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                              ),
+                              child: const Icon(Icons.remove, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

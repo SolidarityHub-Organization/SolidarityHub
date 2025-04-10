@@ -11,11 +11,9 @@ using LogicPersistence.Api.Repositories.Interfaces;
 namespace LogicPersistence.Api.Services {
 	public class VictimServices : IVictimServices {
 		private readonly IVictimRepository _victimRepository;
-		private readonly ILocationRepository _locationRepository;
 
 		public VictimServices(IVictimRepository victimRepository, ILocationRepository locationRepository) {
 			_victimRepository = victimRepository;
-			_locationRepository = locationRepository;
 		}
 
 
@@ -74,23 +72,6 @@ namespace LogicPersistence.Api.Services {
 			return victims;
 		}
 
-		public async Task<IEnumerable<VictimLocationDTO>> GetAllVictimsWithLocationAsync() {
-			var victims = await _victimRepository.GetAllVictimsAsync();
-			if (victims == null) {
-				throw new InvalidOperationException("Failed to retrieve victims.");
-			}
-			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
-			var result = new List<VictimLocationDTO>();
-			foreach (var victim in victimsWithLocation) {
-				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
-				result.Add(new VictimLocationDTO {
-					id = victim.id,
-					name = victim.name,
-					latitude = location.latitude,
-					longitude = location.longitude,
-				});
-			}
-			return result;
-		}
+		
 	}
 }

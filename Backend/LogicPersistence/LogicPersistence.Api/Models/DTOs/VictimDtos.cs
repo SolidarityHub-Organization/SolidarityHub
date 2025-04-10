@@ -92,11 +92,3 @@ public class VictimDisplayDto {
 
 	public int? location_id { get; set; }
 }
-
-// For map use only
-public class VictimLocationDTO {
-	public int id { get; set; }
-    public string name { get; set; } = string.Empty;
-    public double latitude { get; set; }
-    public double longitude { get; set; }
-}
