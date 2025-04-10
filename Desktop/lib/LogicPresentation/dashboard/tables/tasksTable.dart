@@ -268,7 +268,7 @@ class _TaskstableState extends State<Taskstable> {
                                             true
                                         ? 'Dirección desconocida'
                                         : taskAddresses[task.id] ??
-                                            'C<argando dirección...',
+                                            'Cargando dirección...',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
