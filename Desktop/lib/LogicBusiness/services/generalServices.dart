@@ -25,11 +25,14 @@ class GeneralService {
         final data = json.decode(response.body);
         final address = data['address'];
 
-        final road = address['road'] ?? '';
+        final road = address['road'] ?? 'Unknown road';
         final city =
-            address['city'] ?? address['town'] ?? address['village'] ?? '';
-        final state = address['state'] ?? '';
-        final country = address['country'] ?? '';
+            address['city'] ??
+            address['town'] ??
+            address['village'] ??
+            'Unknown city';
+        final state = address['state'] ?? 'Unknown state';
+        final country = address['country'] ?? 'Unknown country';
 
         final formattedAddress = '$road, $city, $state, $country';
         return formattedAddress;

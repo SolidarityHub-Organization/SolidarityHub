@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
+import 'package:solidarityhub/LogicPersistence/models/location.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
@@ -42,60 +44,38 @@ Future<String> createTask({
   required double longitude,
   int? taskId,
 }) async {
-  try {
-    // First create the location
-    final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
-    final locationData = {"latitude": latitude, "longitude": longitude};
+  // First create the location
+  final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
+  final locationData = {"latitude": latitude, "longitude": longitude};
 
-    final locationResponse = await http.post(
-      locationUrl,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(locationData),
-    );
+  final locationResponse = await http.post(
+    locationUrl,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(locationData),
+  );
 
-    if (locationResponse.statusCode < 200 ||
-        locationResponse.statusCode > 299) {
-      return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
-    }
-
-    // Get the new location ID
-    final locationResult = json.decode(locationResponse.body);
-    final int locationId = locationResult['id'];
-
-    // Now create the task with the new location
-    final taskUrl =
-        taskId == null
-            ? Uri.parse("http://localhost:5170/api/v1/tasks")
-            : Uri.parse("http://localhost:5170/api/v1/tasks/$taskId");
-
-    final Map<String, dynamic> taskData = {
-      "name": name,
-      "description": description,
-      "admin_id": null,
-      "location_id": locationId,
-      "volunteer_ids": selectedVolunteers,
-    };
-
-    if (taskId != null) {
-      taskData['id'] = taskId;
-    }
-
-    final taskResponse =
-        http.Request(taskId == null ? 'POST' : 'PUT', taskUrl)
-          ..headers.addAll({'Content-Type': 'application/json'})
-          ..body = json.encode(taskData);
-
-    final streamedResponse = await taskResponse.send();
-    final responseBody = await http.Response.fromStream(streamedResponse);
-
-    if (responseBody.statusCode >= 200 && responseBody.statusCode <= 299) {
-      return "Task has been added";
-    } else {
-      return "Error: ${responseBody.statusCode} - ${responseBody.body}";
-    }
-  } catch (error) {
-    return "Error: $error";
+  if (locationResponse.statusCode < 200 || locationResponse.statusCode > 299) {
+    return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
   }
+
+  // Get the new location ID
+  final locationResult = json.decode(locationResponse.body);
+  final int locationId = locationResult['id'];
+
+  final Map<String, dynamic> taskData = {
+    "name": name,
+    "description": description,
+    "admin_id": null,
+    "location_id": locationId,
+    "volunteer_ids": selectedVolunteers,
+  };
+
+  final validationHandler = ValidationHandler();
+  final persistenceHandler = PersistenceHandler();
+
+  validationHandler.setNext(persistenceHandler);
+
+  return await validationHandler.handle(taskData);
 }
 
 Future<List<T>> fetchData<T>(
@@ -222,7 +202,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       taskId: widget.taskToEdit?.id,
     );
 
-    if (result == "Task has been added") {
+    if (result.startsWith("OK")) {
       widget.onTaskCreated();
     }
 
@@ -238,11 +218,14 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 0,
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      child: _contentBox(context),
+      body: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: _contentBox(context),
+      ),
     );
   }
 
