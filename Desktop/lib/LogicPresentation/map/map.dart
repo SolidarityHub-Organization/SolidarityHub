@@ -129,7 +129,7 @@ class _MapScreenState extends State<MapScreen> {
                   borderRadius: BorderRadius.circular(15.0),
                   child: FlutterMap(
                     options: MapOptions(
-                      initialCenter: LatLng(40.4168, -3.7038),
+                      initialCenter: LatLng(39.47391, -0.37966),
                       initialZoom: 13,
                     ),
                     children: [
