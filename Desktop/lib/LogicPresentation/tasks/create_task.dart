@@ -39,38 +39,24 @@ Future<String> createTask({
   required String name,
   required String description,
   required List<int> selectedVolunteers,
-  required double latitude,
-  required double longitude,
+  required String latitude,
+  required String longitude,
   int? taskId,
 }) async {
-  final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
-  final locationData = {"latitude": latitude, "longitude": longitude};
-
-  final locationResponse = await http.post(
-    locationUrl,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode(locationData),
-  );
-
-  if (locationResponse.statusCode < 200 || locationResponse.statusCode > 299) {
-    return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
-  }
-
-  final locationResult = json.decode(locationResponse.body);
-  final int locationId = locationResult['id'];
-
   final Map<String, dynamic> taskData = {
+    "id": taskId,
     "name": name,
     "description": description,
     "admin_id": null,
-    "location_id": locationId,
     "volunteer_ids": selectedVolunteers,
+    "location": {"latitude": latitude, "longitude": longitude},
   };
 
   final validationHandler = ValidationHandler();
+  final locationHandler = LocationHandler();
   final persistenceHandler = PersistenceHandler();
 
-  validationHandler.setNext(persistenceHandler);
+  validationHandler.setNext(locationHandler).setNext(persistenceHandler);
 
   return await validationHandler.handle(taskData);
 }
@@ -174,21 +160,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _handleCreateTask() async {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
-
-    double? latitude = double.tryParse(latitudeController.text);
-    double? longitude = double.tryParse(longitudeController.text);
-
-    if (name.isEmpty ||
-        description.isEmpty ||
-        latitude == null ||
-        longitude == null) {
-      AppSnackBar.show(
-        context: context,
-        message: "Por favor, complete todos los campos.",
-        type: SnackBarType.error,
-      );
-      return;
-    }
+    final latitude = latitudeController.text.trim();
+    final longitude = longitudeController.text.trim();
 
     final result = await createTask(
       name: name,
@@ -201,15 +174,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
     if (result.startsWith("OK")) {
       widget.onTaskCreated();
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
     AppSnackBar.show(
       context: context,
       message: result,
-      type: SnackBarType.success,
+      type: result.startsWith("OK") ? SnackBarType.success : SnackBarType.error,
     );
   }
 

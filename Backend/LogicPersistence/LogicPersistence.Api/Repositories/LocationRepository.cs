@@ -10,12 +10,22 @@ public class LocationRepository : ILocationRepository {
 
 	public async Task<Location> CreateLocationAsync(Location location) {
 		using var connection = new NpgsqlConnection(connectionString);
-		const string sql = @"
-            INSERT INTO location (latitude, longitude, victim_id, volunteer_id)
-            VALUES (@latitude, @longitude, @victim_id, @volunteer_id)
-            RETURNING *";
 
-		return await connection.QuerySingleAsync<Location>(sql, location);
+		const string selectSql = @"
+		SELECT * FROM location
+		WHERE latitude = @latitude AND longitude = @longitude";
+
+		var existing = await connection.QuerySingleOrDefaultAsync<Location>(selectSql, location);
+
+		if (existing is not null)
+			return existing;
+
+		const string insertSql = @"
+		INSERT INTO location (latitude, longitude, victim_id, volunteer_id)
+		VALUES (@latitude, @longitude, @victim_id, @volunteer_id)
+		RETURNING *";
+
+		return await connection.QuerySingleAsync<Location>(insertSql, location);
 	}
 
 	public async Task<bool> DeleteLocationAsync(int id) {

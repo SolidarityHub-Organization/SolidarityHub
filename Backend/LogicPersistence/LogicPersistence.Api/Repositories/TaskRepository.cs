@@ -55,12 +55,16 @@ public class TaskRepository : ITaskRepository {
             RETURNING *";
 
 		const string insertVolunteerTaskSql = @"
-            INSERT INTO volunteer_task (volunteer_id, task_id, state)
-            VALUES (@volunteer_id, @task_id, @state::state)";
+			INSERT INTO volunteer_task (volunteer_id, task_id, state)
+			SELECT @volunteer_id, @task_id, @state::state
+			WHERE NOT EXISTS (
+				SELECT 1 FROM volunteer_task
+				WHERE volunteer_id = @volunteer_id AND task_id = @task_id
+			)";
 
 		const string deleteVolunteerTaskSql = @"
-            DELETE FROM volunteer_task
-            WHERE task_id = @task_id AND volunteer_id <> ALL(@volunteerIds)";
+			DELETE FROM volunteer_task
+			WHERE task_id = @task_id AND volunteer_id <> ALL(@volunteerIds)";
 
 		try {
 			var updatedTask = await connection.QuerySingleAsync<Task>(updateTaskSql, task, transaction);

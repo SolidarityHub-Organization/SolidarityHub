@@ -100,8 +100,8 @@ class _TaskstableState extends State<Taskstable> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Cancelar'),
                     style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                    child: const Text('Cancelar'),
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context, true),
@@ -309,7 +309,8 @@ class _TaskstableState extends State<Taskstable> {
                                         task.assignedVolunteers.isNotEmpty
                                             ? task.assignedVolunteers
                                                 .map(
-                                                  (volunteer) => volunteer.name,
+                                                  (volunteer) =>
+                                                      '${volunteer.name} ${volunteer.surname}',
                                                 )
                                                 .join(', ')
                                             : 'Sin asignar',
