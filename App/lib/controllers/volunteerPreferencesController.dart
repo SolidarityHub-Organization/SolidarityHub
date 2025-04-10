@@ -1,3 +1,4 @@
+import 'package:app/interface/loginUI.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
@@ -81,6 +82,9 @@ class VolunteerPreferencesController {
           }
           print("Registro exitoso y habilidades enviadas.");
         }
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => loginUI()),);
+
       } else {
         print("Error en el registro: ${response.statusCode}");
         print("Mensaje: ${response.body}");

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
 import 'dart:convert';
+import 'package:app/interface/loginUI.dart';
 
 class VictimNeedsController {
   final UserRegistrationData userData;
@@ -44,6 +45,7 @@ class VictimNeedsController {
         final data = jsonDecode(response.body);
         print("Registro exitoso");
         print("Respuesta del servidor: $data");
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => loginUI()),);
       } else {
         print("Error en el registro: ${response.statusCode}");
         print("Mensaje: ${response.body}");
