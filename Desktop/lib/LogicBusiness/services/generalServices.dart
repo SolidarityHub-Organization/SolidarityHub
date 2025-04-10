@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
 
 class GeneralService {
   final String baseUrl;
 
   GeneralService(this.baseUrl);
 
-  Future<String> getAddressFromLatLon(double lat, double lon, context) async {
+  Future<String> getAddressFromLatLon(double lat, double lon) async {
     try {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
@@ -40,12 +39,7 @@ class GeneralService {
         throw Exception('Failed to get address');
       }
     } catch (e) {
-      AppSnackBar.show(
-        context: context,
-        message: 'Error fetching address: $e',
-        type: SnackBarType.error,
-      );
-      return 'Address not available';
+      return "Error fetching address: $e";
     }
   }
 }
