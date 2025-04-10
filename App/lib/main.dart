@@ -1,4 +1,4 @@
-import 'package:app/interface/pantallaInicio.dart';
+import 'package:app/interface/logoScreen.dart';
 import 'package:flutter/material.dart';
 import 'interface/loginUI.dart';
 import 'interface/register.dart';
