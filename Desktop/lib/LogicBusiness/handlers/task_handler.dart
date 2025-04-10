@@ -63,8 +63,6 @@ class PersistenceHandler extends TaskHandler {
   Future<String> handle(Map<String, dynamic> taskData) async {
     final isUpdate = taskData['id'] != null;
 
-    print(taskData);
-
     final url =
         isUpdate
             ? Uri.parse("http://localhost:5170/api/v1/tasks/${taskData['id']}")
