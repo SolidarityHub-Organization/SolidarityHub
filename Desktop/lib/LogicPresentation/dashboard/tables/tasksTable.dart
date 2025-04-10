@@ -262,8 +262,13 @@ class _TaskstableState extends State<Taskstable> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    taskAddresses[task.id] ??
-                                        'Cargando dirección...',
+                                    taskAddresses[task.id]?.startsWith(
+                                              'Error',
+                                            ) ==
+                                            true
+                                        ? 'Dirección desconocida'
+                                        : taskAddresses[task.id] ??
+                                            'C<argando dirección...',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
