@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// Function to show the create task modal
-Future<void> showCreateTaskModal(BuildContext context) {
+Future<void> showCreateTaskModal(
+  BuildContext context,
+  VoidCallback onTaskCreated,
+) {
   return showDialog(
     context: context,
-    builder: (BuildContext context) => const CreateTaskModal(),
+    builder:
+        (BuildContext context) => CreateTaskModal(onTaskCreated: onTaskCreated),
   );
 }
 
 class CreateTaskModal extends StatefulWidget {
-  const CreateTaskModal({super.key});
+  final VoidCallback onTaskCreated;
+
+  const CreateTaskModal({super.key, required this.onTaskCreated});
 
   @override
   State<CreateTaskModal> createState() => _CreateTaskModalState();
@@ -206,6 +211,10 @@ class _CreateTaskModalState extends State<CreateTaskModal>
                                         selectedVolunteers,
                                         selectedLocation,
                                       );
+
+                                      if (result == "Task has been added") {
+                                        widget.onTaskCreated();
+                                      }
 
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(

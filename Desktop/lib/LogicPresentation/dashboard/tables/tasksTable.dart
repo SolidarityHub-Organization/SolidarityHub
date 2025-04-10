@@ -42,7 +42,7 @@ class _TaskstableState extends State<Taskstable> {
                   'description': task['description'] ?? 'Sin descripción',
                   'skills': task['skills'] ?? [], // Lista vacía si es null
                   'volunteer':
-                        (task['assigned_volunteers'] as List).isNotEmpty
+                      (task['assigned_volunteers'] as List).isNotEmpty
                           ? (task['assigned_volunteers'] as List)
                               .map(
                                 (volunteer) =>
@@ -96,7 +96,9 @@ class _TaskstableState extends State<Taskstable> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  showCreateTaskModal(context);
+                  showCreateTaskModal(context, () {
+                    _fetchTasks();
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
