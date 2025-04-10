@@ -1,24 +1,25 @@
 INSERT INTO "location" ("latitude", "longitude") VALUES
-  (40.7128, -74.0060),
-  (34.0522, -118.2437),
-  (41.8781, -87.6298),
-  (29.7604, -95.3698),
-  (33.4484, -112.0740),
-  (39.9526, -75.1652),
-  (32.7157, -117.1611),
-  (37.7749, -122.4194),
-  (30.2672, -97.7431),
-  (39.7392, -104.9903),
-  (47.6062, -122.3321),
-  (25.7617, -80.1918),
-  (42.3601, -71.0589),
-  (36.1699, -115.1398),
-  (35.2271, -80.8431);
+  (39.4699, -0.3763),  -- Plaza del Ayuntamiento
+  (39.4783, -0.3767),  -- Jardines del Real (Viveros)
+  (39.4557, -0.3521),  -- Ciudad de las Artes y las Ciencias
+  (39.4715, -0.3677),  -- Mercado Central
+  (39.4735, -0.3787),  -- Torres de Serranos
+  (39.4632, -0.3795),  -- Estación del Norte
+  (39.4698, -0.3779),  -- Plaza de la Reina
+  (39.4744, -0.3798),  -- Torres de Quart
+  (39.4561, -0.3419),  -- Oceanogràfic
+  (39.4789, -0.3676),  -- Jardín Botánico
+  (39.4736, -0.3583),  -- Puerto de Valencia
+  (39.4852, -0.3504),  -- Playa de la Malvarrosa
+  (39.4581, -0.3322),  -- Puerto Este
+  (39.4803, -0.3407),  -- Playa de las Arenas
+  (39.4650, -0.3773);
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, 5551234567, '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
   ('Maria', 'Garcia', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 1, 5552345678, '456 Admin Ave, Los Angeles, CA 90001', 'ADM-002-2025', 'California'),
-  ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, 5553456789, '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois');
+  ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, 5553456789, '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
+  ('Admin', 'Admin', 'admin@admin.admin','admin', 1, 5554567890, '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
 
 INSERT INTO "victim" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
   ('Alice', 'Wilson', 'alice@example.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 1, 5551112222, '101 Victim St, New York, NY 10001', 'VCT-001-2025', 1),

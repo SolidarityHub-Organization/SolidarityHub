@@ -9,6 +9,11 @@ public class SkillRepository : ISkillRepository
 {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
+    static SkillRepository()
+    {
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<SkillLevel>("skill_level");
+    }
+
     public async Task<Skill> CreateSkillAsync(Skill skill)
     {
         using var connection = new NpgsqlConnection(connectionString);

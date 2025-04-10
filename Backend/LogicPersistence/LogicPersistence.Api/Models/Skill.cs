@@ -1,16 +1,22 @@
 using System.ComponentModel.DataAnnotations;
+using NpgsqlTypes;
 
 namespace LogicPersistence.Api.Models;
 
-public enum SkillLevel {
+public enum SkillLevel 
+{
+    [PgName("Unknown")]
 	[Display(Name = "Desconocido")]
-	Unknown = -1,
+    Unknown = -1,
+    [PgName("Beginner")]
 	[Display(Name = "Principiante")]
-	Beginner = 0,
+    Beginner = 0,
+    [PgName("Intermediate")]
 	[Display(Name = "Intermedio")]
-	Intermediate = 1,
+    Intermediate = 1,
+    [PgName("Expert")]
 	[Display(Name = "Experto")]
-	Expert = 2
+    Expert = 2
 }
 
 public class Skill {
