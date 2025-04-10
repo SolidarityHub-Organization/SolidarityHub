@@ -13,8 +13,12 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
+enum MapViewMode { victim, volunteer, both }
+
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
+  MapViewMode _currentMode = MapViewMode.both;
+
   final VictimService _victimServices = VictimService('http://localhost:5170');
   final VolunteerService _volunteerServices = VolunteerService('http://localhost:5170');
   final MapController _mapController = MapController();
@@ -35,7 +39,7 @@ class _MapScreenState extends State<MapScreen> {
             return UserLocation.fromJson(location);
           }).toList();
 
-      print(locations);
+      //print(locations);
       setState(() {
         _markers.addAll(
             users.map((user) {
@@ -61,7 +65,7 @@ class _MapScreenState extends State<MapScreen> {
             return UserLocation.fromJson(location);
           }).toList();
 
-      print(locations);
+      //print(locations);
       setState(() {
         _markers.addAll(
             users.map((user) {
@@ -191,6 +195,34 @@ class _MapScreenState extends State<MapScreen> {
                               child: const Icon(
                                 Icons.remove,
                                 color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _markers.clear();
+                                  if (_currentMode == MapViewMode.victim) {
+                                    _currentMode = MapViewMode.volunteer;
+                                    _fetchVolunteerLocations();
+                                  } else if (_currentMode == MapViewMode.volunteer) {
+                                    _currentMode = MapViewMode.both;
+                                    _fetchVictimLocations();
+                                    _fetchVolunteerLocations();
+                                  } else if (_currentMode == MapViewMode.both) {
+                                    _currentMode = MapViewMode.victim;
+                                    _fetchVictimLocations();
+                                  }
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                              ),
+                              child: const Text(
+                                "⇆",
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                             ),
                           ],
