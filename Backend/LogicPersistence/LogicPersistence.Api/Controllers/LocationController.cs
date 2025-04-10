@@ -93,5 +93,41 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpGet("locations/volunteers-with-location")]
+		public async Task<IActionResult> GetAllVolunteersWithLocationAsync()
+		{
+			try
+			{
+				var volunteerWithLocation = await _locationServices.GetAllVolunteersWithLocationAsync();
+				return Ok(volunteerWithLocation);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+		[HttpGet("locations/users-with-location")]
+		public async Task<IActionResult> GetAllUsersWithLocationAsync()
+		{
+			try
+			{
+				var usersWithLocation = await _locationServices.GetAllUsersWithLocationAsync();
+				return Ok(usersWithLocation);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

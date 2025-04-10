@@ -8,9 +8,11 @@ namespace LogicPersistence.Api.Services {
 	public class LocationServices : ILocationServices {
 		private readonly ILocationRepository _locationRepository;
 		private readonly IVictimRepository _victimRepository;
+		private readonly IVolunteerRepository _volunteerRepository;
 
-		public LocationServices(ILocationRepository locationRepository, IVictimRepository victimRepository) {
+		public LocationServices(ILocationRepository locationRepository, IVictimRepository victimRepository, IVolunteerRepository volunteerRepository) {
 			_victimRepository = victimRepository;
+			_volunteerRepository = volunteerRepository;
 			_locationRepository = locationRepository;
 		}
 
@@ -82,6 +84,62 @@ namespace LogicPersistence.Api.Services {
 					id = victim.id,
 					name = victim.name,
 					role = "victim",
+					latitude = location.latitude,
+					longitude = location.longitude,
+				});
+			}
+			return result;
+		}
+
+		public async Task<IEnumerable<UserLocationDTO>> GetAllVolunteersWithLocationAsync() {
+			var volunteers = await _volunteerRepository.GetAllVolunteersAsync();
+			if (volunteers == null) {
+				throw new InvalidOperationException("Failed to retrieve volunteers.");
+			}
+			var volunteersWithLocation = volunteers.Where(v => v.location_id != null).ToList();
+			var result = new List<UserLocationDTO>();
+			foreach (var volunteer in volunteersWithLocation) {
+				var location = await _locationRepository.GetLocationByIdAsync(volunteer.location_id.Value);
+				result.Add(new UserLocationDTO {
+					id = volunteer.id,
+					name = volunteer.name,
+					role = "volunteer",
+					latitude = location.latitude,
+					longitude = location.longitude,
+				});
+			}
+			return result;
+		}
+
+		public async Task<IEnumerable<UserLocationDTO>> GetAllUsersWithLocationAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
+			}
+			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
+			var result = new List<UserLocationDTO>();
+			foreach (var victim in victimsWithLocation) {
+				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
+				result.Add(new UserLocationDTO {
+					id = victim.id,
+					name = victim.name,
+					role = "victim",
+					latitude = location.latitude,
+					longitude = location.longitude,
+				});
+			}
+
+			var volunteers = await _volunteerRepository.GetAllVolunteersAsync();
+			if (volunteers == null) {
+				throw new InvalidOperationException("Failed to retrieve volunteers.");
+			}
+			var volunteersWithLocation = volunteers.Where(v => v.location_id != null).ToList(); 
+			foreach (var volunteer in volunteersWithLocation) {
+				var location = await _locationRepository.GetLocationByIdAsync(volunteer.location_id.Value);
+				result.Add(new UserLocationDTO {
+					id = volunteer.id,
+					name = volunteer.name,
+					role = "volunteer",
 					latitude = location.latitude,
 					longitude = location.longitude,
 				});

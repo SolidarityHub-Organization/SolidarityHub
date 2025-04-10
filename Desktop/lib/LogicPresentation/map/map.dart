@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../LogicBusiness/services/victimServices.dart';
+import '../../LogicBusiness/services/volunteerServices.dart';
 import '../../LogicPersistence/models/userLocation.dart';
 import 'markerfactory.dart';
 
@@ -14,18 +15,20 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
-  final VictimService _userServices = VictimService('http://localhost:5170');
+  final VictimService _victimServices = VictimService('http://localhost:5170');
+  final VolunteerService _volunteerServices = VolunteerService('http://localhost:5170');
   final MapController _mapController = MapController();
 
   @override
   void initState() {
     super.initState();
     _fetchVictimLocations();
+    _fetchVolunteerLocations();
   }
 
   Future<void> _fetchVictimLocations() async {
     try {
-      final locations = await _userServices.fetchLocations();
+      final locations = await _victimServices.fetchLocations();
 
       List<UserLocation> users =
           locations.map((location) {
@@ -34,11 +37,37 @@ class _MapScreenState extends State<MapScreen> {
 
       print(locations);
       setState(() {
-        _markers =
+        _markers.addAll(
             users.map((user) {
               final markerCreator = getMarkerCreator(user.role);
               return markerCreator.createMarker(user, context);
-            }).toList();
+            }).toList());
+      });
+    } catch (e) {
+      // Mejora la gestión de errores
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
+      );
+      print('Error al obtener las ubicaciones: $e');
+    }
+  }
+
+  Future<void> _fetchVolunteerLocations() async {
+    try {
+      final locations = await _volunteerServices.fetchLocations();
+
+      List<UserLocation> users =
+          locations.map((location) {
+            return UserLocation.fromJson(location);
+          }).toList();
+
+      print(locations);
+      setState(() {
+        _markers.addAll(
+            users.map((user) {
+              final markerCreator = getMarkerCreator(user.role);
+              return markerCreator.createMarker(user, context);
+            }).toList());
       });
     } catch (e) {
       // Mejora la gestión de errores

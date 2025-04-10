@@ -9,5 +9,7 @@ namespace LogicPersistence.Api.Services {
 		System.Threading.Tasks.Task DeleteLocationAsync(int id);
 		Task<IEnumerable<Location>> GetAllLocationsAsync();
 		Task<IEnumerable<UserLocationDTO>> GetAllVictimsWithLocationAsync();
+		Task<IEnumerable<UserLocationDTO>> GetAllVolunteersWithLocationAsync();
+		Task<IEnumerable<UserLocationDTO>> GetAllUsersWithLocationAsync();
 	}
 }

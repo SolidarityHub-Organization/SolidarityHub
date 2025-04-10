@@ -18,4 +18,30 @@ class VolunteerService {
       throw Exception('Failed to load victim needs count');
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchLocations() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/v1/locations/volunteers-with-location'),
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((location) {
+          return {
+            'id': location['id'],
+            'name': location['name'],
+            'latitude': location['latitude'],
+            'longitude': location['longitude'],
+            'role': location['role'],
+          };
+        }).toList();
+      } else {
+        print('Error al obtener las ubicaciones: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error al conectar con el backend: $e');
+      return [];
+    }
+  }
 }
