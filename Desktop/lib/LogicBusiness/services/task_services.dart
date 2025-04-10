@@ -8,7 +8,7 @@ class TaskService {
   Future<String> deleteTask(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/tasks/$id'));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return "Task deleted successfully";
     } else {
       throw Exception('Failed to delete task with id $id');

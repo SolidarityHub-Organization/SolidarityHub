@@ -334,6 +334,7 @@ class _TaskstableState extends State<Taskstable> {
                                 ElevatedButton(
                                   onPressed: () {
                                     _deleteTask(task);
+                                    _fetchTasks();
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
