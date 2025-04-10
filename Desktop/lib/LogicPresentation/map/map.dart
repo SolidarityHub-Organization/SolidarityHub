@@ -154,7 +154,10 @@ class _MapScreenState extends State<MapScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 final zoom = _mapController.zoom + 1;
-                                _mapController.move(_mapController.center, zoom);
+                                _mapController.move(
+                                  _mapController.center,
+                                  zoom,
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
@@ -167,14 +170,20 @@ class _MapScreenState extends State<MapScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 final zoom = _mapController.zoom - 1;
-                                _mapController.move(_mapController.center, zoom);
+                                _mapController.move(
+                                  _mapController.center,
+                                  zoom,
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 shape: const CircleBorder(),
                                 padding: const EdgeInsets.all(12),
                               ),
-                              child: const Icon(Icons.remove, color: Colors.white),
+                              child: const Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
