@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
-import 'package:solidarityhub/requests.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 import 'package:solidarityhub/populate_database.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
@@ -22,6 +20,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Solidarity Hub '),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -35,44 +34,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final Requests _requests = Requests();
-  String data = '';
-
-  Future<void> _populateDatabase() async {
-    final result = await PopulateDatabase.populateAsync();
-    setState(() {
-      data = result;
-    });
-  }
-
-  Future<void> _clearDatabase() async {
-    final result = await PopulateDatabase.clearDatabase();
-    setState(() {
-      data = result;
-    });
-  }
-
-  Future<void> _fetchTest() async {
-    final result = await _requests.fetchTest();
-    setState(() {
-      data = result;
-    });
-  }
-
-  Future<void> _addUser() async {
-    final result = await _requests.addUser();
-    setState(() {
-      data = result;
-    });
-  }
-
-  Future<void> _getUsers() async {
-    final result = await _requests.getUsers();
-    setState(() {
-      data = result;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: _populateDatabase,
+                  onPressed: PopulateDatabase.populateDatabase,
                   icon: const Icon(Icons.add_box),
                   label: const Text("Populate Database"),
                   style: ElevatedButton.styleFrom(
@@ -129,51 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton.icon(
-                  onPressed: _clearDatabase,
+                  onPressed: PopulateDatabase.clearDatabase,
                   icon: const Icon(Icons.delete),
                   label: const Text("Clear Database"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  onPressed: _fetchTest,
-                  icon: const Icon(Icons.data_usage),
-                  label: const Text("Get Example Data"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  onPressed: _addUser,
-                  icon: const Icon(Icons.person_add),
-                  label: const Text("Add User"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  onPressed: _getUsers,
-                  icon: const Icon(Icons.people),
-                  label: const Text("Get All Users"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -245,12 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       horizontal: 20,
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  data.isNotEmpty ? data : "Press a button to fetch data",
-                  style: const TextStyle(fontSize: 16, color: Colors.black54),
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),

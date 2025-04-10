@@ -12,50 +12,50 @@ public class InitialMigration : Migration {
 
 		// Create the required types (enums) for some parameters in the tables
 		Execute.Sql(@"
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'hazard_level') THEN
-                    CREATE TYPE hazard_level AS ENUM('Unknown', 'Low', 'Medium', 'High', 'Critical');
-                END IF;
+			DO $$
+			BEGIN
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'hazard_level') THEN
+					CREATE TYPE hazard_level AS ENUM ('Unknown', 'Low', 'Medium', 'High', 'Critical');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN
-                    CREATE TYPE item_type AS ENUM('Other', 'Food', 'Tools', 'Clothes', 'Medicine', 'Furniture');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN
+					CREATE TYPE item_type AS ENUM ('Other', 'Food', 'Tools', 'Clothes', 'Medicine', 'Furniture');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'currency') THEN
-                    CREATE TYPE currency AS ENUM('Other', 'USD', 'EUR');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'currency') THEN
+					CREATE TYPE currency AS ENUM ('Other', 'USD', 'EUR');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
-                    CREATE TYPE payment_status AS ENUM('Pending', 'Completed', 'Failed', 'Refunded');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
+					CREATE TYPE payment_status AS ENUM ('Pending', 'Completed', 'Failed', 'Refunded');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_service') THEN
-                    CREATE TYPE payment_service AS ENUM('Other', 'PayPal', 'BankTransfer', 'CreditCard');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_service') THEN
+					CREATE TYPE payment_service AS ENUM ('Other', 'PayPal', 'BankTransfer', 'CreditCard');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'urgency_level') THEN
-                    CREATE TYPE urgency_level AS ENUM('Unknown', 'Low', 'Medium', 'High', 'Critical');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'urgency_level') THEN
+					CREATE TYPE urgency_level AS ENUM ('Unknown', 'Low', 'Medium', 'High', 'Critical');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transport_type') THEN
-                    CREATE TYPE transport_type AS ENUM('Other', 'Car', 'Bike', 'Foot', 'Boat', 'Plane', 'Train');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transport_type') THEN
+					CREATE TYPE transport_type AS ENUM ('Other', 'Car', 'Bike', 'Foot', 'Boat', 'Plane', 'Train');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'skill_level') THEN
-                    CREATE TYPE skill_level AS ENUM('Unknown', 'Beginner', 'Intermediate', 'Expert');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'skill_level') THEN
+					CREATE TYPE skill_level AS ENUM ('Unknown', 'Beginner', 'Intermediate', 'Expert');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'day_of_week') THEN
-                    CREATE TYPE day_of_week AS ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-                END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'day_of_week') THEN
+					CREATE TYPE day_of_week AS ENUM ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+				END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'state') THEN
-                    CREATE TYPE state AS ENUM('Assigned', 'Pending', 'Completed', 'Cancelled');
-                END IF;
-            END
-            $$;
-        ");
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'state') THEN
+					CREATE TYPE state AS ENUM ('Assigned', 'Pending', 'Completed', 'Cancelled');
+				END IF;
+			END
+			$$;
+		");
 
 		// Create location table first as it's referenced by many other tables
 		Create.Table("location")
@@ -225,11 +225,11 @@ public class InitialMigration : Migration {
 		Create.PrimaryKey("PK_VolunteerTask").OnTable("volunteer_task")
 			.Columns(["volunteer_id", "task_id"]);
 
-		Create.Table("volunteer_place_preference")
+		Create.Table("volunteer_place")
 			.WithColumn("volunteer_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerPlacePreference_Volunteer", "volunteer", "id").OnDelete(Rule.Cascade)
 			.WithColumn("place_id").AsInt32().NotNullable().ForeignKey("FK_VolunteerPlacePreference_Place", "place", "id").OnDelete(Rule.Cascade)
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
-		Create.PrimaryKey("PK_VolunteerPlacePreference").OnTable("volunteer_place_preference")
+		Create.PrimaryKey("PK_VolunteerPlacePreference").OnTable("volunteer_place")
 			.Columns(["volunteer_id", "place_id"]);
 
 		Create.Table("task_skill")
@@ -344,7 +344,7 @@ public class InitialMigration : Migration {
 		Delete.PrimaryKey("PK_VolunteerSkill").FromTable("volunteer_skill");
 		Delete.PrimaryKey("PK_VolunteerTask").FromTable("volunteer_task");
 		Delete.PrimaryKey("PK_TaskDonation").FromTable("task_donation");
-		Delete.PrimaryKey("PK_VolunteerPlacePreference").FromTable("volunteer_place_preference");
+		Delete.PrimaryKey("PK_VolunteerPlacePreference").FromTable("volunteer_place");
 		Delete.PrimaryKey("PK_AffectedZoneLocation").FromTable("affected_zone_location");
 		Delete.PrimaryKey("PK_PlaceAffectedZone").FromTable("place_affected_zone");
 
@@ -357,7 +357,7 @@ public class InitialMigration : Migration {
 		Delete.Table("route_location");
 		Delete.Table("task_donation");
 		Delete.Table("task_skill");
-		Delete.Table("volunteer_place_preference");
+		Delete.Table("volunteer_place");
 		Delete.Table("volunteer_task");
 		Delete.Table("volunteer_skill");
 		Delete.Table("volunteer_time");
