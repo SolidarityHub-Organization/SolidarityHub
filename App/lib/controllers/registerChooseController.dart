@@ -27,7 +27,7 @@ class RegisterChooseController {
       return;
     }
 
-    if (!_isValidPhone(phone)) {
+    if (!isValidPhone(phone)) {
       print('El número de teléfono no es válido.');
       return;
     }
@@ -57,7 +57,7 @@ class RegisterChooseController {
           builder: (context) => AddressScreen(userData: userData),),);
     }
   }
-  bool _isValidPhone(String phone) {
+  bool isValidPhone(String phone) {
     final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');
     return phoneRegex.hasMatch(phone);
   }

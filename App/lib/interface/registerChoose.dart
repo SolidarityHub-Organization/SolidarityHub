@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/registerChooseController.dart';
 import '../models/user_registration_data.dart';
+import 'package:flutter/services.dart';
 
 class RegisterChoose extends StatefulWidget {
   final UserRegistrationData userData;
@@ -11,6 +12,16 @@ class RegisterChoose extends StatefulWidget {
 }
 
 class _RegisterChooseState extends State<RegisterChoose> {
+  bool _nameHasError = false;
+  bool _surnameHasError = false;
+  bool _birthDateHasError = false;
+  bool _phoneHasError = false;
+
+  String? _nameErrorText;
+  String? _surnameErrorText;
+  String? _birthDateErrorText;
+  String? _phoneErrorText;
+
   late RegisterChooseController _controller;
 
   @override
@@ -18,6 +29,63 @@ class _RegisterChooseState extends State<RegisterChoose> {
     super.initState();
     _controller = RegisterChooseController(widget.userData);
   }
+
+  void _submitFormConValidacion(String rol, BuildContext context) {
+    setState(() {
+      _nameHasError = false;
+      _surnameHasError = false;
+      _birthDateHasError = false;
+      _phoneHasError = false;
+
+      _nameErrorText = null;
+      _surnameErrorText = null;
+      _birthDateErrorText = null;
+      _phoneErrorText = null;
+
+      bool isValid = true;
+
+      if (_controller.nameController.text.trim().isEmpty) {
+        _nameHasError = true;
+        _nameErrorText = 'El nombre no puede estar vacío';
+        isValid = false;
+      }
+
+      if (_controller.surnameController.text.trim().isEmpty) {
+        _surnameHasError = true;
+        _surnameErrorText = 'Los apellidos no pueden estar vacíos';
+        isValid = false;
+      }
+
+      if (_controller.birthDateController.text.trim().isEmpty) {
+        _birthDateHasError = true;
+        _birthDateErrorText = 'La fecha de nacimiento es obligatoria';
+        isValid = false;
+      }
+
+      if (_controller.phoneController.text.trim().isEmpty) {
+        _phoneHasError = true;
+        _phoneErrorText = 'El teléfono no puede estar vacío';
+        isValid = false;
+      }
+
+      if (isValid) {
+        _controller.submitForm(rol, context);
+      }
+
+      if (_controller.phoneController.text.trim().isEmpty) {
+        _phoneHasError = true;
+        _phoneErrorText = 'El teléfono no puede estar vacío';
+        isValid = false;
+      } else if (!_controller.isValidPhone(_controller.phoneController.text.trim())) {
+        _phoneHasError = true;
+        _phoneErrorText = 'Introduce un número válido de 9 dígitos';
+        isValid = false;
+      }
+
+
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +113,47 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
+                  //Nombre
                   TextField(
                     controller: _controller.nameController,
-                    decoration: const InputDecoration(labelText: 'Nombre'),
+                    decoration: InputDecoration(
+                      labelText: 'Nombre',
+                      errorText: _nameErrorText,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _nameHasError ? Colors.red : Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _nameHasError ? Colors.red : Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
+
                   const SizedBox(height: 10),
+                  //Apellidos
                   TextField(
                     controller: _controller.surnameController,
-                    decoration: const InputDecoration(labelText: 'Apellidos'),
+                    decoration: InputDecoration(
+                      labelText: 'Apellidos',
+                      errorText: _surnameErrorText,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _surnameHasError ? Colors.red : Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _surnameHasError ? Colors.red : Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
+
                   const SizedBox(height: 10),
+                  //Fecha nac
                   TextField(
                     controller: _controller.birthDateController,
-                    decoration: const InputDecoration(labelText: 'Fecha de nacimiento'),
                     readOnly: true,
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -66,7 +162,6 @@ class _RegisterChooseState extends State<RegisterChoose> {
                         firstDate: DateTime(1900),
                         lastDate: DateTime.now(),
                       );
-
                       if (pickedDate != null) {
                         String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/"
                             "${pickedDate.month.toString().padLeft(2, '0')}/"
@@ -76,19 +171,50 @@ class _RegisterChooseState extends State<RegisterChoose> {
                         });
                       }
                     },
+                    decoration: InputDecoration(
+                      labelText: 'Fecha de nacimiento',
+                      errorText: _birthDateErrorText,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _birthDateHasError ? Colors.red : Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _birthDateHasError ? Colors.red : Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
 
+
                   const SizedBox(height: 10),
+                  //Telefono
                   TextField(
                     controller: _controller.phoneController,
-                    decoration: const InputDecoration(labelText: 'Teléfono'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: 'Teléfono',
+                      errorText: _phoneErrorText,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _phoneHasError ? Colors.red : Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _phoneHasError ? Colors.red : Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
+
+
                   const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _controller.submitForm('Afectado', context),
+                          onPressed: ()=> _submitFormConValidacion('Afectado', context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -102,7 +228,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _controller.submitForm('Voluntario',context),
+                          onPressed: () => _submitFormConValidacion('Voluntario', context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),
