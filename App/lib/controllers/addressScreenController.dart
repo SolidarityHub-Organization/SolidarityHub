@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import '../models/user_registration_data.dart';
 
 class AddressController {
+  final UserRegistrationData userData;
+
+  AddressController(this.userData);
+
   final TextEditingController addressLine1Controller = TextEditingController();
   final TextEditingController addressLine2Controller = TextEditingController();
   final TextEditingController countryController = TextEditingController();
@@ -36,11 +41,23 @@ class AddressController {
     };
   }
 
+  String getFullAddressString() {
+    final parts = [
+      addressLine1Controller.text,
+      addressLine2Controller.text,
+      cityController.text,
+      provinceController.text,
+      postalCodeController.text,
+      countryController.text,
+    ];
+    return parts.where((part) => part.isNotEmpty).join(', ');
+  }
+
   void submitAddress() {
     if (validateFields()) {
-      final data = getAddressData();
-      // Aquí podrías enviar los datos a un backend, guardarlos en local, etc.
-      print('Datos válidos enviados: $data');
+      final fullAddress = getFullAddressString();
+      print('Dirección completa: $fullAddress');
+      userData.address = fullAddress;
     } else {
       print('Por favor, completa todos los campos obligatorios');
     }

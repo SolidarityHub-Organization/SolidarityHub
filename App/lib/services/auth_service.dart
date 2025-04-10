@@ -38,4 +38,22 @@ class AuthService {
 
     return response;
   }
+
+  static Future<http.Response> sendVolunteerSkill({
+    required String volunteerId,
+    required String skill,
+  }) async {
+    final url = Uri.parse('http://localhost:5170/api/v1/volunteerSkill');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'volunteer_id': volunteerId,
+        'skill_id': skill,
+      }),
+    );
+
+    return response;
+  }
 }

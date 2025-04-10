@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
 import '../interface/schedules.dart';
+import '../interface/addressScreen.dart';
 import 'dart:convert';
 
 class RegisterChooseController {
@@ -44,13 +45,17 @@ class RegisterChooseController {
     userData.role = role;
 
     print("[RegisterChooseController] Datos personales guardados:");
-    print(userData.toJson());
+
     if (role.toLowerCase() == "voluntario") {
       Navigator.push(context,
         MaterialPageRoute(
           builder: (context) => Schedules(userData: userData),),);
     }
-    //Falta hacer el de afectado
+    else if(role.toLowerCase() == "afectado"){
+      Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => AddressScreen(userData: userData),),);
+    }
   }
   bool _isValidPhone(String phone) {
     final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');

@@ -19,12 +19,16 @@ class RegisterController {
   }
 
   void register(BuildContext context) async{
-    userData.email = emailController.text.trim();
-    userData.password = passwordController.text;
 
-    print("Datos de login guardados en el modelo:");
-    print("Continua Registro");
-    Navigator.push(context, MaterialPageRoute( builder: (context) => RegisterChoose(userData),),);
+    if(validatePasswords() && emailController.text.isNotEmpty) {
+      userData.email = emailController.text.trim();
+      userData.password = passwordController.text;
+
+      print("Datos de login guardados en el modelo:");
+      print("Continua Registro");
+      Navigator.push(context,
+        MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+    }
   }
 
   void dispose() {
