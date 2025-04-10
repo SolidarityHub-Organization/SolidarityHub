@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
 import 'package:solidarityhub/LogicPersistence/models/location.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
@@ -41,40 +42,21 @@ Future<String> createTask({
   required int selectedLocation,
   int? taskId,
 }) async {
-  final url =
-      taskId == null
-          ? Uri.parse("http://localhost:5170/api/v1/tasks")
-          : Uri.parse("http://localhost:5170/api/v1/tasks/$taskId");
+  final Map<String, dynamic> taskData = {
+    "id": taskId,
+    "name": name,
+    "description": description,
+    "admin_id": null,
+    "location_id": selectedLocation,
+    "volunteer_ids": selectedVolunteers,
+  };
 
-  try {
-    final Map<String, dynamic> taskData = {
-      "name": name,
-      "description": description,
-      "admin_id": null,
-      "location_id": selectedLocation,
-      "volunteer_ids": selectedVolunteers,
-    };
+  final validationHandler = ValidationHandler();
+  final persistenceHandler = PersistenceHandler();
 
-    if (taskId != null) {
-      taskData['id'] = taskId;
-    }
+  validationHandler.setNext(persistenceHandler);
 
-    final response =
-        http.Request(taskId == null ? 'POST' : 'PUT', url)
-          ..headers.addAll({'Content-Type': 'application/json'})
-          ..body = json.encode(taskData);
-
-    final streamedResponse = await response.send();
-    final responseBody = await http.Response.fromStream(streamedResponse);
-
-    if (responseBody.statusCode >= 200 && responseBody.statusCode <= 299) {
-      return "Task has been added";
-    } else {
-      return "Error: ${responseBody.statusCode} - ${responseBody.body}";
-    }
-  } catch (error) {
-    return "Error: $error";
-  }
+  return await validationHandler.handle(taskData);
 }
 
 Future<List<T>> fetchData<T>(
@@ -146,19 +128,18 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 5),
+      ),
+    );
   }
 
   Future<void> _handleCreateTask() async {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
-
-    if (name.isEmpty || description.isEmpty || selectedLocation == 0) {
-      _showSnackBar('Por favor, complete todos los campos.');
-      return;
-    }
 
     final result = await createTask(
       name: name,
@@ -168,23 +149,26 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       taskId: widget.taskToEdit?.id,
     );
 
-    if (result == "Task has been added") {
+    if (result.startsWith("OK")) {
       widget.onTaskCreated();
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
     _showSnackBar(result);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 0,
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      child: _contentBox(context),
+      body: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: _contentBox(context),
+      ),
     );
   }
 
@@ -313,7 +297,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     required int selectedValue,
     required ValueChanged<int?> onChanged,
   }) {
-    print(selectedValue);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
