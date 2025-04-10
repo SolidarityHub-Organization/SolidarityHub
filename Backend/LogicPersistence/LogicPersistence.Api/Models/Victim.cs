@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace LogicPersistence.Api.Models;
 
 public class Victim {
@@ -9,7 +7,7 @@ public class Victim {
 	public string name { get; set; } = string.Empty;
 	public string surname { get; set; } = string.Empty;
 	public int prefix { get; set; }
-	public BigInteger phone_number { get; set; }
+	public int phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
 
