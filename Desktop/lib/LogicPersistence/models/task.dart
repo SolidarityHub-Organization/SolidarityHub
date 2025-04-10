@@ -1,10 +1,12 @@
+import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
+
 class TaskWithDetails {
   final int id;
   final String name;
   final String description;
   final int? adminId;
   final int locationId;
-  final List<dynamic> assignedVolunteers;
+  final List<Volunteer> assignedVolunteers;
 
   TaskWithDetails({
     required this.id,
@@ -22,7 +24,9 @@ class TaskWithDetails {
       description: json['description'],
       adminId: json['admin_id'],
       locationId: json['location_id'],
-      assignedVolunteers: List<dynamic>.from(json['assigned_volunteers']),
+      assignedVolunteers: (json['assigned_volunteers'] as List)
+          .map((volunteer) => Volunteer.fromJson(volunteer))
+          .toList(),
     );
   }
 }

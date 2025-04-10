@@ -27,14 +27,10 @@ public class TaskRepository : ITaskRepository {
         try {
             var createdTask = await connection.QuerySingleAsync<Task>(taskSql, task, transaction);
 
-            Console.WriteLine($"Created task: {createdTask.id}");
-
             if (volunteerIds.Length > 0) {
                 var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = createdTask.id, state = "Assigned" });
                 await connection.ExecuteAsync(volunteerTaskSql, volunteerTasks, transaction);
             }
-
-            Console.WriteLine($"Assigned volunteers to task: {createdTask.id}");
 
             await transaction.CommitAsync();
             return createdTask;
@@ -44,9 +40,12 @@ public class TaskRepository : ITaskRepository {
         }
     }
 
-    public async Task<Task> UpdateTaskAsync(Task task) {
+    public async Task<Task> UpdateTaskAsync(Task task, int[] volunteerIds) {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = @"
+        await connection.OpenAsync();
+        using var transaction = await connection.BeginTransactionAsync();
+
+        const string updateTaskSql = @"
             UPDATE task 
             SET name = @name, 
                 description = @description, 
@@ -55,7 +54,30 @@ public class TaskRepository : ITaskRepository {
             WHERE id = @id
             RETURNING *";
 
-        return await connection.QuerySingleAsync<Task>(sql, task);
+        const string insertVolunteerTaskSql = @"
+            INSERT INTO volunteer_task (volunteer_id, task_id, state)
+            VALUES (@volunteer_id, @task_id, @state::state)";
+
+        const string deleteVolunteerTaskSql = @"
+            DELETE FROM volunteer_task
+            WHERE task_id = @task_id AND volunteer_id <> ALL(@volunteerIds)";
+
+        try {
+            var updatedTask = await connection.QuerySingleAsync<Task>(updateTaskSql, task, transaction);
+
+            await connection.ExecuteAsync(deleteVolunteerTaskSql, new { task_id = updatedTask.id, volunteerIds }, transaction);
+
+            if (volunteerIds.Length > 0) {
+                var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = updatedTask.id, state = "Assigned" });
+                await connection.ExecuteAsync(insertVolunteerTaskSql, volunteerTasks, transaction);
+            }
+
+            await transaction.CommitAsync();
+            return updatedTask;
+        } catch {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<Task?> GetTaskByIdAsync(int id) {
