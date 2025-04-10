@@ -42,7 +42,7 @@ class _LoginScreenState extends State<loginUI> {
       }
 
       if (isValid) {
-        authController.login();
+        authController.login(context);
       }
     });
   }

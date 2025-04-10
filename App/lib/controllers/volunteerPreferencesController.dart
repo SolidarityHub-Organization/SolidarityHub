@@ -65,7 +65,7 @@ class VolunteerPreferencesController {
       final volunteerId = data['id'].toString();
 
       print("Respuesta del servidor: $data");
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201 && volunteerId.isNotEmpty ) {
         final data = jsonDecode(response.body);
         print("Registro exitoso");
         print("Respuesta del servidor: $data");

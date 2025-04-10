@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/auth_service.dart';
+import '/interface/homeScreen.dart';
 
 class AuthController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void login() async {
+  void login(BuildContext context) async {
     String email = emailController.text.trim();
     String password = passwordController.text;
 
@@ -20,6 +21,7 @@ class AuthController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print('Login exitoso');
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()),);
         print('Token recibido: ${data['token']}');
       } else {
         print('Error de login: ${response.statusCode}');
