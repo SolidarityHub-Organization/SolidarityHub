@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../../LogicBusiness/services/victimServices.dart'; // Importa el servicio
+import '../../LogicBusiness/services/victimServices.dart';
+import '../../LogicPersistence/models/userLocation.dart';
+import 'markerfactory.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -14,9 +14,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
-  final VictimService _userServices = VictimService(
-    'http://localhost:5170',
-  ); // Corrige el símbolo '>' en la URL
+  final VictimService _userServices = VictimService('http://localhost:5170');
   final MapController _mapController = MapController();
 
   @override
@@ -28,37 +26,18 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _fetchVictimLocations() async {
     try {
       final locations = await _userServices.fetchLocations();
+
+      List<UserLocation> users =
+          locations.map((location) {
+            return UserLocation.fromJson(location);
+          }).toList();
+
       print(locations);
       setState(() {
         _markers =
-            locations.map((location) {
-              return Marker(
-                point: LatLng(location['latitude'], location['longitude']),
-                width: 50,
-                height: 50,
-                child: GestureDetector(
-                  onTap: () {
-                    // Muestra un diálogo con los detalles de la víctima
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            title: Text('Detalles de la víctima'),
-                            content: Text(
-                              'ID: ${location['id']}\nNombre: ${location['name']}',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: Text('Cerrar'),
-                              ),
-                            ],
-                          ),
-                    );
-                  },
-                  child: Icon(Icons.location_pin, color: Colors.blue, size: 40),
-                ),
-              );
+            users.map((user) {
+              final markerCreator = getMarkerCreator(user.role);
+              return markerCreator.createMarker(user, context);
             }).toList();
       });
     } catch (e) {

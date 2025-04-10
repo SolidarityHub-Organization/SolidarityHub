@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../LogicPersistence/models/victim.dart';
 
 class VictimService {
   final String baseUrl;
@@ -29,10 +28,10 @@ class VictimService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {
           return {
-            'id': location['id'], // ID de la víctima
-            'name': location['name'], // Nombre de la víctima
-            'latitude': location['latitude'], // Latitud
-            'longitude': location['longitude'], // Longitud
+            'id': location['id'],
+            'name': location['name'],
+            'latitude': location['latitude'],
+            'longitude': location['longitude'],
           };
         }).toList();
       } else {

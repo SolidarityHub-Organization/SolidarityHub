@@ -1,6 +1,7 @@
 public class App {
 
 	public static void Main(string[] args) {
+		
 		var builder = WebApplication.CreateBuilder(args);
 
 		BackendConfiguration.SetEnvironmentVariablesConfiguration();
