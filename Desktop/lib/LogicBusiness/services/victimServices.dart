@@ -32,6 +32,7 @@ class VictimService {
             'name': location['name'],
             'latitude': location['latitude'],
             'longitude': location['longitude'],
+            'role': location['role'],
           };
         }).toList();
       } else {
