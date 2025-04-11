@@ -4,6 +4,7 @@ using LogicPersistence.Api.Repositories.Interfaces;
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
+using System.Data;
 
 public class SkillRepository : ISkillRepository
 {
@@ -12,6 +13,7 @@ public class SkillRepository : ISkillRepository
     static SkillRepository()
     {
         NpgsqlConnection.GlobalTypeMapper.MapEnum<SkillLevel>("skill_level");
+        SqlMapper.AddTypeHandler(new SkillLevelTypeHandler());
     }
 
     public async Task<Skill> CreateSkillAsync(Skill skill)
@@ -73,3 +75,24 @@ public class SkillRepository : ISkillRepository
         return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id });
     }
 }
+
+#region SkillLevelTypeHandler
+//nose que cojones es esto pero cada vez que entramos en el proyecto no funcionan los métodos de skill
+public class SkillLevelTypeHandler : SqlMapper.TypeHandler<SkillLevel>
+{
+    public override SkillLevel Parse(object value)
+    {
+        return value switch
+        {
+            string str => Enum.Parse<SkillLevel>(str),
+            int i => (SkillLevel)i,
+            _ => SkillLevel.Unknown
+        };
+    }
+
+    public override void SetValue(IDbDataParameter parameter, SkillLevel value)
+    {
+        parameter.Value = value.ToString();
+    }
+}
+#endregion
