@@ -102,5 +102,15 @@ namespace LogicPersistence.Api.Services
             }
             return volunteer;
         }
+
+        public async Task<int> GetVolunteersCountAsync() 
+        {
+            var volunteers = await _volunteerRepository.GetAllVolunteersAsync();
+            if (volunteers == null) 
+            {
+                throw new InvalidOperationException("Failed to retrieve volunteers.");
+            }
+            return volunteers.Count();
+        }
     }
 }

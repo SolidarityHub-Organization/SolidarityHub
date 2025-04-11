@@ -14,5 +14,6 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeleteVolunteerAsync(int id);
         Task<IEnumerable<Volunteer>> GetAllVolunteersAsync();
         Task<Volunteer?> GetVolunteerByEmailAsync(string email);
+        Task<int> GetVolunteersCountAsync();
     }
 }

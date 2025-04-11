@@ -81,5 +81,17 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpGet("victims/count")]
+		public async Task<IActionResult> GetVictimsCountAsync() {
+			try {
+				var count = await _victimServices.GetVictimsCountAsync();
+				return Ok(count);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

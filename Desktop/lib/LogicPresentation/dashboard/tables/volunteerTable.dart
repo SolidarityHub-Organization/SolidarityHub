@@ -62,7 +62,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Dashboard: Voluntarios y sus habilidades',
+                  'Voluntarios y sus habilidades',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
