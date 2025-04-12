@@ -11,6 +11,15 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id);
         Task<PhysicalDonation> GetPhysicalDonationByIdAsync(int id);
         Task<IEnumerable<PhysicalDonation>> GetAllPhysicalDonationsAsync();
+        Task<int> GetTotalAmountPhysicalDonationsAsync();
+#endregion
+#region MonetaryDonation
+        Task<MonetaryDonation> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto);        
+        Task<MonetaryDonation> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto);       
+        System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id);
+        Task<MonetaryDonation> GetMonetaryDonationByIdAsync(int id);
+        Task<IEnumerable<MonetaryDonation>> GetAllMonetaryDonationsAsync();
+        Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency);
 #endregion
     }
 }
