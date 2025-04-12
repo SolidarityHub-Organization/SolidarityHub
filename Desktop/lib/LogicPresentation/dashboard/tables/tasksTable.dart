@@ -4,7 +4,6 @@ import 'package:solidarityhub/LogicBusiness/services/generalServices.dart';
 import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'dart:convert';
-
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 
 class Taskstable extends StatefulWidget {
@@ -15,10 +14,8 @@ class Taskstable extends StatefulWidget {
 }
 
 class _TaskstableState extends State<Taskstable> {
-  GeneralService generalService = GeneralService(
-    'http://localhost:5170/api/v1',
-  );
-  TaskService taskService = TaskService('http://localhost:5170/api/v1');
+  final GeneralService generalService = GeneralService('http://localhost:5170/api/v1');
+  final TaskService taskService = TaskService('http://localhost:5170/api/v1');
   List<TaskWithDetails> tasks = [];
   bool isLoading = true;
   Map<int, String> taskAddresses = {};
@@ -29,21 +26,17 @@ class _TaskstableState extends State<Taskstable> {
     _fetchTasks();
   }
 
-  // TODO: Create a new endpoint to get all tasks without having to loop calls for the location endpoint
   Future<void> _loadTaskAddresses() async {
     for (var task in tasks) {
       try {
         final locationResponse = await http.get(
-          Uri.parse(
-            'http://localhost:5170/api/v1/locations/${task.locationId}',
-          ),
+          Uri.parse('http://localhost:5170/api/v1/locations/${task.locationId}'),
         );
 
         if (locationResponse.statusCode == 200) {
           final locationData = json.decode(locationResponse.body);
           final double lat = locationData['latitude'];
           final double lon = locationData['longitude'];
-
           final address = await generalService.getAddressFromLatLon(lat, lon);
 
           setState(() {
@@ -68,10 +61,7 @@ class _TaskstableState extends State<Taskstable> {
         final List<dynamic> data = json.decode(response.body);
 
         setState(() {
-          tasks =
-              data
-                  .map((taskJson) => TaskWithDetails.fromJson(taskJson))
-                  .toList();
+          tasks = data.map((taskJson) => TaskWithDetails.fromJson(taskJson)).toList();
           isLoading = false;
         });
 
@@ -87,35 +77,28 @@ class _TaskstableState extends State<Taskstable> {
   }
 
   Future<void> _deleteTask(TaskWithDetails task) async {
-    // Show confirmation dialog
-    final bool confirm =
-        await showDialog(
+    final bool confirm = await showDialog(
           context: context,
-          builder:
-              (context) => AlertDialog(
-                title: const Text('Confirmar eliminación'),
-                content: Text(
-                  '¿Está seguro de que desea eliminar la tarea "${task.name}"?',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                    child: const Text('Cancelar'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Eliminar'),
-                  ),
-                ],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+          builder: (context) => AlertDialog(
+            title: const Text('Confirmar eliminación'),
+            content: Text('¿Está seguro de que desea eliminar la tarea "${task.name}"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                child: const Text('Cancelar'),
               ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Eliminar'),
+              ),
+            ],
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          ),
         ) ??
         false;
 
@@ -127,7 +110,6 @@ class _TaskstableState extends State<Taskstable> {
       });
 
       final result = await taskService.deleteTask(task.id);
-
       await _fetchTasks();
 
       if (!mounted) return;
@@ -158,6 +140,7 @@ class _TaskstableState extends State<Taskstable> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -184,13 +167,8 @@ class _TaskstableState extends State<Taskstable> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 13.0,
-                    vertical: 16.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                 ),
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: const Text(
@@ -204,159 +182,66 @@ class _TaskstableState extends State<Taskstable> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : tasks.isEmpty
-              ? const Center(
-                child: Text(
-                  'No hay tareas disponibles.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              )
-              : Expanded(
-                child: ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        task.name,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "Sin prioridad",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            "Sin estado",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.blue,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    taskAddresses[task.id]?.startsWith(
-                                              'Error',
-                                            ) ==
-                                            true
-                                        ? 'Dirección desconocida'
-                                        : taskAddresses[task.id] ??
-                                            'Cargando dirección...',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
+                  ? const Center(
+                      child: Text(
+                        'No hay tareas disponibles.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columnSpacing: 24,
+                            columns: const [
+                              DataColumn(label: Text('Nombre')),
+                              DataColumn(label: Text('Descripción')),
+                              DataColumn(label: Text('Dirección')),
+                              DataColumn(label: Text('Asignado a')),
+                              DataColumn(label: Text('Acciones')),
+                            ],
+                            rows: tasks.map((task) {
+                              final address = taskAddresses[task.id]?.startsWith('Error') == true
+                                  ? 'Dirección desconocida'
+                                  : taskAddresses[task.id] ?? 'Cargando dirección...';
+
+                              final volunteers = task.assignedVolunteers.isNotEmpty
+                                  ? task.assignedVolunteers
+                                      .map((v) => '${v.name} ${v.surname}')
+                                      .join(', ')
+                                  : 'Sin asignar';
+
+                              return DataRow(cells: [
+                                DataCell(Text(task.name)),
+                                DataCell(Text(task.description)),
+                                DataCell(Text(address)),
+                                DataCell(Text(volunteers)),
+                                DataCell(Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.orange),
+                                      onPressed: () {
+                                        showCreateTaskModal(context, () {
+                                          _fetchTasks();
+                                        }, task);
+                                      },
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    task.description,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'Habilidades requeridas:',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () {
+                                        _deleteTask(task);
+                                      },
                                     ),
-                                  ),
-                                  ...[].map<Widget>((skill) {
-                                    return Text(
-                                      '- $skill',
-                                      style: const TextStyle(fontSize: 14),
-                                    );
-                                  }),
-                                  const SizedBox(height: 8),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Asignado a:',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        task.assignedVolunteers.isNotEmpty
-                                            ? task.assignedVolunteers
-                                                .map(
-                                                  (volunteer) =>
-                                                      '${volunteer.name} ${volunteer.surname}',
-                                                )
-                                                .join(', ')
-                                            : 'Sin asignar',
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Column(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showCreateTaskModal(context, () {
-                                      _fetchTasks();
-                                    }, task);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('Editar'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _deleteTask(task);
-                                    _fetchTasks();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('Eliminar'),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  ],
+                                )),
+                              ]);
+                            }).toList(),
+                          ),
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
         ],
       ),
     );
