@@ -20,10 +20,25 @@ class _TaskstableState extends State<Taskstable> {
   bool isLoading = true;
   Map<int, String> taskAddresses = {};
 
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+
   @override
   void initState() {
     super.initState();
     _fetchTasks();
+  }
+
+  void _sort<T>(Comparable<T> Function(TaskWithDetails task) getField, int columnIndex, bool ascending) {
+    setState(() {
+      tasks.sort((a, b) {
+        final aValue = getField(a);
+        final bValue = getField(b);
+        return ascending ? Comparable.compare(aValue, bValue) : Comparable.compare(bValue, aValue);
+      });
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+    });
   }
 
   Future<void> _loadTaskAddresses() async {
@@ -194,13 +209,40 @@ class _TaskstableState extends State<Taskstable> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: DataTable(
+                            sortColumnIndex: _sortColumnIndex,
+                            sortAscending: _sortAscending,
                             columnSpacing: 24,
-                            columns: const [
-                              DataColumn(label: Text('Nombre')),
-                              DataColumn(label: Text('Descripción')),
-                              DataColumn(label: Text('Dirección')),
-                              DataColumn(label: Text('Asignado a')),
-                              DataColumn(label: Text('Acciones')),
+                            columns: [
+                              DataColumn(
+                                label: const Text('Nombre'),
+                                onSort: (index, ascending) =>
+                                    _sort((task) => task.name.toLowerCase(), index, ascending),
+                              ),
+                              DataColumn(
+                                label: const Text('Descripción'),
+                                onSort: (index, ascending) =>
+                                    _sort((task) => task.description.toLowerCase(), index, ascending),
+                              ),
+                              DataColumn(
+                                label: const Text('Dirección'),
+                                onSort: (index, ascending) => _sort(
+                                  (task) => taskAddresses[task.id]?.toLowerCase() ?? '',
+                                  index,
+                                  ascending,
+                                ),
+                              ),
+                              DataColumn(
+                                label: const Text('Asignado a'),
+                                onSort: (index, ascending) => _sort(
+                                  (task) => task.assignedVolunteers
+                                      .map((v) => '${v.name} ${v.surname}')
+                                      .join(', ')
+                                      .toLowerCase(),
+                                  index,
+                                  ascending,
+                                ),
+                              ),
+                              const DataColumn(label: Text('Acciones')),
                             ],
                             rows: tasks.map((task) {
                               final address = taskAddresses[task.id]?.startsWith('Error') == true
