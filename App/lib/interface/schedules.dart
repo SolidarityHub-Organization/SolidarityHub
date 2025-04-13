@@ -66,31 +66,31 @@ class _SchedulesState extends State<Schedules> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    ...timeLabels.entries.map((entry) {
-                      final label = entry.key;
-                      final hours = entry.value;
-                      return RadioListTile<String>(
-                        title: Text('$label $hours'),
-                        value: label,
-                        groupValue: controller.selectedTime,
-                        activeColor: Colors.red,
-                        onChanged: (value) {
-                          setState(() {
-                            controller.updateSelectedTime(value);
-                          });
-                        },
-                      );
+            ...timeLabels.entries.map((entry) {
+                    final label = entry.key;
+                    final hours = entry.value;
+                    final isSelected = controller.selectedTimes.contains(label);
+                    return CheckboxListTile(
+                    title: Text('$label $hours'),
+                    value: isSelected,
+                    activeColor: Colors.red,
+                    onChanged: (bool? value) {
+                    setState(() {
+                    controller.updateSelectedTimes(label, value ?? false);
+                        });
+                      },
+                    );
                     }).toList(),
                     SizedBox(height: 10),
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          if (controller.selectedTime != null) {
-                            widget.userData.schedule = controller.selectedTime;
+                          if (controller.selectedTimes.isNotEmpty) {
+                            widget.userData.schedule = controller.selectedTimes.join(', ');
                             controller.goToNextScreen(context, widget.userData);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Selecciona un horario antes de continuar.')),
+                              SnackBar(content: Text('Selecciona al menos un horario antes de continuar.')),
                             );
                           }
                         },
@@ -103,6 +103,7 @@ class _SchedulesState extends State<Schedules> {
                         ),
                         child: Text('Siguiente paso', style: TextStyle(color: Colors.white)),
                       ),
+
                     ),
                   ],
                 ),

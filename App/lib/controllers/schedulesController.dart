@@ -4,17 +4,21 @@ import '../models/user_registration_data.dart';
 import '../interface/volunteerPreferences.dart';
 
 class SchedulesController {
-  String? selectedTime;
+  Set<String> selectedTimes = {};
 
-  void updateSelectedTime(String? time) {
-    selectedTime = time;
+  void updateSelectedTimes(String time, bool isSelected) {
+    if (isSelected) {
+      selectedTimes.add(time);
+    } else {
+      selectedTimes.remove(time);
+    }
   }
 
   void goToNextScreen(BuildContext context, UserRegistrationData userData) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VolunteerPreferences(userData: userData), //Poner la pantalla siguiente
+        builder: (context) => VolunteerPreferences(userData: userData),
       ),
     );
   }
