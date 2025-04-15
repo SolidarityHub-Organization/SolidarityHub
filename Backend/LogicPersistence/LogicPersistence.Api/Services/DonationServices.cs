@@ -140,6 +140,7 @@ namespace LogicPersistence.Api.Services
             return donations;
         }
 
+        //por ahora solo acepta EUR y USD
         public async Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency) {
             var totalEuro = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.EUR);
             var totalDollar = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.USD);

@@ -47,3 +47,8 @@ public class AffectedZoneDisplayDto
     public HazardLevel hazard_level { get; set; }
     public int admin_id { get; set; }
 }
+
+public class AffectedZoneWithPointsDTO : AffectedZoneDisplayDto
+{
+    public List<LocationDisplayDto> points { get; set; } = new List<LocationDisplayDto>();
+}
