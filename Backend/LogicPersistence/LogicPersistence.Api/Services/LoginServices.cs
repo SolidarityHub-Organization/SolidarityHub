@@ -2,6 +2,8 @@ using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
+
 
 namespace LogicPersistence.Api.Services
 {
@@ -21,11 +23,11 @@ namespace LogicPersistence.Api.Services
             var victim = await _VictimRepository.GetVictimByEmailAsync(email);
             if (victim != null && victim.password == password)
             {
-                return "victima";
+                return System.Text.Json.JsonSerializer.Serialize(new { role = "victima", id = victim.id });
             }
 			var volunteer = await _volunteerRepository.GetVolunteerByEmailAsync(email);
 			if(volunteer != null && volunteer.password == password) {
-				return "voluntario";
+				return System.Text.Json.JsonSerializer.Serialize(new { role = "voluntario", id = volunteer.id });
 			}
 
             return null;
