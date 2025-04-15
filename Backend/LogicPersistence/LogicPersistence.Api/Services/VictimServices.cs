@@ -72,6 +72,14 @@ namespace LogicPersistence.Api.Services {
 			return victims;
 		}
 
+		public async Task<int> GetVictimsCountAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
+			}
+			return victims.Count();
+		}
+
 		
 	}
 }

@@ -107,6 +107,10 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IGeneralRepository, GeneralRepository>();
 		builder.Services.AddScoped<IGeneralServices, GeneralServices>();
 		builder.Services.AddScoped<ILoginServices, LoginServices>();
+		builder.Services.AddScoped<ISignupServices, SignupServices>();
+
+		builder.Services.AddScoped<IDonationRepository, DonationRepository>();
+		builder.Services.AddScoped<IDonationServices, DonationServices>();
 	}
 
 }

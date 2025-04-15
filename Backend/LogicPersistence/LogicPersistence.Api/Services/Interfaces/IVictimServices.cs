@@ -8,5 +8,6 @@ namespace LogicPersistence.Api.Services {
 		Task<Victim> UpdateVictimAsync(int id, VictimUpdateDto victimUpdateDto);
 		System.Threading.Tasks.Task DeleteVictimAsync(int id);
 		Task<IEnumerable<Victim>> GetAllVictimsAsync();
+		Task<int> GetVictimsCountAsync();
 	}
 }

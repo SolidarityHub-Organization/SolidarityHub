@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../LogicBusiness/services/victimServices.dart';
+import '../../LogicBusiness/services/volunteerServices.dart';
 import '../../LogicPersistence/models/userLocation.dart';
 import 'markerfactory.dart';
 
@@ -12,33 +13,65 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
+enum MapViewMode { victim, volunteer, both }
+
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
-  final VictimService _userServices = VictimService('http://localhost:5170');
+  MapViewMode _currentMode = MapViewMode.both;
+
+  final VictimService _victimServices = VictimService('http://localhost:5170');
+  final VolunteerService _volunteerServices = VolunteerService('http://localhost:5170');
   final MapController _mapController = MapController();
 
   @override
   void initState() {
     super.initState();
     _fetchVictimLocations();
+    _fetchVolunteerLocations();
   }
 
   Future<void> _fetchVictimLocations() async {
     try {
-      final locations = await _userServices.fetchLocations();
+      final locations = await _victimServices.fetchLocations();
 
       List<UserLocation> users =
           locations.map((location) {
             return UserLocation.fromJson(location);
           }).toList();
 
-      print(locations);
+      //print(locations);
       setState(() {
-        _markers =
+        _markers.addAll(
             users.map((user) {
               final markerCreator = getMarkerCreator(user.role);
               return markerCreator.createMarker(user, context);
-            }).toList();
+            }).toList());
+      });
+    } catch (e) {
+      // Mejora la gestión de errores
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
+      );
+      print('Error al obtener las ubicaciones: $e');
+    }
+  }
+
+  Future<void> _fetchVolunteerLocations() async {
+    try {
+      final locations = await _volunteerServices.fetchLocations();
+
+      List<UserLocation> users =
+          locations.map((location) {
+            return UserLocation.fromJson(location);
+          }).toList();
+
+      //print(locations);
+      setState(() {
+        _markers.addAll(
+            users.map((user) {
+              final markerCreator = getMarkerCreator(user.role);
+              return markerCreator.createMarker(user, context);
+            }).toList());
       });
     } catch (e) {
       // Mejora la gestión de errores
@@ -162,6 +195,34 @@ class _MapScreenState extends State<MapScreen> {
                               child: const Icon(
                                 Icons.remove,
                                 color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _markers.clear();
+                                  if (_currentMode == MapViewMode.victim) {
+                                    _currentMode = MapViewMode.volunteer;
+                                    _fetchVolunteerLocations();
+                                  } else if (_currentMode == MapViewMode.volunteer) {
+                                    _currentMode = MapViewMode.both;
+                                    _fetchVictimLocations();
+                                    _fetchVolunteerLocations();
+                                  } else if (_currentMode == MapViewMode.both) {
+                                    _currentMode = MapViewMode.victim;
+                                    _fetchVictimLocations();
+                                  }
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                              ),
+                              child: const Text(
+                                "⇆",
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                             ),
                           ],

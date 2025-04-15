@@ -39,38 +39,24 @@ Future<String> createTask({
   required String name,
   required String description,
   required List<int> selectedVolunteers,
-  required double latitude,
-  required double longitude,
+  required String latitude,
+  required String longitude,
   int? taskId,
 }) async {
-  final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
-  final locationData = {"latitude": latitude, "longitude": longitude};
-
-  final locationResponse = await http.post(
-    locationUrl,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode(locationData),
-  );
-
-  if (locationResponse.statusCode < 200 || locationResponse.statusCode > 299) {
-    return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
-  }
-
-  final locationResult = json.decode(locationResponse.body);
-  final int locationId = locationResult['id'];
-
   final Map<String, dynamic> taskData = {
+    "id": taskId,
     "name": name,
     "description": description,
     "admin_id": null,
-    "location_id": locationId,
     "volunteer_ids": selectedVolunteers,
+    "location": {"latitude": latitude, "longitude": longitude},
   };
 
   final validationHandler = ValidationHandler();
+  final locationHandler = LocationHandler();
   final persistenceHandler = PersistenceHandler();
 
-  validationHandler.setNext(persistenceHandler);
+  validationHandler.setNext(locationHandler).setNext(persistenceHandler);
 
   return await validationHandler.handle(taskData);
 }
@@ -174,21 +160,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _handleCreateTask() async {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
-
-    double? latitude = double.tryParse(latitudeController.text);
-    double? longitude = double.tryParse(longitudeController.text);
-
-    if (name.isEmpty ||
-        description.isEmpty ||
-        latitude == null ||
-        longitude == null) {
-      AppSnackBar.show(
-        context: context,
-        message: "Por favor, complete todos los campos.",
-        type: SnackBarType.error,
-      );
-      return;
-    }
+    final latitude = latitudeController.text.trim();
+    final longitude = longitudeController.text.trim();
 
     final result = await createTask(
       name: name,
@@ -201,15 +174,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
     if (result.startsWith("OK")) {
       widget.onTaskCreated();
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
     AppSnackBar.show(
       context: context,
       message: result,
-      type: SnackBarType.success,
+      type: result.startsWith("OK") ? SnackBarType.success : SnackBarType.error,
     );
   }
 
@@ -218,7 +191,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         elevation: 0,
         backgroundColor: Colors.transparent,
         child: _contentBox(context),
@@ -234,7 +207,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
         children: [
@@ -257,7 +230,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       children: [
         Text(
           isEditing ? 'Editar Tarea' : 'Crear Tarea',
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         IconButton(
           icon: const Icon(Icons.close),
@@ -280,7 +253,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               const SizedBox(height: 16),
               _buildTextField(
                 controller: descriptionController,
-                label: 'Description',
+                label: 'Descripción',
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -344,7 +317,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Colors.red, width: 2.0),
+        ),
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,
@@ -354,53 +335,91 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Widget _buildCreateButton(bool isEditing) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
         ),
         onPressed: _handleCreateTask,
-        child: Text(isEditing ? 'Editar Tarea' : 'Crear Tarea'),
+        icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white),
+        label: Text(
+          isEditing ? 'Actualizar Tarea' : 'Crear Tarea',
+          style: const TextStyle(fontSize: 16),
+        ),
       ),
     );
   }
 
   Widget _buildVolunteerList() {
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Voluntarios disponibles',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Voluntarios disponibles',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: volunteers.length,
+                  itemBuilder: (context, index) {
+                    final volunteer = volunteers[index];
+                    final isSelected = selectedVolunteers.contains(
+                      volunteer.id,
+                    );
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      elevation: 0,
+                      color: isSelected ? Colors.red : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(
+                          color: isSelected ? Colors.red : Colors.transparent,
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          '${volunteer.name} ${volunteer.surname}',
+                          style: TextStyle(
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                          ),
+                        ),
+                        trailing: Checkbox(
+                          activeColor: Colors.red,
+                          value: isSelected,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value == true) {
+                                selectedVolunteers.add(volunteer.id);
+                              } else {
+                                selectedVolunteers.remove(volunteer.id);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: volunteers.length,
-              itemBuilder: (context, index) {
-                final volunteer = volunteers[index];
-                final isSelected = selectedVolunteers.contains(volunteer.id);
-                return ListTile(
-                  title: Text('${volunteer.name} ${volunteer.surname}'),
-                  trailing: Checkbox(
-                    value: isSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedVolunteers.add(volunteer.id);
-                        } else {
-                          selectedVolunteers.remove(volunteer.id);
-                        }
-                      });
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

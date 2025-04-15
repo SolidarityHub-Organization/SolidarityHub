@@ -82,7 +82,6 @@ class _RegisterChooseState extends State<RegisterChoose> {
         isValid = false;
       }
 
-
     });
   }
 
@@ -117,7 +116,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                   TextField(
                     controller: _controller.nameController,
                     decoration: InputDecoration(
-                      labelText: 'Nombre',
+                      labelText: 'Nombre (*)',
                       errorText: _nameErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -136,7 +135,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                   TextField(
                     controller: _controller.surnameController,
                     decoration: InputDecoration(
-                      labelText: 'Apellidos',
+                      labelText: 'Apellidos (*)',
                       errorText: _surnameErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -172,7 +171,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'Fecha de nacimiento',
+                      labelText: 'Fecha de nacimiento (*)',
                       errorText: _birthDateErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -194,7 +193,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      labelText: 'Teléfono',
+                      labelText: 'Teléfono (*)',
                       errorText: _phoneErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(

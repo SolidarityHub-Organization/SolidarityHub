@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicBusiness/services/generalServices.dart';
+import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'dart:convert';
 
@@ -13,8 +15,13 @@ class Taskstable extends StatefulWidget {
 }
 
 class _TaskstableState extends State<Taskstable> {
+  GeneralService generalService = GeneralService(
+    'http://localhost:5170/api/v1',
+  );
+  TaskService taskService = TaskService('http://localhost:5170/api/v1');
   List<TaskWithDetails> tasks = [];
   bool isLoading = true;
+  Map<int, String> taskAddresses = {};
 
   @override
   void initState() {
@@ -22,10 +29,39 @@ class _TaskstableState extends State<Taskstable> {
     _fetchTasks();
   }
 
+  // TODO: Create a new endpoint to get all tasks without having to loop calls for the location endpoint
+  Future<void> _loadTaskAddresses() async {
+    for (var task in tasks) {
+      try {
+        final locationResponse = await http.get(
+          Uri.parse(
+            'http://localhost:5170/api/v1/locations/${task.locationId}',
+          ),
+        );
+
+        if (locationResponse.statusCode == 200) {
+          final locationData = json.decode(locationResponse.body);
+          final double lat = locationData['latitude'];
+          final double lon = locationData['longitude'];
+
+          final address = await generalService.getAddressFromLatLon(lat, lon);
+
+          setState(() {
+            taskAddresses[task.id] = address;
+          });
+        }
+      } catch (e) {
+        setState(() {
+          taskAddresses[task.id] = 'Dirección no disponible';
+        });
+      }
+    }
+  }
+
   Future<void> _fetchTasks() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5170/api/v1/tasksWithDetails'),
+        Uri.parse('http://localhost:5170/api/v1/tasks-with-details'),
       );
 
       if (response.statusCode == 200) {
@@ -38,6 +74,8 @@ class _TaskstableState extends State<Taskstable> {
                   .toList();
           isLoading = false;
         });
+
+        _loadTaskAddresses();
       } else {
         throw Exception('Error al obtener las tareas: ${response.statusCode}');
       }
@@ -45,6 +83,71 @@ class _TaskstableState extends State<Taskstable> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _deleteTask(TaskWithDetails task) async {
+    // Show confirmation dialog
+    final bool confirm =
+        await showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Confirmar eliminación'),
+                content: Text(
+                  '¿Está seguro de que desea eliminar la tarea "${task.name}"?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                    child: const Text('Cancelar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Eliminar'),
+                  ),
+                ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+        ) ??
+        false;
+
+    if (!confirm) return;
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final result = await taskService.deleteTask(task.id);
+
+      await _fetchTasks();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result), backgroundColor: Colors.green),
+      );
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al eliminar la tarea: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -159,7 +262,13 @@ class _TaskstableState extends State<Taskstable> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    "Ubicación desconocida",
+                                    taskAddresses[task.id]?.startsWith(
+                                              'Error',
+                                            ) ==
+                                            true
+                                        ? 'Dirección desconocida'
+                                        : taskAddresses[task.id] ??
+                                            'Cargando dirección...',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
@@ -200,7 +309,8 @@ class _TaskstableState extends State<Taskstable> {
                                         task.assignedVolunteers.isNotEmpty
                                             ? task.assignedVolunteers
                                                 .map(
-                                                  (volunteer) => volunteer.name,
+                                                  (volunteer) =>
+                                                      '${volunteer.name} ${volunteer.surname}',
                                                 )
                                                 .join(', ')
                                             : 'Sin asignar',
@@ -216,17 +326,6 @@ class _TaskstableState extends State<Taskstable> {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Acción para ver detalles
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('Ver detalles'),
-                                ),
-                                const SizedBox(height: 8),
-                                ElevatedButton(
-                                  onPressed: () {
                                     showCreateTaskModal(context, () {
                                       _fetchTasks();
                                     }, task);
@@ -236,6 +335,18 @@ class _TaskstableState extends State<Taskstable> {
                                     foregroundColor: Colors.white,
                                   ),
                                   child: const Text('Editar'),
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _deleteTask(task);
+                                    _fetchTasks();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Eliminar'),
                                 ),
                               ],
                             ),

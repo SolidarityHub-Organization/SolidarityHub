@@ -18,10 +18,43 @@ class ValidationHandler extends TaskHandler {
     if (taskData['name'].isEmpty || taskData['description'].isEmpty) {
       return "Error: Nombre y Descripción no pueden estar vacíos.";
     }
-    if (taskData['location_id'] == 0) {
-      return "Error: La ubicación debe seleccionarse.";
+
+    final location = taskData['location'];
+
+    try {
+      final latitude = double.parse(location['latitude'].toString());
+      final longitude = double.parse(location['longitude'].toString());
+      if (latitude == 0 || longitude == 0) {
+        return "Error: La ubicación debe seleccionarse.";
+      }
+    } catch (e) {
+      return "Error: Latitud y Longitud deben ser números válidos.";
     }
+
     return nextHandler?.handle(taskData) ?? "Validación exitosa";
+  }
+}
+
+class LocationHandler extends TaskHandler {
+  @override
+  Future<String> handle(Map<String, dynamic> taskData) async {
+    final locationUrl = Uri.parse("http://localhost:5170/api/v1/locations");
+
+    final locationResponse = await http.post(
+      locationUrl,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(taskData['location']),
+    );
+
+    if (locationResponse.statusCode < 200 ||
+        locationResponse.statusCode > 299) {
+      return "Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}";
+    }
+
+    final locationResult = json.decode(locationResponse.body);
+    taskData['location_id'] = locationResult['id'];
+
+    return nextHandler?.handle(taskData) ?? "Ubicación creada con éxito";
   }
 }
 
