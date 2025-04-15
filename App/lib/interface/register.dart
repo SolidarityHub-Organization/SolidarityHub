@@ -149,7 +149,7 @@ class _RegisterState extends State<Register> {
                   TextField(
                     controller: registerController.emailController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'Email (*)',
                       errorText: _emailErrorText,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -170,7 +170,7 @@ class _RegisterState extends State<Register> {
                     controller: registerController.passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Contraseña',
+                      labelText: 'Contraseña (*)',
                       errorText: _passwordErrorText,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -191,7 +191,7 @@ class _RegisterState extends State<Register> {
                     controller: registerController.repeatPasswordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Repite Contraseña',
+                      labelText: 'Repite Contraseña (*)',
                       errorText: _repeatPasswordErrorText,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),

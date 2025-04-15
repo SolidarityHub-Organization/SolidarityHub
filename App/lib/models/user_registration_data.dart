@@ -22,10 +22,7 @@ class UserRegistrationData {
       'phone_number': phone,
       'role': role,
       'address': address,
-      'identification': null,
-      'schedule':schedule,
-      'skill':preferences,
-      'needs': needs,
+      'identification': null
     };
   }
 }

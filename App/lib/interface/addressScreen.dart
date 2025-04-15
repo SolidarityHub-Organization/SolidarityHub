@@ -106,12 +106,12 @@ class _AddressScreenState extends State<AddressScreen> {
                               ),
                               const SizedBox(height: 10),
 
-                              _buildTextField("Línea de Dirección 1", controller.addressLine1Controller),
+                              _buildTextField("Línea de Dirección 1 (*)", controller.addressLine1Controller),
                               _buildTextField("Línea de Dirección 2", controller.addressLine2Controller),
-                              _buildTextField("País", controller.countryController),
-                              _buildTextField("Provincia", controller.provinceController),
-                              _buildTextField("Localidad", controller.cityController),
-                              _buildTextField("Código postal", controller.postalCodeController),
+                              _buildTextField("País (*)", controller.countryController),
+                              _buildTextField("Provincia (*)", controller.provinceController),
+                              _buildTextField("Localidad (*)", controller.cityController),
+                              _buildTextField("Código postal (*)", controller.postalCodeController),
 
                               const SizedBox(height: 20),
 

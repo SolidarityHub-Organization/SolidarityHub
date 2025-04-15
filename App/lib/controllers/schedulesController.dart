@@ -1,7 +1,6 @@
 import 'package:app/interface/volunteerPreferences.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
-import '../interface/volunteerPreferences.dart';
 
 class SchedulesController {
   Set<String> selectedTimes = {};
