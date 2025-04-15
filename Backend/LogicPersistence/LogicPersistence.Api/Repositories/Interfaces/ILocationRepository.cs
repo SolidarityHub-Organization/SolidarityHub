@@ -8,4 +8,5 @@ public interface ILocationRepository {
 	Task<bool> DeleteLocationAsync(int id);
 	Task<Location?> GetLocationByIdAsync(int id);
 	Task<IEnumerable<Location>> GetAllLocationsAsync();
+	Task<IEnumerable<Location>> GetLocationsByAffectedZoneIdAsync(int id);
 }

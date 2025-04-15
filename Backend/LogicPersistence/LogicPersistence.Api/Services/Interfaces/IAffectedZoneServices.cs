@@ -10,6 +10,6 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeleteAffectedZoneAsync(int id);
         Task<AffectedZone> GetAffectedZoneByIdAsync(int id);
         Task<IEnumerable<AffectedZone>> GetAllAffectedZonesAsync();
-        
+        Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllAffectedZonesWithPointsAsync();
     }
 }

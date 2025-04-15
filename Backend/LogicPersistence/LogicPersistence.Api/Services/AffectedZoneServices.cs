@@ -2,6 +2,7 @@ using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
+using LogicPersistence.Api.Repositories.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
@@ -9,10 +10,12 @@ namespace LogicPersistence.Api.Services
     public class AffectedZoneServices : IAffectedZoneServices
     {
         private readonly IAffectedZoneRepository _affectedZoneRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public AffectedZoneServices(IAffectedZoneRepository affectedZoneRepository)
+        public AffectedZoneServices(IAffectedZoneRepository affectedZoneRepository, ILocationRepository locationRepository)
         {
             _affectedZoneRepository = affectedZoneRepository;
+            _locationRepository = locationRepository;
         }
 
         public async Task<AffectedZone> CreateAffectedZoneAsync(AffectedZoneCreateDto affectedZoneCreateDto)
@@ -71,6 +74,32 @@ namespace LogicPersistence.Api.Services
                 throw new InvalidOperationException("Failed to retrieve affected zones.");
             }
             return affectedZones;
+        }
+
+        public async Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllAffectedZonesWithPointsAsync() 
+        {
+            var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
+            if (affectedZones == null) 
+            {
+                throw new InvalidOperationException("Failed to retrieve affected zones.");
+            }
+            var result = new List<AffectedZoneWithPointsDTO>();
+            foreach (var affectedZone in affectedZones) 
+            {
+                var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(affectedZone.id);
+                if (points.ToList().Count >= 3) {
+                    result.Add(new AffectedZoneWithPointsDTO {
+                        id = affectedZone.id,
+                        name = affectedZone.name,
+                        description = affectedZone.description,
+                        hazard_level = affectedZone.hazard_level,
+                        admin_id = affectedZone.admin_id,
+                        points = points.Select(p => p.ToLocationDisplayDto()).ToList()
+                    });
+                }
+                
+            }
+            return result;
         }
 
 

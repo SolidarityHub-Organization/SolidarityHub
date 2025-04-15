@@ -59,4 +59,16 @@ public class LocationRepository : ILocationRepository {
 		using var connection = new NpgsqlConnection(connectionString);
 		return await connection.QueryAsync<Location>("SELECT * FROM location");
 	}
+
+	public async Task<IEnumerable<Location>> GetLocationsByAffectedZoneIdAsync(int id) {
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT l.* 
+			FROM location l
+			INNER JOIN affected_zone_location azl ON l.id = azl.location_id
+			WHERE azl.affected_zone_id = @id";
+
+		return await connection.QueryAsync<Location>(sql, new { id });
+
+	}
 }
