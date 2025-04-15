@@ -1,3 +1,4 @@
+using System.Numerics;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Services;
@@ -12,7 +13,7 @@ namespace LogicPersistence.Api.Logic
 	    public string name { get; set; }
     	public string surname { get; set; }
 	    public int prefix { get; set; }
-	    public int phone_number { get; set; }
+	    public BigInteger phone_number { get; set; }
 	    public string address { get; set; }
         public string identification { get; set; }
         public int? location_id { get; set; }
