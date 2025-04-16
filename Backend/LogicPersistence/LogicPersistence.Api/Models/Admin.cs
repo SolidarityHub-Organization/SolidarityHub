@@ -8,7 +8,7 @@ public class Admin {
 	public string name { get; set; } = string.Empty;
 	public string surname { get; set; } = string.Empty;
 	public int prefix { get; set; }
-	public int phone_number { get; set; }
+	public string phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
 
