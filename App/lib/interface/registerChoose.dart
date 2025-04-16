@@ -16,11 +16,13 @@ class _RegisterChooseState extends State<RegisterChoose> {
   bool _surnameHasError = false;
   bool _birthDateHasError = false;
   bool _phoneHasError = false;
+  bool _identificationHasError = false;
 
   String? _nameErrorText;
   String? _surnameErrorText;
   String? _birthDateErrorText;
   String? _phoneErrorText;
+  String? _identificationErrorText;
 
   late RegisterChooseController _controller;
 
@@ -36,11 +38,13 @@ class _RegisterChooseState extends State<RegisterChoose> {
       _surnameHasError = false;
       _birthDateHasError = false;
       _phoneHasError = false;
+      _identificationHasError = false;
 
       _nameErrorText = null;
       _surnameErrorText = null;
       _birthDateErrorText = null;
       _phoneErrorText = null;
+      _identificationErrorText = null;
 
       bool isValid = true;
 
@@ -68,9 +72,6 @@ class _RegisterChooseState extends State<RegisterChoose> {
         isValid = false;
       }
 
-      if (isValid) {
-        _controller.submitForm(rol, context);
-      }
 
       if (_controller.phoneController.text.trim().isEmpty) {
         _phoneHasError = true;
@@ -80,6 +81,21 @@ class _RegisterChooseState extends State<RegisterChoose> {
         _phoneHasError = true;
         _phoneErrorText = 'Introduce un número válido de 9 dígitos';
         isValid = false;
+      }
+
+      if(_controller.identificationController.text.trim().isEmpty){
+        _identificationHasError = true;
+        _identificationErrorText = 'El DNI no puede estar vacío';
+        isValid = false;
+      }
+      else if(!_controller.isValidIdentification(_controller.identificationController.text.trim())){
+        _identificationHasError = true;
+        _identificationErrorText = 'El DNI tiene que seguir el formato de este ejemplo: 00000000X';
+        isValid = false;
+      }
+
+      if (isValid) {
+        _controller.submitForm(rol, context);
       }
 
     });
@@ -116,7 +132,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                   TextField(
                     controller: _controller.nameController,
                     decoration: InputDecoration(
-                      labelText: 'Nombre (*)',
+                      labelText: 'Nombre*',
                       errorText: _nameErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -135,7 +151,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                   TextField(
                     controller: _controller.surnameController,
                     decoration: InputDecoration(
-                      labelText: 'Apellidos (*)',
+                      labelText: 'Apellidos*',
                       errorText: _surnameErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -171,7 +187,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'Fecha de nacimiento (*)',
+                      labelText: 'Fecha de nacimiento*',
                       errorText: _birthDateErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -185,6 +201,24 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     ),
                   ),
 
+                  const SizedBox(height: 10),
+                  // DNI
+                  TextField(
+                    controller: _controller.identificationController,
+                    decoration: InputDecoration(
+                      labelText: 'DNI*',
+                      errorText: _identificationErrorText,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _identificationHasError ? Colors.red : Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: _identificationHasError ? Colors.red : Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 10),
                   //Telefono
@@ -193,7 +227,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      labelText: 'Teléfono (*)',
+                      labelText: 'Teléfono*',
                       errorText: _phoneErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder: OutlineInputBorder(
@@ -213,7 +247,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: ()=> _submitFormConValidacion('Afectado', context),
+                          onPressed: ()=> _submitFormConValidacion('Victim', context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -227,7 +261,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _submitFormConValidacion('Voluntario', context),
+                          onPressed: () => _submitFormConValidacion('Volunteer', context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 12),
