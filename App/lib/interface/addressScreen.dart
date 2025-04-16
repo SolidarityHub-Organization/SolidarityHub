@@ -1,3 +1,4 @@
+import 'package:app/interface/schedules.dart';
 import 'package:flutter/material.dart';
 import '/controllers/addressScreenController.dart';
 import '/models/user_registration_data.dart';
@@ -49,12 +50,23 @@ class _AddressScreenState extends State<AddressScreen> {
           const SnackBar(content: Text("Dirección enviada correctamente")),
         );
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VictimNecessities(userData: widget.userData),
-          ),
-        );
+        if(widget.userData.role == 'Volunteer'){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Schedules(userData: widget.userData),
+            ),
+          );
+        }
+        else{
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VictimNecessities(userData: widget.userData),
+            ),
+          );
+        }
+
       }
     });
   }
@@ -106,12 +118,12 @@ class _AddressScreenState extends State<AddressScreen> {
                               ),
                               const SizedBox(height: 10),
 
-                              _buildTextField("Línea de Dirección 1 (*)", controller.addressLine1Controller),
+                              _buildTextField("Línea de Dirección 1*", controller.addressLine1Controller),
                               _buildTextField("Línea de Dirección 2", controller.addressLine2Controller),
-                              _buildTextField("País (*)", controller.countryController),
-                              _buildTextField("Provincia (*)", controller.provinceController),
-                              _buildTextField("Localidad (*)", controller.cityController),
-                              _buildTextField("Código postal (*)", controller.postalCodeController),
+                              _buildTextField("País*", controller.countryController),
+                              _buildTextField("Provincia*", controller.provinceController),
+                              _buildTextField("Localidad*", controller.cityController),
+                              _buildTextField("Código postal*", controller.postalCodeController),
 
                               const SizedBox(height: 20),
 

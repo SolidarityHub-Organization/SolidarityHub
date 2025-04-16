@@ -10,6 +10,7 @@ class UserRegistrationData {
   String? schedule;
   String? preferences;
   String? needs;
+  String? identification;
 
   Map<String, dynamic> toJson() {
     return {
@@ -22,7 +23,7 @@ class UserRegistrationData {
       'phone_number': phone,
       'role': role,
       'address': address,
-      'identification': null
+      'identification': identification
     };
   }
 

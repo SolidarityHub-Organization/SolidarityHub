@@ -20,22 +20,25 @@ class RegisterController {
 
 
   void register(BuildContext context) async{
-
-    if(validatePasswords() && emailController.text.isNotEmpty) {
-      userData.email = emailController.text.trim();
-      userData.password = passwordController.text;
-    if(AuthService.emailExists(emailController.text.trim()) == false){
-      print("Datos de login guardados en el modelo:");
-      print("Continua Registro");
-      Navigator.push(context,
-        MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+    try {
+      if (AuthService.emailExists(emailController.text.trim()) != true) {
+        print("Datos de login guardados en el modelo:");
+        print("Continua Registro");
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+      }
+      else {
+        print("El Email introducido ya existe");
+      }
     }
-    else{
-      print("Email ya existe");
+    catch(e) {
+      print("Error de conexión con el servidor: $e");
     }
-
+      if(validatePasswords() && emailController.text.isNotEmpty) {
+        userData.email = emailController.text.trim();
+        userData.password = passwordController.text;
+      }
     }
-  }
 
   void dispose() {
     emailController.dispose();
