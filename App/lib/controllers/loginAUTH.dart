@@ -21,7 +21,7 @@ class AuthController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body); //Checkear
         print('Login exitoso');
-        Navigator.pushNamed(context, '/homeScreen');
+        Navigator.pushNamed(context, '/homeScreenVoluntario');
         print('Token recibido: ${data['token']}'); //Checkear
       } else {
         print('Error de login: ${response.statusCode}');
