@@ -47,12 +47,44 @@ class _VolunteerTabState extends State<VolunteerTab> {
                       barRods: [
                         BarChartRodData(
                           toY: (entry.value['item2'] as int).toDouble(),
-                          color:
-                              Colors.red, // Cambiar color de las barras a rojo
-                          width: 30, // Barras más gruesas
+                          color: const Color(0xFFF44336),
+                          width: 30,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ],
+                    ),
+                  )
+                  .toList();
+
+          final totalValue = data.fold<int>(
+            0,
+            (sum, entry) => sum + (entry['item2'] as int),
+          );
+
+          final pieSections =
+              data
+                  .map(
+                    (entry) => PieChartSectionData(
+                      value: (entry['item2'] as int).toDouble(),
+                      title: entry['item1'],
+                      color:
+                          Colors.primaries[data.indexOf(entry) %
+                              Colors.primaries.length],
+                      radius: 50,
+                      titleStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      badgeWidget: Text(
+                        '${((entry['item2'] as int) / totalValue * 100).toStringAsFixed(1)}%',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      badgePositionPercentageOffset: 1.3,
                     ),
                   )
                   .toList();
@@ -71,100 +103,113 @@ class _VolunteerTabState extends State<VolunteerTab> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    60.0, // Margen izquierdo igual al derecho
-                    0,
-                    60.0, // Margen derecho
-                    20.0, // Margen inferior
-                  ),
-                  child: BarChart(
-                    BarChartData(
-                      barGroups: barGroups,
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles:
-                                false, // Ocultar números del eje izquierdo
-                          ),
-                        ),
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            interval: 1, // Mostrar solo números enteros
-                            reservedSize: 60,
-                            getTitlesWidget: (value, meta) {
-                              if (value % 1 == 0) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles:
-                                false, // Ocultar números del eje superior
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize:
-                                40, // Espacio para los nombres del eje inferior
-                            getTitlesWidget: (value, meta) {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 12.0),
-                                child: Text(
-                                  data[value.toInt()]['item1'] as String,
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(60.0, 0, 30.0, 20.0),
+                        child: BarChart(
+                          BarChartData(
+                            barGroups: barGroups,
+                            titlesData: FlTitlesData(
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  interval: 1,
+                                  reservedSize: 40,
+                                  getTitlesWidget: (value, meta) {
+                                    if (value % 1 == 0) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8.0,
+                                        ),
+                                        child: Text(
+                                          value.toInt().toString(),
+                                          style: const TextStyle(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      gridData: FlGridData(
-                        show: true,
-                        drawHorizontalLine: true,
-                        horizontalInterval: 5,
-                        getDrawingHorizontalLine: (value) {
-                          return FlLine(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            strokeWidth: 1,
-                          );
-                        },
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border.all(color: Color(0xFFF44336), width: 1),
-                      ),
-                      barTouchData: BarTouchData(
-                        touchTooltipData: BarTouchTooltipData(
-                          tooltipBgColor: Color(0xFFF44336),
-                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                            return BarTooltipItem(
-                              '${data[group.x.toInt()]['item1']}: ${rod.toY.toInt()}',
-                              const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 40,
+                                  getTitlesWidget: (value, meta) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 12.0),
+                                      child: Text(
+                                        data[value.toInt()]['item1'] as String,
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            gridData: FlGridData(
+                              show: true,
+                              drawHorizontalLine: true,
+                              horizontalInterval: 5,
+                              getDrawingHorizontalLine: (value) {
+                                return FlLine(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  strokeWidth: 1,
+                                );
+                              },
+                            ),
+                            borderData: FlBorderData(show: false),
+                            barTouchData: BarTouchData(
+                              touchTooltipData: BarTouchTooltipData(
+                                tooltipBgColor: const Color(0xFFF44336),
+                                getTooltipItem: (
+                                  group,
+                                  groupIndex,
+                                  rod,
+                                  rodIndex,
+                                ) {
+                                  return BarTooltipItem(
+                                    '${data[group.x.toInt()]['item1']}: ${rod.toY.toInt()}',
+                                    const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(30.0, 0, 60.0, 20.0),
+                        child: PieChart(
+                          PieChartData(
+                            sections: pieSections,
+                            centerSpaceRadius: 40,
+                            sectionsSpace: 4,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
