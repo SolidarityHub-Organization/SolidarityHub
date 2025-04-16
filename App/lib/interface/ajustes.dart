@@ -13,7 +13,12 @@ class AjustesCuenta extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(Icons.arrow_back, color: Colors.white),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back, color: Colors.white),
+                  ),
                   SizedBox(width: 12),
                   Text(
                     "AJUSTES",
