@@ -25,5 +25,19 @@ class UserRegistrationData {
       'identification': null
     };
   }
+
+  Map<String, dynamic> volunteerToJson() {
+    return {
+      'schedule': schedule,
+      'preferences': preferences
+    };
+  }
+
+  Map<String, dynamic> victimToJson() {
+    return {
+      'needs': needs
+    };
+  }
+
 }
 

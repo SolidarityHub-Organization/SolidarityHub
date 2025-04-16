@@ -19,10 +19,10 @@ class AuthController {
       final response = await AuthService.login(email, password); // Llamada al servicio
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(response.body); //Checkear
         print('Login exitoso');
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()),);
-        print('Token recibido: ${data['token']}');
+        print('Token recibido: ${data['token']}'); //Checkear
       } else {
         print('Error de login: ${response.statusCode}');
         print('Mensaje: ${response.body}');
