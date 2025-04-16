@@ -29,8 +29,12 @@ namespace LogicPersistence.Api.Services
 			if(volunteer != null && volunteer.password == password) {
 				return System.Text.Json.JsonSerializer.Serialize(new { role = "voluntario", id = volunteer.id });
 			}
+            if (victim != null || volunteer != null)
+            {
+                return System.Text.Json.JsonSerializer.Serialize(new { role = "exists" });
+            }
 
-            return null;
+            return System.Text.Json.JsonSerializer.Serialize(new { role = "email not registered" });
         }
     }
 }
