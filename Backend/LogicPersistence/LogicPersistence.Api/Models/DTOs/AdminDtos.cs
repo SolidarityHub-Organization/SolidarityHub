@@ -32,7 +32,7 @@ public class AdminCreateDto
 
     [Required]
     [Range(100000000, 99999999999)]
-    public int phone_number { get; set; }
+    public string phone_number { get; set; }
 
     [Required]
     [MaxLength(255)]
@@ -75,7 +75,7 @@ public class AdminUpdateDto
 
 	[Required]
     [Range(100000000, 99999999999)]
-    public int phone_number { get; set; }
+    public string phone_number { get; set; }
 
 	[Required]
     [MaxLength(255)]
@@ -95,7 +95,7 @@ public class AdminDisplayDto
     public string name { get; set; } = string.Empty;
     public string surname { get; set; } = string.Empty;
     public int prefix { get; set; }
-    public int phone_number { get; set; }
+    public string phone_number { get; set; }
     public string address { get; set; } = string.Empty;
     public string identification { get; set; } = string.Empty;
 }
