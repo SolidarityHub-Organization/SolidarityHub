@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/auth_service.dart';
-import '/interface/homeScreen.dart';
+import '/interface/homeScreenVoluntario.dart';
 
 class AuthController {
   final TextEditingController emailController = TextEditingController();
@@ -21,7 +21,7 @@ class AuthController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body); //Checkear
         print('Login exitoso');
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()),);
+        Navigator.pushNamed(context, '/homeScreen');
         print('Token recibido: ${data['token']}'); //Checkear
       } else {
         print('Error de login: ${response.statusCode}');
