@@ -484,3 +484,10 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 /App/linux/flutter
+App/linux/flutter/generated_plugin_registrant.cc
+App/linux/flutter/generated_plugin_registrant.h
+App/linux/flutter/generated_plugins.cmake
+App/macos/Flutter/GeneratedPluginRegistrant.swift
+App/windows/flutter/generated_plugin_registrant.cc
+App/windows/flutter/generated_plugin_registrant.h
+App/windows/flutter/generated_plugins.cmake
