@@ -39,5 +39,12 @@ class UserRegistrationData {
     };
   }
 
+  Map<String, dynamic> emailValidation() {
+    return {
+      'email': email,
+      'password': null,
+    };
+  }
+
 }
 

@@ -56,4 +56,27 @@ class AuthService {
 
     return response;
   }
+
+  static Future<bool> emailExists(String email) async {
+    final url = Uri.parse('https://tu-backend.com/api/verificar_email');
+
+    final Map<String, dynamic> data = {
+      'email': email,
+      'password': null,
+    };
+
+    final response = await http.post(url,
+    headers: {
+    'Content-Type': 'application/json',
+    },
+        body: jsonEncode(data),
+    );
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return responseData['role'] == "exists";
+    } else {
+      throw Exception('Error al verificar email: ${response.statusCode}');
+    }
+    }
+
 }
