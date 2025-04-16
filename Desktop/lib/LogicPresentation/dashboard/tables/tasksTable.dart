@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicBusiness/services/generalServices.dart';
+import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
 import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'dart:convert';
@@ -15,7 +15,7 @@ class Taskstable extends StatefulWidget {
 }
 
 class _TaskstableState extends State<Taskstable> {
-  GeneralService generalService = GeneralService(
+  CoordenadasService coordenadasService = CoordenadasService(
     'http://localhost:5170/api/v1',
   );
   TaskService taskService = TaskService('http://localhost:5170/api/v1');
@@ -44,7 +44,10 @@ class _TaskstableState extends State<Taskstable> {
           final double lat = locationData['latitude'];
           final double lon = locationData['longitude'];
 
-          final address = await generalService.getAddressFromLatLon(lat, lon);
+          final address = await coordenadasService.getAddressFromLatLon(
+            lat,
+            lon,
+          );
 
           setState(() {
             taskAddresses[task.id] = address;

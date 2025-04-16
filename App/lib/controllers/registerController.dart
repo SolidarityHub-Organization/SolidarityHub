@@ -18,16 +18,22 @@ class RegisterController {
     return passwordController.text == repeatPasswordController.text;
   }
 
+
   void register(BuildContext context) async{
 
     if(validatePasswords() && emailController.text.isNotEmpty) {
       userData.email = emailController.text.trim();
       userData.password = passwordController.text;
-
+    if(AuthService.emailExists(emailController.text.trim()) == false){
       print("Datos de login guardados en el modelo:");
       print("Continua Registro");
       Navigator.push(context,
         MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+    }
+    else{
+      print("Email ya existe");
+    }
+
     }
   }
 
