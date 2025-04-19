@@ -112,6 +112,7 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IDonationServices, DonationServices>();
 		builder.Services.AddScoped<IAffectedZoneRepository, AffectedZoneRepository>();
 		builder.Services.AddScoped<IAffectedZoneServices, AffectedZoneServices>();
+		builder.Services.AddScoped<IMapServices, MapServices>();
 	}
 
 }

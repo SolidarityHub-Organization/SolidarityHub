@@ -118,29 +118,6 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        [HttpGet("affected-zones/with-points")]
-        public async Task<ActionResult> GetAllAffectedZonesWithPointsAsync()
-        {
-            try
-            {
-                var affectedZones = await _affectedZoneServices.GetAllAffectedZonesWithPointsAsync();
-                return Ok(affectedZones);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-
-
-
-
     }
 
 }
