@@ -5,9 +5,10 @@ namespace LogicPersistence.Api.Services
 {
     public interface IMapServices
     {
-        Task<IEnumerable<UserLocationDTO>> GetAllVictimsWithLocationAsync();
-        Task<IEnumerable<UserLocationDTO>> GetAllVolunteersWithLocationAsync();
-        Task<IEnumerable<UserLocationDTO>> GetAllUsersWithLocationAsync();
+        Task<IEnumerable<MapMarkerDTO>> GetAllVictimsWithLocationAsync();
+        Task<IEnumerable<MapMarkerDTO>> GetAllVolunteersWithLocationAsync();
+        Task<IEnumerable<MapMarkerDTO>> GetAllUsersWithLocationAsync();
         Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllAffectedZonesWithPointsAsync();
+        Task<IEnumerable<MapMarkerDTO>> GetAllTasksWithLocationAsync();
     }
 }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import '../../LogicPersistence/models/userLocation.dart';
+import '../../LogicPersistence/models/mapMarker.dart';
 
 abstract class MapMarkerCreator {
-  Marker createMarker(UserLocation user, BuildContext context);
+  Marker createMarker(MapMarker mapMarker, BuildContext context);
 }
 
 class VictimMarkerCreator implements MapMarkerCreator {
   @override
-  Marker createMarker(UserLocation user, BuildContext context) {
+  Marker createMarker(MapMarker mapMarker, BuildContext context) {
     return Marker(
-      point: user.position,
+      point: mapMarker.position,
       width: 50,
       height: 50,
       child: GestureDetector(
@@ -19,8 +19,8 @@ class VictimMarkerCreator implements MapMarkerCreator {
             context: context,
             builder:
                 (context) => AlertDialog(
-                  title: Text('Detalles de la víctima'),
-                  content: Text('ID: ${user.id}\nNombre: ${user.name}'),
+                  title: Text('Detalles del afectado'),
+                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -42,9 +42,9 @@ class VictimMarkerCreator implements MapMarkerCreator {
 
 class VolunteerMarkerCreator implements MapMarkerCreator {
   @override
-  Marker createMarker(UserLocation user, BuildContext context) {
+  Marker createMarker(MapMarker mapMarker, BuildContext context) {
     return Marker(
-      point: user.position,
+      point: mapMarker.position,
       width: 50,
       height: 50,
       child: GestureDetector(
@@ -54,7 +54,7 @@ class VolunteerMarkerCreator implements MapMarkerCreator {
             builder:
                 (context) => AlertDialog(
                   title: Text('Detalles del voluntario'),
-                  content: Text('ID: ${user.id}\nNombre: ${user.name}'),
+                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -70,12 +70,44 @@ class VolunteerMarkerCreator implements MapMarkerCreator {
   }
 }
 
+class TaskMarkerCreator implements MapMarkerCreator {
+  @override
+  Marker createMarker(MapMarker mapMarker, BuildContext context) {
+    return Marker(
+      point: mapMarker.position,
+      width: 50,
+      height: 50,
+      child: GestureDetector(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder:
+                (context) => AlertDialog(
+                  title: Text('Detalles de la tarea'),
+                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Cerrar'),
+                    ),
+                  ],
+                ),
+          );
+        },
+        child: const Icon(Icons.location_pin, color: Colors.orange, size: 40),
+      ),
+    );
+  }
+}
+
 MapMarkerCreator getMarkerCreator(String role) {
   switch (role) {
     case 'victim':
       return VictimMarkerCreator();
     case 'volunteer':
       return VolunteerMarkerCreator();
+    case 'task':
+      return TaskMarkerCreator();
     default:
       throw Exception('Tipo de usuario desconocido: $role');
   }

@@ -3,7 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../LogicBusiness/services/victimServices.dart';
 import '../../LogicBusiness/services/volunteerServices.dart';
-import '../../LogicPersistence/models/userLocation.dart';
+import '../../LogicBusiness/services/task_services.dart';
+import '../../LogicPersistence/models/mapMarker.dart';
 import 'markerfactory.dart';
 
 class MapScreen extends StatefulWidget {
@@ -13,14 +14,15 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-enum MapViewMode { victim, volunteer, both }
+enum MapViewMode { victim, volunteer, task, all }
 
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
-  MapViewMode _currentMode = MapViewMode.both;
+  MapViewMode _currentMode = MapViewMode.all;
 
   final VictimService _victimServices = VictimService('http://localhost:5170');
   final VolunteerService _volunteerServices = VolunteerService('http://localhost:5170');
+  final TaskService _taskServices = TaskService('http://localhost:5170');
   final MapController _mapController = MapController();
 
   @override
@@ -28,23 +30,24 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     _fetchVictimLocations();
     _fetchVolunteerLocations();
+    _fetchTaskLocations();
   }
 
   Future<void> _fetchVictimLocations() async {
     try {
       final locations = await _victimServices.fetchLocations();
 
-      List<UserLocation> users =
+      List<MapMarker> mapMarkers =
           locations.map((location) {
-            return UserLocation.fromJson(location);
+            return MapMarker.fromJson(location);
           }).toList();
 
       //print(locations);
       setState(() {
         _markers.addAll(
-            users.map((user) {
-              final markerCreator = getMarkerCreator(user.role);
-              return markerCreator.createMarker(user, context);
+            mapMarkers.map((mapMarker) {
+              final markerCreator = getMarkerCreator(mapMarker.type);
+              return markerCreator.createMarker(mapMarker, context);
             }).toList());
       });
     } catch (e) {
@@ -60,17 +63,43 @@ class _MapScreenState extends State<MapScreen> {
     try {
       final locations = await _volunteerServices.fetchLocations();
 
-      List<UserLocation> users =
+      List<MapMarker> mapMarkers =
           locations.map((location) {
-            return UserLocation.fromJson(location);
+            return MapMarker.fromJson(location);
           }).toList();
 
       //print(locations);
       setState(() {
         _markers.addAll(
-            users.map((user) {
-              final markerCreator = getMarkerCreator(user.role);
-              return markerCreator.createMarker(user, context);
+            mapMarkers.map((mapMarker) {
+              final markerCreator = getMarkerCreator(mapMarker.type);
+              return markerCreator.createMarker(mapMarker, context);
+            }).toList());
+      });
+    } catch (e) {
+      // Mejora la gestión de errores
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
+      );
+      print('Error al obtener las ubicaciones: $e');
+    }
+  }
+
+  Future<void> _fetchTaskLocations() async {
+    try {
+      final locations = await _taskServices.fetchLocations();
+
+      List<MapMarker> mapMarkers =
+          locations.map((location) {
+            return MapMarker.fromJson(location);
+          }).toList();
+
+      //print(locations);
+      setState(() {
+        _markers.addAll(
+            mapMarkers.map((mapMarker) {
+              final markerCreator = getMarkerCreator(mapMarker.type);
+              return markerCreator.createMarker(mapMarker, context);
             }).toList());
       });
     } catch (e) {
@@ -202,16 +231,25 @@ class _MapScreenState extends State<MapScreen> {
                               onPressed: () {
                                 setState(() {
                                   _markers.clear();
-                                  if (_currentMode == MapViewMode.victim) {
-                                    _currentMode = MapViewMode.volunteer;
-                                    _fetchVolunteerLocations();
-                                  } else if (_currentMode == MapViewMode.volunteer) {
-                                    _currentMode = MapViewMode.both;
-                                    _fetchVictimLocations();
-                                    _fetchVolunteerLocations();
-                                  } else if (_currentMode == MapViewMode.both) {
-                                    _currentMode = MapViewMode.victim;
-                                    _fetchVictimLocations();
+                                  switch (_currentMode) {
+                                    case MapViewMode.victim:
+                                      _currentMode = MapViewMode.volunteer;
+                                      _fetchVolunteerLocations();
+                                      break;
+                                    case MapViewMode.volunteer:
+                                      _currentMode = MapViewMode.task;
+                                      _fetchTaskLocations();
+                                      break;
+                                    case MapViewMode.task:
+                                      _currentMode = MapViewMode.all;
+                                      _fetchVictimLocations();
+                                      _fetchVolunteerLocations();
+                                      _fetchTaskLocations();
+                                      break;
+                                    case MapViewMode.all:
+                                      _currentMode = MapViewMode.victim;
+                                      _fetchVictimLocations();
+                                      break;
                                   }
                                 });
                               },

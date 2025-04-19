@@ -81,6 +81,24 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
+		[HttpGet("map/tasks-with-location")]
+		public async Task<IActionResult> GetAllTasksWithLocationAsync()
+		{
+			try
+			{
+				var tasksWithLocation = await _mapServices.GetAllTasksWithLocationAsync();
+				return Ok(tasksWithLocation);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 
     }
 }
