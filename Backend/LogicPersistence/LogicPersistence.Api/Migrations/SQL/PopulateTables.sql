@@ -47,11 +47,11 @@ UPDATE "location" SET "volunteer_id" = 4 WHERE "id" = 9;
 UPDATE "location" SET "volunteer_id" = 5 WHERE "id" = 10;
 
 INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") VALUES
-  ('Flood Zone A', 'Areas along the eastern riverbank with significant flooding', 'High', 1),
-  ('Wildfire Zone B', 'Forest areas in the northwest with ongoing wildfires', 'Critical', 2),
-  ('Hurricane Impact C', 'Coastal regions affected by recent hurricane', 'Medium', 3),
-  ('Earthquake Zone D', 'Areas with structural damage from recent earthquake', 'High', 1),
-  ('Drought Region E', 'Agricultural areas affected by prolonged drought', 'Medium', 2);
+  ('Zona de Inundación A', 'Áreas a lo largo del río con inundaciones significativas', 'High', 1),
+  ('Zona de Incendio B', 'Áreas forestales del noroeste con incendios activos', 'Critical', 2),
+  ('Zona de Huracán C', 'Regiones costeras afectadas por huracán reciente', 'Medium', 3),
+  ('Zona de Terremoto D', 'Áreas con daños estructurales por terremoto reciente', 'High', 1),
+  ('Región de Sequía E', 'Zonas agrícolas afectadas por sequía prolongada', 'Medium', 2);
 
 INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
   (1, 1), (1, 2), (1, 3),
@@ -61,14 +61,14 @@ INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
   (5, 10);
 
 INSERT INTO "physical_donation" ("item_name", "description", "quantity", "item_type", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
-  ('Bottled Water', 'Cases of 24 water bottles', 50, 'Food', '2025-03-25 10:00:00', 1, NULL, NULL),
-  ('First Aid Kits', 'Basic medical supplies', 20, 'Medicine', '2025-03-26 11:30:00', 2, NULL, NULL),
-  ('Blankets', 'Warm wool blankets', 30, 'Clothes', '2025-03-27 09:15:00', 3, NULL, NULL),
-  ('Canned Food', 'Assorted non-perishable food items', 100, 'Food', '2025-03-28 14:45:00', 4, NULL, NULL),
-  ('Power Tools', 'Set of tools for rebuilding', 5, 'Tools', '2025-03-29 16:20:00', 5, NULL, NULL),
-  ('Baby Formula', 'Infant nutrition supplies', 25, 'Food', '2025-03-30 08:30:00', NULL, 1, NULL),
-  ('Tents', 'Temporary shelter', 15, 'Other', '2025-03-31 13:10:00', NULL, 2, NULL),
-  ('Medications', 'Assorted over-the-counter medicines', 40, 'Medicine', '2025-04-01 10:45:00', NULL, 3, NULL);
+  ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-03-25 10:00:00', 1, NULL, NULL),
+  ('Botiquines', 'Suministros médicos básicos', 20, 'Medicine', '2025-03-26 11:30:00', 2, NULL, NULL),
+  ('Mantas', 'Mantas de lana calientes', 30, 'Clothes', '2025-03-27 09:15:00', 3, NULL, NULL),
+  ('Comida Enlatada', 'Alimentos no perecederos surtidos', 100, 'Food', '2025-03-28 14:45:00', 4, NULL, NULL),
+  ('Herramientas Eléctricas', 'Conjunto de herramientas para reconstrucción', 5, 'Tools', '2025-03-29 16:20:00', 5, NULL, NULL),
+  ('Fórmula para Bebés', 'Suministros de nutrición infantil', 25, 'Food', '2025-03-30 08:30:00', NULL, 1, NULL),
+  ('Tiendas de Campaña', 'Refugio temporal', 15, 'Other', '2025-03-31 13:10:00', NULL, 2, NULL),
+  ('Medicamentos', 'Medicamentos variados sin receta', 40, 'Medicine', '2025-04-01 10:45:00', NULL, 3, NULL);
 
 INSERT INTO "monetary_donation" ("amount", "currency", "payment_status", "transaction_id", "payment_service", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
   (500.00, 'USD', 'Completed', 'TXN-2025-001', 'PayPal', '2025-03-25 10:30:00', 1, NULL, NULL),
@@ -80,11 +80,11 @@ INSERT INTO "monetary_donation" ("amount", "currency", "payment_status", "transa
   (3500.00, 'EUR', 'Completed', 'TXN-2025-007', 'PayPal', '2025-03-31 13:25:00', NULL, 2, NULL);
 
 INSERT INTO "place" ("name", "admin_id") VALUES
-  ('Community Center Alpha', 1),
-  ('School Shelter Beta', 2),
-  ('Hospital Aid Station', 3),
-  ('Sports Arena Gamma', 1),
-  ('Church Refuge Delta', 2);
+  ('Centro Comunitario Alfa', 1),
+  ('Refugio Escolar Beta', 2),
+  ('Estación de Ayuda Hospital', 3),
+  ('Arena Deportiva Gamma', 1),
+  ('Refugio Iglesia Delta', 2);
 
 INSERT INTO "place_affected_zone" ("place_id", "affected_zone_id") VALUES
   (1, 1), (1, 2),
@@ -94,21 +94,21 @@ INSERT INTO "place_affected_zone" ("place_id", "affected_zone_id") VALUES
   (5, 4), (5, 5);
 
 INSERT INTO "skill" ("name", "level", "admin_id") VALUES
-  ('First Aid', 'Intermediate', 1),
-  ('Heavy Lifting', 'Beginner', 2),
-  ('Cooking', 'Expert', 3),
-  ('Construction', 'Intermediate', 1),
-  ('Child Care', 'Beginner', 2),
-  ('Medical Doctor', 'Expert', 3),
-  ('Truck Driving', 'Intermediate', 1),
-  ('Counseling', 'Expert', 2);
+  ('Primeros Auxilios', 'Intermediate', 1),
+  ('Levantamiento de Peso', 'Beginner', 2),
+  ('Cocina', 'Expert', 3),
+  ('Construcción', 'Intermediate', 1),
+  ('Cuidado Infantil', 'Beginner', 2),
+  ('Médico', 'Expert', 3),
+  ('Conducción de Camiones', 'Intermediate', 1),
+  ('Consejería', 'Expert', 2);
 
 INSERT INTO "task" ("name", "description", "admin_id", "location_id") VALUES
-  ('Distribute Water', 'Hand out bottled water to affected residents', 1, 11),
-  ('Medical Assessment', 'Perform basic health checks on shelter residents', 2, 12),
-  ('Debris Clearing', 'Clear fallen trees and debris from roads', 3, 13),
-  ('Food Service', 'Prepare and serve meals at the community center', 1, 14),
-  ('Child Care Shift', 'Supervise children at the shelter', 2, 15);
+  ('Distribuir Agua', 'Repartir agua embotellada a residentes afectados', 1, 11),
+  ('Evaluación Médica', 'Realizar chequeos básicos de salud a residentes del refugio', 2, 12),
+  ('Limpieza de Escombros', 'Limpiar árboles caídos y escombros de las carreteras', 3, 13),
+  ('Servicio de Comida', 'Preparar y servir comidas en el centro comunitario', 1, 14),
+  ('Turno de Cuidado Infantil', 'Supervisar niños en el refugio', 2, 15);
 
 INSERT INTO "task_time" ("start_time", "end_time", "date", "task_id") VALUES
   ('08:00:00', '12:00:00', '2025-04-15', 1),
@@ -131,19 +131,19 @@ INSERT INTO "volunteer_time" ("start_time", "end_time", "day", "volunteer_id") V
   ('09:00:00', '15:00:00', 'Friday', 5);
 
 INSERT INTO "need_type" ("name", "admin_id") VALUES
-  ('Food and Water', 1),
-  ('Medical Supplies', 2),
-  ('Shelter', 3),
-  ('Transportation', 1),
-  ('Childcare', 2);
+  ('Comida y Agua', 1),
+  ('Suministros Médicos', 2),
+  ('Refugio', 3),
+  ('Transporte', 1),
+  ('Cuidado Infantil', 2);
 
 INSERT INTO "need" ("name", "description", "urgency_level", "victim_id", "admin_id") VALUES
-  ('Emergency Food', 'Family of 4 needs food supplies', 'High', 1, NULL),
-  ('Medication Refill', 'Need insulin refill within 48 hours', 'Critical', 2, NULL),
-  ('Temporary Housing', 'Home damaged, needs shelter for 2 weeks', 'Medium', 3, NULL),
-  ('Evacuation Transport', 'Elderly couple needs transportation from flood zone', 'High', 4, NULL),
-  ('Baby Supplies', 'Need formula and diapers for infant', 'Medium', 5, NULL),
-  ('Community Kitchen', 'Central food distribution point needed', 'Medium', NULL, 1);
+  ('Comida de Emergencia', 'Familia de 4 necesita suministros de comida', 'High', 1, NULL),
+  ('Reposición de Medicamentos', 'Necesita reposición de insulina en 48 horas', 'Critical', 2, NULL),
+  ('Vivienda Temporal', 'Casa dañada, necesita refugio por 2 semanas', 'Medium', 3, NULL),
+  ('Transporte de Evacuación', 'Pareja de ancianos necesita transporte desde zona inundada', 'High', 4, NULL),
+  ('Suministros para Bebé', 'Necesita fórmula y pañales para bebé', 'Medium', 5, NULL),
+  ('Cocina Comunitaria', 'Se necesita punto central de distribución de alimentos', 'Medium', NULL, 1);
 
 INSERT INTO "need_need_type" ("need_id", "need_type_id") VALUES
   (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 1);

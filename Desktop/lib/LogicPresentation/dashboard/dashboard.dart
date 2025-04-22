@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/LogicPresentation/dashboard/tables/taskTable.dart';
 import 'tables/generalTable.dart';
 import 'tables/victimTable.dart';
 import 'tables/resourceTable.dart';
 import 'tables/volunteerTable.dart';
-import 'tables/tasksTable.dart';
+import '../tasks/tasks.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -62,7 +63,7 @@ class _DashboardState extends State<Dashboard>
                             Tab(text: 'Afectados'),
                             Tab(text: 'Recursos'),
                             Tab(text: 'Voluntarios'),
-                            Tab(text: 'Tareas',)
+                            Tab(text: 'Tareas'),
                           ],
                         ),
                       ),
@@ -117,7 +118,7 @@ class _DashboardState extends State<Dashboard>
                 VictimsTab(selectedPeriod: _selectedPeriod),
                 const RecursosTab(),
                 VolunteerTab(selectedPeriod: _selectedPeriod),
-                const Taskstable(),
+                TaskTable(selectedPeriod: _selectedPeriod),
               ],
             ),
           ),

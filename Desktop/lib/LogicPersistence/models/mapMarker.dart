@@ -1,24 +1,24 @@
 import 'package:latlong2/latlong.dart';
 
-class UserLocation {
+class MapMarker {
   final int id;
   final String name;
   final LatLng position;
-  final String role;
+  final String type;
 
-  UserLocation({
+  MapMarker({
     required this.id,
     required this.name,
     required this.position,
-    required this.role,
+    required this.type,
   });
 
-  factory UserLocation.fromJson(Map<String, dynamic> json) {
-    return UserLocation(
+  factory MapMarker.fromJson(Map<String, dynamic> json) {
+    return MapMarker(
       id: json['id'] as int,
       name: json['name'] as String,
       position: LatLng(json['latitude'] as double, json['longitude'] as double),
-      role: json['role'] as String,
+      type: json['type'] as String,
     );
   }
 }

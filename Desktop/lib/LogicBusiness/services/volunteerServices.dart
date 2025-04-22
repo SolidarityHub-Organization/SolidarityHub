@@ -22,7 +22,7 @@ class VolunteerService {
   Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/v1/locations/volunteers-with-location'),
+        Uri.parse('$baseUrl/api/v1/map/volunteers-with-location'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -32,7 +32,7 @@ class VolunteerService {
             'name': location['name'],
             'latitude': location['latitude'],
             'longitude': location['longitude'],
-            'role': location['role'],
+            'type': location['type'],
           };
         }).toList();
       } else {
