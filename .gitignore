@@ -5,6 +5,7 @@
 
 # dotenv files
 .env.development
+.env.developmentCopy
 .env.production
 
 # User-specific files
