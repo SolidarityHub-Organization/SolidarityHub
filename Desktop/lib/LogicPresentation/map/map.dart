@@ -21,7 +21,9 @@ class _MapScreenState extends State<MapScreen> {
   MapViewMode _currentMode = MapViewMode.all;
 
   final VictimService _victimServices = VictimService('http://localhost:5170');
-  final VolunteerService _volunteerServices = VolunteerService('http://localhost:5170');
+  final VolunteerService _volunteerServices = VolunteerService(
+    'http://localhost:5170',
+  );
   final TaskService _taskServices = TaskService('http://localhost:5170');
   final MapController _mapController = MapController();
 
@@ -45,10 +47,11 @@ class _MapScreenState extends State<MapScreen> {
       //print(locations);
       setState(() {
         _markers.addAll(
-            mapMarkers.map((mapMarker) {
-              final markerCreator = getMarkerCreator(mapMarker.type);
-              return markerCreator.createMarker(mapMarker, context);
-            }).toList());
+          mapMarkers.map((mapMarker) {
+            final markerCreator = getMarkerCreator(mapMarker.type);
+            return markerCreator.createMarker(mapMarker, context);
+          }).toList(),
+        );
       });
     } catch (e) {
       // Mejora la gestión de errores
@@ -71,10 +74,11 @@ class _MapScreenState extends State<MapScreen> {
       //print(locations);
       setState(() {
         _markers.addAll(
-            mapMarkers.map((mapMarker) {
-              final markerCreator = getMarkerCreator(mapMarker.type);
-              return markerCreator.createMarker(mapMarker, context);
-            }).toList());
+          mapMarkers.map((mapMarker) {
+            final markerCreator = getMarkerCreator(mapMarker.type);
+            return markerCreator.createMarker(mapMarker, context);
+          }).toList(),
+        );
       });
     } catch (e) {
       // Mejora la gestión de errores
@@ -97,10 +101,11 @@ class _MapScreenState extends State<MapScreen> {
       //print(locations);
       setState(() {
         _markers.addAll(
-            mapMarkers.map((mapMarker) {
-              final markerCreator = getMarkerCreator(mapMarker.type);
-              return markerCreator.createMarker(mapMarker, context);
-            }).toList());
+          mapMarkers.map((mapMarker) {
+            final markerCreator = getMarkerCreator(mapMarker.type);
+            return markerCreator.createMarker(mapMarker, context);
+          }).toList(),
+        );
       });
     } catch (e) {
       // Mejora la gestión de errores
@@ -126,31 +131,45 @@ class _MapScreenState extends State<MapScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Tooltip(
-                  message: "Se desarrollará en el Sprint 2",
-                  child: ElevatedButton(
-                    onPressed: () {}, // Botón habilitado (sin funcionalidad)
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: Text(
-                      "Botón 1",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _markers.clear();
+                      _fetchVictimLocations();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "Mostrar afectados",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-                SizedBox(width: 10),
-                Tooltip(
-                  message: "Se desarrollará en el Sprint 2",
-                  child: ElevatedButton(
-                    onPressed: () {}, // Botón habilitado (sin funcionalidad)
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: Text(
-                      "Botón 2",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _markers.clear();
+                      _fetchVolunteerLocations();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "Mostrar voluntarios",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _markers.clear();
+                      _fetchTaskLocations();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "Mostrar tareas",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -260,7 +279,11 @@ class _MapScreenState extends State<MapScreen> {
                               ),
                               child: const Text(
                                 "⇆",
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ],
