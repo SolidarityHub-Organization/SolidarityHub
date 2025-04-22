@@ -9,6 +9,9 @@ namespace LogicPersistence.Api.Services {
 		System.Threading.Tasks.Task DeleteTaskAsync(int id);
 		Task<IEnumerable<Models.Task>> GetAllTasksAsync();
 		Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync();
-		Task<Dictionary<State, IEnumerable<int>>> GetTasksWithStatesAsync();
+		Task<Dictionary<State, IEnumerable<int>>> GetAllTaskIdsWithStatesAsync();
+		Task<Dictionary<State, int>> GetAllTaskCountByStateAsync();
+		Task<int> GetTaskCountByStateAsync(string stateString);
+		Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString);
 	}
 }

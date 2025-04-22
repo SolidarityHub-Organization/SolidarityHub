@@ -74,16 +74,62 @@ namespace LogicPersistence.Api.Services {
 			return tasks;
 		}
 
-		public async Task<Dictionary<State, IEnumerable<int>>> GetTasksWithStatesAsync()
+		public async Task<Dictionary<State, IEnumerable<int>>> GetAllTaskIdsWithStatesAsync()
 		{
-			var taskStates = await _taskRepository.GetTasksWithStatesAsync();
+			var taskStates = await _taskRepository.GetAllTaskIdsWithStatesAsync();
 			if (taskStates == null) {
-				throw new InvalidOperationException("Failed to retrieve tasks with states.");
+				throw new InvalidOperationException("Failed to retrieve tasks IDs with states.");
 			}
 			return taskStates.ToDictionary(
 				x => x.state,
 				x => x.task_ids.AsEnumerable()
 			);
+		}
+
+		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync()
+		{
+			var taskCounts = await _taskRepository.GetAllTaskCountByStateAsync();
+			if (taskCounts == null)
+			{
+				throw new InvalidOperationException("Failed to retrieve task counts by state.");
+			}
+			
+			return taskCounts.ToDictionary(
+				x => x.state,
+				x => x.count
+			);
+		}
+
+		public async Task<int> GetTaskCountByStateAsync(State state)
+		{
+			var count = await _taskRepository.GetTaskCountByStateAsync(state);
+			return count;
+		}
+
+		public async Task<int> GetTaskCountByStateAsync(string stateString)
+		{
+			if (!Enum.TryParse<State>(stateString, true, out var state))
+			{
+				throw new ArgumentException($"Invalid state value: {stateString}");
+			}
+			
+			var count = await _taskRepository.GetTaskCountByStateAsync(state);
+			return count;
+		}
+
+		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString)
+		{
+			if (!Enum.TryParse<State>(stateString, true, out State state))
+			{
+				throw new ArgumentException($"Invalid state value: {stateString}");
+			}
+
+			var taskIds = await _taskRepository.GetTaskIdsByStateAsync(state);
+			if (taskIds == null)
+			{
+				throw new InvalidOperationException($"Failed to retrieve task IDs for state {state}.");
+			}
+			return taskIds;
 		}
 	}
 }

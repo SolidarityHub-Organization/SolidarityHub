@@ -140,7 +140,7 @@ public class TaskRepository : ITaskRepository {
 		return tasks;
 	}
 
-	public async Task<IEnumerable<(State state, int[] task_ids)>> GetTasksWithStatesAsync()
+	public async Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync()
 	{
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
@@ -153,4 +153,40 @@ public class TaskRepository : ITaskRepository {
 		return await connection.QueryAsync<(State state, int[] task_ids)>(sql);
 	}
 	
+	public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync()
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT vt.state, COUNT(DISTINCT t.id) as count
+			FROM task t
+			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE vt.state IS NOT NULL
+			GROUP BY vt.state";
+
+		return await connection.QueryAsync<(State state, int count)>(sql);
+	}
+
+	public async Task<int> GetTaskCountByStateAsync(State state)
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT COUNT(DISTINCT t.id)
+			FROM task t
+			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE vt.state = @state::state";
+
+		return await connection.QuerySingleOrDefaultAsync<int>(sql, new { state = state.ToString() });
+	}
+
+	public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state)
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT DISTINCT t.id
+			FROM task t
+			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE vt.state = @state::state";
+
+		return await connection.QueryAsync<int>(sql, new { state = state.ToString() });
+	}
 }
