@@ -140,4 +140,17 @@ public class TaskRepository : ITaskRepository {
 		return tasks;
 	}
 
+	public async Task<IEnumerable<(State state, int[] task_ids)>> GetTasksWithStatesAsync()
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT vt.state, array_agg(t.id) AS task_ids
+			FROM task t
+			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE vt.state IS NOT NULL
+			GROUP BY vt.state";
+
+		return await connection.QueryAsync<(State state, int[] task_ids)>(sql);
+	}
+	
 }

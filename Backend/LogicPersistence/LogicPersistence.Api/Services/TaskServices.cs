@@ -1,4 +1,5 @@
 using LogicPersistence.Api.Mappers;
+using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 
@@ -71,6 +72,18 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve tasks with details.");
 			}
 			return tasks;
+		}
+
+		public async Task<Dictionary<State, IEnumerable<int>>> GetTasksWithStatesAsync()
+		{
+			var taskStates = await _taskRepository.GetTasksWithStatesAsync();
+			if (taskStates == null) {
+				throw new InvalidOperationException("Failed to retrieve tasks with states.");
+			}
+			return taskStates.ToDictionary(
+				x => x.state,
+				x => x.task_ids.AsEnumerable()
+			);
 		}
 	}
 }
