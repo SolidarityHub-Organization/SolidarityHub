@@ -80,6 +80,21 @@ namespace LogicPersistence.Api.Services {
 			return victims.Count();
 		}
 
+		public async Task<IEnumerable<(string date, int count)>> GetVictimsCountByDateAsync() {
+			var victims = await _victimRepository.GetAllVictimsAsync();
+			if (victims == null) {
+				throw new InvalidOperationException("Failed to retrieve victims.");
+			}
+			var oldestDate = victims.Min(v => v.created_at).Date;
+			var days = (DateTime.Now.Date - oldestDate).Days + 1;
+			var victimsCountByDate = Enumerable.Range(0, days)
+				.Select(d => oldestDate.AddDays(d)) //esto crea una lista de fechas desde primera hasta hoy
+				.Select(d => new { Date = d, Count = victims.Count(v => v.created_at.Date == d) }) //aqui coge las fechas y añade el numero de afectados
+				.ToList();
+
+			return victimsCountByDate.Select(v => (v.Date.ToString("dd-MM-yyyy"), v.Count)).ToList();
+		}
+
 		
 	}
 }

@@ -90,6 +90,7 @@ public class VictimDisplayDto {
 	public string phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
+	public DateTime created_at { get; set; } 
 
 	public int? location_id { get; set; }
 }

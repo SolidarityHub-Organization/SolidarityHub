@@ -52,6 +52,7 @@ public static class VictimMapper {
 			address = victim.address,
 			identification = victim.identification,
 			// Password is intentionally omitted.
+			created_at = victim.created_at,
 
 			location_id = victim.location_id
 		};
