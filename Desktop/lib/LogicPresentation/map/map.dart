@@ -3,8 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../LogicBusiness/services/victimServices.dart';
 import '../../LogicBusiness/services/volunteerServices.dart';
+import '../../LogicBusiness/services/affectedZoneServices.dart';
 import '../../LogicBusiness/services/task_services.dart';
 import '../../LogicPersistence/models/mapMarker.dart';
+import '../../LogicPersistence/models/affectedZone.dart';
 import 'markerfactory.dart';
 
 class MapScreen extends StatefulWidget {
@@ -15,16 +17,17 @@ class MapScreen extends StatefulWidget {
 }
 
 enum MapViewMode { victim, volunteer, task, all }
+final String baseUrl = 'http://localhost:5170';
 
 class _MapScreenState extends State<MapScreen> {
   List<Marker> _markers = [];
+  List<Polygon> _polygons = [];
   MapViewMode _currentMode = MapViewMode.all;
 
-  final VictimService _victimServices = VictimService('http://localhost:5170');
-  final VolunteerService _volunteerServices = VolunteerService(
-    'http://localhost:5170',
-  );
-  final TaskService _taskServices = TaskService('http://localhost:5170');
+  final VictimService _victimServices = VictimService(baseUrl);
+  final VolunteerService _volunteerServices = VolunteerService(baseUrl,);
+  final TaskService _taskServices = TaskService(baseUrl);
+  final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(baseUrl);
   final MapController _mapController = MapController();
 
   @override
@@ -32,6 +35,7 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     _fetchVictimLocations();
     _fetchVolunteerLocations();
+    _fetchAffectedZones();
     _fetchTaskLocations();
   }
 
@@ -116,6 +120,42 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _fetchAffectedZones() async {
+    try {
+      final zones = await _affectedZoneServices.fetchAffectedZones();
+
+      setState(() {
+        _polygons = zones.map((zoneData) {
+          final zone = AffectedZone.fromJson(zoneData);  
+        
+          return Polygon(
+            points: zone.points
+                .map((point) => LatLng(point.latitude, point.longitude))
+                .toList(),
+            color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.3),
+            borderColor: _getHazardLevelColor(zone.hazardLevel),
+            borderStrokeWidth: 2,
+            isDotted: true,
+          );
+        }).toList();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener las zonas afectadas: $e')),
+      );
+    }
+  }
+
+  Color _getHazardLevelColor(int hazardLevel) {
+    switch (hazardLevel) {
+      case 0: return Colors.green; 
+      case 1: return Colors.yellow; 
+      case 2: return Colors.orange; 
+      case 3: return Colors.red; 
+      default: return Colors.grey; 
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,6 +212,23 @@ class _MapScreenState extends State<MapScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _markers.clear();
+                      _fetchVictimLocations();
+                      _fetchVolunteerLocations();
+                      _fetchTaskLocations();
+                      _fetchAffectedZones();
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "Mostrar todo",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ],
             ),
           ),
@@ -202,6 +259,7 @@ class _MapScreenState extends State<MapScreen> {
                                 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                             subdomains: ['a', 'b', 'c', 'd'],
                           ),
+                          PolygonLayer(polygons: _polygons),
                           MarkerLayer(markers: _markers),
                         ],
                       ),
