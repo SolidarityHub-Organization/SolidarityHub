@@ -6,16 +6,29 @@ class TaskTableService {
 
   TaskTableService(this.baseUrl);
 
-  Future<List<Map<String, dynamic>>> fetchTaskProgress() async {
+  Future<Map<String, dynamic>> fetchTaskTypeCount() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/api/v1/need-types/victim-counts'),
+      Uri.parse('$baseUrl/api/v1/tasks/states/count'),
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.cast<Map<String, dynamic>>();
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data.map((key, value) => MapEntry(key, value as int));
     } else {
-      throw Exception('Failed to load victim needs count');
+      throw Exception('Failed to load task type count');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchAllTasks() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/v1/tasks/states/count'),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data.map((key, value) => MapEntry(key, value as int));
+    } else {
+      throw Exception('Failed to load task type count');
     }
   }
 }
