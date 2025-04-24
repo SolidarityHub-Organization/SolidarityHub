@@ -44,4 +44,26 @@ class VictimService {
       return [];
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchVictimCountByDate() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/v1/victims/count-by-date'),
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((need) {
+          return {'date': need['item1'], 'num': need['item2']};
+        }).toList();
+      } else {
+        print(
+          'Error al obtener el numero de vicitmas por dia: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      print('Error al conectar con el backend: $e');
+      return [];
+    }
+  }
 }

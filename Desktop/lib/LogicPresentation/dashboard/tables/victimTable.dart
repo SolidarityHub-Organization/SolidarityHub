@@ -18,13 +18,47 @@ class _VictimsTabState extends State<VictimsTab> {
   @override
   void initState() {
     super.initState();
-    _victimNeedsFuture = _victimService.fetchVictimNeedsCount();
+    _victimNeedsFuture =
+        _victimService.fetchVictimCountByDate(); // Usar el método correcto
+  }
+
+  List<BarChartGroupData> generateBarGroups(List<Map<String, dynamic>> data) {
+    return data.asMap().entries.map((entry) {
+      return BarChartGroupData(
+        x: entry.key,
+        barRods: [
+          BarChartRodData(
+            toY: entry.value['num'].toDouble(),
+            color: Colors.blue,
+            width: 15,
+          ),
+        ],
+      );
+    }).toList();
+  }
+
+  List<PieChartSectionData> generatePieSections(
+    List<Map<String, dynamic>> data,
+  ) {
+    return data.map((entry) {
+      return PieChartSectionData(
+        value: entry['num'].toDouble(),
+        title: '${entry['num']}',
+        color: Colors.primaries[entry.hashCode % Colors.primaries.length],
+        radius: 50,
+        titleStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _victimNeedsFuture,
+      future: _victimService.fetchVictimCountByDate(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -34,192 +68,223 @@ class _VictimsTabState extends State<VictimsTab> {
           return const Center(child: Text('No data available'));
         } else {
           final data = snapshot.data!;
-          final barGroups =
-              data
+
+          // Validar que los datos no estén vacíos
+          if (data.isEmpty) {
+            return const Center(child: Text('No data available'));
+          }
+
+          // Ordenar los datos por fecha
+          final sortedData =
+              data..sort((a, b) => a['date'].compareTo(b['date']));
+
+          // Crear los puntos para el gráfico de líneas
+          final lineSpots =
+              sortedData
                   .asMap()
                   .entries
                   .map(
-                    (entry) => BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (entry.value['item2'] as int).toDouble(),
-                          color: const Color(
-                            0xFFF44336,
-                          ), // Color rojo para las barras
-                          width: 30, // Barras más gruesas
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ],
+                    (entry) => FlSpot(
+                      entry.key.toDouble(),
+                      entry.value['num'] != null
+                          ? entry.value['num'].toDouble()
+                          : 0.0, // Manejar valores nulos
                     ),
                   )
                   .toList();
 
-          final totalValue = data.fold<int>(
-            0,
-            (sum, entry) => sum + (entry['item2'] as int),
-          );
+          // Generar datos para gráficos de barras y pastel
+          final barGroups = generateBarGroups(sortedData);
+          final pieSections = generatePieSections(sortedData);
 
-          final pieSections =
-              data
-                  .map(
-                    (entry) => PieChartSectionData(
-                      value: (entry['item2'] as int).toDouble(),
-                      title:
-                          entry['item1'], // Mostrar necesidad dentro del trozo
-                      color:
-                          Colors.primaries[data.indexOf(entry) %
-                              Colors.primaries.length], // Colores dinámicos
-                      radius: 50,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      badgeWidget: Text(
-                        '${((entry['item2'] as int) / totalValue * 100).toStringAsFixed(1)}%',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      badgePositionPercentageOffset:
-                          1.3, // Posición más estilizada
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Afectados y sus necesidades',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
-                  )
-                  .toList();
-
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Afectados y sus necesidades',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(60.0, 0, 30.0, 20.0),
-                        child: BarChart(
-                          BarChartData(
-                            barGroups: barGroups,
-                            titlesData: FlTitlesData(
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  interval: 1,
-                                  reservedSize: 1,
-                                  getTitlesWidget: (value, meta) {
-                                    if (value % 1 == 0) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 8.0,
-                                        ), // Acercar al gráfico
-                                        child: Text(
-                                          value.toInt().toString(),
-                                          style: const TextStyle(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-                              ),
-                              rightTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles:
-                                      false, // Ocultar números en el eje derecho
-                                ),
-                              ),
-                              topTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  reservedSize: 40,
-                                  getTitlesWidget: (value, meta) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 12.0),
-                                      child: Text(
-                                        data[value.toInt()]['item1'] as String,
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            gridData: FlGridData(
+                // Gráfico de líneas
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 100.0),
+                  child: SizedBox(
+                    height: 400,
+                    child: LineChart(
+                      LineChartData(
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: lineSpots,
+                            isCurved: true,
+                            color: Colors.red,
+                            barWidth: 3,
+                            belowBarData: BarAreaData(
                               show: true,
-                              drawHorizontalLine: true,
-                              horizontalInterval: 5,
-                              getDrawingHorizontalLine: (value) {
-                                return FlLine(
-                                  color: const Color.fromARGB(255, 0, 0, 0),
-                                  strokeWidth: 1,
+                              color: Colors.red.withOpacity(0.3),
+                            ),
+                            dotData: FlDotData(show: true),
+                          ),
+                        ],
+                        minY: 0, // Asegurar que el eje Y comience desde cero
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: 1, // Intervalo de 1 en el eje Y
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value
+                                      .toInt()
+                                      .toString(), // Mostrar sin decimales
+                                  style: const TextStyle(fontSize: 12),
                                 );
                               },
                             ),
-                            borderData: FlBorderData(
-                              show:
-                                  false, // Eliminar las líneas que rodean el gráfico
+                          ),
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                final index = value.toInt();
+                                if (index >= 0 && index < lineSpots.length) {
+                                  // Mostrar solo las fechas correspondientes a los puntos
+                                  return Text(
+                                    sortedData[index]['date'],
+                                    style: const TextStyle(fontSize: 10),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                              interval: 1, // Mostrar solo fechas de los puntos
                             ),
-                            barTouchData: BarTouchData(
-                              touchTooltipData: BarTouchTooltipData(
-                                tooltipBgColor: Colors.red,
-                                getTooltipItem: (
-                                  group,
-                                  groupIndex,
-                                  rod,
-                                  rodIndex,
-                                ) {
-                                  return BarTooltipItem(
-                                    '${data[group.x.toInt()]['item1']}: ${rod.toY.toInt()}',
-                                    const TextStyle(
-                                      color: Colors.white,
+                          ),
+                        ),
+                        gridData: FlGridData(show: true),
+                        borderData: FlBorderData(show: true),
+                      ),
+                    ),
+                  ),
+                ),
+                // Gráfico de barras
+                SizedBox(
+                  height: 500,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(60.0, 0, 30.0, 100.0),
+                    child: BarChart(
+                      BarChartData(
+                        barGroups: barGroups,
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: 1,
+                              reservedSize: 1,
+                              getTitlesWidget: (value, meta) {
+                                if (value % 1 == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Text(
+                                      value.toInt().toString(),
+                                      style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ),
+                          rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                final index = value.toInt();
+                                if (index >= 0 && index < sortedData.length) {
+                                  return Text(
+                                    sortedData[index]['date'],
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   );
-                                },
-                              ),
+                                }
+                                return const SizedBox.shrink();
+                              },
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(30.0, 0, 60.0, 20.0),
-                        child: PieChart(
-                          PieChartData(
-                            sections: pieSections,
-                            centerSpaceRadius: 40,
-                            sectionsSpace: 4, // Más espacio entre secciones
+                        gridData: FlGridData(
+                          show: true,
+                          drawHorizontalLine: true,
+                          horizontalInterval: 5,
+                          getDrawingHorizontalLine: (value) {
+                            return FlLine(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              strokeWidth: 1,
+                            );
+                          },
+                        ),
+                        borderData: FlBorderData(show: false),
+                        barTouchData: BarTouchData(
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.red,
+                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                              final index = group.x.toInt();
+                              if (index >= 0 && index < sortedData.length) {
+                                return BarTooltipItem(
+                                  '${sortedData[index]['date']}: ${rod.toY.toInt()}',
+                                  const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                // Gráfico de pastel
+                SizedBox(
+                  height: 300,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(30.0, 0, 60.0, 20.0),
+                    child: PieChart(
+                      PieChartData(
+                        sections: pieSections,
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 4,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         }
       },
