@@ -50,4 +50,5 @@ public class NeedDisplayDto
     public UrgencyLevel urgencyLevel { get; set; }
     public int? victim_id { get; set; }
     public int? admin_id { get; set; }
+    public DateTime created_at { get; set; }
 }

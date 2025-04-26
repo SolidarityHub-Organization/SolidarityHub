@@ -256,6 +256,24 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("need-types/victim-counts/filtered")]
+        public async Task<IActionResult> GetNeedTypesWithVictimCountFilteredByDateAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var needTypesWithVictimCount = await _needServices.GetNeedTypesWithVictimCountAsync(startDate, endDate);
+                return Ok(needTypesWithVictimCount);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 #endregion
 	}
 }

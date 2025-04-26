@@ -29,7 +29,7 @@ public class Need {	// these specific needs that can be of a certain need type
 	// a need can be set by an admin or a victim (one is null)
 	public int? victim_id { get; set; }
 	public int? admin_id { get; set; }
-
+	public DateTime created_at { get; set; }
 
 	// Navigation properties
 

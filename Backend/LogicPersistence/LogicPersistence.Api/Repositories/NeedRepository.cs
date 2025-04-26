@@ -103,6 +103,7 @@ public class NeedRepository : INeedRepository
         return await connection.QueryAsync<NeedType>("SELECT * FROM need_type");
     }
 
+    //este método se podrá borrar en un futuro
     public async Task<int> GetVictimCountById(int id)
     {
         
@@ -116,6 +117,20 @@ public class NeedRepository : INeedRepository
             WHERE nt.id = @id
             AND n.victim_id IS NOT NULL";
         return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id });
+    }
+
+    public async Task<int> GetVictimCountByIdFilteredByDate(int id, DateTime startDate, DateTime endDate)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            SELECT COUNT(DISTINCT n.victim_id)
+            FROM need_type nt
+            LEFT JOIN need_need_type nnt ON nt.id = nnt.need_type_id
+            LEFT JOIN need n ON nnt.need_id = n.id
+            WHERE nt.id = @id
+            AND n.victim_id IS NOT NULL
+            AND n.created_at BETWEEN @startDate AND @endDate";
+        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id, startDate, endDate });
     }
 #endregion
 }

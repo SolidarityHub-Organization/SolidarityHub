@@ -161,6 +161,7 @@ namespace LogicPersistence.Api.Services
             return await _needRepository.GetVictimCountById(id);
         }
 
+        //borrar mas tarde cuando se use el filtro en el frontend
         public async Task<IEnumerable<(string needTypeName, int count)>> GetNeedTypesWithVictimCountAsync()
         {
             var needTypes = await _needRepository.GetAllNeedTypesAsync();
@@ -176,6 +177,28 @@ namespace LogicPersistence.Api.Services
             }
             return res;
         }
+
+        public async Task<IEnumerable<(string needTypeName, int count)>> GetNeedTypesWithVictimCountAsync(DateTime startDate, DateTime endDate)
+        {
+            if (startDate > endDate)
+            {
+                throw new ArgumentException("Start date must be less than or equal to end date.");
+            }
+            var needTypes = await _needRepository.GetAllNeedTypesAsync();
+            if (needTypes == null)
+            {
+                throw new InvalidOperationException("Failed to retrieve need types.");
+            }
+            var res = new List<(string needTypeName, int count)>();
+            foreach (NeedType needType in needTypes)
+            {
+                var count = await _needRepository.GetVictimCountByIdFilteredByDate(needType.id, startDate, endDate);
+                res.Add((needType.name, count));
+            }
+            return res;
+        }
+
+        
 #endregion
     }
 }

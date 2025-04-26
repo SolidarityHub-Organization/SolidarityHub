@@ -18,6 +18,7 @@ namespace LogicPersistence.Api.Repositories.Interfaces
         Task<NeedType> UpdateNeedTypeAsync(NeedType needType);
         Task<IEnumerable<NeedType>> GetAllNeedTypesAsync();
         Task<int> GetVictimCountById(int id);
+        Task<int> GetVictimCountByIdFilteredByDate(int id, DateTime startDate, DateTime endDate);
 #endregion
 
 

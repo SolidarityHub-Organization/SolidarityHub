@@ -64,7 +64,7 @@ public class TaskWithDetailsDto {
 public class TaskForDashboardDto {
 	public int id { get; set; }
 	public string name { get; set; } = string.Empty;
-	public String urgency_level { get; set; }
-	public String state { get; set; }
+	public String urgency_level { get; set; } = string.Empty;
+	public String state { get; set; } = string.Empty;
 	public AffectedZoneWithPointsDTO? affected_zone { get; set; }
 }
