@@ -198,3 +198,10 @@ INSERT INTO "route_location" ("route_id", "location_id") VALUES
 
 INSERT INTO "task_donation" ("task_id", "donation_id") VALUES
   (1, 1), (2, 2), (2, 8), (3, 5), (4, 3), (4, 4), (5, 6);
+
+UPDATE victim 
+SET created_at = CASE 
+    WHEN id = 1 THEN CURRENT_TIMESTAMP - INTERVAL '7 days'
+    WHEN id IN (2, 3) THEN CURRENT_TIMESTAMP - INTERVAL '2 days'
+    ELSE created_at
+END;

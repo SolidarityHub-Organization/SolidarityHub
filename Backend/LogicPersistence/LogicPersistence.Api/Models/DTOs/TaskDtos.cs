@@ -60,3 +60,11 @@ public class TaskWithDetailsDto {
 	public string assigned_volunteersJson { get; set; } = "[]";
 	public IEnumerable<VolunteerDisplayDto> assigned_volunteers { get; set; } = [];
 }
+
+public class TaskForDashboardDto {
+	public int id { get; set; }
+	public string name { get; set; } = string.Empty;
+	public String urgency_level { get; set; }
+	public String state { get; set; }
+	public AffectedZoneWithPointsDTO? affected_zone { get; set; }
+}

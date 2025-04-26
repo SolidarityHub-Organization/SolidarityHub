@@ -189,4 +189,31 @@ public class TaskRepository : ITaskRepository {
 
 		return await connection.QueryAsync<int>(sql, new { state = state.ToString() });
 	}
+
+	public async Task<State> GetTaskStateByIdAsync(int taskId)
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT DISTINCT vt.state::text
+			FROM task t
+			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE t.id = @taskId";
+
+		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { taskId });
+		return result != null ? Enum.Parse<State>(result) : State.Unknown;
+	}
+
+	public async Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId)
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT MAX(n.urgency_level::text)
+			FROM task t
+			JOIN need_task nt ON t.id = nt.task_id
+			JOIN need n ON nt.need_id = n.id
+			WHERE t.id = @taskId";
+
+		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { taskId });
+		return result != null ? Enum.Parse<UrgencyLevel>(result) : UrgencyLevel.Unknown;
+	}
 }

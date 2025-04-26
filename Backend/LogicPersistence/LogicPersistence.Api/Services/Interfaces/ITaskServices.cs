@@ -13,5 +13,6 @@ namespace LogicPersistence.Api.Services {
 		Task<Dictionary<State, int>> GetAllTaskCountByStateAsync();
 		Task<int> GetTaskCountByStateAsync(string stateString);
 		Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString);
+		Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync();
 	}
 }

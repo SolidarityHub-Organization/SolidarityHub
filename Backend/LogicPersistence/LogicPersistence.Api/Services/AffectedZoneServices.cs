@@ -73,10 +73,36 @@ namespace LogicPersistence.Api.Services
             }
             return affectedZones;
         }
+#region Internal methods
 
-        
+        public static bool IsPointInAffectedZone(double latitude, double longitude, AffectedZoneWithPointsDTO affectedZone)
+        {
+            if (affectedZone == null || affectedZone.points == null || affectedZone.points.Count == 0) {
+                return false;
+            }
+
+            bool isInside = false;
+            int j = affectedZone.points.Count - 1;
+
+            for (int i = 0; i < affectedZone.points.Count; i++)
+            {
+                var pointI = affectedZone.points[i];
+                var pointJ = affectedZone.points[j];
 
 
+                if (((pointI.latitude > latitude) != (pointJ.latitude > latitude)) &&
+                    (longitude < (pointJ.longitude - pointI.longitude) * (latitude - pointI.latitude) / 
+                    (pointJ.latitude - pointI.latitude) + pointI.longitude))
+                {
+                    isInside = !isInside;
+                }
+
+                j = i;
+            }
+
+            return isInside;
+        }
+#endregion
     }
     
 }
