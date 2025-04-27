@@ -24,9 +24,10 @@ class TaskWithDetails {
       description: json['description'],
       adminId: json['admin_id'],
       locationId: json['location_id'],
-      assignedVolunteers: (json['assigned_volunteers'] as List)
-          .map((volunteer) => Volunteer.fromJson(volunteer))
-          .toList(),
+      assignedVolunteers:
+          (json['assigned_volunteers'] as List)
+              .map((volunteer) => Volunteer.fromJson(volunteer))
+              .toList(),
     );
   }
 }

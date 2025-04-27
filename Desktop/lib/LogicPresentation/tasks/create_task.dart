@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
@@ -88,6 +90,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   final TextEditingController latitudeController = TextEditingController();
   final TextEditingController longitudeController = TextEditingController();
 
+  final MapController _mapController = MapController();
+  List<Marker> _markers = [];
+  LatLng selectedLocation = const LatLng(
+    39.4699,
+    -0.3776,
+  ); // Valencia por defecto
   List<Volunteer> volunteers = [];
   List<int> selectedVolunteers = [];
   bool isLoading = true;
@@ -106,9 +114,35 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               .map((volunteer) => volunteer.id)
               .toList();
     } else {
-      latitudeController.text = "0.0";
-      longitudeController.text = "0.0";
+      _updateLocationControllers(selectedLocation);
+      _updateMarker(selectedLocation);
     }
+  }
+
+  void _updateLocationControllers(LatLng location) {
+    latitudeController.text = location.latitude.toString();
+    longitudeController.text = location.longitude.toString();
+  }
+
+  void _updateMarker(LatLng location) {
+    setState(() {
+      _markers = [
+        Marker(
+          point: location,
+          width: 40,
+          height: 40,
+          child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+        ),
+      ];
+    });
+  }
+
+  void _onMapTap(TapPosition tapPosition, LatLng location) {
+    setState(() {
+      selectedLocation = location;
+      _updateLocationControllers(location);
+      _updateMarker(location);
+    });
   }
 
   Future<void> _loadTaskLocation() async {
@@ -121,9 +155,14 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
         if (response.statusCode >= 200 && response.statusCode <= 299) {
           final location = json.decode(response.body);
+          final latLng = LatLng(
+            double.parse(location['latitude'].toString()),
+            double.parse(location['longitude'].toString()),
+          );
           setState(() {
-            latitudeController.text = location['latitude'].toString();
-            longitudeController.text = location['longitude'].toString();
+            selectedLocation = latLng;
+            _updateLocationControllers(latLng);
+            _updateMarker(latLng);
           });
         }
       } catch (error) {
@@ -246,31 +285,31 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       children: [
         Expanded(
           flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField(controller: nameController, label: 'Nombre'),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: descriptionController,
-                label: 'Descripción',
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              _buildLocationFields(),
-              const Spacer(),
-              _buildCreateButton(widget.taskToEdit != null),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTextField(
+                  controller: nameController,
+                  label: 'Nombre',
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 8),
+                _buildTextField(
+                  controller: descriptionController,
+                  label: 'Descripción',
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 8),
+                _buildLocationFields(),
+                const SizedBox(height: 8),
+                _buildCreateButton(widget.taskToEdit != null),
+              ],
+            ),
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(
-          flex: 1,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildVolunteerList()],
-          ),
-        ),
+        Expanded(child: _buildVolunteerList()),
       ],
     );
   }
@@ -284,13 +323,59 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.grey),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: selectedLocation,
+                initialZoom: 13,
+                onTap: _onMapTap,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                  subdomains: const ['a', 'b', 'c', 'd'],
+                ),
+                MarkerLayer(markers: _markers),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
               child: _buildTextField(
                 controller: latitudeController,
                 label: 'Latitud',
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                onChanged: (value) {
+                  try {
+                    final lat = double.parse(value);
+                    final newLocation = LatLng(lat, selectedLocation.longitude);
+                    setState(() {
+                      selectedLocation = newLocation;
+                      _updateMarker(newLocation);
+                    });
+                  } catch (e) {
+                    // Ignorar errores de parsing
+                  }
+                },
+                maxLines: 1,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -298,10 +383,91 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               child: _buildTextField(
                 controller: longitudeController,
                 label: 'Longitud',
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                onChanged: (value) {
+                  try {
+                    final lng = double.parse(value);
+                    final newLocation = LatLng(selectedLocation.latitude, lng);
+                    setState(() {
+                      selectedLocation = newLocation;
+                      _updateMarker(newLocation);
+                    });
+                  } catch (e) {
+                    // Ignorar errores de parsing
+                  }
+                },
+                maxLines: 1,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVolunteerList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Voluntarios disponibles',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: volunteers.length,
+            itemBuilder: (context, index) {
+              final volunteer = volunteers[index];
+              final isSelected = selectedVolunteers.contains(volunteer.id);
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
+                elevation: 0,
+                color: isSelected ? Colors.red.withOpacity(0.1) : null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(
+                    color: isSelected ? Colors.red : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                child: ListTile(
+                  title: Text(
+                    '${volunteer.name} ${volunteer.surname}',
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  trailing: Checkbox(
+                    activeColor: Colors.red,
+                    value: isSelected,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          selectedVolunteers.add(volunteer.id);
+                        } else {
+                          selectedVolunteers.remove(volunteer.id);
+                        }
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
@@ -312,15 +478,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     required String label,
     int maxLines = 1,
     TextInputType? keyboardType,
+    bool readOnly = false,
+    EdgeInsets? contentPadding,
+    Function(String)? onChanged,
   }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 16,
-        ),
+        contentPadding:
+            contentPadding ??
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -329,6 +497,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,
+      readOnly: readOnly,
+      onChanged: onChanged,
     );
   }
 
@@ -349,76 +519,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         label: Text(
           isEditing ? 'Actualizar Tarea' : 'Crear Tarea',
           style: const TextStyle(fontSize: 16),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVolunteerList() {
-    return Expanded(
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Voluntarios disponibles',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Divider(),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: volunteers.length,
-                  itemBuilder: (context, index) {
-                    final volunteer = volunteers[index];
-                    final isSelected = selectedVolunteers.contains(
-                      volunteer.id,
-                    );
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 4.0),
-                      elevation: 0,
-                      color: isSelected ? Colors.red : null,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(
-                          color: isSelected ? Colors.red : Colors.transparent,
-                          width: 1,
-                        ),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          '${volunteer.name} ${volunteer.surname}',
-                          style: TextStyle(
-                            fontWeight:
-                                isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                          ),
-                        ),
-                        trailing: Checkbox(
-                          activeColor: Colors.red,
-                          value: isSelected,
-                          onChanged: (value) {
-                            setState(() {
-                              if (value == true) {
-                                selectedVolunteers.add(volunteer.id);
-                              } else {
-                                selectedVolunteers.remove(volunteer.id);
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
