@@ -9,14 +9,16 @@ namespace LogicPersistence.Api.Services
     public class DonationServices : IDonationServices
     {
         private readonly IDonationRepository _donationRepository;
+        private readonly IVolunteerRepository _volunteerRepository;
 
-        public DonationServices(IDonationRepository donationRepository)
+        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository)
         {
             _donationRepository = donationRepository;
+            _volunteerRepository = volunteerRepository;
         }
 
 #region PhysicalDonation
-        public async Task<PhysicalDonation> CreatePhysicalDonationAsync(PhysicalDonationCreateDto donationCreateDto)
+        public async Task<PhysicalDonationDisplayDto> CreatePhysicalDonationAsync(PhysicalDonationCreateDto donationCreateDto)
         {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
@@ -24,12 +26,19 @@ namespace LogicPersistence.Api.Services
 
             var donation = await _donationRepository.CreatePhysicalDonationAsync(donationCreateDto.ToPhysicalDonation());
             if (donation == null) {
-				throw new InvalidOperationException("Failed to create physical donation.");
-			}
-            return donation;
+                throw new InvalidOperationException("Failed to create physical donation.");
+            }
+
+            Volunteer? volunteer = null;
+            if (donation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+            }
+
+            return donation.ToPhysicalDonationDisplayDto(volunteer);
         }
 
-        public async Task<PhysicalDonation> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto)
+        public async Task<PhysicalDonationDisplayDto> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto)
         {
             if (id != donationUpdateDto.id)
             {
@@ -42,37 +51,63 @@ namespace LogicPersistence.Api.Services
             }
             var updatedDonation = donationUpdateDto.ToPhysicalDonation();
             await _donationRepository.UpdatePhysicalDonationAsync(updatedDonation);
-            return updatedDonation;
+
+            Volunteer? volunteer = null;
+            if (updatedDonation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(updatedDonation.volunteer_id.Value);
+            }
+
+            return updatedDonation.ToPhysicalDonationDisplayDto(volunteer);
         }
 
         public async System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id)
         {
             var existingDonation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
-			if (existingDonation == null) {
-				throw new KeyNotFoundException($"Donation with id {id} not found.");
-			}
+            if (existingDonation == null) {
+                throw new KeyNotFoundException($"Donation with id {id} not found.");
+            }
 
-			var deletionSuccesful = await _donationRepository.DeletePhysicalDonationAsync(id);
-			if (!deletionSuccesful) {
-				throw new InvalidOperationException($"Failed to delete physical donation with id {id}.");
-			}
+            var deletionSuccesful = await _donationRepository.DeletePhysicalDonationAsync(id);
+            if (!deletionSuccesful) {
+                throw new InvalidOperationException($"Failed to delete physical donation with id {id}.");
+            }
         }
 
-        public async Task<PhysicalDonation> GetPhysicalDonationByIdAsync(int id) {
-			var donation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
-			if (donation == null) {
-				throw new KeyNotFoundException($"Donation with id {id} not found.");
-			}
-			return donation;
-		}
+        public async Task<PhysicalDonationDisplayDto> GetPhysicalDonationByIdAsync(int id) {
+            var donation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
+            if (donation == null) {
+                throw new KeyNotFoundException($"Donation with id {id} not found.");
+            }
 
-        public async Task<IEnumerable<PhysicalDonation>> GetAllPhysicalDonationsAsync()
+            Volunteer? volunteer = null;
+            if (donation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+            }
+
+            return donation.ToPhysicalDonationDisplayDto(volunteer);
+        }
+
+        public async Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync()
         {
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync();
-			if (donations == null) {
-				throw new InvalidOperationException("Failed to retrieve donations.");
-			}
-			return donations;
+            if (donations == null) {
+                throw new InvalidOperationException("Failed to retrieve donations.");
+            }
+
+            var result = new List<PhysicalDonationDisplayDto>();
+            foreach (var donation in donations)
+            {
+                Volunteer? volunteer = null;
+                if (donation.volunteer_id.HasValue)
+                {
+                    volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+                }
+                result.Add(donation.ToPhysicalDonationDisplayDto(volunteer));
+            }
+
+            return result;
         }
 
         public async Task<int> GetTotalAmountPhysicalDonationsAsync()
@@ -86,7 +121,7 @@ namespace LogicPersistence.Api.Services
 #endregion
 #region MonetaryDonation
 
-        public async Task<MonetaryDonation> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto)
+        public async Task<MonetaryDonationDisplayDto> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto)
         {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
@@ -95,10 +130,17 @@ namespace LogicPersistence.Api.Services
             if (donation == null) {
                 throw new InvalidOperationException("Failed to create monetary donation.");
             }
-            return donation;
+
+            Volunteer? volunteer = null;
+            if (donation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+            }
+
+            return donation.ToMonetaryDonationDisplayDto(volunteer);
         }
 
-        public async Task<MonetaryDonation> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto)
+        public async Task<MonetaryDonationDisplayDto> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto)
         {
             if (id != donationUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
@@ -109,7 +151,14 @@ namespace LogicPersistence.Api.Services
             }
             var updatedDonation = donationUpdateDto.ToMonetaryDonation();
             await _donationRepository.UpdateMonetaryDonationAsync(updatedDonation);
-            return updatedDonation;
+
+            Volunteer? volunteer = null;
+            if (updatedDonation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(updatedDonation.volunteer_id.Value);
+            }
+
+            return updatedDonation.ToMonetaryDonationDisplayDto(volunteer);
         }
 
         public async System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id)
@@ -124,20 +173,39 @@ namespace LogicPersistence.Api.Services
             }
         }
 
-        public async Task<MonetaryDonation> GetMonetaryDonationByIdAsync(int id) {
+        public async Task<MonetaryDonationDisplayDto> GetMonetaryDonationByIdAsync(int id) {
             var donation = await _donationRepository.GetMonetaryDonationByIdAsync(id);
             if (donation == null) {
                 throw new KeyNotFoundException($"Donation with id {id} not found.");
             }
-            return donation;
+
+            Volunteer? volunteer = null;
+            if (donation.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+            }
+
+            return donation.ToMonetaryDonationDisplayDto(volunteer);
         }
 
-        public async Task<IEnumerable<MonetaryDonation>> GetAllMonetaryDonationsAsync() {
+        public async Task<IEnumerable<MonetaryDonationDisplayDto>> GetAllMonetaryDonationsAsync() {
             var donations = await _donationRepository.GetAllMonetaryDonationsAsync();
             if (donations == null) {
                 throw new InvalidOperationException("Failed to retrieve donations.");
             }
-            return donations;
+
+            var result = new List<MonetaryDonationDisplayDto>();
+            foreach (var donation in donations)
+            {
+                Volunteer? volunteer = null;
+                if (donation.volunteer_id.HasValue)
+                {
+                    volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+                }
+                result.Add(donation.ToMonetaryDonationDisplayDto(volunteer));
+            }
+
+            return result;
         }
 
         //por ahora solo acepta EUR y USD
@@ -162,7 +230,6 @@ namespace LogicPersistence.Api.Services
 
             return totalEuro + totalDollar;
         }
-
 
 #endregion
     }

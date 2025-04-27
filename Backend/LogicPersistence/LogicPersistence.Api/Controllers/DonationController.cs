@@ -22,6 +22,16 @@ namespace LogicPersistence.Api.Controllers
         {
             try
             {
+                if (donationCreateDto == null)
+                {
+                    return BadRequest("La información de la donación no puede estar vacía.");
+                }
+
+                if (!donationCreateDto.volunteer_id.HasValue && !donationCreateDto.admin_id.HasValue)
+                {
+                    return BadRequest("Se requiere especificar un volunteer_id o admin_id para crear una donación.");
+                }
+
                 var donation = await _donationServices.CreatePhysicalDonationAsync(donationCreateDto);
                 return CreatedAtRoute(nameof(GetPhysicalDonationByIdAsync), new { id = donation.id }, donation);
             }
@@ -130,6 +140,42 @@ namespace LogicPersistence.Api.Controllers
             catch (InvalidOperationException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("physical-donations/{id}/assign")]
+        public async Task<IActionResult> AssignPhysicalDonationAsync(int id, [FromBody] AssignDonationDto assignDto)
+        {
+            try
+            {
+                var donation = await _donationServices.GetPhysicalDonationByIdAsync(id);
+                if (donation == null)
+                {
+                    return NotFound($"Donación con id {id} no encontrada.");
+                }
+
+                var updateDto = new PhysicalDonationUpdateDto
+                {
+                    id = donation.id,
+                    item_name = donation.item_name,
+                    description = donation.description,
+                    quantity = donation.quantity,
+                    item_type = donation.item_type,
+                    volunteer_id = donation.volunteer_id,
+                    admin_id = donation.admin_id,
+                    victim_id = assignDto.victim_id
+                };
+
+                var result = await _donationServices.UpdatePhysicalDonationAsync(id, updateDto);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -251,10 +297,6 @@ namespace LogicPersistence.Api.Controllers
             catch (InvalidOperationException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest($"Moneda inválida: {ex.Message}");
             }
             catch (Exception ex)
             {

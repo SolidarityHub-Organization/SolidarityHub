@@ -27,7 +27,7 @@ public class VictimCreateDto {
 
 	[Required]
 	[Range(100000000, 99999999999)]
-	public string phone_number { get; set; }
+	public string phone_number { get; set; } = string.Empty;
 
 	[Required]
 	[MaxLength(255)]
@@ -67,7 +67,7 @@ public class VictimUpdateDto {
 
 	[Required]
 	[Range(100000000, 99999999999)]
-	public string phone_number { get; set; }
+	public string phone_number { get; set; } = string.Empty;
 
 	[Required]
 	[MaxLength(255)]
@@ -87,7 +87,7 @@ public class VictimDisplayDto {
 	public string name { get; set; } = string.Empty;
 	public string surname { get; set; } = string.Empty;
 	public int prefix { get; set; }
-	public string phone_number { get; set; }
+	public string phone_number { get; set; } = string.Empty;
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
 	public DateTime created_at { get; set; } 

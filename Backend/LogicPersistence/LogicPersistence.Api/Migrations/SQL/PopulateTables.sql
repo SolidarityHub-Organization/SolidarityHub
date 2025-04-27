@@ -16,24 +16,24 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4650, -0.3773);
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
-  ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, 5551234567, '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
-  ('Maria', 'Garcia', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 1, 5552345678, '456 Admin Ave, Los Angeles, CA 90001', 'ADM-002-2025', 'California'),
-  ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, 5553456789, '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
-  ('Admin', 'Admin', 'admin@admin.admin','admin', 1, 5554567890, '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
+  ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
+  ('Maria', 'Garcia', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 1, '5552345678', '456 Admin Ave, Los Angeles, CA 90001', 'ADM-002-2025', 'California'),
+  ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, '5553456789', '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
+  ('Admin', 'Admin', 'admin@admin.admin','admin', 1, '5554567890', '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
 
 INSERT INTO "victim" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
-  ('Alice', 'Wilson', 'alice@example.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 1, 5551112222, '101 Victim St, New York, NY 10001', 'VCT-001-2025', 1),
-  ('Bob', 'Martinez', 'bob@example.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 1, 5552223333, '202 Victim Ave, Los Angeles, CA 90001', 'VCT-002-2025', 2),
-  ('Carol', 'Taylor', 'carol@example.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 1, 5553334444, '303 Victim Blvd, Chicago, IL 60601', 'VCT-003-2025', 3),
-  ('Devin', 'Brown', 'devin@example.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 1, 5554445555, '404 Victim Dr, Houston, TX 77001', 'VCT-004-2025', 4),
-  ('Eva', 'Davis', 'eva@example.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 1, 5555556666, '505 Victim Ln, Phoenix, AZ 85001', 'VCT-005-2025', 5);
+  ('Alice', 'Wilson', 'alice@example.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 1, '5551112222', '101 Victim St, New York, NY 10001', 'VCT-001-2025', 1),
+  ('Bob', 'Martinez', 'bob@example.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 1, '5552223333', '202 Victim Ave, Los Angeles, CA 90001', 'VCT-002-2025', 2),
+  ('Carol', 'Taylor', 'carol@example.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 1, '5553334444', '303 Victim Blvd, Chicago, IL 60601', 'VCT-003-2025', 3),
+  ('Devin', 'Brown', 'devin@example.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 1, '5554445555', '404 Victim Dr, Houston, TX 77001', 'VCT-004-2025', 4),
+  ('Eva', 'Davis', 'eva@example.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 1, '5555556666', '505 Victim Ln, Phoenix, AZ 85001', 'VCT-005-2025', 5);
 
 INSERT INTO "volunteer" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
-  ('Frank', 'Lee', 'frank@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, 5556667777, '101 Volunteer St, Philadelphia, PA 19101', 'VOL-001-2025', 6),
-  ('Grace', 'Kim', 'grace@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, 5557778888, '202 Volunteer Ave, San Diego, CA 92101', 'VOL-002-2025', 7),
-  ('Henry', 'Chen', 'henry@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, 5558889999, '303 Volunteer Blvd, San Francisco, CA 94101', 'VOL-003-2025', 8),
-  ('Isabel', 'Lopez', 'isabel@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, 5559990000, '404 Volunteer Dr, Austin, TX 78701', 'VOL-004-2025', 9),
-  ('Jake', 'Williams', 'jake@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, 5550001111, '505 Volunteer Ln, Denver, CO 80201', 'VOL-005-2025', 10);
+  ('Frank', 'Lee', 'frank@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556667777', '101 Volunteer St, Philadelphia, PA 19101', 'VOL-001-2025', 6),
+  ('Grace', 'Kim', 'grace@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557778888', '202 Volunteer Ave, San Diego, CA 92101', 'VOL-002-2025', 7),
+  ('Henry', 'Chen', 'henry@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558889999', '303 Volunteer Blvd, San Francisco, CA 94101', 'VOL-003-2025', 8),
+  ('Isabel', 'Lopez', 'isabel@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559990000', '404 Volunteer Dr, Austin, TX 78701', 'VOL-004-2025', 9),
+  ('Jake', 'Williams', 'jake@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550001111', '505 Volunteer Ln, Denver, CO 80201', 'VOL-005-2025', 10);
 
 UPDATE "location" SET "victim_id" = 1 WHERE "id" = 1;
 UPDATE "location" SET "victim_id" = 2 WHERE "id" = 2;

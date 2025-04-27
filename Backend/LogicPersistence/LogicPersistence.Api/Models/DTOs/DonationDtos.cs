@@ -60,6 +60,16 @@ public class PhysicalDonationDisplayDto : DonationBaseDto {
 	public string description { get; set; } = string.Empty;
 	public int quantity { get; set; }
 	public PhysicalDonationType item_type { get; set; }
+
+	// Información adicional del voluntario
+	public string? volunteer_name { get; set; }
+	public string? volunteer_surname { get; set; }
+}
+
+// DTO para asignar donaciones a víctimas
+public class AssignDonationDto : DonationBaseDto {
+	[Required]
+	public int victim_id { get; set; }
 }
 
 // Monetary Donation DTOs
@@ -109,4 +119,8 @@ public class MonetaryDonationDisplayDto : DonationBaseDto {
 	public Currency currency { get; set; }
 	public PaymentStatus payment_status { get; set; }
 	public PaymentService payment_service { get; set; }
+
+	// Información adicional del voluntario
+	public string? volunteer_name { get; set; }
+	public string? volunteer_surname { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Numerics;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,6 @@ namespace LogicPersistence.Api.Controllers
         {
             _volunteerServices = volunteerServices;
         }
-
         [HttpPost("volunteers")]
         public async Task<IActionResult> CreateVolunteerAsync(VolunteerCreateDto volunteerCreateDto) 
         {

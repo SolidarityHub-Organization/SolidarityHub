@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
+import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/tasks.dart';
 import 'package:solidarityhub/populate_database.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
@@ -178,6 +179,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   icon: const Icon(Icons.task),
                   label: const Text("Crear tareas"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 20,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => const DonationsPage(
+                              baseUrl: 'http://localhost:5170',
+                            ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.book),
+                  label: const Text("Donaciones"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,

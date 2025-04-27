@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicPersistence/models/victim.dart';
 
 class VictimService {
   final String baseUrl;
@@ -86,6 +87,20 @@ class VictimService {
     } catch (e) {
       print('Error al conectar con el backend: $e');
       return [];
+    }
+  }
+
+  Future<List<Victim>> fetchAllVictims() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/v1/victims'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((victim) => Victim.fromJson(victim)).toList();
+      } else {
+        throw Exception('Error al obtener víctimas: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error al conectar con el backend: $e');
     }
   }
 }

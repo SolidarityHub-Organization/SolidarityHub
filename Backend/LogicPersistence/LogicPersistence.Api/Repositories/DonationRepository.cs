@@ -15,10 +15,22 @@ public class DonationRepository : IDonationRepository {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO physical_donation (item_name, description, quantity, item_type, donation_date, volunteer_id, admin_id, victim_id)
-            VALUES (@item_name, @description, @quantity, @item_type, @donation_date, @volunteer_id, @admin_id, @victim_id)
+            VALUES (@item_name, @description, @quantity, @item_type::item_type, @donation_date, @volunteer_id, @admin_id, @victim_id)
             RETURNING *";
 
-        return await connection.QuerySingleAsync<PhysicalDonation>(sql, donation);
+        var parameters = new
+        {
+            item_name = donation.item_name,
+            description = donation.description,
+            quantity = donation.quantity,
+            item_type = donation.item_type.ToString(),
+            donation_date = donation.donation_date,
+            volunteer_id = donation.volunteer_id,
+            admin_id = donation.admin_id,
+            victim_id = donation.victim_id
+        };
+
+        return await connection.QuerySingleAsync<PhysicalDonation>(sql, parameters);
     }
 
     public async Task<PhysicalDonation> UpdatePhysicalDonationAsync(PhysicalDonation donation) 
@@ -29,7 +41,7 @@ public class DonationRepository : IDonationRepository {
             SET item_name = @item_name,
                 description = @description,
                 quantity = @quantity,
-                item_type = @item_type,
+                item_type = @item_type::item_type,
                 donation_date = @donation_date,
                 volunteer_id = @volunteer_id,
                 admin_id = @admin_id,
@@ -37,7 +49,20 @@ public class DonationRepository : IDonationRepository {
             WHERE id = @id
             RETURNING *";
 
-        return await connection.QuerySingleAsync<PhysicalDonation>(sql, donation);
+        var parameters = new
+        {
+            id = donation.id,
+            item_name = donation.item_name,
+            description = donation.description,
+            quantity = donation.quantity,
+            item_type = donation.item_type.ToString(),
+            donation_date = donation.donation_date,
+            volunteer_id = donation.volunteer_id,
+            admin_id = donation.admin_id,
+            victim_id = donation.victim_id
+        };
+
+        return await connection.QuerySingleAsync<PhysicalDonation>(sql, parameters);
     }
 
     public async Task<bool> DeletePhysicalDonationAsync(int id) 

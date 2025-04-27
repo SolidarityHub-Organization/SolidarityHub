@@ -14,7 +14,8 @@ public static class DonationMapper
             item_type = donationCreateDto.item_type,
             volunteer_id = donationCreateDto.volunteer_id,
             admin_id = donationCreateDto.admin_id,
-            victim_id = donationCreateDto.victim_id
+            victim_id = donationCreateDto.victim_id,
+            donation_date = donationCreateDto.donation_date
         };
     }
 
@@ -28,7 +29,8 @@ public static class DonationMapper
             item_type = donationUpdateDto.item_type,
             volunteer_id = donationUpdateDto.volunteer_id,
             admin_id = donationUpdateDto.admin_id,
-            victim_id = donationUpdateDto.victim_id
+            victim_id = donationUpdateDto.victim_id,
+            donation_date = donationUpdateDto.donation_date
         };
     }
 
@@ -41,7 +43,8 @@ public static class DonationMapper
             payment_status = PaymentStatus.Pending,  // always starts as pending
             volunteer_id = donationCreateDto.volunteer_id,
             admin_id = donationCreateDto.admin_id,
-            victim_id = donationCreateDto.victim_id
+            victim_id = donationCreateDto.victim_id,
+            donation_date = donationCreateDto.donation_date
         };
     }
 
@@ -55,11 +58,12 @@ public static class DonationMapper
             payment_status = donationUpdateDto.payment_status,
             volunteer_id = donationUpdateDto.volunteer_id,
             admin_id = donationUpdateDto.admin_id,
-            victim_id = donationUpdateDto.victim_id
+            victim_id = donationUpdateDto.victim_id,
+            donation_date = donationUpdateDto.donation_date
         };
     }
 
-    public static PhysicalDonationDisplayDto ToPhysicalDonationDisplayDto(this PhysicalDonation donation) 
+    public static PhysicalDonationDisplayDto ToPhysicalDonationDisplayDto(this PhysicalDonation donation, Volunteer? volunteer = null) 
     {
         return new PhysicalDonationDisplayDto {
             id = donation.id,
@@ -69,11 +73,14 @@ public static class DonationMapper
             item_type = donation.item_type,
             volunteer_id = donation.volunteer_id,
             admin_id = donation.admin_id,
-            victim_id = donation.victim_id
+            victim_id = donation.victim_id,
+            donation_date = donation.donation_date,
+            volunteer_name = volunteer?.name,
+            volunteer_surname = volunteer?.surname
         };
     }
 
-    public static MonetaryDonationDisplayDto ToMonetaryDonationDisplayDto(this MonetaryDonation donation) 
+    public static MonetaryDonationDisplayDto ToMonetaryDonationDisplayDto(this MonetaryDonation donation, Volunteer? volunteer = null) 
     {
         return new MonetaryDonationDisplayDto {
             id = donation.id,
@@ -83,7 +90,10 @@ public static class DonationMapper
             payment_status = donation.payment_status,
             volunteer_id = donation.volunteer_id,
             admin_id = donation.admin_id,
-            victim_id = donation.victim_id
+            victim_id = donation.victim_id,
+            donation_date = donation.donation_date,
+            volunteer_name = volunteer?.name,
+            volunteer_surname = volunteer?.surname
         };
     }
 }

@@ -4,7 +4,7 @@ class Victim {
   final String name;
   final String surname;
   final int prefix;
-  final int phoneNumber;
+  final String phoneNumber;
   final String address;
   final String identification;
   final int locationId;
