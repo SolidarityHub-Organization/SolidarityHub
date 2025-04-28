@@ -3,9 +3,14 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../LogicBusiness/services/victimServices.dart';
 
 class VictimsTab extends StatefulWidget {
-  final String selectedPeriod;
+  final DateTime? fechaInicio;
+  final DateTime? fechaFin;
 
-  const VictimsTab({Key? key, required this.selectedPeriod}) : super(key: key);
+  const VictimsTab({
+    Key? key,
+    required this.fechaFin,
+    required this.fechaInicio,
+  }) : super(key: key);
 
   @override
   _VictimsTabState createState() => _VictimsTabState();
@@ -28,10 +33,11 @@ class _VictimsTabState extends State<VictimsTab> {
           BarChartRodData(
             toY: (entry.value['num'] ?? 0).toDouble(), // Manejar valores nulos
             color: Colors.red, // Cambiar color a rojo
-            width: 30, // Aumentar el grosor de las barras
-            borderRadius: BorderRadius.circular(
-              4,
-            ), // Reducir redondez de bordes
+            width: 30, // Aumentar el ancho de las barras
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
           ),
         ],
       );

@@ -3,9 +3,11 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../LogicBusiness/services/taskTableServices.dart';
 
 class TaskTable extends StatefulWidget {
-  final String selectedPeriod; // Agregar el parámetro selectedPeriod
+  final DateTime? fechaInicio;
+  final DateTime? fechaFin;
 
-  const TaskTable({Key? key, required this.selectedPeriod}) : super(key: key);
+  const TaskTable({Key? key, required this.fechaFin, required this.fechaInicio})
+    : super(key: key);
 
   @override
   _TaskTableState createState() => _TaskTableState();

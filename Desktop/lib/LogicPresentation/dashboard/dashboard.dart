@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Importar intl para manejar fechas
 import 'package:solidarityhub/LogicPresentation/dashboard/tables/taskTable.dart';
 import 'tables/generalTable.dart';
 import 'tables/victimTable.dart';
@@ -16,7 +17,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedPeriod = '7dias';
+  DateTime? _fechaInicio;
+  DateTime? _fechaFin;
 
   @override
   void initState() {
@@ -24,10 +26,32 @@ class _DashboardState extends State<Dashboard>
     _tabController = TabController(length: 5, vsync: this);
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  Future<void> _selectFechaInicio(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fechaInicio ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _fechaInicio = picked;
+      });
+    }
+  }
+
+  Future<void> _selectFechaFin(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fechaFin ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _fechaFin = picked;
+      });
+    }
   }
 
   @override
@@ -68,40 +92,48 @@ class _DashboardState extends State<Dashboard>
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: Tooltip(
-                            message: 'Se desarrollará en el Sprint 2',
-                            child: DropdownButton<String>(
-                              value: _selectedPeriod,
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: '24h',
-                                  child: Text('Últimas 24 horas'),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              TextButton(
+                                onPressed: () => _selectFechaInicio(context),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.white, // Fondo blanco
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                DropdownMenuItem(
-                                  value: '7dias',
-                                  child: Text('Últimos 7 días'),
+                                child: Text(
+                                  _fechaInicio != null
+                                      ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}'
+                                      : 'Seleccionar inicio',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                  ), // Texto rojo
                                 ),
-                                DropdownMenuItem(
-                                  value: '30dias',
-                                  child: Text('Últimos 30 días'),
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton(
+                                onPressed: () => _selectFechaFin(context),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.white, // Fondo blanco
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                DropdownMenuItem(
-                                  value: 'total',
-                                  child: Text('Total'),
+                                child: Text(
+                                  _fechaFin != null
+                                      ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}'
+                                      : 'Seleccionar fin',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                  ), // Texto rojo
                                 ),
-                              ],
-                              onChanged: null, // Deshabilitar el botón
-                            ),
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
@@ -114,11 +146,11 @@ class _DashboardState extends State<Dashboard>
             child: TabBarView(
               controller: _tabController,
               children: [
-                const GeneralTab(),
-                VictimsTab(selectedPeriod: _selectedPeriod),
+                GeneralTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
+                VictimsTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
                 const RecursosTab(),
-                VolunteerTab(selectedPeriod: _selectedPeriod),
-                TaskTable(selectedPeriod: _selectedPeriod),
+                VolunteerTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
+                TaskTable(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
               ],
             ),
           ),

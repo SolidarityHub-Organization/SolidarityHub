@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import '../../../LogicBusiness/services/generalServices.dart';
 
 class GeneralTab extends StatefulWidget {
-  const GeneralTab({Key? key}) : super(key: key);
+  final DateTime? fechaInicio;
+  final DateTime? fechaFin;
+
+  const GeneralTab({
+    Key? key,
+    required this.fechaFin,
+    required this.fechaInicio,
+  }) : super(key: key);
 
   @override
-  _GeneralTabState createState() => _GeneralTabState();
+  State<StatefulWidget> createState() {
+    return _GeneralTabState(); // Implementación corregida
+  }
 }
 
 class _GeneralTabState extends State<GeneralTab> {
@@ -77,8 +86,14 @@ class _GeneralTabState extends State<GeneralTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoCard('Donaciones Recibidas', ''),
-              _buildInfoCard('', ''),
+              _buildInfoCard(
+                'Donaciones Recibidas',
+                '0',
+              ), // Valor predeterminado
+              _buildInfoCard(
+                'Eventos Realizados',
+                '0',
+              ), // Título y valor corregidos
             ],
           ),
         ],

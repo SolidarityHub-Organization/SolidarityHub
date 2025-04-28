@@ -3,10 +3,14 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../LogicBusiness/services/volunteerServices.dart';
 
 class VolunteerTab extends StatefulWidget {
-  final String selectedPeriod;
+  final DateTime? fechaInicio;
+  final DateTime? fechaFin;
 
-  const VolunteerTab({Key? key, required this.selectedPeriod})
-    : super(key: key);
+  const VolunteerTab({
+    Key? key,
+    required this.fechaFin,
+    required this.fechaInicio,
+  }) : super(key: key);
 
   @override
   _VolunteerTabState createState() => _VolunteerTabState();
