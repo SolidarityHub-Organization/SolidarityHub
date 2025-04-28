@@ -21,6 +21,12 @@ class _TaskTableState extends State<TaskTable> {
   // Inicializar el Future correctamente
   late final Future<Map<String, dynamic>> _taskTypeCount =
       _taskService.fetchTaskTypeCount();
+  late final Future<List<Map<String, dynamic>>> _allTasks =
+      _taskService.fetchAllTasks();
+
+  String? _selectedUrgency;
+  String? _selectedState;
+  String? _selectedZone;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,6 @@ class _TaskTableState extends State<TaskTable> {
           children: [
             const SizedBox(height: 20),
             Center(
-              // Centrar el título
               child: Text(
                 'Distribución de Tareas por Estado',
                 style: const TextStyle(
@@ -41,7 +46,7 @@ class _TaskTableState extends State<TaskTable> {
                 ),
               ),
             ),
-            const SizedBox(height: 70), // Margen inferior agregado
+            const SizedBox(height: 70),
             FutureBuilder<Map<String, dynamic>>(
               future: _taskTypeCount,
               builder: (context, snapshot) {
@@ -95,6 +100,214 @@ class _TaskTableState extends State<TaskTable> {
                         ],
                       ),
                     ],
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 40),
+            Text(
+              'Filtros',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedUrgency,
+                    hint: const Text('Nivel de Urgencia'),
+                    items:
+                        ['Alto', 'Medio', 'Bajo', 'Crítico', 'Desconocido']
+                            .map(
+                              (urgency) => DropdownMenuItem(
+                                value: urgency,
+                                child: Text(urgency),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedUrgency = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedState,
+                    hint: const Text('Estado'),
+                    items:
+                        ['Asignado', 'Pendiente', 'Completado', 'Desconocido']
+                            .map(
+                              (state) => DropdownMenuItem(
+                                value: state,
+                                child: Text(state),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedState = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedZone,
+                    hint: const Text('Zona Afectada'),
+                    items:
+                        ['Zona de Inundación A', 'Sin zona']
+                            .map(
+                              (zone) => DropdownMenuItem(
+                                value: zone,
+                                child: Text(zone),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedZone = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedUrgency = null;
+                    _selectedState = null;
+                    _selectedZone = null;
+                  });
+                },
+                child: const Text(
+                  'Borrar Filtros',
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Lista de Tareas',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _allTasks,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error al cargar las tareas'),
+                  );
+                } else {
+                  final tasks =
+                      snapshot.data!
+                          .where(
+                            (task) =>
+                                (_selectedUrgency == null ||
+                                    task['urgency_level'] ==
+                                        _selectedUrgency) &&
+                                (_selectedState == null ||
+                                    task['state'] == _selectedState) &&
+                                (_selectedZone == null ||
+                                    task['affected_zone']?['name'] ==
+                                        _selectedZone),
+                          )
+                          .toList();
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      final affectedZoneName =
+                          task['affected_zone']?['name'] ?? 'Sin zona';
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        elevation: 4,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16.0),
+                          title: Text(
+                            task['name'] ?? 'Sin nombre',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                'Estado: ${task['state'] ?? 'Desconocido'}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                'Zona afectada: $affectedZoneName',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          trailing:
+                              task['affected_zone'] != null
+                                  ? IconButton(
+                                    icon: const Icon(
+                                      Icons.location_on,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                              'Información de Ubicación',
+                                            ),
+                                            content: const SizedBox(
+                                              height: 100,
+                                              child: Center(
+                                                child: Text(
+                                                  'Contenido pendiente',
+                                                ),
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Cerrar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  )
+                                  : null,
+                        ),
+                      );
+                    },
                   );
                 }
               },
