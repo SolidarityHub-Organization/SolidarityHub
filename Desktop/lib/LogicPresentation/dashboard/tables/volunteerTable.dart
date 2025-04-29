@@ -23,6 +23,9 @@ class _VolunteerTabState extends State<VolunteerTab> {
     'http://localhost:5170',
   );
 
+  final ScrollController _mainScrollController = ScrollController();
+  final ScrollController _legendScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -30,97 +33,166 @@ class _VolunteerTabState extends State<VolunteerTab> {
   }
 
   @override
+  void dispose() {
+    _mainScrollController.dispose();
+    _legendScrollController.dispose();
+    super.dispose();
+  }
+
+  double _calculateMaxTitleWidth(List<Map<String, dynamic>> data) {
+    final textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    
+    double maxWidth = 0;
+    for (var item in data) {
+      textPainter.text = TextSpan(
+        text: item['item1'] as String,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+      textPainter.layout();
+      maxWidth = math.max(maxWidth, textPainter.width);
+    }
+    return maxWidth * 1;  // add a % of padding
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _volunteerNeedsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No data available'));
-        } else {
-          final data = snapshot.data!;
-          final barGroups =
-              data
-                  .asMap()
-                  .entries
-                  .map(
-                    (entry) => BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (entry.value['item2'] as int).toDouble(),
-                          color: const Color(0xFFF44336),
-                          width: 30,
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(70, 103, 0, 0),
-                            width: 2,
-                          ),
+    return Scrollbar(
+      controller: _mainScrollController,
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        controller: _mainScrollController,
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _volunteerNeedsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No data available'));
+            } else {
+              final data = snapshot.data!;
+              final barGroups =
+                  data
+                      .asMap()
+                      .entries
+                      .map(
+                        (entry) => BarChartGroupData(
+                          x: entry.key,
+                          barRods: [
+                            BarChartRodData(
+                              toY: (entry.value['item2'] as int).toDouble(),
+                              color: const Color(0xFFF44336),
+                              width: 30,
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide: const BorderSide(
+                                color: Color.fromARGB(70, 103, 0, 0),
+                                width: 2,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                  .toList();
+                      )
+                      .toList();
 
-          final totalValue = data.fold<int>(
-            0,
-            (sum, entry) => sum + (entry['item2'] as int),
-          );
+              final totalValue = data.fold<int>(
+                0,
+                (sum, entry) => sum + (entry['item2'] as int),
+              );
 
-          final pieSections =
-              data
-                  .map(
-                    (entry) => PieChartSectionData(
-                      value: (entry['item2'] as int).toDouble(),
-                      title: entry['item1'],
-                      color:
-                          Colors.primaries[data.indexOf(entry) %
-                              Colors.primaries.length],
-                      radius: 50,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      badgeWidget: Text(
-                        '${((entry['item2'] as int) / totalValue * 100).toStringAsFixed(1)}%',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      badgePositionPercentageOffset: 1.3,
-                    ),
-                  )
-                  .toList();
+              final double threshold = 10.0;  // minimum percentage threshold
 
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Voluntarios y sus habilidades',
-                  style: TextStyle(
-                    fontSize: 30,
+              final Map<String, int> groupedData = {};
+              int otherTotal = 0;
+
+              for (var entry in data) {
+                double percentage = (entry['item2'] as int) / totalValue * 100;
+                if (percentage < threshold) {
+                  otherTotal += entry['item2'] as int;
+                } else {
+                  groupedData[entry['item1'] as String] = entry['item2'] as int;
+                }
+              }
+
+              if (otherTotal > 0) {
+                groupedData['Other'] = otherTotal;
+              }
+
+              final pieSections = groupedData.entries.map(
+                (entry) => PieChartSectionData(
+                  value: entry.value.toDouble(),
+                  title: entry.key.length > 10 
+                      ? '${entry.key.substring(0, 10)}...'
+                      : entry.key,
+                  color: entry.key == 'Other' 
+                      ? Colors.grey 
+                      : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) % Colors.primaries.length],
+                  radius: 120,
+                  titleStyle: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    color: Colors.white,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  badgeWidget: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      '${(entry.value / totalValue * 100).toStringAsFixed(1)}%',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  badgePositionPercentageOffset: 1.3,
                 ),
-              ),
-              Expanded(
-                child: Row(
+              ).toList();
+
+              // map to store the original data before grouping
+              final Map<String, int> originalData = {};
+              for (var entry in data) {
+                originalData[entry['item1'] as String] = entry['item2'] as int;
+              }
+
+              return Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
                   children: [
-                    Expanded(
+                    const Text(
+                      'Voluntarios y sus habilidades',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    // bar chart
+                    SizedBox(
+                      height: 500,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(60.0, 0, 30.0, 20.0),
                         child: BarChart(
                           BarChartData(
                             barGroups: barGroups,
-                            groupsSpace: 30,
+                            groupsSpace: 15,
+                            alignment: BarChartAlignment.spaceAround,
                             titlesData: FlTitlesData(
                               leftTitles: AxisTitles(
                                 sideTitles: SideTitles(
@@ -156,7 +228,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
-                                  reservedSize: 80,
+                                  reservedSize: _calculateMaxTitleWidth(data),
                                   getTitlesWidget: (value, meta) {
                                     return Container(
                                       width: 0,
@@ -174,7 +246,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                             fontSize: 12,
                                           ),
                                           overflow: TextOverflow.visible,
-                                          softWrap: false,  // prevents text from wrapping
+                                          softWrap: false,
                                         ),
                                       ),
                                     );
@@ -185,15 +257,8 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             gridData: FlGridData(
                               show: true,
                               drawHorizontalLine: true,
-                              horizontalInterval: 1,
-                              verticalInterval: null,
+                              drawVerticalLine: false,
                               getDrawingHorizontalLine: (value) {
-                                return FlLine(
-                                  color: Colors.black12,
-                                  strokeWidth: 1,
-                                );
-                              },
-                              getDrawingVerticalLine: (value) {
                                 return FlLine(
                                   color: Colors.black12,
                                   strokeWidth: 1,
@@ -220,32 +285,157 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                 },
                               ),
                             ),
-                            maxY: data.fold<int>(0, (max, item) => 
-                              math.max(max, item['item2'] as int)).toDouble(), 
-                            alignment: BarChartAlignment.start,
                           ),
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(30.0, 0, 60.0, 20.0),
-                        child: PieChart(
-                          PieChartData(
-                            sections: pieSections,
-                            centerSpaceRadius: 40,
-                            sectionsSpace: 4,
+                    const SizedBox(height: 30),
+                    // pie chart and legend
+                    SizedBox(
+                      height: 400,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(30.0, 0, 0, 50.0),
+                                child: PieChart(
+                                  PieChartData(
+                                    sections: pieSections,
+                                    centerSpaceRadius: 50,
+                                    sectionsSpace: 8,
+                                    pieTouchData: PieTouchData(
+                                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                                        // could add touch instructions here for pie chart
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          // legend
+                          Expanded(
+                            flex: 1,
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxHeight: 350,
+                                ),
+                                child: Scrollbar(
+                                  controller: _legendScrollController,
+                                  thumbVisibility: true,
+                                  child: SingleChildScrollView(
+                                    controller: _legendScrollController,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // main items
+                                          ...originalData.entries
+                                              .where((entry) => (entry.value / totalValue * 100) >= threshold)
+                                              .map((entry) {
+                                            final double percentage = (entry.value / totalValue * 100);
+                                            return _buildLegendItem(entry, percentage, false, groupedData);
+                                          }),
+                                          // divider
+                                          if (originalData.entries.any((entry) => (entry.value / totalValue * 100) < threshold))
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                                              child: Center(
+                                                child: Divider(
+                                                  height: 1,
+                                                  color: Colors.black26,
+                                                  indent: 125,
+                                                  endIndent: 125,
+                                                ),
+                                              ),
+                                            ),
+                                          // "Other" items
+                                          ...originalData.entries
+                                              .where((entry) => (entry.value / totalValue * 100) < threshold)
+                                              .map((entry) {
+                                            final double percentage = (entry.value / totalValue * 100);
+                                            return _buildLegendItem(entry, percentage, true, groupedData);
+                                          }),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          );
-        }
-      },
+              );
+            }
+          },
+        ),
+      ),
     );
   }
+}
+
+Widget _buildLegendItem(MapEntry<String, int> entry, double percentage, bool isInOther, Map<String, int> groupedData) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 6.0),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 100,
+              child: Text(
+                entry.key,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isInOther ? Colors.grey[700] : Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              width: 100,
+              height: 12,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: percentage / 100,
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation(
+                    isInOther 
+                        ? Colors.grey
+                        : Colors.primaries[
+                            groupedData.keys.toList().indexOf(entry.key) %
+                                Colors.primaries.length],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 50,
+              child: Text(
+                '${percentage.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isInOther ? Colors.grey[700] : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
