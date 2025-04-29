@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../LogicBusiness/services/volunteerServices.dart';
+import 'dart:math' as math;
 
 class VolunteerTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -54,6 +55,10 @@ class _VolunteerTabState extends State<VolunteerTab> {
                           color: const Color(0xFFF44336),
                           width: 30,
                           borderRadius: BorderRadius.circular(4),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(70, 103, 0, 0),
+                            width: 2,
+                          ),
                         ),
                       ],
                     ),
@@ -115,6 +120,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                         child: BarChart(
                           BarChartData(
                             barGroups: barGroups,
+                            groupsSpace: 30,
                             titlesData: FlTitlesData(
                               leftTitles: AxisTitles(
                                 sideTitles: SideTitles(
@@ -150,15 +156,25 @@ class _VolunteerTabState extends State<VolunteerTab> {
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
-                                  reservedSize: 40,
+                                  reservedSize: 80,
                                   getTitlesWidget: (value, meta) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 12.0),
-                                      child: Text(
-                                        data[value.toInt()]['item1'] as String,
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.bold,
+                                    return Container(
+                                      width: 0,
+                                      height: 100, 
+                                      padding: const EdgeInsets.only(top: 10),
+                                      alignment: Alignment.topCenter,
+                                      child: Transform(
+                                        alignment: Alignment.topCenter,
+                                        transform: Matrix4.rotationZ(45 * (3.1415927 / 180)),
+                                        child: Text(
+                                          data[value.toInt()]['item1'] as String,
+                                          style: const TextStyle(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                          overflow: TextOverflow.visible,
+                                          softWrap: false,  // prevents text from wrapping
                                         ),
                                       ),
                                     );
@@ -169,10 +185,17 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             gridData: FlGridData(
                               show: true,
                               drawHorizontalLine: true,
-                              horizontalInterval: 5,
+                              horizontalInterval: 1,
+                              verticalInterval: null,
                               getDrawingHorizontalLine: (value) {
                                 return FlLine(
-                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  color: Colors.black12,
+                                  strokeWidth: 1,
+                                );
+                              },
+                              getDrawingVerticalLine: (value) {
+                                return FlLine(
+                                  color: Colors.black12,
                                   strokeWidth: 1,
                                 );
                               },
@@ -197,6 +220,9 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                 },
                               ),
                             ),
+                            maxY: data.fold<int>(0, (max, item) => 
+                              math.max(max, item['item2'] as int)).toDouble(), 
+                            alignment: BarChartAlignment.start,
                           ),
                         ),
                       ),
