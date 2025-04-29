@@ -20,13 +20,27 @@ class _VictimsTabState extends State<VictimsTab> {
   final VictimService _victimService = VictimService('http://localhost:5170');
 
   // Inicializar los Futures directamente
-  late final Future<List<Map<String, dynamic>>> _victimCountFuture =
+  late Future<List<Map<String, dynamic>>> _victimCountFuture =
       _victimService.fetchVictimCountByDate();
-  late final Future<List<Map<String, dynamic>>> _victimNeedsFuture =
+  late Future<List<Map<String, dynamic>>> _victimNeedsFuture =
       _victimService.fetchFilteredVictimCounts(
         widget.fechaInicio ?? DateTime(2000, 1, 1), // Default start date
         widget.fechaFin ?? DateTime.now(), // Default end date
       );
+
+  @override
+  void didUpdateWidget(covariant VictimsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fechaInicio != widget.fechaInicio || 
+        oldWidget.fechaFin != widget.fechaFin) {
+      setState(() {
+        _victimNeedsFuture = _victimService.fetchFilteredVictimCounts(
+          widget.fechaInicio ?? DateTime(2000, 1, 1),
+          widget.fechaFin ?? DateTime.now(),
+        );
+      });
+    }
+  }
 
   List<BarChartGroupData> generateBarGroups(List<Map<String, dynamic>> data) {
     return data.asMap().entries.map((entry) {
