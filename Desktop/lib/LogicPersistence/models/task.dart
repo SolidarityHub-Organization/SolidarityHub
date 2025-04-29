@@ -1,3 +1,4 @@
+import 'package:solidarityhub/LogicPersistence/models/victim.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
 class TaskWithDetails {
@@ -7,6 +8,7 @@ class TaskWithDetails {
   final int? adminId;
   final int locationId;
   final List<Volunteer> assignedVolunteers;
+  final List<Victim> assignedVictim;
 
   TaskWithDetails({
     required this.id,
@@ -15,6 +17,7 @@ class TaskWithDetails {
     required this.adminId,
     required this.locationId,
     required this.assignedVolunteers,
+    required this.assignedVictim,
   });
 
   factory TaskWithDetails.fromJson(Map<String, dynamic> json) {
@@ -28,6 +31,12 @@ class TaskWithDetails {
           (json['assigned_volunteers'] as List)
               .map((volunteer) => Volunteer.fromJson(volunteer))
               .toList(),
+      assignedVictim:
+          json['assigned_victims'] != null
+              ? (json['assigned_victims'] as List)
+                  .map((victim) => Victim.fromJson(victim))
+                  .toList()
+              : [],
     );
   }
 }

@@ -19,7 +19,7 @@ namespace LogicPersistence.Api.Services {
 				throw new ArgumentNullException(nameof(taskCreateDto));
 			}
 
-			var task = await _taskRepository.CreateTaskAsync(taskCreateDto.ToTask(), taskCreateDto.volunteer_ids);
+			var task = await _taskRepository.CreateTaskAsync(taskCreateDto.ToTask(), taskCreateDto.volunteer_ids, taskCreateDto.victim_ids);
 			if (task == null) {
 				throw new InvalidOperationException("Failed to create task.");
 			}
@@ -44,7 +44,7 @@ namespace LogicPersistence.Api.Services {
 				throw new KeyNotFoundException($"Task with id {id} not found.");
 			}
 			var updatedTask = taskUpdateDto.ToTask();
-			await _taskRepository.UpdateTaskAsync(updatedTask, taskUpdateDto.volunteer_ids);
+			await _taskRepository.UpdateTaskAsync(updatedTask, taskUpdateDto.volunteer_ids, taskUpdateDto.victim_ids);
 			return updatedTask;
 		}
 
@@ -76,8 +76,7 @@ namespace LogicPersistence.Api.Services {
 			return tasks;
 		}
 
-		public async Task<Dictionary<State, IEnumerable<int>>> GetAllTaskIdsWithStatesAsync()
-		{
+		public async Task<Dictionary<State, IEnumerable<int>>> GetAllTaskIdsWithStatesAsync() {
 			var taskStates = await _taskRepository.GetAllTaskIdsWithStatesAsync();
 			if (taskStates == null) {
 				throw new InvalidOperationException("Failed to retrieve tasks IDs with states.");
@@ -88,59 +87,50 @@ namespace LogicPersistence.Api.Services {
 			);
 		}
 
-		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync()
-		{
+		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync() {
 			var taskCounts = await _taskRepository.GetAllTaskCountByStateAsync();
-			if (taskCounts == null)
-			{
+			if (taskCounts == null) {
 				throw new InvalidOperationException("Failed to retrieve task counts by state.");
 			}
-			
+
 			return taskCounts.ToDictionary(
 				x => x.state,
 				x => x.count
 			);
 		}
 
-		public async Task<int> GetTaskCountByStateAsync(State state)
-		{
+		public async Task<int> GetTaskCountByStateAsync(State state) {
 			var count = await _taskRepository.GetTaskCountByStateAsync(state);
 			return count;
 		}
 
-		public async Task<int> GetTaskCountByStateAsync(string stateString)
-		{
-			if (!Enum.TryParse<State>(stateString, true, out var state))
-			{
+		public async Task<int> GetTaskCountByStateAsync(string stateString) {
+			if (!Enum.TryParse<State>(stateString, true, out var state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");
 			}
-			
+
 			var count = await _taskRepository.GetTaskCountByStateAsync(state);
 			return count;
 		}
 
-		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString)
-		{
-			if (!Enum.TryParse<State>(stateString, true, out State state))
-			{
+		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString) {
+			if (!Enum.TryParse<State>(stateString, true, out State state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");
 			}
 
 			var taskIds = await _taskRepository.GetTaskIdsByStateAsync(state);
-			if (taskIds == null)
-			{
+			if (taskIds == null) {
 				throw new InvalidOperationException($"Failed to retrieve task IDs for state {state}.");
 			}
 			return taskIds;
 		}
 
-		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync()
-		{
+		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync() {
 			var tasks = await _taskRepository.GetAllTasksAsync();
 			if (tasks == null) {
 				throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
 			}
-			
+
 			var result = new List<TaskForDashboardDto>();
 			foreach (var task in tasks) {
 				var state = await _taskRepository.GetTaskStateByIdAsync(task.id);
@@ -159,17 +149,16 @@ namespace LogicPersistence.Api.Services {
 			return result;
 		}
 
-#region Internal Methods
+		#region Internal Methods
 		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
 		//chapuza de método
-		public async Task<AffectedZoneWithPointsDTO> GetAffectedZoneForTasks(Models.Task task)
-		{
+		public async Task<AffectedZoneWithPointsDTO?> GetAffectedZoneForTasks(Models.Task task) {
 			var locationRepository = new LocationRepository();
 			var victimRepository = new VictimRepository();
 			var volunteerRepository = new VolunteerRepository();
-			var affectedZoneRepository = new AffectedZoneRepository(); 
-			var taskRepository = _taskRepository; 
-			
+			var affectedZoneRepository = new AffectedZoneRepository();
+			var taskRepository = _taskRepository;
+
 			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository);
 			var locationServices = new LocationServices(locationRepository);
 
@@ -190,6 +179,6 @@ namespace LogicPersistence.Api.Services {
 
 			return null;
 		}
-#endregion
+		#endregion
 	}
 }

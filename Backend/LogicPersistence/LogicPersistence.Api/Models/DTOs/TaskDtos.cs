@@ -18,6 +18,9 @@ public class TaskCreateDto {
 
 	[Required]
 	public int[] volunteer_ids { get; set; } = [];
+
+	[Required]
+	public int[] victim_ids { get; set; } = [];
 }
 
 public class TaskUpdateDto {
@@ -36,9 +39,12 @@ public class TaskUpdateDto {
 
 	[Required]
 	public int location_id { get; set; }
-	
+
 	[Required]
 	public int[] volunteer_ids { get; set; } = [];
+
+	[Required]
+	public int[] victim_ids { get; set; } = [];
 }
 
 public class TaskDisplayDto {
@@ -59,6 +65,8 @@ public class TaskWithDetailsDto {
 	// does not support deserializing JSON to a list of objects directly.
 	public string assigned_volunteersJson { get; set; } = "[]";
 	public IEnumerable<VolunteerDisplayDto> assigned_volunteers { get; set; } = [];
+	public string assigned_victimsJson { get; set; } = "[]";
+	public IEnumerable<VictimDisplayDto> assigned_victims { get; set; } = [];
 }
 
 public class TaskForDashboardDto {

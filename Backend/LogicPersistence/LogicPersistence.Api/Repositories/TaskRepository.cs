@@ -1,6 +1,5 @@
 namespace LogicPersistence.Api.Repositories;
 
-using LogicPersistence.Api.Repositories.Interfaces;
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
@@ -10,7 +9,7 @@ using Newtonsoft.Json;
 public class TaskRepository : ITaskRepository {
 	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
-	public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds) {
+	public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds, int[] victimIds) {
 		using var connection = new NpgsqlConnection(connectionString);
 		await connection.OpenAsync();
 		using var transaction = await connection.BeginTransactionAsync();
@@ -24,12 +23,21 @@ public class TaskRepository : ITaskRepository {
             INSERT INTO volunteer_task (volunteer_id, task_id, state)
             VALUES (@volunteer_id, @task_id, @state::state)";
 
+		const string victimTaskSql = @"
+            INSERT INTO victim_task (victim_id, task_id, state)
+            VALUES (@victim_id, @task_id, @state::state)";
+
 		try {
 			var createdTask = await connection.QuerySingleAsync<Task>(taskSql, task, transaction);
 
 			if (volunteerIds.Length > 0) {
 				var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = createdTask.id, state = "Assigned" });
 				await connection.ExecuteAsync(volunteerTaskSql, volunteerTasks, transaction);
+			}
+
+			if (victimIds.Length > 0) {
+				var victimTasks = victimIds.Select(id => new { victim_id = id, task_id = createdTask.id, state = "Assigned" });
+				await connection.ExecuteAsync(victimTaskSql, victimTasks, transaction);
 			}
 
 			await transaction.CommitAsync();
@@ -40,7 +48,7 @@ public class TaskRepository : ITaskRepository {
 		}
 	}
 
-	public async Task<Task> UpdateTaskAsync(Task task, int[] volunteerIds) {
+	public async Task<Task> UpdateTaskAsync(Task task, int[] volunteerIds, int[] victimIds) {
 		using var connection = new NpgsqlConnection(connectionString);
 		await connection.OpenAsync();
 		using var transaction = await connection.BeginTransactionAsync();
@@ -62,9 +70,21 @@ public class TaskRepository : ITaskRepository {
 				WHERE volunteer_id = @volunteer_id AND task_id = @task_id
 			)";
 
+		const string insertVictimTaskSql = @"
+			INSERT INTO victim_task (victim_id, task_id, state)
+			SELECT @victim_id, @task_id, @state::state
+			WHERE NOT EXISTS (
+				SELECT 1 FROM victim_task
+				WHERE victim_id = @victim_id AND task_id = @task_id
+			)";
+
 		const string deleteVolunteerTaskSql = @"
 			DELETE FROM volunteer_task
 			WHERE task_id = @task_id AND volunteer_id <> ALL(@volunteerIds)";
+
+		const string deleteVictimTaskSql = @"
+			DELETE FROM victim_task
+			WHERE task_id = @task_id AND victim_id <> ALL(@victimIds)";
 
 		try {
 			var updatedTask = await connection.QuerySingleAsync<Task>(updateTaskSql, task, transaction);
@@ -74,6 +94,13 @@ public class TaskRepository : ITaskRepository {
 			if (volunteerIds.Length > 0) {
 				var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = updatedTask.id, state = "Assigned" });
 				await connection.ExecuteAsync(insertVolunteerTaskSql, volunteerTasks, transaction);
+			}
+
+			await connection.ExecuteAsync(deleteVictimTaskSql, new { task_id = updatedTask.id, victimIds }, transaction);
+
+			if (victimIds.Length > 0) {
+				var victimTasks = victimIds.Select(id => new { victim_id = id, task_id = updatedTask.id, state = "Assigned" });
+				await connection.ExecuteAsync(insertVictimTaskSql, victimTasks, transaction);
 			}
 
 			await transaction.CommitAsync();
@@ -107,28 +134,55 @@ public class TaskRepository : ITaskRepository {
 		using var connection = new NpgsqlConnection(connectionString);
 
 		const string sql = @"
+        WITH task_volunteers AS (
+            SELECT
+                t.id as task_id,
+                COALESCE(json_agg(json_build_object(
+                    'id', v.id,
+                    'email', v.email,
+                    'name', v.name,
+                    'surname', v.surname,
+                    'prefix', v.prefix,
+                    'phone_number', v.phone_number,
+                    'address', v.address,
+                    'identification', v.identification,
+                    'location_id', v.location_id
+                )) FILTER (WHERE v.id IS NOT NULL), '[]') AS volunteers
+            FROM task t
+            LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+            LEFT JOIN volunteer v ON vt.volunteer_id = v.id
+            GROUP BY t.id
+        ),
+        task_victims AS (
+            SELECT
+                t.id as task_id,
+                COALESCE(json_agg(json_build_object(
+                    'id', v.id,
+                    'email', v.email,
+                    'name', v.name,
+                    'surname', v.surname,
+                    'prefix', v.prefix,
+                    'phone_number', v.phone_number,
+                    'address', v.address,
+                    'identification', v.identification,
+                    'location_id', v.location_id
+                )) FILTER (WHERE v.id IS NOT NULL), '[]') AS victims
+            FROM task t
+            LEFT JOIN victim_task vt ON t.id = vt.task_id
+            LEFT JOIN victim v ON vt.victim_id = v.id
+            GROUP BY t.id
+        )
         SELECT
             t.id,
             t.name,
             t.description,
             t.admin_id,
             t.location_id,
-            COALESCE(json_agg(json_build_object(
-                'id', v.id,
-                'email', v.email,
-                'name', v.name,
-                'surname', v.surname,
-                'prefix', v.prefix,
-                'phone_number', v.phone_number,
-                'address', v.address,
-                'identification', v.identification,
-                'location_id', v.location_id
-            )) FILTER (WHERE v.id IS NOT NULL), '[]') AS assigned_volunteersJson
+            tv.volunteers AS assigned_volunteersJson,
+            tvi.victims AS assigned_victimsJson
         FROM task t
-        LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-        LEFT JOIN volunteer v ON vt.volunteer_id = v.id
-        GROUP BY t.id";
-
+        LEFT JOIN task_volunteers tv ON t.id = tv.task_id
+        LEFT JOIN task_victims tvi ON t.id = tvi.task_id";
 
 		var tasks = await connection.QueryAsync<TaskWithDetailsDto>(sql);
 
@@ -137,74 +191,114 @@ public class TaskRepository : ITaskRepository {
 			task.assigned_volunteersJson = "";
 		}
 
+		foreach (var task in tasks) {
+			task.assigned_victims = JsonConvert.DeserializeObject<IEnumerable<VictimDisplayDto>>(task.assigned_victimsJson) ?? [];
+			task.assigned_victimsJson = "";
+		}
+
 		return tasks;
 	}
 
-	public async Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync()
-	{
+	public async Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync() {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-			SELECT vt.state, array_agg(t.id) AS task_ids
-			FROM task t
-			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-			WHERE vt.state IS NOT NULL
-			GROUP BY vt.state";
+			SELECT state, array_agg(task_id) AS task_ids
+			FROM (
+				SELECT vt.state, t.id as task_id
+				FROM task t
+				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+				WHERE vt.state IS NOT NULL
+				UNION
+				SELECT vit.state, t.id as task_id
+				FROM task t
+				LEFT JOIN victim_task vit ON t.id = vit.task_id
+				WHERE vit.state IS NOT NULL
+			) combined
+			GROUP BY state";
 
 		return await connection.QueryAsync<(State state, int[] task_ids)>(sql);
 	}
-	
-	public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync()
-	{
+
+	public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync() {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-			SELECT vt.state, COUNT(DISTINCT t.id) as count
-			FROM task t
-			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-			WHERE vt.state IS NOT NULL
-			GROUP BY vt.state";
+			SELECT state, COUNT(task_id) as count
+			FROM (
+				SELECT DISTINCT t.id as task_id, vt.state
+				FROM task t
+				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+				WHERE vt.state IS NOT NULL
+				UNION
+				SELECT DISTINCT t.id as task_id, vit.state
+				FROM task t
+				LEFT JOIN victim_task vit ON t.id = vit.task_id
+				WHERE vit.state IS NOT NULL
+			) combined
+			GROUP BY state";
 
 		return await connection.QueryAsync<(State state, int count)>(sql);
 	}
 
-	public async Task<int> GetTaskCountByStateAsync(State state)
-	{
+	public async Task<int> GetTaskCountByStateAsync(State state) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-			SELECT COUNT(DISTINCT t.id)
-			FROM task t
-			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-			WHERE vt.state = @state::state";
+			SELECT COUNT(DISTINCT task_id)
+			FROM (
+				SELECT t.id as task_id
+				FROM task t
+				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+				WHERE vt.state = @state::state
+				UNION
+				SELECT t.id as task_id
+				FROM task t
+				LEFT JOIN victim_task vit ON t.id = vit.task_id
+				WHERE vit.state = @state::state
+			) combined";
 
 		return await connection.QuerySingleOrDefaultAsync<int>(sql, new { state = state.ToString() });
 	}
 
-	public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state)
-	{
+	public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-			SELECT DISTINCT t.id
-			FROM task t
-			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-			WHERE vt.state = @state::state";
+			SELECT DISTINCT task_id
+			FROM (
+				SELECT t.id as task_id
+				FROM task t
+				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+				WHERE vt.state = @state::state
+				UNION
+				SELECT t.id as task_id
+				FROM task t
+				LEFT JOIN victim_task vit ON t.id = vit.task_id
+				WHERE vit.state = @state::state
+			) combined";
 
 		return await connection.QueryAsync<int>(sql, new { state = state.ToString() });
 	}
 
-	public async Task<State> GetTaskStateByIdAsync(int taskId)
-	{
+	public async Task<State> GetTaskStateByIdAsync(int taskId) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-			SELECT DISTINCT vt.state::text
-			FROM task t
-			LEFT JOIN volunteer_task vt ON t.id = vt.task_id
-			WHERE t.id = @taskId";
+			SELECT DISTINCT state::text
+			FROM (
+				SELECT vt.state
+				FROM task t
+				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
+				WHERE t.id = @taskId AND vt.state IS NOT NULL
+				UNION
+				SELECT vit.state
+				FROM task t
+				LEFT JOIN victim_task vit ON t.id = vit.task_id
+				WHERE t.id = @taskId AND vit.state IS NOT NULL
+			) combined
+			LIMIT 1";
 
 		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { taskId });
 		return result != null ? Enum.Parse<State>(result) : State.Unknown;
 	}
 
-	public async Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId)
-	{
+	public async Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
 			SELECT MAX(n.urgency_level::text)

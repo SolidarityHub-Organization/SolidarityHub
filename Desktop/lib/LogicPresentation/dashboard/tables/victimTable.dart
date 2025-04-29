@@ -22,8 +22,8 @@ class _VictimsTabState extends State<VictimsTab> {
   // Inicializar los Futures directamente
   late final Future<List<Map<String, dynamic>>> _victimCountFuture =
       _victimService.fetchVictimCountByDate();
-  late final Future<List<Map<String, dynamic>>> _victimNeedsFuture =
-      _victimService.fetchFilteredVictimCounts(
+  late Future<List<Map<String, dynamic>>> _victimNeedsFuture = _victimService
+      .fetchFilteredVictimCounts(
         widget.fechaInicio ?? DateTime(2000, 1, 1), // Default start date
         widget.fechaFin ?? DateTime.now(), // Default end date
       );

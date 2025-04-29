@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
+import 'package:solidarityhub/LogicPersistence/models/victim.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
 
@@ -43,6 +44,7 @@ Future<String> createTask({
   required List<int> selectedVolunteers,
   required String latitude,
   required String longitude,
+  List<int>? selectedVictim,
   int? taskId,
 }) async {
   final Map<String, dynamic> taskData = {
@@ -51,6 +53,7 @@ Future<String> createTask({
     "description": description,
     "admin_id": null,
     "volunteer_ids": selectedVolunteers,
+    "victim_ids": selectedVictim ?? [],
     "location": {"latitude": latitude, "longitude": longitude},
   };
 
@@ -89,6 +92,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController latitudeController = TextEditingController();
   final TextEditingController longitudeController = TextEditingController();
+  final TextEditingController searchAddressController = TextEditingController();
+  final TextEditingController searchVolunteersController =
+      TextEditingController();
+  final TextEditingController searchVictimController = TextEditingController();
 
   final MapController _mapController = MapController();
   List<Marker> _markers = [];
@@ -97,7 +104,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     -0.3776,
   ); // Valencia por defecto
   List<Volunteer> volunteers = [];
+  List<Victim> victim = [];
   List<int> selectedVolunteers = [];
+  List<int> selectedVictim = [];
   bool isLoading = true;
 
   @override
@@ -113,6 +122,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           widget.taskToEdit!.assignedVolunteers
               .map((volunteer) => volunteer.id)
               .toList();
+      selectedVictim =
+          widget.taskToEdit!.assignedVictim.map((victim) => victim.id).toList();
     } else {
       _updateLocationControllers(selectedLocation);
       _updateMarker(selectedLocation);
@@ -179,9 +190,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     try {
       final results = await Future.wait([
         fetchData("volunteers", Volunteer.fromJson),
+        fetchData("victims", Victim.fromJson),
       ]);
       setState(() {
-        volunteers = results[0];
+        volunteers = results[0] as List<Volunteer>;
+        victim = results[1] as List<Victim>;
         isLoading = false;
       });
     } catch (error) {
@@ -202,27 +215,135 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     final latitude = latitudeController.text.trim();
     final longitude = longitudeController.text.trim();
 
-    final result = await createTask(
-      name: name,
-      description: description,
-      selectedVolunteers: selectedVolunteers,
-      latitude: latitude,
-      longitude: longitude,
-      taskId: widget.taskToEdit?.id,
-    );
+    try {
+      // Usar la función createTask que implementa correctamente el proceso con los handlers
+      final result = await createTask(
+        name: name,
+        description: description,
+        selectedVolunteers: selectedVolunteers,
+        latitude: latitude,
+        longitude: longitude,
+        selectedVictim: selectedVictim,
+        taskId: widget.taskToEdit?.id,
+      );
 
-    if (result.startsWith("OK")) {
-      widget.onTaskCreated();
-      if (mounted) {
-        Navigator.pop(context);
+      if (result.startsWith("OK:")) {
+        widget.onTaskCreated();
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        AppSnackBar.show(
+          context: context,
+          message:
+              widget.taskToEdit != null
+                  ? "Tarea actualizada correctamente"
+                  : "Tarea creada correctamente",
+          type: SnackBarType.success,
+        );
+      } else {
+        AppSnackBar.show(
+          context: context,
+          message: result,
+          type: SnackBarType.error,
+        );
       }
+    } catch (error) {
+      AppSnackBar.show(
+        context: context,
+        message: "Error: $error",
+        type: SnackBarType.error,
+      );
+    }
+  }
+
+  Future<void> _searchAddress() async {
+    final address = searchAddressController.text.trim();
+    if (address.isEmpty) {
+      AppSnackBar.show(
+        context: context,
+        message: "Por favor, introduce una dirección para buscar",
+        type: SnackBarType.error,
+      );
+      return;
     }
 
-    AppSnackBar.show(
-      context: context,
-      message: result,
-      type: result.startsWith("OK") ? SnackBarType.success : SnackBarType.error,
-    );
+    try {
+      // Encode the address for URL
+      final encodedAddress = Uri.encodeComponent(address);
+      // Use Nominatim geocoding service (OpenStreetMap)
+      final url = Uri.parse(
+        "https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1",
+      );
+
+      final response = await http.get(
+        url,
+        headers: {"User-Agent": "SolidarityHub/1.0"},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final result = data[0];
+          final double lat = double.parse(result['lat']);
+          final double lon = double.parse(result['lon']);
+          final LatLng location = LatLng(lat, lon);
+
+          setState(() {
+            selectedLocation = location;
+            _updateLocationControllers(location);
+            _updateMarker(location);
+            _mapController.move(
+              location,
+              15.0,
+            ); // Zoom in to the found location
+          });
+        } else {
+          AppSnackBar.show(
+            context: context,
+            message: "No se encontró ninguna ubicación con esa dirección",
+            type: SnackBarType.warning,
+          );
+        }
+      } else {
+        AppSnackBar.show(
+          context: context,
+          message: "Error al buscar la dirección: ${response.statusCode}",
+          type: SnackBarType.error,
+        );
+      }
+    } catch (error) {
+      AppSnackBar.show(
+        context: context,
+        message: "Error: $error",
+        type: SnackBarType.error,
+      );
+    }
+  }
+
+  // Función para buscar voluntarios
+  List<Volunteer> _filteredVolunteers() {
+    if (searchVolunteersController.text.isEmpty) {
+      return volunteers;
+    }
+    final query = searchVolunteersController.text.toLowerCase();
+    return volunteers.where((volunteer) {
+      return volunteer.name.toLowerCase().contains(query) ||
+          volunteer.surname.toLowerCase().contains(query) ||
+          volunteer.email.toLowerCase().contains(query);
+    }).toList();
+  }
+
+  // Función para buscar afectados
+  List<Victim> _filteredVictim() {
+    if (searchVictimController.text.isEmpty) {
+      return victim;
+    }
+    final query = searchVictimController.text.toLowerCase();
+    return victim.where((person) {
+      return person.name.toLowerCase().contains(query) ||
+          person.surname.toLowerCase().contains(query) ||
+          person.email.toLowerCase().contains(query);
+    }).toList();
   }
 
   @override
@@ -285,31 +406,37 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       children: [
         Expanded(
           flex: 2,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTextField(
-                  controller: nameController,
-                  label: 'Nombre',
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: descriptionController,
-                  label: 'Descripción',
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 8),
-                _buildLocationFields(),
-                const SizedBox(height: 8),
-                _buildCreateButton(widget.taskToEdit != null),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField(
+                controller: nameController,
+                label: 'Nombre',
+                maxLines: 1,
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: descriptionController,
+                label: 'Descripción',
+                maxLines: 2,
+              ),
+              const SizedBox(height: 8),
+              Expanded(child: _buildLocationFields()),
+              const SizedBox(height: 8),
+              _buildCreateButton(widget.taskToEdit != null),
+            ],
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(child: _buildVolunteerList()),
+        Expanded(
+          child: Column(
+            children: [
+              Expanded(child: _buildVolunteerSection()),
+              const SizedBox(height: 16),
+              Expanded(child: _buildVictimSection()),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -323,95 +450,63 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Container(
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: selectedLocation,
-                initialZoom: 13,
-                onTap: _onMapTap,
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                  subdomains: const ['a', 'b', 'c', 'd'],
-                ),
-                MarkerLayer(markers: _markers),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
               child: _buildTextField(
-                controller: latitudeController,
-                label: 'Latitud',
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                onChanged: (value) {
-                  try {
-                    final lat = double.parse(value);
-                    final newLocation = LatLng(lat, selectedLocation.longitude);
-                    setState(() {
-                      selectedLocation = newLocation;
-                      _updateMarker(newLocation);
-                    });
-                  } catch (e) {
-                    // Ignorar errores de parsing
-                  }
-                },
+                controller: searchAddressController,
+                label: 'Buscar dirección',
                 maxLines: 1,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildTextField(
-                controller: longitudeController,
-                label: 'Longitud',
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                onChanged: (value) {
-                  try {
-                    final lng = double.parse(value);
-                    final newLocation = LatLng(selectedLocation.latitude, lng);
-                    setState(() {
-                      selectedLocation = newLocation;
-                      _updateMarker(newLocation);
-                    });
-                  } catch (e) {
-                    // Ignorar errores de parsing
-                  }
-                },
-                maxLines: 1,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: _searchAddress,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 22),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              child: const Icon(Icons.search),
             ),
           ],
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: selectedLocation,
+                  initialZoom: 13,
+                  onTap: _onMapTap,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                    subdomains: const ['a', 'b', 'c', 'd'],
+                  ),
+                  MarkerLayer(markers: _markers),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildVolunteerList() {
+  Widget _buildVolunteerSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -420,53 +515,175 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Container(
-          constraints: BoxConstraints(maxHeight: 400),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8.0),
+        TextField(
+          controller: searchVolunteersController,
+          decoration: InputDecoration(
+            labelText: 'Buscar voluntarios',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon:
+                searchVolunteersController.text.isNotEmpty
+                    ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchVolunteersController.clear();
+                        });
+                      },
+                    )
+                    : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
           ),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: volunteers.length,
-            itemBuilder: (context, index) {
-              final volunteer = volunteers[index];
-              final isSelected = selectedVolunteers.contains(volunteer.id);
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                elevation: 0,
-                color: isSelected ? Colors.red.withOpacity(0.1) : null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(
-                    color: isSelected ? Colors.red : Colors.transparent,
-                    width: 1,
+          onChanged: (value) {
+            setState(() {});
+          },
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _filteredVolunteers().length,
+              itemBuilder: (context, index) {
+                final volunteer = _filteredVolunteers()[index];
+                final isSelected = selectedVolunteers.contains(volunteer.id);
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 8.0,
                   ),
-                ),
-                child: ListTile(
-                  title: Text(
-                    '${volunteer.name} ${volunteer.surname}',
-                    style: TextStyle(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                  elevation: 0,
+                  color: isSelected ? Colors.red.withAlpha(26) : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: BorderSide(
+                      color: isSelected ? Colors.red : Colors.transparent,
+                      width: 1,
                     ),
                   ),
-                  trailing: Checkbox(
-                    activeColor: Colors.red,
-                    value: isSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedVolunteers.add(volunteer.id);
-                        } else {
-                          selectedVolunteers.remove(volunteer.id);
-                        }
-                      });
-                    },
+                  child: ListTile(
+                    title: Text(
+                      '${volunteer.name} ${volunteer.surname}',
+                      style: TextStyle(
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    subtitle: Text(volunteer.email),
+                    trailing: Checkbox(
+                      activeColor: Colors.red,
+                      value: isSelected,
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == true) {
+                            selectedVolunteers.add(volunteer.id);
+                          } else {
+                            selectedVolunteers.remove(volunteer.id);
+                          }
+                        });
+                      },
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVictimSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Afectados disponibles',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: searchVictimController,
+          decoration: InputDecoration(
+            labelText: 'Buscar afectados',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon:
+                searchVictimController.text.isNotEmpty
+                    ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchVictimController.clear();
+                        });
+                      },
+                    )
+                    : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          onChanged: (value) {
+            setState(() {});
+          },
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _filteredVictim().length,
+              itemBuilder: (context, index) {
+                final person = _filteredVictim()[index];
+                final isSelected = selectedVictim.contains(person.id);
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 8.0,
+                  ),
+                  elevation: 0,
+                  color: isSelected ? Colors.red.withAlpha(26) : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: BorderSide(
+                      color: isSelected ? Colors.red : Colors.transparent,
+                      width: 1,
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      '${person.name} ${person.surname}',
+                      style: TextStyle(
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    subtitle: Text(person.email),
+                    trailing: Checkbox(
+                      activeColor: Colors.red,
+                      value: isSelected,
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == true) {
+                            selectedVictim.add(person.id);
+                          } else {
+                            selectedVictim.remove(person.id);
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
