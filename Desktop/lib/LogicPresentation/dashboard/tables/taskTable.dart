@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:solidarityhub/LogicPresentation/map/map.dart';
 import '../../../LogicBusiness/services/taskTableServices.dart';
 
 class TaskTable extends StatefulWidget {
@@ -106,101 +107,160 @@ class _TaskTableState extends State<TaskTable> {
             ),
             const SizedBox(height: 40),
             Text(
-              'Filtros',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedUrgency,
-                    hint: const Text('Nivel de Urgencia'),
-                    items:
-                        ['Alto', 'Medio', 'Bajo', 'Crítico', 'Desconocido']
-                            .map(
-                              (urgency) => DropdownMenuItem(
-                                value: urgency,
-                                child: Text(urgency),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedUrgency = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedState,
-                    hint: const Text('Estado'),
-                    items:
-                        ['Asignado', 'Pendiente', 'Completado', 'Desconocido']
-                            .map(
-                              (state) => DropdownMenuItem(
-                                value: state,
-                                child: Text(state),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedState = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedZone,
-                    hint: const Text('Zona Afectada'),
-                    items:
-                        ['Zona de Inundación A', 'Sin zona']
-                            .map(
-                              (zone) => DropdownMenuItem(
-                                value: zone,
-                                child: Text(zone),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedZone = value;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedUrgency = null;
-                    _selectedState = null;
-                    _selectedZone = null;
-                  });
-                },
-                child: const Text(
-                  'Borrar Filtros',
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
               'Lista de Tareas',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Nivel de Urgencia',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          value: _selectedUrgency,
+                          items:
+                              [
+                                    'Sin seleccionar',
+                                    'Alto',
+                                    'Medio',
+                                    'Bajo',
+                                    'Crítico',
+                                    'Desconocido',
+                                  ]
+                                  .map(
+                                    (urgency) => DropdownMenuItem(
+                                      value:
+                                          urgency == 'Sin seleccionar'
+                                              ? null
+                                              : urgency,
+                                      child: Text(urgency),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedUrgency = value;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Estado',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          value: _selectedState,
+                          items:
+                              [
+                                    'Sin seleccionar',
+                                    'Asignado',
+                                    'Pendiente',
+                                    'Completado',
+                                    'Desconocido',
+                                  ]
+                                  .map(
+                                    (state) => DropdownMenuItem(
+                                      value:
+                                          state == 'Sin seleccionar'
+                                              ? null
+                                              : state,
+                                      child: Text(state),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedState = value;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Zona Afectada',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          value: _selectedZone,
+                          items:
+                              [
+                                    'Sin seleccionar',
+                                    'Zona de Inundación A',
+                                    'Sin zona',
+                                  ]
+                                  .map(
+                                    (zone) => DropdownMenuItem(
+                                      value:
+                                          zone == 'Sin seleccionar'
+                                              ? null
+                                              : zone,
+                                      child: Text(zone),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedZone = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedUrgency = null;
+                          _selectedState = null;
+                          _selectedZone = null;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          255,
+                          255,
+                          255,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: const Text('Borrar Filtros'),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             FutureBuilder<List<Map<String, dynamic>>>(
@@ -223,8 +283,10 @@ class _TaskTableState extends State<TaskTable> {
                                 (_selectedState == null ||
                                     task['state'] == _selectedState) &&
                                 (_selectedZone == null ||
-                                    task['affected_zone']?['name'] ==
-                                        _selectedZone),
+                                    (_selectedZone == 'Sin zona' &&
+                                        task['affected_zone'] == null) ||
+                                    (task['affected_zone']?['name'] ==
+                                        _selectedZone)),
                           )
                           .toList();
                   return ListView.builder(
@@ -276,31 +338,12 @@ class _TaskTableState extends State<TaskTable> {
                                       color: Colors.red,
                                     ),
                                     onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text(
-                                              'Información de Ubicación',
-                                            ),
-                                            content: const SizedBox(
-                                              height: 100,
-                                              child: Center(
-                                                child: Text(
-                                                  'Contenido pendiente',
-                                                ),
-                                              ),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Cerrar'),
-                                              ),
-                                            ],
-                                          );
-                                        },
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => const MapScreen(),
+                                        ),
                                       );
                                     },
                                   )

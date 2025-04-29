@@ -26,6 +26,12 @@ class _DashboardState extends State<Dashboard>
     _tabController = TabController(length: 5, vsync: this);
   }
 
+  void _refreshCurrentTab() {
+    setState(() {
+
+    });
+  }
+
   Future<void> _selectFechaInicio(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -36,6 +42,7 @@ class _DashboardState extends State<Dashboard>
     if (picked != null) {
       setState(() {
         _fechaInicio = picked;
+        _refreshCurrentTab();
       });
     }
   }
@@ -50,6 +57,7 @@ class _DashboardState extends State<Dashboard>
     if (picked != null) {
       setState(() {
         _fechaFin = picked;
+        _refreshCurrentTab();
       });
     }
   }
