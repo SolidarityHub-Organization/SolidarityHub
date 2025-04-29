@@ -20,9 +20,9 @@ class _VictimsTabState extends State<VictimsTab> {
   final VictimService _victimService = VictimService('http://localhost:5170');
 
   // Inicializar los Futures directamente
-  late Future<List<Map<String, dynamic>>> _victimCountFuture =
+  late final Future<List<Map<String, dynamic>>> _victimCountFuture =
       _victimService.fetchVictimCountByDate();
-  late Future<List<Map<String, dynamic>>> _victimNeedsFuture =
+  late final Future<List<Map<String, dynamic>>> _victimNeedsFuture =
       _victimService.fetchFilteredVictimCounts(
         widget.fechaInicio ?? DateTime(2000, 1, 1), // Default start date
         widget.fechaFin ?? DateTime.now(), // Default end date
@@ -31,7 +31,7 @@ class _VictimsTabState extends State<VictimsTab> {
   @override
   void didUpdateWidget(covariant VictimsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fechaInicio != widget.fechaInicio || 
+    if (oldWidget.fechaInicio != widget.fechaInicio ||
         oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
         _victimNeedsFuture = _victimService.fetchFilteredVictimCounts(
@@ -152,10 +152,21 @@ class _VictimsTabState extends State<VictimsTab> {
           // Crear los puntos para el gráfico de líneas
           final lineSpots =
               sortedLineData.asMap().entries.map((entry) {
+                final index =
+                    entry.key.toDouble(); // Usar el índice como valor X
+                final value =
+                    (entry.value['num'] ?? 0)
+                        .toDouble(); // Manejar valores nulos
                 return FlSpot(
-                  entry.key.toDouble(),
-                  (entry.value['num'] ?? 0).toDouble(), // Manejar valores nulos
-                );
+                  index,
+                  value,
+                ); // Usar el índice como X y el valor como Y
+              }).toList();
+
+          // Crear una lista de etiquetas para el eje X
+          final xLabels =
+              sortedLineData.map((entry) {
+                return entry['date'] ?? ''; // Usar las fechas como etiquetas
               }).toList();
 
           return FutureBuilder<List<Map<String, dynamic>>>(
@@ -252,20 +263,37 @@ class _VictimsTabState extends State<VictimsTab> {
                                     getTitlesWidget: (value, meta) {
                                       final index = value.toInt();
                                       if (index >= 0 &&
-                                          index < lineSpots.length) {
-                                        return Text(
-                                          sortedLineData[index]['date'] ?? '',
-                                          style: const TextStyle(fontSize: 10),
+                                          index < xLabels.length) {
+                                        return Transform.rotate(
+                                          angle:
+                                              -0.5, // Rotar etiquetas para mejor visibilidad
+                                          child: Text(
+                                            xLabels[index], // Mostrar la fecha correspondiente
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                            ),
+                                          ),
                                         );
                                       }
                                       return const SizedBox.shrink();
                                     },
-                                    interval:
-                                        1, // Mostrar solo fechas de los puntos
+                                    interval: 1, // Mostrar todas las etiquetas
                                   ),
                                 ),
                               ),
-                              gridData: FlGridData(show: true),
+                              gridData: FlGridData(
+                                show: true,
+                                drawVerticalLine:
+                                    true, // Mostrar líneas verticales
+                                verticalInterval:
+                                    1, // Intervalo de las líneas verticales
+                                getDrawingVerticalLine: (value) {
+                                  return FlLine(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    strokeWidth: 0.5,
+                                  );
+                                },
+                              ),
                               borderData: FlBorderData(show: true),
                             ),
                           ),

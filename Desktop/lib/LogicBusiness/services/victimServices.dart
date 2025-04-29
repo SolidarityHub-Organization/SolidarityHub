@@ -68,28 +68,6 @@ class VictimService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchVictimCountByType() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/api/v1/need-types/victim-counts'),
-      );
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((need) {
-          return {'type': need['item1'], 'num': need['item2']};
-        }).toList();
-      } else {
-        print(
-          'Error al obtener el numero de vicitmas por tipo: ${response.statusCode}',
-        );
-        return [];
-      }
-    } catch (e) {
-      print('Error al conectar con el backend: $e');
-      return [];
-    }
-  }
-
   Future<List<Victim>> fetchAllVictims() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/api/v1/victims'));
