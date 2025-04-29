@@ -23,7 +23,10 @@ class _VictimsTabState extends State<VictimsTab> {
   late final Future<List<Map<String, dynamic>>> _victimCountFuture =
       _victimService.fetchVictimCountByDate();
   late final Future<List<Map<String, dynamic>>> _victimNeedsFuture =
-      _victimService.fetchVictimCountByType();
+      _victimService.fetchFilteredVictimCounts(
+        widget.fechaInicio ?? DateTime(2000, 1, 1), // Default start date
+        widget.fechaFin ?? DateTime.now(), // Default end date
+      );
 
   List<BarChartGroupData> generateBarGroups(List<Map<String, dynamic>> data) {
     return data.asMap().entries.map((entry) {
@@ -31,7 +34,8 @@ class _VictimsTabState extends State<VictimsTab> {
         x: entry.key,
         barRods: [
           BarChartRodData(
-            toY: (entry.value['num'] ?? 0).toDouble(), // Manejar valores nulos
+            toY:
+                (entry.value['count'] ?? 0).toDouble(), // Manejar valores nulos
             color: Colors.red, // Cambiar color a rojo
             width: 30, // Aumentar el ancho de las barras
             borderRadius: const BorderRadius.only(
@@ -46,15 +50,15 @@ class _VictimsTabState extends State<VictimsTab> {
 
   List<PieChartSectionData> generatePieSections(
     List<Map<String, dynamic>> data,
-    List<Color> uniqueColors, // Pasar la lista de colores única
+    List<Color> uniqueColors,
   ) {
     final total = data.fold<int>(
       0,
-      (sum, entry) => sum + ((entry['num'] ?? 0) as int), // Calcular el total
+      (sum, entry) => sum + ((entry['count'] ?? 0) as int), // Calcular el total
     );
 
     return data.asMap().entries.map((entry) {
-      final value = (entry.value['num'] ?? 0).toDouble();
+      final value = (entry.value['count'] ?? 0).toDouble();
       final percentage =
           total > 0 ? (value / total * 100).toStringAsFixed(1) : '0.0';
       return PieChartSectionData(
