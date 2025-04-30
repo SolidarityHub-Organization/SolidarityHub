@@ -7,6 +7,22 @@ import 'dart:convert';
 
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 
+class ColumnData {
+  final String id;
+  final String label;
+  double width;
+  final String tooltip;
+  final bool sortable;
+
+  ColumnData({
+    required this.id,
+    required this.label,
+    required this.width,
+    required this.tooltip,
+    required this.sortable,
+  });
+}
+
 class Taskstable extends StatefulWidget {
   const Taskstable({super.key});
 
@@ -20,16 +36,81 @@ class _TaskstableState extends State<Taskstable> {
   );
   TaskService taskService = TaskService('http://localhost:5170/api/v1');
   List<TaskWithDetails> tasks = [];
+  List<TaskWithDetails> filteredTasks = [];
   bool isLoading = true;
   Map<int, String> taskAddresses = {};
+
+  String nameFilter = '';
+  String addressFilter = '';
+  String statusFilter = 'Todos';
+  String priorityFilter = 'Todas';
+
+  String sortField = 'name';
+  bool sortAscending = true;
+
+  List<ColumnData> columns = [];
 
   @override
   void initState() {
     super.initState();
+    _initColumns();
     _fetchTasks();
   }
 
-  // TODO: Create a new endpoint to get all tasks without having to loop calls for the location endpoint
+  void _initColumns() {
+    columns = [
+      ColumnData(
+        id: 'name',
+        label: 'Nombre',
+        width: 0.15,
+        tooltip: 'Nombre de la tarea',
+        sortable: true,
+      ),
+      ColumnData(
+        id: 'description',
+        label: 'Descripción',
+        width: 0.2,
+        tooltip: 'Descripción de la tarea',
+        sortable: true,
+      ),
+      ColumnData(
+        id: 'address',
+        label: 'Dirección',
+        width: 0.15,
+        tooltip: 'Dirección de la tarea',
+        sortable: true,
+      ),
+      ColumnData(
+        id: 'status',
+        label: 'Estado',
+        width: 0.1,
+        tooltip: 'Estado actual de la tarea',
+        sortable: true,
+      ),
+      ColumnData(
+        id: 'priority',
+        label: 'Prioridad',
+        width: 0.1,
+        tooltip: 'Prioridad de la tarea',
+        sortable: true,
+      ),
+      ColumnData(
+        id: 'volunteers',
+        label: 'Voluntarios',
+        width: 0.2,
+        tooltip: 'Voluntarios asignados',
+        sortable: false,
+      ),
+      ColumnData(
+        id: 'actions',
+        label: 'Acciones',
+        width: 0.1,
+        tooltip: 'Acciones disponibles',
+        sortable: false,
+      ),
+    ];
+  }
+
   Future<void> _loadTaskAddresses() async {
     for (var task in tasks) {
       try {
@@ -59,6 +140,8 @@ class _TaskstableState extends State<Taskstable> {
         });
       }
     }
+
+    _applyFilters();
   }
 
   Future<void> _fetchTasks() async {
@@ -75,6 +158,7 @@ class _TaskstableState extends State<Taskstable> {
               data
                   .map((taskJson) => TaskWithDetails.fromJson(taskJson))
                   .toList();
+          filteredTasks = List.from(tasks);
           isLoading = false;
         });
 
@@ -89,8 +173,185 @@ class _TaskstableState extends State<Taskstable> {
     }
   }
 
+  void _reorderColumn(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final ColumnData item = columns.removeAt(oldIndex);
+      columns.insert(newIndex, item);
+    });
+  }
+
+  Widget _buildDraggableDataTable() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 32,
+      child: ReorderableListView(
+        scrollDirection: Axis.horizontal,
+        onReorder: _reorderColumn,
+        header: Container(
+          height: 500,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Row(
+              children: List.generate(columns.length, (columnIndex) {
+                return ReorderableDragStartListener(
+                  index: columnIndex,
+                  child: _buildColumn(columnIndex),
+                );
+              }),
+            ),
+          ),
+        ),
+        children: <Widget>[],
+      ),
+    );
+  }
+
+  Widget _buildColumn(int columnIndex) {
+    final column = columns[columnIndex];
+    final width = (MediaQuery.of(context).size.width - 32) * column.width;
+
+    return Container(
+      key: ValueKey(column.id),
+      width: width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            color: Colors.grey[200],
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    column.label,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (column.sortable)
+                  IconButton(
+                    icon: Icon(
+                      sortField == column.id
+                          ? (sortAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward)
+                          : Icons.unfold_more,
+                      size: 16,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if (sortField == column.id) {
+                          sortAscending = !sortAscending;
+                        } else {
+                          sortField = column.id;
+                          sortAscending = true;
+                        }
+                        _applyFilters();
+                      });
+                    },
+                    tooltip: 'Ordenar por ${column.label}',
+                    constraints: const BoxConstraints(
+                      maxWidth: 24,
+                      maxHeight: 24,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                // Resize handle in header
+                if (columnIndex < columns.length - 1)
+                  MouseRegion(
+                    cursor: SystemMouseCursors.resizeLeftRight,
+                    child: GestureDetector(
+                      onHorizontalDragUpdate: (details) {
+                        final totalWidth =
+                            MediaQuery.of(context).size.width - 32;
+                        final delta = details.delta.dx / totalWidth;
+                        final minWidth = 0.05;
+                        final maxWidth = 0.5;
+
+                        setState(() {
+                          final newWidth = columns[columnIndex].width + delta;
+                          final nextWidth =
+                              columns[columnIndex + 1].width - delta;
+
+                          if (newWidth >= minWidth &&
+                              newWidth <= maxWidth &&
+                              nextWidth >= minWidth &&
+                              nextWidth <= maxWidth) {
+                            columns[columnIndex].width = newWidth;
+                            columns[columnIndex + 1].width = nextWidth;
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 8,
+                        height: 24,
+                        margin: const EdgeInsets.only(left: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border(
+                            right: BorderSide(
+                              color: Colors.grey[400]!,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            height: 450,
+            child: ListView.builder(
+              itemCount: filteredTasks.isEmpty ? 1 : filteredTasks.length,
+              itemBuilder: (context, rowIndex) {
+                if (filteredTasks.isEmpty) {
+                  return Container(
+                    height: 52,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey[300]!),
+                      ),
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child:
+                        columnIndex == 0
+                            ? const Text('No se encontraron resultados')
+                            : const Text(''),
+                  );
+                }
+
+                final task = filteredTasks[rowIndex];
+                return Container(
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.grey[300]!),
+                    ),
+                  ),
+                  child: _buildCellContent(column.id, task),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _deleteTask(TaskWithDetails task) async {
-    // Show confirmation dialog
     final bool confirm =
         await showDialog(
           context: context,
@@ -151,6 +412,184 @@ class _TaskstableState extends State<Taskstable> {
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  void _applyFilters() {
+    setState(() {
+      filteredTasks =
+          tasks.where((task) {
+            final nameMatches =
+                nameFilter.isEmpty ||
+                task.name.toLowerCase().contains(nameFilter.toLowerCase());
+
+            final address = taskAddresses[task.id] ?? '';
+            final addressMatches =
+                addressFilter.isEmpty ||
+                address.toLowerCase().contains(addressFilter.toLowerCase());
+
+            final statusMatches =
+                statusFilter == 'Todos' || _getTaskStatus(task) == statusFilter;
+
+            final priorityMatches =
+                priorityFilter == 'Todas' ||
+                _getTaskPriority(task) == priorityFilter;
+
+            return nameMatches &&
+                addressMatches &&
+                statusMatches &&
+                priorityMatches;
+          }).toList();
+
+      _sortTasks();
+    });
+  }
+
+  void _sortTasks() {
+    filteredTasks.sort((a, b) {
+      int comparison;
+
+      switch (sortField) {
+        case 'name':
+          comparison = a.name.compareTo(b.name);
+          break;
+        case 'address':
+          final aAddress = taskAddresses[a.id] ?? '';
+          final bAddress = taskAddresses[b.id] ?? '';
+          comparison = aAddress.compareTo(bAddress);
+          break;
+        case 'status':
+          comparison = _getTaskStatus(a).compareTo(_getTaskStatus(b));
+          break;
+        case 'priority':
+          comparison = _getTaskPriority(a).compareTo(_getTaskPriority(b));
+          break;
+        default:
+          comparison = a.name.compareTo(b.name);
+      }
+
+      return sortAscending ? comparison : -comparison;
+    });
+  }
+
+  String _getTaskStatus(TaskWithDetails task) {
+    return 'Pendiente';
+  }
+
+  String _getTaskPriority(TaskWithDetails task) {
+    return task.adminId != null ? 'Alta' : 'Media';
+  }
+
+  Widget _buildCellContent(String columnId, TaskWithDetails task) {
+    switch (columnId) {
+      case 'name':
+        return GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text(task.name),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Descripción: ${task.description}'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Dirección: ${taskAddresses[task.id]?.startsWith('Error') == true ? 'Dirección desconocida' : taskAddresses[task.id] ?? 'Cargando dirección...'}',
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cerrar'),
+                      ),
+                    ],
+                  ),
+            );
+          },
+          child: Text(task.name, overflow: TextOverflow.ellipsis),
+        );
+
+      case 'description':
+        return Text(task.description, overflow: TextOverflow.ellipsis);
+
+      case 'address':
+        return Text(
+          taskAddresses[task.id]?.startsWith('Error') == true
+              ? 'Dirección desconocida'
+              : taskAddresses[task.id] ?? 'Cargando dirección...',
+          overflow: TextOverflow.ellipsis,
+        );
+
+      case 'status':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: _getStatusColor(_getTaskStatus(task)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            _getTaskStatus(task),
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+
+      case 'priority':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: _getPriorityColor(_getTaskPriority(task)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            _getTaskPriority(task),
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+
+      case 'volunteers':
+        return Text(
+          task.assignedVolunteers.isNotEmpty
+              ? task.assignedVolunteers
+                  .map((volunteer) => '${volunteer.name} ${volunteer.surname}')
+                  .join(', ')
+              : 'Sin asignar',
+          overflow: TextOverflow.ellipsis,
+        );
+
+      case 'actions':
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.orange, size: 20),
+              onPressed: () {
+                showCreateTaskModal(context, () {
+                  _fetchTasks();
+                }, task);
+              },
+              tooltip: 'Editar',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+              onPressed: () {
+                _deleteTask(task);
+              },
+              tooltip: 'Eliminar',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ],
+        );
+
+      default:
+        return const Text('');
     }
   }
 
@@ -224,6 +663,167 @@ class _TaskstableState extends State<Taskstable> {
               ],
             ),
             const SizedBox(height: 16),
+            ExpansionTile(
+              title: const Text('Filtros y Ordenamiento'),
+              backgroundColor: Colors.grey[50],
+              initiallyExpanded: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                labelText: 'Nombre de la tarea',
+                                prefixIcon: Icon(Icons.search),
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                nameFilter = value;
+                                _applyFilters();
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                labelText: 'Dirección',
+                                prefixIcon: Icon(Icons.location_on),
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                addressFilter = value;
+                                _applyFilters();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              decoration: const InputDecoration(
+                                labelText: 'Estado',
+                                border: OutlineInputBorder(),
+                              ),
+                              value: statusFilter,
+                              items:
+                                  [
+                                    'Todos',
+                                    'Asignado',
+                                    'Pendiente',
+                                    'Completado',
+                                    'Cancelado',
+                                  ].map<DropdownMenuItem<String>>((
+                                    String value,
+                                  ) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    statusFilter = newValue;
+                                    _applyFilters();
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              decoration: const InputDecoration(
+                                labelText: 'Prioridad',
+                                border: OutlineInputBorder(),
+                              ),
+                              value: priorityFilter,
+                              items:
+                                  [
+                                    'Todas',
+                                    'Alta',
+                                    'Media',
+                                    'Baja',
+                                  ].map<DropdownMenuItem<String>>((
+                                    String value,
+                                  ) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    priorityFilter = newValue;
+                                    _applyFilters();
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              sortAscending
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                sortAscending = !sortAscending;
+                                _applyFilters();
+                              });
+                            },
+                            tooltip:
+                                sortAscending
+                                    ? 'Cambiar a orden descendente'
+                                    : 'Cambiar a orden ascendente',
+                          ),
+                          const Text('Ordenamiento:'),
+                          const SizedBox(width: 8),
+                          Chip(
+                            label: Text(
+                              'Por ${columns.firstWhere((c) => c.id == sortField).label}',
+                            ),
+                            backgroundColor: Colors.grey[200],
+                          ),
+                          const Spacer(),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                nameFilter = '';
+                                addressFilter = '';
+                                statusFilter = 'Todos';
+                                priorityFilter = 'Todas';
+                                sortField = 'name';
+                                sortAscending = true;
+                                _applyFilters();
+                              });
+                            },
+                            icon: const Icon(Icons.clear),
+                            label: const Text('Limpiar filtros'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : tasks.isEmpty
@@ -233,156 +833,38 @@ class _TaskstableState extends State<Taskstable> {
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 )
-                : Expanded(
-                  child: ListView.builder(
-                    itemCount: tasks.length,
-                    itemBuilder: (context, index) {
-                      final task = tasks[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          task.name,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Sin prioridad",
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              "Sin estado",
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      taskAddresses[task.id]?.startsWith(
-                                                'Error',
-                                              ) ==
-                                              true
-                                          ? 'Dirección desconocida'
-                                          : taskAddresses[task.id] ??
-                                              'Cargando dirección...',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      task.description,
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      'Habilidades requeridas:',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    ...[].map<Widget>((skill) {
-                                      return Text(
-                                        '- $skill',
-                                        style: const TextStyle(fontSize: 14),
-                                      );
-                                    }),
-                                    const SizedBox(height: 8),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Asignado a:',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          task.assignedVolunteers.isNotEmpty
-                                              ? task.assignedVolunteers
-                                                  .map(
-                                                    (volunteer) =>
-                                                        '${volunteer.name} ${volunteer.surname}',
-                                                  )
-                                                  .join(', ')
-                                              : 'Sin asignar',
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Column(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      showCreateTaskModal(context, () {
-                                        _fetchTasks();
-                                      }, task);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: const Text('Editar'),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      _deleteTask(task);
-                                      _fetchTasks();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    child: const Text('Eliminar'),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                : Expanded(child: _buildDraggableDataTable()),
           ],
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Completado':
+        return Colors.green;
+      case 'Pendiente':
+        return Colors.blue;
+      case 'Asignado':
+        return Colors.amber;
+      case 'Cancelado':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _getPriorityColor(String priority) {
+    switch (priority) {
+      case 'Alta':
+        return Colors.red;
+      case 'Media':
+        return Colors.orange;
+      case 'Baja':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 }
