@@ -33,7 +33,8 @@ public static class TaskMapper
             name = task.name,
             description = task.description,
             admin_id = task.admin_id,
-            location_id = task.location_id
+            location_id = task.location_id,
+            created_at = task.created_at
         };
     }
 }

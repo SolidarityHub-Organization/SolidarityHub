@@ -16,6 +16,7 @@ public class Volunteer : IUser{
 	public string phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
+    public DateTime created_at { get; set; } 
 
 	// FKs
 	// connections to other tables/entities that aren't many to many

@@ -47,6 +47,7 @@ public static class VolunteerMapper {
             phone_number = volunteer.phone_number,
             address = volunteer.address,
             identification = volunteer.identification,
+            created_at = volunteer.created_at,
             // Password is intentionally omitted.
 
             location_id = volunteer.location_id

@@ -104,11 +104,11 @@ namespace LogicPersistence.Api.Controllers {
 
 		// dictionary of state and task count e.g. { "Completed": 2, "Pending": 4 }
 		[HttpGet("tasks/states/count")]
-		public async Task<IActionResult> GetAllTaskCountByStateAsync()
+		public async Task<IActionResult> GetAllTaskCountByStateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
 		{
 			try
 			{
-				var stateCounts = await _taskServices.GetAllTaskCountByStateAsync();
+				var stateCounts = await _taskServices.GetAllTaskCountByStateAsync(fromDate, toDate);
 				return Ok(stateCounts);
 			}
 			catch (InvalidOperationException ex)

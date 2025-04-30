@@ -219,7 +219,7 @@ public class TaskRepository : ITaskRepository {
 		return await connection.QueryAsync<(State state, int[] task_ids)>(sql);
 	}
 
-	public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync() {
+	public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
 			SELECT state, COUNT(task_id) as count
@@ -228,15 +228,20 @@ public class TaskRepository : ITaskRepository {
 				FROM task t
 				LEFT JOIN volunteer_task vt ON t.id = vt.task_id
 				WHERE vt.state IS NOT NULL
+				AND t.created_at BETWEEN @fromDate AND @toDate
 				UNION
 				SELECT DISTINCT t.id as task_id, vit.state
 				FROM task t
 				LEFT JOIN victim_task vit ON t.id = vit.task_id
 				WHERE vit.state IS NOT NULL
+				AND t.created_at BETWEEN @fromDate AND @toDate
 			) combined
 			GROUP BY state";
 
-		return await connection.QueryAsync<(State state, int count)>(sql);
+		return await connection.QueryAsync<(State state, int count)>(sql, new {
+			FromDate = fromDate,			
+			ToDate = toDate
+		});
 	}
 
 	public async Task<int> GetTaskCountByStateAsync(State state) {

@@ -53,6 +53,7 @@ public class TaskDisplayDto {
 	public string description { get; set; } = string.Empty;
 	public int? admin_id { get; set; }
 	public int location_id { get; set; }
+    public DateTime created_at { get; set; } 
 }
 
 public class TaskWithDetailsDto {

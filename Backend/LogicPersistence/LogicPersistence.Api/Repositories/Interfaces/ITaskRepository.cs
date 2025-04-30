@@ -11,7 +11,7 @@ public interface ITaskRepository {
 	Task<Models.Task?> GetTaskByIdAsync(int id);
 	Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync();
 	Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync();
-	Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync();
+	Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate);
 	Task<int> GetTaskCountByStateAsync(State state);
 	Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state);
 	Task<State> GetTaskStateByIdAsync(int taskId);

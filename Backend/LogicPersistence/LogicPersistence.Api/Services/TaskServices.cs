@@ -87,8 +87,11 @@ namespace LogicPersistence.Api.Services {
 			);
 		}
 
-		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync() {
-			var taskCounts = await _taskRepository.GetAllTaskCountByStateAsync();
+		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate) {
+			if (fromDate > toDate) {
+				throw new ArgumentException("From date must be less than or equal to to date.");
+			}
+			var taskCounts = await _taskRepository.GetAllTaskCountByStateAsync(fromDate, toDate);
 			if (taskCounts == null) {
 				throw new InvalidOperationException("Failed to retrieve task counts by state.");
 			}

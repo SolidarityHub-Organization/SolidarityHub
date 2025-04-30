@@ -117,30 +117,12 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
-        [HttpGet("skills/{id}/volunteer-count")]
-        public async Task<IActionResult> GetVolunteerCountByIdAsync(int id)
-        {
-            try
-            {
-                var count = await _skillServices.GetVolunteerCountById(id);
-                return Ok(count);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         [HttpGet("skills/volunteer-counts")]
-        public async Task<IActionResult> GetSkillsWithVolunteerCountAsync() 
+        public async Task<IActionResult> GetSkillsWithVolunteerCountAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) 
         {
             try
             {
-                var skillsWithVolunteerCount = await _skillServices.GetSkillsWithVolunteerCountAsync();
+                var skillsWithVolunteerCount = await _skillServices.GetSkillsWithVolunteerCountAsync(fromDate, toDate);
                 return Ok(skillsWithVolunteerCount);
             }
             catch (InvalidOperationException ex)

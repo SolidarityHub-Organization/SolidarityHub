@@ -62,17 +62,23 @@ public class SkillRepository : ISkillRepository
         return await connection.QueryAsync<Skill>("SELECT * FROM skill");
     }
 
-    public async Task<int> GetVolunteerCountById(int id)
+    public async Task<int> GetVolunteerCountById(int id, DateTime fromDate, DateTime toDate)
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT COUNT(vs.volunteer_id) 
+            SELECT COUNT(v.id)
             FROM skill s
             LEFT JOIN volunteer_skill vs ON s.id = vs.skill_id
+            LEFT JOIN volunteer v ON vs.volunteer_id = v.id
             WHERE s.id = @id
+            AND v.created_at BETWEEN @fromDate AND @toDate
             GROUP BY s.id";
 
-        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id });
+        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { 
+            id,
+            FromDate = fromDate,
+            ToDate = toDate
+        });
     }
 }
 

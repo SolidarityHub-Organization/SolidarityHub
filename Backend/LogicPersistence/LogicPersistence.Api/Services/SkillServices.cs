@@ -71,17 +71,6 @@ namespace LogicPersistence.Api.Services
             }
         }
 
-        public async Task<int> GetVolunteerCountById(int id)
-        {
-            var skill = await _skillRepository.GetSkillByIdAsync(id);
-            if (skill == null)
-            {
-                throw new KeyNotFoundException($"Skill with id {id} not found.");
-            }
-
-            return await _skillRepository.GetVolunteerCountById(id);
-        }
-
         public async Task<IEnumerable<Skill>> GetAllSkillsAsync()
         {
             var skills = await _skillRepository.GetAllSkillsAsync();
@@ -92,7 +81,7 @@ namespace LogicPersistence.Api.Services
             return skills;
         }
 
-        public async Task<IEnumerable<(string skillName, int count)>> GetSkillsWithVolunteerCountAsync() 
+        public async Task<IEnumerable<(string skillName, int count)>> GetSkillsWithVolunteerCountAsync(DateTime fromDate, DateTime toDate) 
         {
             var skills = await _skillRepository.GetAllSkillsAsync();
             if (skills == null)
@@ -102,7 +91,7 @@ namespace LogicPersistence.Api.Services
             var res = new List<(string skillName, int count)>();
             foreach (Skill skill in skills)
             {
-                var count = await _skillRepository.GetVolunteerCountById(skill.id);
+                var count = await _skillRepository.GetVolunteerCountById(skill.id, fromDate, toDate);
                 res.Add((skill.name, count));
             }
             return res;
