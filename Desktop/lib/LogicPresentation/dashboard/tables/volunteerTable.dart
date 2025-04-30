@@ -270,7 +270,6 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                   gridData: FlGridData(
                                     show: true,
                                     drawHorizontalLine: true,
-                                    horizontalInterval: 1,
                                     drawVerticalLine: false,
                                     getDrawingHorizontalLine: (value) {
                                       return FlLine(
