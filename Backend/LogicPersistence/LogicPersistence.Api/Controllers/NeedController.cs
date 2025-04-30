@@ -258,11 +258,11 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("need-types/victim-counts/filtered")]
-        public async Task<IActionResult> GetNeedTypesWithVictimCountFilteredByDateAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        public async Task<IActionResult> GetNeedTypesWithVictimCountFilteredByDateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
             try
             {
-                var needTypesWithVictimCount = await _needServices.GetNeedTypesWithVictimCountAsync(startDate, endDate);
+                var needTypesWithVictimCount = await _needServices.GetNeedTypesWithVictimCountAsync(fromDate, toDate);
                 return Ok(needTypesWithVictimCount);
             }
             catch (InvalidOperationException ex)
