@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../controllers/loginAUTH.dart'; // Importamos el controlador
+import '../controllers/loginAUTH.dart';
+import '../models/button_creator.dart'; // Importamos el controlador
 
 class loginUI extends StatefulWidget {
   @override
@@ -72,36 +73,19 @@ class _LoginScreenState extends State<loginUI> {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => authController.onLoginTabPressed(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text(
-                            "Log In",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        child: buildCustomButton(
+                          "Log In",
+                          () => authController.onLoginTabPressed(context),
+                          verticalPadding: 12,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => authController.onRegisterTabPressed(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text(
-                            "Registro",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        child: buildCustomButton(
+                          "Registro",
+                              () => authController.onRegisterTabPressed(context),
+                          backgroundColor: Colors.grey,
+                          verticalPadding: 12,
                         ),
                       ),
                     ],
@@ -159,7 +143,14 @@ class _LoginScreenState extends State<loginUI> {
 
                   SizedBox(height: 20),
                   // Botón de "Log in"
-                  ElevatedButton(
+                  buildCustomButton(
+                    "Log in",
+                    _validateAndLogin,
+                    verticalPadding: 15,
+                    horizontalPadding: 100,
+                    backgroundColor: Colors.red,
+                  )
+                  /*ElevatedButton(
                     onPressed: _validateAndLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -169,7 +160,7 @@ class _LoginScreenState extends State<loginUI> {
                       ),
                     ),
                     child: Text('Log in', style: TextStyle(color: Colors.white, fontSize: 16)),
-                  ),
+                  ),*/
                 ],
               ),
             ),
