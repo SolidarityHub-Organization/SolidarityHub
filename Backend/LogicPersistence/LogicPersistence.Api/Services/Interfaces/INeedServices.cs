@@ -21,7 +21,7 @@ namespace LogicPersistence.Api.Services
     Task<IEnumerable<NeedType>> GetAllNeedTypesAsync();
     Task<int> GetVictimCountByIdAsync(int id);
     Task<IEnumerable<(string needTypeName, int count)>> GetNeedTypesWithVictimCountAsync();
-    Task<IEnumerable<(string needTypeName, int count)>> GetNeedTypesWithVictimCountAsync(DateTime startDate, DateTime endDate);
+    Task<Dictionary<string, int>> GetNeedTypesWithVictimCountAsync(DateTime startDate, DateTime endDate);
 #endregion
     }
     

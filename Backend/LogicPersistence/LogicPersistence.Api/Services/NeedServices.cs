@@ -178,7 +178,7 @@ namespace LogicPersistence.Api.Services
             return res;
         }
 
-        public async Task<IEnumerable<(string needTypeName, int count)>> GetNeedTypesWithVictimCountAsync(DateTime startDate, DateTime endDate)
+        public async Task<Dictionary<string, int>> GetNeedTypesWithVictimCountAsync(DateTime startDate, DateTime endDate)
         {
             if (startDate > endDate)
             {
@@ -189,11 +189,11 @@ namespace LogicPersistence.Api.Services
             {
                 throw new InvalidOperationException("Failed to retrieve need types.");
             }
-            var res = new List<(string needTypeName, int count)>();
+            Dictionary<string, int> res = new Dictionary<string, int>();
             foreach (NeedType needType in needTypes)
             {
                 var count = await _needRepository.GetVictimCountByIdFilteredByDate(needType.id, startDate, endDate);
-                res.Add((needType.name, count));
+                res.Add(needType.name, count);
             }
             return res;
         }
