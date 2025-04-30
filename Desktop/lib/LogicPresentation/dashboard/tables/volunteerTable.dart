@@ -31,7 +31,10 @@ class _VolunteerTabState extends State<VolunteerTab> {
   @override
   void initState() {
     super.initState();
-    _volunteerNeedsFuture = _volunteerService.fetchVolunteerSkillsCount();
+    final now = DateTime.now();
+    final start = widget.fechaInicio ?? now.subtract(const Duration(days: 365));
+    final end = widget.fechaFin ?? now;
+    _volunteerNeedsFuture = _volunteerService.fetchFilteredVolunteerSkillsCount(start, end);
   }
 
   @override

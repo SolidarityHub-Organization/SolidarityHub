@@ -6,6 +6,7 @@ class VolunteerService {
 
   VolunteerService(this.baseUrl);
 
+  /*
   Future<List<Map<String, dynamic>>> fetchVolunteerSkillsCount() async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/v1/skills/volunteer-counts'),
@@ -16,6 +17,32 @@ class VolunteerService {
       return data.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Failed to load victim needs count');
+    }
+  }
+  */
+
+  Future<List<Map<String, dynamic>>> fetchFilteredVolunteerSkillsCount(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final response = await http.get(
+      Uri.parse(
+        '$baseUrl/api/v1/skills/volunteer-counts'
+        '?fromDate=${startDate.toIso8601String()}'
+        '&toDate=${endDate.toIso8601String()}',
+      ),
+    );
+    
+    if (response.statusCode == 200) {
+      // Convert dictionary to list
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data.entries.map((entry) => {
+        'item1': entry.key,
+        'item2': entry.value,
+      }).toList();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Failed to load filtered volunteer skills count');
     }
   }
 

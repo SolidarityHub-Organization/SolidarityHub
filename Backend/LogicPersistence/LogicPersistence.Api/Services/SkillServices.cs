@@ -81,20 +81,21 @@ namespace LogicPersistence.Api.Services
             return skills;
         }
 
-        public async Task<IEnumerable<(string skillName, int count)>> GetSkillsWithVolunteerCountAsync(DateTime fromDate, DateTime toDate) 
+        public async Task<Dictionary<string, int>> GetSkillsWithVolunteerCountAsync(DateTime fromDate, DateTime toDate) 
         {
             var skills = await _skillRepository.GetAllSkillsAsync();
             if (skills == null)
             {
                 throw new InvalidOperationException("Failed to retrieve skills.");
             }
-            var res = new List<(string skillName, int count)>();
+
+            Dictionary<string, int> result = new Dictionary<string, int>(); 
             foreach (Skill skill in skills)
             {
                 var count = await _skillRepository.GetVolunteerCountById(skill.id, fromDate, toDate);
-                res.Add((skill.name, count));
+                result.Add(skill.name, count);
             }
-            return res;
+            return result;
         }
     }
 }

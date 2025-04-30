@@ -10,7 +10,7 @@ namespace LogicPersistence.Api.Services
         Task<Skill> UpdateSkillAsync(int id, SkillUpdateDto skillUpdateDto);
         System.Threading.Tasks.Task DeleteSkillAsync(int id);
         Task<IEnumerable<Skill>> GetAllSkillsAsync();
-        Task<IEnumerable<(string skillName, int count)>> GetSkillsWithVolunteerCountAsync(DateTime fromDate, DateTime toDate) ;
+        Task<Dictionary<string, int>> GetSkillsWithVolunteerCountAsync(DateTime fromDate, DateTime toDate) ;
     }
     
 }
