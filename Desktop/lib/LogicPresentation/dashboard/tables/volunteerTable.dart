@@ -195,7 +195,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             ),
                           ),
                           const SizedBox(height: 50),
-                          // Bar Chart
+                          // bar chart
                           SizedBox(
                             height: 500,
                             width: math.max(800, constraints.maxWidth - 16),
@@ -270,6 +270,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                   gridData: FlGridData(
                                     show: true,
                                     drawHorizontalLine: true,
+                                    horizontalInterval: 1,
                                     drawVerticalLine: false,
                                     getDrawingHorizontalLine: (value) {
                                       return FlLine(
