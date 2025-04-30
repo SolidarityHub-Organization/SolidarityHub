@@ -27,8 +27,32 @@ class _GeneralTabState extends State<GeneralTab> {
   @override
   void initState() {
     super.initState();
-    _victimCountFuture = _generalService.fetchVictimCount();
-    _volunteerCountFuture = _generalService.fetchVolunteerCount();
+    _victimCountFuture = _generalService.fetchVictimCount(
+      widget.fechaInicio ?? DateTime(2000, 1, 1),
+      widget.fechaFin ?? DateTime.now(),
+    );
+    _volunteerCountFuture = _generalService.fetchVolunteerCount(
+      widget.fechaInicio ?? DateTime(2000, 1, 1),
+      widget.fechaFin ?? DateTime.now(),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant GeneralTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fechaInicio != widget.fechaInicio ||
+        oldWidget.fechaFin != widget.fechaFin) {
+      setState(() {
+        _victimCountFuture = _generalService.fetchVictimCount(
+          widget.fechaInicio ?? DateTime(2000, 1, 1),
+          widget.fechaFin ?? DateTime.now(),
+        );
+        _volunteerCountFuture = _generalService.fetchVolunteerCount(
+          widget.fechaInicio ?? DateTime(2000, 1, 1),
+          widget.fechaFin ?? DateTime.now(),
+        );
+      });
+    }
   }
 
   @override
@@ -56,7 +80,15 @@ class _GeneralTabState extends State<GeneralTab> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return _buildInfoCard('Personas Afectadas', 'Cargando...');
                   } else if (snapshot.hasError) {
-                    return _buildInfoCard('Personas Afectadas', 'Error');
+                    // Mostrar más detalles sobre el error
+
+                    return _buildInfoCard(
+                      'Personas Afectadas',
+                      'Error: ${snapshot.error.toString().substring(0, snapshot.error.toString().length > 30 ? 30 : snapshot.error.toString().length)}...',
+                    );
+                  } else if (!snapshot.hasData) {
+                    // Verificamos si no hay datos aunque no haya error
+                    return _buildInfoCard('Personas Afectadas', 'Sin datos');
                   } else {
                     return _buildInfoCard(
                       'Personas Afectadas',
