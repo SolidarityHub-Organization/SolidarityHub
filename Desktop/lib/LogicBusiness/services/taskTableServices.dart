@@ -6,9 +6,21 @@ class TaskTableService {
 
   TaskTableService(this.baseUrl);
 
-  Future<Map<String, dynamic>> fetchTaskTypeCount() async {
+  Future<Map<String, dynamic>> fetchTaskTypeCount(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    print(
+      'Fetching task type count with query parameters: '
+      '?fromDate=${startDate.toIso8601String()}'
+      '&toDate=${endDate.toIso8601String()}',
+    );
     final response = await http.get(
-      Uri.parse('$baseUrl/api/v1/tasks/states/count'),
+      Uri.parse(
+        '$baseUrl/api/v1/tasks/states/count'
+        '?fromDate=${startDate.toIso8601String()}'
+        '&toDate=${endDate.toIso8601String()}',
+      ),
     );
 
     if (response.statusCode == 200) {
@@ -19,9 +31,16 @@ class TaskTableService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchAllTasks() async {
+  Future<List<Map<String, dynamic>>> fetchAllTasks(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/api/v1/tasks/dashboard'),
+      Uri.parse(
+        '$baseUrl/api/v1/tasks/dashboard'
+        '?fromDate=${startDate.toIso8601String()}'
+        '&toDate=${endDate.toIso8601String()}',
+      ),
     );
 
     if (response.statusCode == 200) {

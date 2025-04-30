@@ -20,10 +20,16 @@ class _TaskTableState extends State<TaskTable> {
   );
 
   // Inicializar el Future correctamente
-  late final Future<Map<String, dynamic>> _taskTypeCount =
-      _taskService.fetchTaskTypeCount();
-  late final Future<List<Map<String, dynamic>>> _allTasks =
-      _taskService.fetchAllTasks();
+  late final Future<Map<String, dynamic>> _taskTypeCount = _taskService
+      .fetchTaskTypeCount(
+        widget.fechaInicio ?? DateTime(2000, 1, 1),
+        widget.fechaFin ?? DateTime.now(),
+      );
+  late final Future<List<Map<String, dynamic>>> _allTasks = _taskService
+      .fetchAllTasks(
+        widget.fechaInicio ?? DateTime(2000, 1, 1),
+        widget.fechaFin ?? DateTime.now(),
+      );
 
   String? _selectedUrgency;
   String? _selectedState;

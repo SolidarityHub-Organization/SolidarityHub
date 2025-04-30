@@ -7,19 +7,6 @@ class VictimService {
 
   VictimService(this.baseUrl);
 
-  Future<List<Map<String, dynamic>>> fetchVictimNeedsCount() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/v1/need-types/victim-counts'),
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Failed to load victim needs count');
-    }
-  }
-
   Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final response = await http.get(
@@ -95,10 +82,16 @@ class VictimService {
         ),
       );
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((item) {
-          return {'type': item['item1'], 'count': item['item2']};
-        }).toList();
+        // Tratar la respuesta como un mapa directamente
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        // Convertir el mapa a lista de mapas con 'type' y 'count'
+        List<Map<String, dynamic>> result = [];
+        data.forEach((key, value) {
+          result.add({'type': key, 'count': value});
+        });
+
+        return result;
       } else {
         throw Exception(
           'Error al obtener víctimas filtradas: ${response.statusCode}',

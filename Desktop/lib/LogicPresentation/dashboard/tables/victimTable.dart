@@ -19,15 +19,27 @@ class VictimsTab extends StatefulWidget {
 class _VictimsTabState extends State<VictimsTab> {
   final VictimService _victimService = VictimService('http://localhost:5170');
 
+  DateTime _adjustEndDate(DateTime? date) {
+    if (date == null) return DateTime.now();
+    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
+    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+  }
+
   late final Future<List<Map<String, dynamic>>> _victimCountFuture =
-      _victimService.fetchVictimCountByDate().then((data) {
-        return data;
+      _victimService.fetchVictimCountByDate().catchError((error) {
+        print('Error al obtener datos de víctimas por fecha: $error');
+        return <Map<String, dynamic>>[];
       });
+
   late Future<List<Map<String, dynamic>>> _victimNeedsFuture = _victimService
       .fetchFilteredVictimCounts(
         widget.fechaInicio ?? DateTime(2000, 1, 1),
-        widget.fechaFin ?? DateTime.now(),
-      );
+        _adjustEndDate(widget.fechaFin),
+      )
+      .catchError((error) {
+        print('Error al obtener datos filtrados de víctimas: $error');
+        return <Map<String, dynamic>>[];
+      });
 
   @override
   void didUpdateWidget(covariant VictimsTab oldWidget) {
@@ -35,10 +47,15 @@ class _VictimsTabState extends State<VictimsTab> {
     if (oldWidget.fechaInicio != widget.fechaInicio ||
         oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        _victimNeedsFuture = _victimService.fetchFilteredVictimCounts(
-          widget.fechaInicio ?? DateTime(2000, 1, 1),
-          widget.fechaFin ?? DateTime.now(),
-        );
+        _victimNeedsFuture = _victimService
+            .fetchFilteredVictimCounts(
+              widget.fechaInicio ?? DateTime(2000, 1, 1),
+              _adjustEndDate(widget.fechaFin),
+            )
+            .catchError((error) {
+              print('Error al actualizar datos filtrados de víctimas: $error');
+              return <Map<String, dynamic>>[];
+            });
       });
     }
   }
@@ -146,7 +163,7 @@ class _VictimsTabState extends State<VictimsTab> {
                 ..sort((a, b) => (a['date'] ?? '').compareTo(b['date'] ?? ''));
 
           final startDate = widget.fechaInicio ?? DateTime(2000, 1, 1);
-          final endDate = widget.fechaFin ?? DateTime.now();
+          final endDate = _adjustEndDate(widget.fechaFin);
 
           final filteredLineData =
               sortedLineData.where((entry) {
@@ -161,10 +178,19 @@ class _VictimsTabState extends State<VictimsTab> {
                 }
 
                 if (entryDate == null) return false;
+                // Ajustar la comparación para incluir el día completo
+                final entryEndOfDay = DateTime(
+                  entryDate.year,
+                  entryDate.month,
+                  entryDate.day,
+                  23,
+                  59,
+                  59,
+                );
                 return (entryDate.isAfter(startDate) ||
                         entryDate.isAtSameMomentAs(startDate)) &&
-                    (entryDate.isBefore(endDate) ||
-                        entryDate.isAtSameMomentAs(endDate));
+                    (entryEndOfDay.isBefore(endDate) ||
+                        entryEndOfDay.isAtSameMomentAs(endDate));
               }).toList();
 
           final lineSpots =
@@ -187,8 +213,9 @@ class _VictimsTabState extends State<VictimsTab> {
             }
           }
 
+          // Usar los datos filtrados para las etiquetas del eje X, no los originales
           final xLabels =
-              sortedLineData.map((entry) {
+              filteredLineData.map((entry) {
                 return entry['date'] ?? '';
               }).toList();
 
@@ -249,14 +276,45 @@ class _VictimsTabState extends State<VictimsTab> {
                                   isCurved: true,
                                   color: Colors.red,
                                   barWidth: 3,
+                                  preventCurveOverShooting:
+                                      true, // Previene que la curva sobrepase los puntos
+                                  preventCurveOvershootingThreshold:
+                                      1.0, // Umbral para el control de la curva
                                   belowBarData: BarAreaData(
                                     show: true,
                                     color: Colors.red.withOpacity(0.3),
+                                    cutOffY: 0,
+                                    applyCutOffY: true,
+                                    spotsLine: BarAreaSpotsLine(
+                                      show:
+                                          true, // Mostrar líneas verticales desde los puntos al eje X
+                                      flLineStyle: FlLine(
+                                        color: Colors.red.withOpacity(0.2),
+                                        strokeWidth: 1,
+                                      ),
+                                    ),
                                   ),
-                                  dotData: FlDotData(show: true),
+                                  dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter: (spot, percent, bar, index) {
+                                      // Asegurar que los puntos no aparezcan por debajo del eje X
+                                      return FlDotCirclePainter(
+                                        radius: 4,
+                                        color: Colors.red,
+                                        strokeWidth: 2,
+                                        strokeColor: Colors.white,
+                                      );
+                                    },
+                                  ),
+                                  isStrokeCapRound: true,
                                 ),
                               ],
-                              minY: 0,
+                              minX: 0,
+                              maxX:
+                                  lineSpots.isNotEmpty
+                                      ? (lineSpots.length - 1).toDouble()
+                                      : 0,
+                              minY: 0, // Forzar que el mínimo sea siempre 0
                               maxY:
                                   lineSpots.isNotEmpty
                                       ? (lineSpots
