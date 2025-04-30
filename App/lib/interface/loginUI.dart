@@ -83,7 +83,7 @@ class _LoginScreenState extends State<loginUI> {
                       Expanded(
                         child: buildCustomButton(
                           "Registro",
-                              () => authController.onRegisterTabPressed(context),
+                          () => authController.onRegisterTabPressed(context),
                           backgroundColor: Colors.grey,
                           verticalPadding: 12,
                         ),
