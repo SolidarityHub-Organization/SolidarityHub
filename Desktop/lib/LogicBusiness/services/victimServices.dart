@@ -90,8 +90,8 @@ class VictimService {
       final response = await http.get(
         Uri.parse(
           '$baseUrl/api/v1/need-types/victim-counts/filtered'
-          '?startDate=${startDate.toIso8601String()}'
-          '&endDate=${endDate.toIso8601String()}',
+          '?fromDate=${startDate.toIso8601String()}'
+          '&toDate=${endDate.toIso8601String()}',
         ),
       );
       if (response.statusCode == 200) {
