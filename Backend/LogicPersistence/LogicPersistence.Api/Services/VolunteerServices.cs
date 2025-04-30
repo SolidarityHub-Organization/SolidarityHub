@@ -103,13 +103,18 @@ namespace LogicPersistence.Api.Services
             return volunteer;
         }
 
-        public async Task<int> GetVolunteersCountAsync() 
+        public async Task<int> GetVolunteersCountAsync(DateTime fromDate, DateTime toDate) 
         {
+            if (fromDate > toDate) 
+            {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
             var volunteers = await _volunteerRepository.GetAllVolunteersAsync();
             if (volunteers == null) 
             {
                 throw new InvalidOperationException("Failed to retrieve volunteers.");
             }
+            volunteers = volunteers.Where(v => v.created_at >= fromDate && v.created_at <= toDate).ToList();
             return volunteers.Count();
         }
     }

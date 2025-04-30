@@ -72,11 +72,15 @@ namespace LogicPersistence.Api.Services {
 			return victims;
 		}
 
-		public async Task<int> GetVictimsCountAsync() {
+		public async Task<int> GetVictimsCountAsync(DateTime fromDate, DateTime toDate) {
+			if (fromDate > toDate) {
+				throw new ArgumentException("From date cannot be greater than to date.");
+			}
 			var victims = await _victimRepository.GetAllVictimsAsync();
 			if (victims == null) {
 				throw new InvalidOperationException("Failed to retrieve victims.");
 			}
+			victims = victims.Where(v => v.created_at.Date >= fromDate.Date && v.created_at.Date <= toDate.Date).ToList();
 			return victims.Count();
 		}
 

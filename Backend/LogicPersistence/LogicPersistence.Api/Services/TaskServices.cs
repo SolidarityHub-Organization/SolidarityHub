@@ -128,10 +128,17 @@ namespace LogicPersistence.Api.Services {
 			return taskIds;
 		}
 
-		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync() {
+		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync(DateTime fromDate, DateTime toDate) {
+			if (fromDate > toDate) {
+				throw new ArgumentException("From date must be less than or equal to to date.");
+			}
 			var tasks = await _taskRepository.GetAllTasksAsync();
 			if (tasks == null) {
 				throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
+			}
+			tasks = tasks.Where(t => t.created_at >= fromDate && t.created_at <= toDate).ToList();
+			if (tasks.Count() == 0) {
+				throw new InvalidOperationException("No tasks found for the specified date range.");
 			}
 
 			var result = new List<TaskForDashboardDto>();

@@ -83,9 +83,9 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpGet("victims/count")]
-		public async Task<IActionResult> GetVictimsCountAsync() {
+		public async Task<IActionResult> GetVictimsCountAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
 			try {
-				var count = await _victimServices.GetVictimsCountAsync();
+				var count = await _victimServices.GetVictimsCountAsync(fromDate, toDate);
 				return Ok(count);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

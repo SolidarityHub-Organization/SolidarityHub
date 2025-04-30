@@ -158,10 +158,10 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("volunteers/count")]
-        public async Task<IActionResult> GetVolunteersCountAsync() 
+        public async Task<IActionResult> GetVolunteersCountAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) 
         {
             try {
-				var count = await _volunteerServices.GetVolunteersCountAsync();
+				var count = await _volunteerServices.GetVolunteersCountAsync(fromDate, toDate);
 				return Ok(count);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

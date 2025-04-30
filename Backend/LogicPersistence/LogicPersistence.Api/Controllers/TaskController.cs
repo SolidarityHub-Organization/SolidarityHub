@@ -160,9 +160,9 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpGet("tasks/dashboard")]
-		public async Task<IActionResult> GetAllTasksForDashboardAsync() {
+		public async Task<IActionResult> GetAllTasksForDashboardAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
 			try {
-				var tasks = await _taskServices.GetAllTasksForDashboardAsync();
+				var tasks = await _taskServices.GetAllTasksForDashboardAsync(fromDate, toDate);
 				return Ok(tasks);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
