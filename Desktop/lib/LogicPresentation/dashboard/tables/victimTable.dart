@@ -25,6 +25,12 @@ class _VictimsTabState extends State<VictimsTab> {
     return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
   }
 
+  DateTime _adjustStartDate(DateTime? date) {
+    if (date == null) return DateTime(2000, 1, 1);
+    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
+    return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
+  }
+
   late final Future<List<Map<String, dynamic>>> _victimCountFuture =
       _victimService.fetchVictimCountByDate().catchError((error) {
         print('Error al obtener datos de víctimas por fecha: $error');
@@ -33,7 +39,7 @@ class _VictimsTabState extends State<VictimsTab> {
 
   late Future<List<Map<String, dynamic>>> _victimNeedsFuture = _victimService
       .fetchFilteredVictimCounts(
-        widget.fechaInicio ?? DateTime(2000, 1, 1),
+        _adjustStartDate(widget.fechaInicio),
         _adjustEndDate(widget.fechaFin),
       )
       .catchError((error) {
@@ -49,7 +55,7 @@ class _VictimsTabState extends State<VictimsTab> {
       setState(() {
         _victimNeedsFuture = _victimService
             .fetchFilteredVictimCounts(
-              widget.fechaInicio ?? DateTime(2000, 1, 1),
+              _adjustStartDate(widget.fechaInicio),
               _adjustEndDate(widget.fechaFin),
             )
             .catchError((error) {
@@ -162,7 +168,7 @@ class _VictimsTabState extends State<VictimsTab> {
               lineData
                 ..sort((a, b) => (a['date'] ?? '').compareTo(b['date'] ?? ''));
 
-          final startDate = widget.fechaInicio ?? DateTime(2000, 1, 1);
+          final startDate = _adjustStartDate(widget.fechaInicio);
           final endDate = _adjustEndDate(widget.fechaFin);
 
           final filteredLineData =
@@ -263,6 +269,25 @@ class _VictimsTabState extends State<VictimsTab> {
                         padding: const EdgeInsets.fromLTRB(
                           60.0,
                           16.0,
+                          60.0,
+                          0.0, // Reducido el padding inferior
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Número de afectados por día',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          60.0,
+                          8.0, // Reducido para ajustar el espacio con el nuevo título
                           60.0,
                           100.0,
                         ),
@@ -408,12 +433,31 @@ class _VictimsTabState extends State<VictimsTab> {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          60.0,
+                          30.0, // Añado espacio superior para separar del gráfico anterior
+                          60.0,
+                          10.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Cantidad de cada tipo de necesidad',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         height: 500,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(
                             60.0,
-                            0,
+                            8.0, // Espacio reducido después del título
                             30.0,
                             100.0,
                           ),

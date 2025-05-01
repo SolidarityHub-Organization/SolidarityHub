@@ -19,16 +19,28 @@ class _TaskTableState extends State<TaskTable> {
     'http://localhost:5170',
   );
 
+  DateTime _adjustEndDate(DateTime? date) {
+    if (date == null) return DateTime.now();
+    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
+    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+  }
+
+  DateTime _adjustStartDate(DateTime? date) {
+    if (date == null) return DateTime(2000, 1, 1);
+    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
+    return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
+  }
+
   // Inicializar el Future correctamente
   late final Future<Map<String, dynamic>> _taskTypeCount = _taskService
       .fetchTaskTypeCount(
-        widget.fechaInicio ?? DateTime(2000, 1, 1),
-        widget.fechaFin ?? DateTime.now(),
+        _adjustStartDate(widget.fechaInicio),
+        _adjustEndDate(widget.fechaFin),
       );
   late final Future<List<Map<String, dynamic>>> _allTasks = _taskService
       .fetchAllTasks(
-        widget.fechaInicio ?? DateTime(2000, 1, 1),
-        widget.fechaFin ?? DateTime.now(),
+        _adjustStartDate(widget.fechaInicio),
+        _adjustEndDate(widget.fechaFin),
       );
 
   String? _selectedUrgency;

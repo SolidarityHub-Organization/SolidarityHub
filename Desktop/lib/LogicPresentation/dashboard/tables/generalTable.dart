@@ -21,6 +21,19 @@ class _GeneralTabState extends State<GeneralTab> {
   final GeneralService _generalService = GeneralService(
     'http://localhost:5170',
   );
+
+  DateTime _adjustEndDate(DateTime? date) {
+    if (date == null) return DateTime.now();
+    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
+    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+  }
+
+  DateTime _adjustStartDate(DateTime? date) {
+    if (date == null) return DateTime(2000, 1, 1);
+    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
+    return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
+  }
+
   late Future<int> _victimCountFuture;
   late Future<int> _volunteerCountFuture;
 
@@ -28,12 +41,12 @@ class _GeneralTabState extends State<GeneralTab> {
   void initState() {
     super.initState();
     _victimCountFuture = _generalService.fetchVictimCount(
-      widget.fechaInicio ?? DateTime(2000, 1, 1),
-      widget.fechaFin ?? DateTime.now(),
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
     );
     _volunteerCountFuture = _generalService.fetchVolunteerCount(
-      widget.fechaInicio ?? DateTime(2000, 1, 1),
-      widget.fechaFin ?? DateTime.now(),
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
     );
   }
 
@@ -44,12 +57,12 @@ class _GeneralTabState extends State<GeneralTab> {
         oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
         _victimCountFuture = _generalService.fetchVictimCount(
-          widget.fechaInicio ?? DateTime(2000, 1, 1),
-          widget.fechaFin ?? DateTime.now(),
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
         );
         _volunteerCountFuture = _generalService.fetchVolunteerCount(
-          widget.fechaInicio ?? DateTime(2000, 1, 1),
-          widget.fechaFin ?? DateTime.now(),
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
         );
       });
     }
