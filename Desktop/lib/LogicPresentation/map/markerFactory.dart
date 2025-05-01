@@ -3,32 +3,27 @@ import 'package:flutter_map/flutter_map.dart';
 import '../../LogicPersistence/models/mapMarker.dart';
 
 abstract class MapMarkerCreator {
-  Marker createMarker(MapMarker mapMarker, BuildContext context);
+  Marker createMarker(
+    MapMarker mapMarker,
+    BuildContext context,
+    Function(MapMarker) onMarkerTap,
+  );
 }
 
 class VictimMarkerCreator implements MapMarkerCreator {
   @override
-  Marker createMarker(MapMarker mapMarker, BuildContext context) {
+  Marker createMarker(
+    MapMarker mapMarker,
+    BuildContext context,
+    Function(MapMarker) onMarkerTap,
+  ) {
     return Marker(
       point: mapMarker.position,
       width: 50,
       height: 50,
       child: GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder:
-                (context) => AlertDialog(
-                  title: Text('Detalles del afectado'),
-                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cerrar'),
-                    ),
-                  ],
-                ),
-          );
+          onMarkerTap(mapMarker);
         },
         child: const Icon(
           Icons.location_pin,
@@ -42,27 +37,18 @@ class VictimMarkerCreator implements MapMarkerCreator {
 
 class VolunteerMarkerCreator implements MapMarkerCreator {
   @override
-  Marker createMarker(MapMarker mapMarker, BuildContext context) {
+  Marker createMarker(
+    MapMarker mapMarker,
+    BuildContext context,
+    Function(MapMarker) onMarkerTap,
+  ) {
     return Marker(
       point: mapMarker.position,
       width: 50,
       height: 50,
       child: GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder:
-                (context) => AlertDialog(
-                  title: Text('Detalles del voluntario'),
-                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cerrar'),
-                    ),
-                  ],
-                ),
-          );
+          onMarkerTap(mapMarker);
         },
         child: const Icon(Icons.location_pin, color: Colors.green, size: 40),
       ),
@@ -72,27 +58,18 @@ class VolunteerMarkerCreator implements MapMarkerCreator {
 
 class TaskMarkerCreator implements MapMarkerCreator {
   @override
-  Marker createMarker(MapMarker mapMarker, BuildContext context) {
+  Marker createMarker(
+    MapMarker mapMarker,
+    BuildContext context,
+    Function(MapMarker) onMarkerTap,
+  ) {
     return Marker(
       point: mapMarker.position,
       width: 50,
       height: 50,
       child: GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder:
-                (context) => AlertDialog(
-                  title: Text('Detalles de la tarea'),
-                  content: Text('ID: ${mapMarker.id}\nNombre: ${mapMarker.name}'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cerrar'),
-                    ),
-                  ],
-                ),
-          );
+          onMarkerTap(mapMarker);
         },
         child: const Icon(Icons.location_pin, color: Colors.orange, size: 40),
       ),
