@@ -128,6 +128,24 @@ namespace LogicPersistence.Api.Services {
 			return taskIds;
 		}
 
+		public async Task<IEnumerable<Models.Task>> GetTasksByStateAsync(string stateString, DateTime fromDate, DateTime toDate) {
+			if (fromDate > toDate) {
+				throw new ArgumentException("From date must be less than or equal to to date.");
+			}
+			if (!Enum.TryParse<State>(stateString, true, out State state)) {
+				throw new ArgumentException($"Invalid state value: {stateString}");
+			}
+
+			var tasksIds = await GetTaskIdsByStateAsync(stateString);
+			var tasks = await GetAllTasksAsync();
+			tasks = tasks.Where(t => tasksIds.Contains(t.id) && t.created_at >= fromDate && t.created_at <= toDate).ToList();
+			if (tasks.Count() == 0) {
+				throw new InvalidOperationException($"No tasks found for state {state} in the specified date range.");
+			}
+			return tasks;
+		}
+
+
 		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync(DateTime fromDate, DateTime toDate) {
 			if (fromDate > toDate) {
 				throw new ArgumentException("From date must be less than or equal to to date.");

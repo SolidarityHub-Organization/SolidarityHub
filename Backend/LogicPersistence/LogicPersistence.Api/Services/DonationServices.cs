@@ -209,9 +209,9 @@ namespace LogicPersistence.Api.Services
         }
 
         //por ahora solo acepta EUR y USD
-        public async Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency) {
-            var totalEuro = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.EUR);
-            var totalDollar = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.USD);
+        public async Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate) {
+            var totalEuro = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.EUR, fromDate, toDate);
+            var totalDollar = await _donationRepository.GetTotalMonetaryAmountByCurrencyAsync(Currency.USD, fromDate, toDate);
             if (totalEuro < 0 || totalDollar < 0) {
                 throw new InvalidOperationException("Failed to retrieve total amount of donations.");
             }

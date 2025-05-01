@@ -155,16 +155,17 @@ public class DonationRepository : IDonationRepository {
         return await connection.QueryAsync<MonetaryDonation>(sql);
     }
 
-    public async Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency) 
+    public async Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate) 
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             SELECT COALESCE(SUM(amount), 0) 
             FROM monetary_donation 
             WHERE currency::text = @currency::text 
-            AND payment_status = 'Completed'::payment_status";
+            AND payment_status = 'Completed'::payment_status 
+            AND created_at BETWEEN @fromDate AND @toDate";
 
-        return await connection.QuerySingleOrDefaultAsync<double>(sql, new { currency = currency.ToString() });
+        return await connection.QuerySingleOrDefaultAsync<double>(sql, new { currency = currency.ToString(), fromDate, toDate });
     }
 #endregion
 }

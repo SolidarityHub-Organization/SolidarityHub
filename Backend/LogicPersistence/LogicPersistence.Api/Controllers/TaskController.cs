@@ -170,5 +170,19 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpGet("tasks/by-state")]
+		public async Task<IActionResult> GetTasksByStateAsync([FromQuery] string state, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+			try {
+				var tasks = await _taskServices.GetTasksByStateAsync(state, fromDate, toDate);
+				return Ok(tasks);
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

@@ -287,11 +287,11 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("monetary-donations/total-amount")]
-        public async Task<IActionResult> GetTotalAmountMonetaryDonationsAsync(Currency currency)
+        public async Task<IActionResult> GetTotalAmountMonetaryDonationsAsync(Currency currency, DateTime fromDate, DateTime toDate)
         {
             try
             {
-                var totalAmount = await _donationServices.GetTotalMonetaryAmountByCurrencyAsync(currency);
+                var totalAmount = await _donationServices.GetTotalMonetaryAmountByCurrencyAsync(currency, fromDate, toDate);
                 return Ok(totalAmount);
             }
             catch (InvalidOperationException ex)

@@ -20,7 +20,7 @@ namespace LogicPersistence.Api.Services
         Task<MonetaryDonationDisplayDto> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto);
         System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id);
         Task<IEnumerable<MonetaryDonationDisplayDto>> GetAllMonetaryDonationsAsync();
-        Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency);
+        Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate);
         #endregion
     }
 }

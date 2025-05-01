@@ -22,7 +22,7 @@ namespace LogicPersistence.Api.Repositories.Interfaces
         Task<bool> DeleteMonetaryDonationAsync(int id);
         Task<MonetaryDonation?> GetMonetaryDonationByIdAsync(int id);
         Task<IEnumerable<MonetaryDonation>> GetAllMonetaryDonationsAsync();
-        Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency);
+        Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate);
 #endregion
     }
 }
