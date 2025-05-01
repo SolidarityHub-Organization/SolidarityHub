@@ -102,20 +102,6 @@ namespace LogicPersistence.Api.Services {
 			);
 		}
 
-		public async Task<int> GetTaskCountByStateAsync(State state) {
-			var count = await _taskRepository.GetTaskCountByStateAsync(state);
-			return count;
-		}
-
-		public async Task<int> GetTaskCountByStateAsync(string stateString) {
-			if (!Enum.TryParse<State>(stateString, true, out var state)) {
-				throw new ArgumentException($"Invalid state value: {stateString}");
-			}
-
-			var count = await _taskRepository.GetTaskCountByStateAsync(state);
-			return count;
-		}
-
 		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString) {
 			if (!Enum.TryParse<State>(stateString, true, out State state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");
@@ -143,6 +129,15 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException($"No tasks found for state {state} in the specified date range.");
 			}
 			return tasks;
+		}
+		
+		public async Task<int> GetTaskCountByStateAsync(string stateString, DateTime fromDate, DateTime toDate) {
+			if (!Enum.TryParse<State>(stateString, true, out var state)) {
+				throw new ArgumentException($"Invalid state value: {stateString}");
+			}
+
+			var tasksByState = await GetTasksByStateAsync(stateString, fromDate, toDate);
+			return tasksByState.Count();
 		}
 
 

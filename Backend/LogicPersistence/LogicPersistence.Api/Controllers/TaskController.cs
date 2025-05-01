@@ -123,11 +123,11 @@ namespace LogicPersistence.Api.Controllers {
 
 		// returns the count of tasks depending on the state e.g. 2
 		[HttpGet("tasks/states/{state}/count")]
-		public async Task<IActionResult> GetTaskCountByStateAsync([FromRoute] string state)
+		public async Task<IActionResult> GetTaskCountByStateAsync([FromRoute] string state, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
 		{
 			try
 			{
-				var count = await _taskServices.GetTaskCountByStateAsync(state);
+				var count = await _taskServices.GetTaskCountByStateAsync(state, fromDate, toDate);
 				return Ok(count);
 			}
 			catch (ArgumentException ex)
