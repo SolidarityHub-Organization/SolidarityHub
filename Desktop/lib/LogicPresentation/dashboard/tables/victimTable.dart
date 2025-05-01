@@ -433,31 +433,12 @@ class _VictimsTabState extends State<VictimsTab> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          60.0,
-                          30.0, // Añado espacio superior para separar del gráfico anterior
-                          60.0,
-                          10.0,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Cantidad de cada tipo de necesidad',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                      ),
                       SizedBox(
                         height: 500,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(
                             60.0,
-                            8.0, // Espacio reducido después del título
+                            0,
                             30.0,
                             100.0,
                           ),

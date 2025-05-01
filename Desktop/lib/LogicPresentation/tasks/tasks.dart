@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
-import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
+import 'package:solidarityhub/LogicBusiness/services/taskTableServices.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'dart:convert';
 
@@ -34,7 +34,9 @@ class _TaskstableState extends State<Taskstable> {
   CoordenadasService coordenadasService = CoordenadasService(
     'http://localhost:5170/api/v1',
   );
-  TaskService taskService = TaskService('http://localhost:5170/api/v1');
+  TaskTableService taskService = TaskTableService(
+    'http://localhost:5170/api/v1',
+  );
   List<TaskWithDetails> tasks = [];
   List<TaskWithDetails> filteredTasks = [];
   bool isLoading = true;
