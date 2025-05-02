@@ -14,7 +14,7 @@ class HomeScreenVoluntario extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // Ícono superior izquierdo (cerrar sesión)
+            // Icono superior izquierdo
             Positioned(
               top: 16,
               left: 16,
@@ -29,7 +29,7 @@ class HomeScreenVoluntario extends StatelessWidget {
             ),
 
 
-            // Contenedor principal blanco
+            // Contenedor blanco centrado
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -60,31 +60,15 @@ class HomeScreenVoluntario extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 30),
-
                         _buildButton("Ver tareas inscritas"),
                         SizedBox(height: 16),
                         _buildButton("Ver tareas disponibles"),
                         SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AjustesCuenta(email:email)),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                          ),
-                          child: const Text("Ajustes", style: TextStyle(color: Colors.white)),
-                        ),
+                        _buildButton("Ajustes"),
                       ],
                     ),
 
-                    // Icono de mensaje en la parte superior derecha
+                    // Icono de mensaje
                     Positioned(
                       top: 0,
                       right: 0,
