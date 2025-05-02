@@ -28,7 +28,11 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Future<void> _loadData() async {
     try {
-      await _controller.fetchTasks();
+      await _controller.fetchTasks(() {
+        if (mounted) {
+          setState(() {});
+        }
+      });
       if (mounted) {
         setState(() {});
       }
@@ -46,6 +50,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF44336),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Gestión de Tareas',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),

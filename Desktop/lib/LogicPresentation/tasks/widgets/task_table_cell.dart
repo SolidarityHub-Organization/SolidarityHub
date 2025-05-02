@@ -143,7 +143,9 @@ class TaskTableCell extends StatelessWidget {
 
     if (confirm) {
       try {
-        await controller.deleteTask(task);
+        await controller.deleteTask(task, () {
+          onTaskChanged();
+        });
 
         if (context.mounted) {
           ScaffoldMessenger.of(

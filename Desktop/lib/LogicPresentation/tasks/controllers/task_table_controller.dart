@@ -47,7 +47,7 @@ class TaskTableController {
     ];
   }
 
-  Future<void> loadTaskAddresses() async {
+  Future<void> loadTaskAddresses([Function? onTaskChanged]) async {
     for (var task in tasks) {
       try {
         final locationResponse = await http.get(Uri.parse('http://localhost:5170/api/v1/locations/${task.locationId}'));
@@ -59,16 +59,25 @@ class TaskTableController {
 
           final address = await coordenadasService.getAddressFromLatLon(lat, lon);
           taskAddresses[task.id] = address;
+
+          applyFilters();
+          // Notificar a la UI que los datos han cambiado
+          if (onTaskChanged != null) {
+            onTaskChanged();
+          }
         }
       } catch (e) {
         taskAddresses[task.id] = 'Dirección no disponible';
+        applyFilters();
+        // Notificar a la UI que los datos han cambiado incluso con error
+        if (onTaskChanged != null) {
+          onTaskChanged();
+        }
       }
-
-      applyFilters();
     }
   }
 
-  Future<void> fetchTasks() async {
+  Future<void> fetchTasks([Function? onTaskChanged]) async {
     isLoading = true;
 
     try {
@@ -86,9 +95,10 @@ class TaskTableController {
 
         _sortTasks();
 
-        isLoading = false;
+        // Pasar el callback a loadTaskAddresses para notificar cambios en la UI
+        loadTaskAddresses(onTaskChanged);
 
-        loadTaskAddresses().then((_) => _sortTasks());
+        isLoading = false;
       } else {
         throw Exception('Error al obtener las tareas: ${response.statusCode}');
       }
@@ -129,12 +139,9 @@ class TaskTableController {
     filteredTasks =
         tasks.where((task) {
           final nameMatches = nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase());
-
           final address = taskAddresses[task.id] ?? '';
           final addressMatches = addressFilter.isEmpty || address.toLowerCase().contains(addressFilter.toLowerCase());
-
           final statusMatches = statusFilter == 'Todos' || getTaskStatus(task) == statusFilter;
-
           final priorityMatches = priorityFilter == 'Todas' || getTaskPriority(task) == priorityFilter;
 
           return nameMatches && addressMatches && statusMatches && priorityMatches;
@@ -151,12 +158,15 @@ class TaskTableController {
     return task.adminId != null ? 'Alta' : 'Media';
   }
 
-  Future<void> deleteTask(TaskWithDetails task) async {
+  Future<void> deleteTask(TaskWithDetails task, [Function? onComplete]) async {
     isLoading = true;
 
     try {
       await taskService.deleteTask(task.id);
       await fetchTasks();
+      if (onComplete != null) {
+        onComplete();
+      }
     } catch (e) {
       isLoading = false;
       rethrow;
