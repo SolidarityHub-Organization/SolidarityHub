@@ -21,6 +21,11 @@ public class TaskCreateDto {
 
 	[Required]
 	public int[] victim_ids { get; set; } = [];
+
+	[Required]
+	public DateTime start_date { get; set; }
+
+	public DateTime? end_date { get; set; }
 }
 
 public class TaskUpdateDto {
@@ -45,6 +50,11 @@ public class TaskUpdateDto {
 
 	[Required]
 	public int[] victim_ids { get; set; } = [];
+
+	[Required]
+	public DateTime start_date { get; set; }
+
+	public DateTime? end_date { get; set; }
 }
 
 public class TaskDisplayDto {
@@ -53,7 +63,9 @@ public class TaskDisplayDto {
 	public string description { get; set; } = string.Empty;
 	public int? admin_id { get; set; }
 	public int location_id { get; set; }
-    public DateTime created_at { get; set; } 
+    public DateTime created_at { get; set; }
+    public DateTime start_date { get; set; }
+    public DateTime? end_date { get; set; }
 }
 
 public class TaskWithDetailsDto {
@@ -62,6 +74,8 @@ public class TaskWithDetailsDto {
 	public string description { get; set; } = string.Empty;
 	public int? admin_id { get; set; }
 	public int location_id { get; set; }
+	public DateTime start_date { get; set; }
+	public DateTime? end_date { get; set; }
 	// Temporaryly using string to store JSON data as dapper
 	// does not support deserializing JSON to a list of objects directly.
 	public string assigned_volunteersJson { get; set; } = "[]";
@@ -76,4 +90,6 @@ public class TaskForDashboardDto {
 	public String urgency_level { get; set; } = string.Empty;
 	public String state { get; set; } = string.Empty;
 	public AffectedZoneWithPointsDTO? affected_zone { get; set; }
+	public DateTime start_date { get; set; }
+	public DateTime? end_date { get; set; }
 }

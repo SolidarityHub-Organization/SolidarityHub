@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
+import 'package:intl/intl.dart';
 
 class TaskTableCell extends StatelessWidget {
   final String columnId;
@@ -19,6 +20,8 @@ class TaskTableCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     switch (columnId) {
       case 'name':
         return GestureDetector(
@@ -39,7 +42,12 @@ class TaskTableCell extends StatelessWidget {
                         ),
                       ],
                     ),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cerrar'))],
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cerrar'),
+                      ),
+                    ],
                   ),
             );
           },
@@ -57,6 +65,12 @@ class TaskTableCell extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         );
 
+      case 'start_date':
+        return _buildDateCell(task.startDate);
+
+      case 'end_date':
+        return _buildDateCell(task.endDate);
+
       case 'status':
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -64,23 +78,33 @@ class TaskTableCell extends StatelessWidget {
             color: controller.getStatusColor(controller.getTaskStatus(task)),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(controller.getTaskStatus(task), style: const TextStyle(color: Colors.white)),
+          child: Text(
+            controller.getTaskStatus(task),
+            style: const TextStyle(color: Colors.white),
+          ),
         );
 
       case 'priority':
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: controller.getPriorityColor(controller.getTaskPriority(task)),
+            color: controller.getPriorityColor(
+              controller.getTaskPriority(task),
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(controller.getTaskPriority(task), style: const TextStyle(color: Colors.white)),
+          child: Text(
+            controller.getTaskPriority(task),
+            style: const TextStyle(color: Colors.white),
+          ),
         );
 
       case 'volunteers':
         return Text(
           task.assignedVolunteers.isNotEmpty
-              ? task.assignedVolunteers.map((volunteer) => '${volunteer.name} ${volunteer.surname}').join(', ')
+              ? task.assignedVolunteers
+                  .map((volunteer) => '${volunteer.name} ${volunteer.surname}')
+                  .join(', ')
               : 'Sin asignar',
           overflow: TextOverflow.ellipsis,
         );
@@ -116,6 +140,28 @@ class TaskTableCell extends StatelessWidget {
     }
   }
 
+  Widget _buildDateCell(DateTime? date) {
+    if (date == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Text(
+          'Por determinar',
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Text(
+        DateFormat('dd/MM/yyyy').format(date),
+        style: const TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
   Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
     final bool confirm =
         await showDialog(
@@ -123,7 +169,9 @@ class TaskTableCell extends StatelessWidget {
           builder:
               (context) => AlertDialog(
                 title: const Text('Confirmar eliminación'),
-                content: Text('¿Está seguro de que desea eliminar la tarea "${task.name}"?'),
+                content: Text(
+                  '¿Está seguro de que desea eliminar la tarea "${task.name}"?',
+                ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
@@ -132,11 +180,16 @@ class TaskTableCell extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context, true),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text('Eliminar'),
                   ),
                 ],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
         ) ??
         false;
@@ -148,14 +201,20 @@ class TaskTableCell extends StatelessWidget {
         });
 
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Tarea eliminada con éxito'), backgroundColor: Colors.green));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Tarea eliminada con éxito'),
+              backgroundColor: Colors.green,
+            ),
+          );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al eliminar la tarea: ${e.toString()}'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Error al eliminar la tarea: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }

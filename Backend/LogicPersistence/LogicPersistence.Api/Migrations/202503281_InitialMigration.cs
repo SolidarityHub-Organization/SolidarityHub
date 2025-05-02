@@ -164,6 +164,8 @@ public class InitialMigration : Migration {
 			.WithColumn("description").AsString(1000).NotNullable()
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Task_Admin", "admin", "id")
 			.WithColumn("location_id").AsInt32().NotNullable().ForeignKey("FK_Task_Location", "location", "id")
+			.WithColumn("start_date").AsDateTime().NotNullable()
+			.WithColumn("end_date").AsDateTime().Nullable()
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 
 		Create.Table("need")

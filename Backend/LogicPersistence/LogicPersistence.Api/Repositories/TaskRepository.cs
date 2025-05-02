@@ -15,8 +15,8 @@ public class TaskRepository : ITaskRepository {
 		using var transaction = await connection.BeginTransactionAsync();
 
 		const string taskSql = @"
-            INSERT INTO task (name, description, admin_id, location_id)
-            VALUES (@name, @description, @admin_id, @location_id)
+            INSERT INTO task (name, description, admin_id, location_id, start_date, end_date)
+            VALUES (@name, @description, @admin_id, @location_id, @start_date, @end_date)
             RETURNING *";
 
 		const string volunteerTaskSql = @"
@@ -58,7 +58,9 @@ public class TaskRepository : ITaskRepository {
             SET name = @name,
                 description = @description,
                 admin_id = @admin_id,
-                location_id = @location_id
+                location_id = @location_id,
+                start_date = @start_date,
+                end_date = @end_date
             WHERE id = @id
             RETURNING *";
 
@@ -178,6 +180,8 @@ public class TaskRepository : ITaskRepository {
             t.description,
             t.admin_id,
             t.location_id,
+            t.start_date,
+            t.end_date,
             tv.volunteers AS assigned_volunteersJson,
             tvi.victims AS assigned_victimsJson
         FROM task t

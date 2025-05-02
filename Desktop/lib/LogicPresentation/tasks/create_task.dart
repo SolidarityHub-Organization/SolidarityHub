@@ -44,6 +44,8 @@ Future<String> createTask({
   required List<int> selectedVolunteers,
   required String latitude,
   required String longitude,
+  required DateTime startDate,
+  DateTime? endDate,
   List<int>? selectedVictim,
   int? taskId,
 }) async {
@@ -54,6 +56,8 @@ Future<String> createTask({
     "admin_id": null,
     "volunteer_ids": selectedVolunteers,
     "victim_ids": selectedVictim ?? [],
+    "start_date": startDate.toIso8601String(),
+    "end_date": endDate?.toIso8601String(),
     "location": {"latitude": latitude, "longitude": longitude},
   };
 
@@ -96,6 +100,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   final TextEditingController searchVolunteersController =
       TextEditingController();
   final TextEditingController searchVictimController = TextEditingController();
+  DateTime? startDate;
+  DateTime? endDate;
 
   final MapController _mapController = MapController();
   List<Marker> _markers = [];
@@ -113,10 +119,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   void initState() {
     super.initState();
     _loadData();
+    startDate = DateTime.now(); // Set default start date to current date
 
     if (widget.taskToEdit != null) {
       nameController.text = widget.taskToEdit!.name;
       descriptionController.text = widget.taskToEdit!.description;
+      startDate = widget.taskToEdit!.startDate;
+      endDate = widget.taskToEdit!.endDate;
       _loadTaskLocation();
       selectedVolunteers =
           widget.taskToEdit!.assignedVolunteers
@@ -215,14 +224,24 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     final latitude = latitudeController.text.trim();
     final longitude = longitudeController.text.trim();
 
+    if (startDate == null) {
+      AppSnackBar.show(
+        context: context,
+        message: "Por favor, selecciona una fecha de inicio",
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
     try {
-      // Usar la función createTask que implementa correctamente el proceso con los handlers
       final result = await createTask(
         name: name,
         description: description,
         selectedVolunteers: selectedVolunteers,
         latitude: latitude,
         longitude: longitude,
+        startDate: startDate!,
+        endDate: endDate,
         selectedVictim: selectedVictim,
         taskId: widget.taskToEdit?.id,
       );
@@ -421,6 +440,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 maxLines: 2,
               ),
               const SizedBox(height: 8),
+              _buildDateFields(),
+              const SizedBox(height: 8),
               Expanded(child: _buildLocationFields()),
               const SizedBox(height: 8),
               _buildCreateButton(widget.taskToEdit != null),
@@ -435,6 +456,99 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               const SizedBox(height: 16),
               Expanded(child: _buildVictimSection()),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateFields() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Fechas de la tarea',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _buildDateField(
+                label: 'Fecha de inicio',
+                date: startDate,
+                onDateSelected: (date) {
+                  setState(() {
+                    startDate = date;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildDateField(
+                label: 'Fecha de fin (opcional)',
+                date: endDate,
+                onDateSelected: (date) {
+                  setState(() {
+                    endDate = date;
+                  });
+                },
+                isOptional: true,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField({
+    required String label,
+    required DateTime? date,
+    required Function(DateTime) onDateSelected,
+    bool isOptional = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
+        InkWell(
+          onTap: () async {
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: date ?? DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (selectedDate != null) {
+              onDateSelected(selectedDate);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  date != null
+                      ? '${date.day}/${date.month}/${date.year}'
+                      : isOptional
+                      ? 'No especificada'
+                      : 'Selecciona una fecha',
+                  style: TextStyle(
+                    color: date != null ? Colors.black : Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+                const Icon(Icons.calendar_today, size: 16),
+              ],
+            ),
           ),
         ),
       ],
@@ -465,7 +579,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 22),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -476,6 +590,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         ),
         const SizedBox(height: 8),
         Expanded(
+          flex: 2,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
@@ -705,12 +820,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         labelText: label,
         contentPadding:
             contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(color: Colors.red, width: 2.0),
         ),
+        isDense: true,
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,

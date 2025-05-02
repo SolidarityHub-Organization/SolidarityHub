@@ -7,6 +7,8 @@ class TaskWithDetails {
   final String description;
   final int? adminId;
   final int locationId;
+  final DateTime startDate;
+  final DateTime? endDate;
   final List<Volunteer> assignedVolunteers;
   final List<Victim> assignedVictim;
 
@@ -16,6 +18,8 @@ class TaskWithDetails {
     required this.description,
     required this.adminId,
     required this.locationId,
+    required this.startDate,
+    this.endDate,
     required this.assignedVolunteers,
     required this.assignedVictim,
   });
@@ -27,6 +31,9 @@ class TaskWithDetails {
       description: json['description'],
       adminId: json['admin_id'],
       locationId: json['location_id'],
+      startDate: DateTime.parse(json['start_date']),
+      endDate:
+          json['end_date'] != null ? DateTime.parse(json['end_date']) : null,
       assignedVolunteers:
           (json['assigned_volunteers'] as List)
               .map((volunteer) => Volunteer.fromJson(volunteer))

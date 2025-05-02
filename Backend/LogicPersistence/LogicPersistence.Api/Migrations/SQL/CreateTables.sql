@@ -204,6 +204,8 @@ CREATE TABLE IF NOT EXISTS "task" (
     "description" VARCHAR(1000) NOT NULL,
     "admin_id" INT,
     "location_id" INT NOT NULL,
+    "start_date" TIMESTAMP NOT NULL,
+    "end_date" TIMESTAMP,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY ("admin_id") REFERENCES "admin"("id"),

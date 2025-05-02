@@ -7,6 +7,8 @@ public class Task {
 	public string description { get; set; } = string.Empty;
 
     public DateTime created_at { get; set; } 
+    public DateTime start_date { get; set; }
+    public DateTime? end_date { get; set; }
 
 	// the type defines the importance of the task
 	// admin_id != null (high importance)
