@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AjustesCuenta extends StatelessWidget {
+
+  final String email;
+
+  AjustesCuenta({required this.email});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

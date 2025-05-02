@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../interface/homeScreenAfectado.dart';
 import '../services/auth_service.dart';
 import '/interface/homeScreenVoluntario.dart';
 
@@ -19,11 +20,19 @@ class AuthController {
       final response = await AuthService.login(email, password); // Llamada al servicio
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body); //Checkear
-        if (data['role'] == 'voluntario' || data['role'] == 'victima') {
+        final data = jsonDecode(response.body);
+        String userName = data['name'];
+        print(jsonDecode(response.body));
+        if (data['role'] == 'voluntario') {
           print('Login exitoso');
-          Navigator.pushNamed(context, '/homeScreenVoluntario');
-          print('Token recibido: ${data['token']}'); //Checkear
+          Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreenVoluntario(email: email, userName: userName),),
+          );
+        }
+        else if(data['role'] == 'victima'){
+          Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreenAfectado(email: email, userName: userName),),
+          );
         }
       } else {
         print('Error de login: ${response.statusCode}');

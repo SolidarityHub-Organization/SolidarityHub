@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'ajustes.dart';
 
 class HomeScreenVoluntario extends StatelessWidget {
-  final String userName = "Ángel";
+  final String userName;
+  final String email;
+
+  HomeScreenVoluntario({required this.email, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,16 @@ class HomeScreenVoluntario extends StatelessWidget {
             Positioned(
               top: 16,
               left: 16,
-              child: Icon(Icons.logout, color: Colors.white, size: 28),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(40),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/login'); // O la ruta que corresponda
+                },
+                hoverColor: Colors.white.withOpacity(0.1),
+                child: Icon(Icons.logout, color: Colors.white, size: 28),
+              ),
             ),
+
 
             // Contenedor principal blanco
             Align(
@@ -59,7 +69,7 @@ class HomeScreenVoluntario extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => AjustesCuenta()),
+                              MaterialPageRoute(builder: (context) => AjustesCuenta(email:email)),
                             );
                           },
                           style: ElevatedButton.styleFrom(

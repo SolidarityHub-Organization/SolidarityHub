@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class HomeScreenAfectado extends StatelessWidget {
-  final String userName = "Ángel";
+  final String userName;
+  final String email;
+
+  HomeScreenAfectado({required this.email, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +17,16 @@ class HomeScreenAfectado extends StatelessWidget {
             Positioned(
               top: 16,
               left: 16,
-              child: Icon(Icons.logout, color: Colors.white, size: 28),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(40),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/login'); // O la ruta que corresponda
+                },
+                hoverColor: Colors.white.withOpacity(0.1),
+                child: Icon(Icons.logout, color: Colors.white, size: 28),
+              ),
             ),
+
 
             // Contenedor blanco centrado
             Align(

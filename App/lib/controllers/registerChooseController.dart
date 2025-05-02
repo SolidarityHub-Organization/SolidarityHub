@@ -52,17 +52,6 @@ class RegisterChooseController {
 
     print("[RegisterChooseController] Datos personales guardados:");
 
-    /*if (role.toLowerCase() == "voluntario") {
-      Navigator.push(context,
-        MaterialPageRoute(
-          builder: (context) => Schedules(userData: userData),),);
-    }
-    else if(role.toLowerCase() == "afectado"){
-      Navigator.push(context,
-        MaterialPageRoute(
-          builder: (context) => AddressScreen(userData: userData),),);
-    }
-    */
     Navigator.push(context,
       MaterialPageRoute(
         builder: (context) => AddressScreen(userData: userData),),);

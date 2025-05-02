@@ -12,6 +12,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
+  String email = "example@email.com";
+  String userName = "ExampleName";
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,9 +29,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => loginUI(), // Ruta nombrada para LogIn
         '/register': (context) => Register(), // Ruta nombrada para registro
         //'/registerChoose': (context) => RegisterChoose(), // Ruta nombrada para registro especifico
-        '/homeScreenVoluntario': (context) => HomeScreenVoluntario(),
-        '/homeScreenAfectado': (context) => HomeScreenAfectado(),
-        '/ajustes': (context) => AjustesCuenta(),
+        '/homeScreenVoluntario': (context) => HomeScreenVoluntario(email: email, userName: userName,),
+        '/homeScreenAfectado': (context) => HomeScreenAfectado(email: email, userName: userName),
+        '/ajustes': (context) => AjustesCuenta(email:email),
       }
     );
   }
