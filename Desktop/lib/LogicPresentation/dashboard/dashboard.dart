@@ -5,7 +5,6 @@ import 'tables/generalTable.dart';
 import 'tables/victimTable.dart';
 import 'tables/resourceTable.dart';
 import 'tables/volunteerTable.dart';
-import '../tasks/tasks.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -14,8 +13,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard>
-    with SingleTickerProviderStateMixin {
+class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
@@ -27,9 +25,7 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _refreshCurrentTab() {
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Future<void> _selectFechaInicio(BuildContext context) async {
@@ -108,17 +104,13 @@ class _DashboardState extends State<Dashboard>
                                 onPressed: () => _selectFechaInicio(context),
                                 style: TextButton.styleFrom(
                                   backgroundColor: Colors.white, // Fondo blanco
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                 ),
                                 child: Text(
                                   _fechaInicio != null
                                       ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}'
                                       : 'Seleccionar inicio',
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                  ), // Texto rojo
+                                  style: const TextStyle(color: Colors.red), // Texto rojo
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -126,17 +118,13 @@ class _DashboardState extends State<Dashboard>
                                 onPressed: () => _selectFechaFin(context),
                                 style: TextButton.styleFrom(
                                   backgroundColor: Colors.white, // Fondo blanco
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                 ),
                                 child: Text(
                                   _fechaFin != null
                                       ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}'
                                       : 'Seleccionar fin',
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                  ), // Texto rojo
+                                  style: const TextStyle(color: Colors.red), // Texto rojo
                                 ),
                               ),
                             ],
