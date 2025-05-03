@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../controllers/loginAUTH.dart';
-import '../models/button_creator.dart'; // Importamos el controlador
+import '../models/button_creator.dart';
+import '../models/custom_form_builder.dart';
+import '../services/login_validators.dart';
 
 class loginUI extends StatefulWidget {
   @override
@@ -8,46 +10,14 @@ class loginUI extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<loginUI> {
-  final AuthController authController = AuthController(); // Instancia del controlador
-  bool _emailHasError = false;
-  bool _passwordHasError = false;
-
-  String? _emailErrorText;
-  String? _passwordErrorText;
+  final AuthController authController = AuthController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _validateAndLogin() {
-    setState(() {
-      _emailHasError = false;
-      _passwordHasError = false;
-      _emailErrorText = null;
-      _passwordErrorText = null;
-
-      bool isValid = true;
-      String email = authController.emailController.text.trim();
-      String password = authController.passwordController.text;
-
-      if (email.isEmpty) {
-        _emailHasError = true;
-        _emailErrorText = 'El email no puede estar vacío';
-        isValid = false;
-      } else if (!email.contains('@')) {
-        _emailHasError = true;
-        _emailErrorText = 'Introduce un email válido';
-        isValid = false;
-      }
-
-      if (password.isEmpty) {
-        _passwordHasError = true;
-        _passwordErrorText = 'La contraseña no puede estar vacía';
-        isValid = false;
-      }
-
-      if (isValid) {
-        authController.login(context);
-      }
-    });
+    if (_formKey.currentState!.validate()) {
+      authController.login(context);
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +36,8 @@ class _LoginScreenState extends State<loginUI> {
                 color: Colors.white, // Tarjeta blanca central
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: CustomFormBuilder(
+                formKey: _formKey,
                 children: [
                   // Botones de Login y Registro
                   Row(
@@ -75,7 +45,7 @@ class _LoginScreenState extends State<loginUI> {
                       Expanded(
                         child: buildCustomButton(
                           "Log In",
-                          () => authController.onLoginTabPressed(context),
+                              () => authController.onLoginTabPressed(context),
                           verticalPadding: 12,
                         ),
                       ),
@@ -83,7 +53,7 @@ class _LoginScreenState extends State<loginUI> {
                       Expanded(
                         child: buildCustomButton(
                           "Registro",
-                          () => authController.onRegisterTabPressed(context),
+                              () => authController.onRegisterTabPressed(context),
                           backgroundColor: Colors.grey,
                           verticalPadding: 12,
                         ),
@@ -91,57 +61,49 @@ class _LoginScreenState extends State<loginUI> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  // Texto de bienvenida
-                  Text('Bienvenido a Solidary Hub', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
+                  // Texto de bienvenida
+                  Text(
+                    'Bienvenido a Solidary Hub',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 10),
-                  // Campos de texto
-                  // Email
-                  TextField(
+
+                  // Campo de email
+                  TextFormField(
                     controller: authController.emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      errorText: _emailErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: _emailHasError ? Colors.red : Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: _emailHasError ? Colors.red : Colors.blue),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                     ),
+                    validator: validateEmail,
                   ),
                   SizedBox(height: 15),
-                  //Contraseña
-                  TextField(
+
+                  // Campo de contraseña
+                  TextFormField(
                     controller: authController.passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      errorText: _passwordErrorText,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: _passwordHasError ? Colors.red : Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: _passwordHasError ? Colors.red : Colors.blue),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                     ),
+                    validator: validatePassword,
                   ),
 
-
                   SizedBox(height: 10),
+
                   // Enlace de "¿Has olvidado la contraseña?"
                   TextButton(
                     onPressed: () {},
-                    child: Text('¿Has olvidado la contraseña?', style: TextStyle(color: Colors.black)),
+                    child: Text(
+                      '¿Has olvidado la contraseña?',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
 
                   SizedBox(height: 20),
+
                   // Botón de "Log in"
                   buildCustomButton(
                     "Log in",
@@ -149,18 +111,7 @@ class _LoginScreenState extends State<loginUI> {
                     verticalPadding: 15,
                     horizontalPadding: 100,
                     backgroundColor: Colors.red,
-                  )
-                  /*ElevatedButton(
-                    onPressed: _validateAndLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Text('Log in', style: TextStyle(color: Colors.white, fontSize: 16)),
-                  ),*/
+                  ),
                 ],
               ),
             ),
@@ -170,5 +121,3 @@ class _LoginScreenState extends State<loginUI> {
     );
   }
 }
-
-
