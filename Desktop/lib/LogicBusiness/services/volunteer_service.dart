@@ -1,12 +1,29 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
 class VolunteerService {
-  final String baseUrl;
+  static String baseUrl = 'http://localhost:5170/api/v1';
 
-  VolunteerService(this.baseUrl);
+  static Future<List<Volunteer>> fetchVolunteers() async {
+    final url = Uri.parse('$baseUrl/volunteers');
 
-  Future<List<Map<String, dynamic>>> fetchFilteredVolunteerSkillsCount(
+    try {
+      final response = await http.get(url);
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final List<dynamic> data = json.decode(response.body);
+        return data
+            .map((item) => Volunteer.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } else {
+        throw Exception("Error fetching volunteers: ${response.statusCode}");
+      }
+    } catch (error) {
+      throw Exception("Error: $error");
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchFilteredVolunteerSkillsCount(
     DateTime startDate,
     DateTime endDate,
   ) async {
@@ -30,7 +47,7 @@ class VolunteerService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchLocations() async {
+  static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/api/v1/map/volunteers-with-location'),

@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
+import 'package:solidarityhub/LogicPersistence/models/task.dart';
 
-class TaskServices {
+class TaskService {
   static String baseUrl = 'http://localhost:5170/api/v1';
 
   static Future<String> createTask({
@@ -37,6 +38,29 @@ class TaskServices {
     return await validationHandler.handle(taskData);
   }
 
+  static Future<void> updateTask(TaskWithDetails task) async {
+    final url = Uri.parse('$baseUrl/tasks/${task.id}');
+    final body = {
+      'id': task.id,
+      'name': task.name,
+      'description': task.description,
+      'admin_id': task.adminId,
+      'location_id': task.locationId,
+      'start_date': task.startDate.toIso8601String(),
+      'end_date': task.endDate?.toIso8601String(),
+      'volunteer_ids': task.assignedVolunteers.map((v) => v.id).toList(),
+      'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
+    };
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(body),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update task');
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchTaskTypeCount(
     DateTime startDate,
     DateTime endDate,
@@ -48,7 +72,7 @@ class TaskServices {
     );
     final response = await http.get(
       Uri.parse(
-        '$baseUrl/api/v1/tasks/states/count'
+        '$baseUrl/tasks/states/count'
         '?fromDate=${startDate.toIso8601String()}'
         '&toDate=${endDate.toIso8601String()}',
       ),
@@ -68,7 +92,7 @@ class TaskServices {
   ) async {
     final response = await http.get(
       Uri.parse(
-        '$baseUrl/api/v1/tasks/dashboard'
+        '$baseUrl/tasks/dashboard'
         '?fromDate=${startDate.toIso8601String()}'
         '&toDate=${endDate.toIso8601String()}',
       ),
@@ -95,7 +119,7 @@ class TaskServices {
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/v1/map/tasks-with-location'),
+        Uri.parse('$baseUrl/map/tasks-with-location'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

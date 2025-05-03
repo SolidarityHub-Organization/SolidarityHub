@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
-import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
+import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/models/column_data.dart';
 
@@ -245,7 +245,7 @@ class TaskTableController {
     isLoading = true;
 
     try {
-      await TaskServices.deleteTask(task.id);
+      await TaskService.deleteTask(task.id);
       await fetchTasks();
       if (onComplete != null) {
         onComplete();
