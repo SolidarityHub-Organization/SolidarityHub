@@ -24,6 +24,7 @@ public class Volunteer : IUser{
 
 
 	// Navigation properties
+	public Time? time_id { get; set; }
 
 	// we don't use this navigation property to maintain consistency with not using the massive navigation property lists, we get time preference through another query instead, even if this one wouldn't occupy much memory
 	//public virtual ICollection<VolunteerTime> VolunteerTimes { get; set; } = new List<VolunteerTime>();

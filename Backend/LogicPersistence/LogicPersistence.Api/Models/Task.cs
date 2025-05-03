@@ -7,8 +7,7 @@ public class Task {
 	public string description { get; set; } = string.Empty;
 
     public DateTime created_at { get; set; } 
-    public DateTime start_date { get; set; }
-    public DateTime? end_date { get; set; }
+    
 
 	// the type defines the importance of the task
 	// admin_id != null (high importance)
@@ -28,6 +27,7 @@ public class Task {
 
 
 	// Navigation properties
+	public Time? time_id { get; set; }
 
 	//public virtual ICollection<Need> Needs { get; set; } = new List<Need>();
     //public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
