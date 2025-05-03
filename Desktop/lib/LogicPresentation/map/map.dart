@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
 import 'package:solidarityhub/LogicPresentation/map/infoSquareFactory.dart';
 import '../../LogicBusiness/services/victimServices.dart';
 import '../../LogicBusiness/services/volunteerServices.dart';
 import '../../LogicBusiness/services/affectedZoneServices.dart';
-import '../../LogicBusiness/services/taskTableServices.dart';
 import '../../LogicPersistence/models/mapMarker.dart';
 import '../../LogicPersistence/models/affectedZone.dart';
 import 'markerfactory.dart';
@@ -29,7 +29,6 @@ class _MapScreenState extends State<MapScreen> {
 
   final VictimService _victimServices = VictimService(baseUrl);
   final VolunteerService _volunteerServices = VolunteerService(baseUrl);
-  final TaskTableService _taskServices = TaskTableService(baseUrl);
   final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(
     baseUrl,
   );
@@ -88,7 +87,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchTaskLocations() async {
     try {
-      final locations = await _taskServices.fetchLocations();
+      final locations = await TaskServices.fetchLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {

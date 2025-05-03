@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
+import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/victim.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
@@ -36,38 +36,6 @@ class CreateTaskModal extends StatefulWidget {
 
   @override
   State<CreateTaskModal> createState() => _CreateTaskModalState();
-}
-
-Future<String> createTask({
-  required String name,
-  required String description,
-  required List<int> selectedVolunteers,
-  required String latitude,
-  required String longitude,
-  required DateTime startDate,
-  DateTime? endDate,
-  List<int>? selectedVictim,
-  int? taskId,
-}) async {
-  final Map<String, dynamic> taskData = {
-    "id": taskId,
-    "name": name,
-    "description": description,
-    "admin_id": null,
-    "volunteer_ids": selectedVolunteers,
-    "victim_ids": selectedVictim ?? [],
-    "start_date": startDate.toIso8601String(),
-    "end_date": endDate?.toIso8601String(),
-    "location": {"latitude": latitude, "longitude": longitude},
-  };
-
-  final validationHandler = ValidationHandler();
-  final locationHandler = LocationHandler();
-  final persistenceHandler = PersistenceHandler();
-
-  validationHandler.setNext(locationHandler).setNext(persistenceHandler);
-
-  return await validationHandler.handle(taskData);
 }
 
 Future<List<T>> fetchData<T>(
@@ -234,7 +202,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
-      final result = await createTask(
+      final result = await TaskServices.createTask(
         name: name,
         description: description,
         selectedVolunteers: selectedVolunteers,

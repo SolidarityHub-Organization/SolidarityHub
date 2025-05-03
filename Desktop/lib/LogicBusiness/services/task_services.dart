@@ -1,12 +1,46 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
 
-class TaskTableService {
-  final String baseUrl;
+class TaskServices {
+  static String baseUrl = 'http://localhost:5170/api/v1';
 
-  TaskTableService(this.baseUrl);
+  static Future<String> createTask({
+    required String name,
+    required String description,
+    required List<int> selectedVolunteers,
+    required String latitude,
+    required String longitude,
+    required DateTime startDate,
+    DateTime? endDate,
+    List<int>? selectedVictim,
+    int? taskId,
+  }) async {
+    final Map<String, dynamic> taskData = {
+      "id": taskId,
+      "name": name,
+      "description": description,
+      "admin_id": null,
+      "volunteer_ids": selectedVolunteers,
+      "victim_ids": selectedVictim ?? [],
+      "start_date": startDate.toIso8601String(),
+      "end_date": endDate?.toIso8601String(),
+      "location": {"latitude": latitude, "longitude": longitude},
+    };
 
-  Future<Map<String, dynamic>> fetchTaskTypeCount(DateTime startDate, DateTime endDate) async {
+    final validationHandler = ValidationHandler();
+    final locationHandler = LocationHandler();
+    final persistenceHandler = PersistenceHandler();
+
+    validationHandler.setNext(locationHandler).setNext(persistenceHandler);
+
+    return await validationHandler.handle(taskData);
+  }
+
+  static Future<Map<String, dynamic>> fetchTaskTypeCount(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     print(
       'Fetching task type count with query parameters: '
       '?fromDate=${startDate.toIso8601String()}'
@@ -28,7 +62,10 @@ class TaskTableService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchAllTasks(DateTime startDate, DateTime endDate) async {
+  static Future<List<Map<String, dynamic>>> fetchAllTasks(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     final response = await http.get(
       Uri.parse(
         '$baseUrl/api/v1/tasks/dashboard'
@@ -45,7 +82,7 @@ class TaskTableService {
     }
   }
 
-  Future<String> deleteTask(int id) async {
+  static Future<String> deleteTask(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/tasks/$id'));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -55,9 +92,11 @@ class TaskTableService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchLocations() async {
+  static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/v1/map/tasks-with-location'));
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/v1/map/tasks-with-location'),
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {

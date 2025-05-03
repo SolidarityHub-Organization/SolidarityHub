@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
-import '../../../LogicBusiness/services/taskTableServices.dart';
+import '../../../LogicBusiness/services/task_services.dart';
 
 class TaskTable extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -15,10 +15,6 @@ class TaskTable extends StatefulWidget {
 }
 
 class _TaskTableState extends State<TaskTable> {
-  final TaskTableService _taskService = TaskTableService(
-    'http://localhost:5170',
-  );
-
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
     // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
@@ -32,13 +28,13 @@ class _TaskTableState extends State<TaskTable> {
   }
 
   // Inicializar el Future correctamente
-  late final Future<Map<String, dynamic>> _taskTypeCount = _taskService
-      .fetchTaskTypeCount(
+  late final Future<Map<String, dynamic>> _taskTypeCount =
+      TaskServices.fetchTaskTypeCount(
         _adjustStartDate(widget.fechaInicio),
         _adjustEndDate(widget.fechaFin),
       );
-  late final Future<List<Map<String, dynamic>>> _allTasks = _taskService
-      .fetchAllTasks(
+  late final Future<List<Map<String, dynamic>>> _allTasks =
+      TaskServices.fetchAllTasks(
         _adjustStartDate(widget.fechaInicio),
         _adjustEndDate(widget.fechaFin),
       );
