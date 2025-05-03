@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import '../models/button_creator.dart';
+import '../controllers/homeScreenController.dart';
 
 class HomeScreenAfectado extends StatelessWidget {
   final String userName;
   final String email;
+  final HomeScreenController homeScreenController = HomeScreenController();
 
   HomeScreenAfectado({required this.email, required this.userName});
 
@@ -60,13 +63,32 @@ class HomeScreenAfectado extends StatelessWidget {
                         ),
                         SizedBox(height: 30),
 
-                        _buildButton("Ver tareas disponibles"),
+                        buildButton("Ver tareas disponibles"),
                         SizedBox(height: 16),
-                        _buildButton("Ajustes"),
+                        // Encapsulado en una caja para que sea visualmente igual a los otros botones
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Ajustes",
+                            homeScreenController.onSettingsPressed(context, email),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
                         SizedBox(height: 40),
 
                         // Botón separado
-                        _buildButton("Cerrar sesión"),
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Cerrar sesión",
+                            homeScreenController.onCerrarSesionPressed(context),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
                       ],
                     ),
 
@@ -104,21 +126,4 @@ class HomeScreenAfectado extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(String text) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        padding: EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-        minimumSize: Size(double.infinity, 0),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white, fontSize: 16),
-      ),
-    );
-  }
 }

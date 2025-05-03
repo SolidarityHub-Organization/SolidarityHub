@@ -22,3 +22,21 @@ Widget buildCustomButton(
     child: Text(text, style: const TextStyle(color: Colors.white)),
   );
 }
+
+Widget buildButton(String text) {
+  return ElevatedButton(
+    onPressed: () {},
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red,
+      padding: EdgeInsets.symmetric(vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(40),
+      ),
+      minimumSize: Size(double.infinity, 0),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(color: Colors.white, fontSize: 16),
+    ),
+  );
+}
