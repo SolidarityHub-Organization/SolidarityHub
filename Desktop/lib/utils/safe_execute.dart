@@ -2,54 +2,31 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class SafeExecute {
-  static Future<T?> runAsync<T>({
-    required Future<T> Function() action,
-    String? context,
-    Function(Object error, StackTrace stackTrace)? onError,
-    T? defaultValue,
-  }) async {
+  static Future<T> runAsync<T>(Future<T> Function() action, [String? context]) async {
     try {
       return await action();
     } catch (error, stackTrace) {
       _logError(error, stackTrace, context);
-
-      if (onError != null) {
-        onError(error, stackTrace);
-      }
-
-      return defaultValue;
+      rethrow;
     }
   }
 
-  static T? run<T>({
-    required T Function() action,
-    String? context,
-    Function(Object error, StackTrace stackTrace)? onError,
-    T? defaultValue,
-  }) {
+  static T run<T>(T Function() action, [String? context]) {
     try {
       return action();
     } catch (error, stackTrace) {
       _logError(error, stackTrace, context);
-
-      if (onError != null) {
-        onError(error, stackTrace);
-      }
-
-      return defaultValue;
+      rethrow;
     }
   }
 
   static void _logError(Object error, StackTrace stackTrace, String? context) {
     if (kDebugMode) {
-      print('╔════════════════════════════════════════');
-      print('║ ERROR${context != null ? ' en $context' : ''}');
-      print('╟────────────────────────────────────────');
-      print('║ ${error.toString()}');
-      print('╟────────────────────────────────────────');
-      print('║ Stack Trace:');
-      print('║ ${stackTrace.toString().split('\n').join('\n║ ')}');
-      print('╚════════════════════════════════════════');
+      print('ERROR${context != null ? ' en $context' : ''}');
+      print(error.toString());
+      print('Stack Trace:');
+      print(stackTrace.toString().split('\n').map((line) => line.trim()).where((line) => line.isNotEmpty).join('\n'));
+      print('');
     }
   }
 }

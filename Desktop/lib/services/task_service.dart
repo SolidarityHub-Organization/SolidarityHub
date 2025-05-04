@@ -4,17 +4,27 @@ import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/services/api_general_service.dart';
 
 class TaskService {
-  static Future<String> createTask(TaskWithDetails task) async {
+  static Future<String> createTask({
+    required String name,
+    required String description,
+    required List<int> selectedVolunteers,
+    required String latitude,
+    required String longitude,
+    required DateTime startDate,
+    DateTime? endDate,
+    List<int>? selectedVictim,
+    int? taskId,
+  }) async {
     final Map<String, dynamic> taskData = {
-      'id': task.id,
-      'name': task.name,
-      'description': task.description,
-      'admin_id': task.adminId,
-      'volunteer_ids': task.assignedVolunteers,
-      'victim_ids': task.assignedVictim,
-      'start_date': task.startDate.toIso8601String(),
-      'end_date': task.endDate?.toIso8601String(),
-      'location': task.locationId,
+      'id': taskId,
+      'name': name,
+      'description': description,
+      'admin_id': null,
+      'volunteer_ids': selectedVolunteers,
+      'victim_ids': selectedVictim ?? [],
+      'start_date': startDate.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
+      'location': {'latitude': latitude, 'longitude': longitude},
     };
 
     final validationHandler = ValidationHandler();

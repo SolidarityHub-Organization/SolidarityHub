@@ -56,7 +56,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   final MapController _mapController = MapController();
   List<Marker> _markers = [];
-  LatLng selectedLocation = const LatLng(39.4699, -0.3776); // Valencia por defecto
+  LatLng selectedLocation = const LatLng(39.4699, -0.3776);
   List<Volunteer> volunteers = [];
   List<Victim> victim = [];
   List<int> selectedVolunteers = [];
@@ -67,7 +67,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   void initState() {
     super.initState();
     _loadData();
-    startDate = DateTime.now(); // Set default start date to current date
+    startDate = DateTime.now();
 
     if (widget.taskToEdit != null) {
       nameController.text = widget.taskToEdit!.name;
@@ -155,6 +155,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _handleCreateTask() async {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
+    final latitude = latitudeController.text.trim();
+    final longitude = longitudeController.text.trim();
 
     if (startDate == null) {
       AppSnackBar.show(message: 'Por favor, selecciona una fecha de inicio', type: SnackBarType.error);
@@ -162,29 +164,20 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     final result = await SafeExecute.runAsync(
-      action: () async {
-        return await TaskService.createTask(
-          TaskWithDetails(
-            name: name,
-            description: description,
-            startDate: startDate!,
-            endDate: endDate,
-            locationId: widget.taskToEdit?.locationId ?? 0,
-            assignedVictim: victim.where((v) => selectedVictim.contains(v.id)).toList(),
-            assignedVolunteers: volunteers.where((v) => selectedVolunteers.contains(v.id)).toList(),
-            adminId: widget.taskToEdit?.adminId ?? 1,
-            id: widget.taskToEdit?.id ?? 0,
-          ),
-        );
-      },
-      context: 'createTask',
-      onError: (error, stackTrace) {
-        AppSnackBar.show(message: 'Error: $error', type: SnackBarType.error);
-      },
-      defaultValue: 'ERROR: No se pudo crear la tarea',
+      () => TaskService.createTask(
+        name: name,
+        description: description,
+        selectedVolunteers: selectedVolunteers,
+        latitude: latitude,
+        longitude: longitude,
+        startDate: startDate!,
+        endDate: endDate,
+        selectedVictim: selectedVictim,
+        taskId: widget.taskToEdit?.id,
+      ),
     );
 
-    if (result?.startsWith('OK:') ?? false) {
+    if (result.startsWith('OK')) {
       widget.onTaskCreated();
       if (mounted) {
         Navigator.pop(context);
@@ -194,7 +187,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         type: SnackBarType.success,
       );
     } else {
-      AppSnackBar.show(message: result ?? 'Error desconocido', type: SnackBarType.error);
+      AppSnackBar.show(message: result, type: SnackBarType.error);
     }
   }
 
@@ -206,9 +199,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
-      // Encode the address for URL
       final encodedAddress = Uri.encodeComponent(address);
-      // Use Nominatim geocoding service (OpenStreetMap)
       final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
 
       final response = await http.get(url, headers: {'User-Agent': 'SolidarityHub/1.0'});
@@ -225,7 +216,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             selectedLocation = location;
             _updateLocationControllers(location);
             _updateMarker(location);
-            _mapController.move(location, 15.0); // Zoom in to the found location
+            _mapController.move(location, 15.0);
           });
         } else {
           AppSnackBar.show(message: 'No se encontró ninguna ubicación con esa dirección', type: SnackBarType.warning);
@@ -465,6 +456,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                   TileLayer(
                     urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
+                    retinaMode: RetinaMode.isHighDensity(context),
                   ),
                   MarkerLayer(markers: _markers),
                 ],

@@ -193,6 +193,7 @@ class _MapScreenState extends State<MapScreen> {
                         TileLayer(
                           urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                           subdomains: ['a', 'b', 'c', 'd'],
+                          retinaMode: RetinaMode.isHighDensity(context),
                         ),
                         PolygonLayer(polygons: _polygons),
                         MarkerLayer(markers: flutterMapMarkers),
