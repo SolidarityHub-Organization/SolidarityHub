@@ -95,12 +95,12 @@ Future<void> showAutoAssignerDialog(
                     selectedStrategy == AssignmentStrategyType.balanced
                         ? BalancedAssignmentStrategy()
                         : RandomAssignmentStrategy();
-                Navigator.of(context).pop();
                 AutoAssigner(strategy).assignTasks(
                   tasks,
                   await VolunteerService.fetchVolunteers(),
                   volunteersPerTask,
                 );
+                Navigator.of(context).pop();
               }
             },
             child: const Text('Assign'),
@@ -112,6 +112,4 @@ Future<void> showAutoAssignerDialog(
 
   numberController.dispose();
   affectedTasksNotifier.dispose();
-
-  return null;
 }
