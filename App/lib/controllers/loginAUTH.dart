@@ -22,16 +22,17 @@ class AuthController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         String userName = data['name'];
+        String role = data['role'];
         print(jsonDecode(response.body));
-        if (data['role'] == 'voluntario') {
+        if (role == 'voluntario') {
           print('Login exitoso');
           Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreenVoluntario(email: email, userName: userName),),
+            context, MaterialPageRoute(builder: (context) => HomeScreenVoluntario(email: email, userName: userName, role: role),),
           );
         }
-        else if(data['role'] == 'victima'){
+        else if(role == 'victima'){
           Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreenAfectado(email: email, userName: userName),),
+            context, MaterialPageRoute(builder: (context) => HomeScreenAfectado(email: email, userName: userName, role: role),),
           );
         }
       } else {

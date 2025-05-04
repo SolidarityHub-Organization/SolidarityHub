@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/LogicBusiness/handlers/auto_assigner.dart';
 import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
+import 'package:solidarityhub/LogicBusiness/services/volunteer_service.dart';
+import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/widgets/task_filter_panel.dart';
@@ -91,28 +94,64 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                   ],
                 ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    showCreateTaskModal(context, () {
-                      _loadData();
-                    }, null);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 13.0,
-                      vertical: 16.0,
+                Row(
+                  spacing: 8,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final volunteers =
+                            await VolunteerService.fetchVolunteers();
+                        List<TaskWithDetails> tasksWithoutVolunteers =
+                            _controller.tasks
+                                .where(
+                                  (task) => task.assignedVolunteers.isEmpty,
+                                )
+                                .toList();
+                        AutoAssigner(
+                          RandomAssignmentStrategy(),
+                        ).assignTasks(tasksWithoutVolunteers, volunteers);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 13.0,
+                          vertical: 16.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.auto_fix_high),
+                      label: const Text(
+                        'Auto Asignar',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        showCreateTaskModal(context, () {
+                          _loadData();
+                        }, null);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 13.0,
+                          vertical: 16.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      icon: const Icon(Icons.add, color: Colors.white),
+                      label: const Text(
+                        'Nueva Tarea',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                  ),
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  label: const Text(
-                    'Nueva Tarea',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  ],
                 ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
@@ -13,6 +14,7 @@ class RandomAssignmentStrategy implements AssignmentStrategy {
     for (var task in tasks) {
       var volunteer = volunteers[Random().nextInt(volunteers.length)];
       task.assignedVolunteers.add(volunteer);
+      TaskService.updateTask(task);
     }
   }
 }

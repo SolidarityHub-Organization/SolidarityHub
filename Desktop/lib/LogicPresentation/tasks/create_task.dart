@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/LogicBusiness/services/task_services.dart';
+import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
 import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPersistence/models/victim.dart';
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
@@ -202,7 +202,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
-      final result = await TaskServices.createTask(
+      final result = await TaskService.createTask(
         name: name,
         description: description,
         selectedVolunteers: selectedVolunteers,

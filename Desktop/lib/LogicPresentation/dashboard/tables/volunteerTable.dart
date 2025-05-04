@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../LogicBusiness/services/volunteerServices.dart';
 import 'dart:math' as math;
+
+import 'package:solidarityhub/LogicBusiness/services/volunteer_service.dart';
 
 class VolunteerTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -19,9 +20,6 @@ class VolunteerTab extends StatefulWidget {
 
 class _VolunteerTabState extends State<VolunteerTab> {
   late Future<List<Map<String, dynamic>>> _volunteerNeedsFuture;
-  final VolunteerService _volunteerService = VolunteerService(
-    'http://localhost:5170',
-  );
 
   final ScrollController _mainScrollController = ScrollController();
   final ScrollController _legendScrollController = ScrollController();
@@ -48,7 +46,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
       widget.fechaInicio ?? now.subtract(const Duration(days: 365)),
     );
     final end = _adjustEndDate(widget.fechaFin);
-    _volunteerNeedsFuture = _volunteerService.fetchFilteredVolunteerSkillsCount(
+    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(
       start,
       end,
     );
@@ -65,8 +63,8 @@ class _VolunteerTabState extends State<VolunteerTab> {
               DateTime.now().subtract(const Duration(days: 365)),
         );
         final end = _adjustEndDate(widget.fechaFin);
-        _volunteerNeedsFuture = _volunteerService
-            .fetchFilteredVolunteerSkillsCount(start, end);
+        _volunteerNeedsFuture =
+            VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
       });
     }
   }

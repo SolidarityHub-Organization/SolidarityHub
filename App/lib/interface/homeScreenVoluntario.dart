@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'ajustes.dart';
+import '../controllers/homeScreenController.dart';
+import '../models/button_creator.dart';
 
 class HomeScreenVoluntario extends StatelessWidget {
   final String userName;
   final String email;
-
-  HomeScreenVoluntario({required this.email, required this.userName});
+  final String role;
+  final HomeScreenController homeScreenController = HomeScreenController();
+  HomeScreenVoluntario({required this.email, required this.userName, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +63,34 @@ class HomeScreenVoluntario extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 30),
-                        _buildButton("Ver tareas inscritas"),
+                        buildButton("Ver tareas inscritas"),
                         SizedBox(height: 16),
-                        _buildButton("Ver tareas disponibles"),
+                        buildButton("Ver tareas disponibles"),
                         SizedBox(height: 16),
-                        _buildButton("Ajustes"),
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Ajustes",
+                            homeScreenController.onSettingsPressed(context, email, role),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
+
+                        SizedBox(height: 40),
+
+                        // Botón separado
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Cerrar sesión",
+                            homeScreenController.onCerrarSesionPressed(context),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
                       ],
                     ),
 
@@ -102,21 +128,4 @@ class HomeScreenVoluntario extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(String text) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        padding: EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-        minimumSize: Size(double.infinity, 0),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white, fontSize: 16),
-      ),
-    );
-  }
 }
