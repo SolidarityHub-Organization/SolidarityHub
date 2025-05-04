@@ -3,6 +3,7 @@ import 'package:solidarityhub/controllers/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:intl/intl.dart';
 import 'package:solidarityhub/models/task.dart';
+import 'package:solidarityhub/widgets/ui/snack_bar.dart';
 
 class TaskTableCell extends StatelessWidget {
   final String columnId;
@@ -167,17 +168,9 @@ class TaskTableCell extends StatelessWidget {
           onTaskChanged();
         });
 
-        if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Tarea eliminada con éxito'), backgroundColor: Colors.green));
-        }
+        AppSnackBar.show(message: 'Tarea eliminada con éxito', type: SnackBarType.info);
       } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al eliminar la tarea: ${e.toString()}'), backgroundColor: Colors.red),
-          );
-        }
+        AppSnackBar.show(message: 'Error al eliminar la tarea: ${e.toString()}', type: SnackBarType.info);
       }
     }
   }

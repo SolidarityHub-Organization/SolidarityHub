@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/services/coordenadasServices.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/tables/taskTable.dart';
 import 'package:solidarityhub/controllers/task_table_controller.dart';
+import 'package:solidarityhub/controllers/task_controller.dart';
+import 'package:solidarityhub/widgets/task_table/task_table.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:solidarityhub/widgets/task_table/auto_assigner_dialog.dart';
 import 'package:solidarityhub/widgets/task_table/task_filter_panel.dart';
@@ -14,31 +15,19 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
-  late TaskTableController _controller;
+  late TaskTableController _tableController;
 
   @override
   void initState() {
     super.initState();
-    _controller = TaskTableController(coordenadasService: CoordenadasService('http://localhost:5170/api/v1'));
-    _loadData();
+    _tableController = TaskTableController(coordenadasService: CoordenadasService('http://localhost:5170/api/v1'));
+    _loadTasks();
   }
 
-  Future<void> _loadData() async {
-    try {
-      await _controller.fetchTasks(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar las tareas: ${e.toString()}'), backgroundColor: Colors.red),
-        );
-      }
+  Future<void> _loadTasks() async {
+    await TaskController.loadData(_tableController);
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -77,7 +66,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () async {
-                        await showAutoAssignerDialog(context, _controller.tasks);
+                        await showAutoAssignerDialog(context, _tableController.tasks);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -91,7 +80,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     ElevatedButton.icon(
                       onPressed: () {
                         showCreateTaskModal(context, () {
-                          _loadData();
+                          _loadTasks();
                         }, null);
                       },
                       style: ElevatedButton.styleFrom(
@@ -108,20 +97,15 @@ class _TasksScreenState extends State<TasksScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            TaskFilterPanel(controller: _controller, onFilterChanged: () => setState(() {})),
+            TaskFilterPanel(controller: _tableController, onFilterChanged: () => setState(() {})),
             const SizedBox(height: 16),
-            _controller.isLoading
+            _tableController.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : _controller.tasks.isEmpty
+                : _tableController.tasks.isEmpty
                 ? const Center(
                   child: Text('No hay tareas disponibles.', style: TextStyle(fontSize: 16, color: Colors.grey)),
                 )
-                : Expanded(
-                  child: TaskTable(
-                    fechaInicio: DateTime.now().subtract(const Duration(days: 30)),
-                    fechaFin: DateTime.now(),
-                  ),
-                ),
+                : Expanded(child: TaskTable(controller: _tableController, onTaskChanged: () => setState(() {}))),
           ],
         ),
       ),

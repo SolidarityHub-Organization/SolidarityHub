@@ -5,7 +5,7 @@ import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/LogicPresentation/map/infoSquareFactory.dart';
 import '../../services/victimServices.dart';
 import '../../services/volunteer_service.dart';
-import '../../services/affectedZoneServices.dart';
+import '../../services/affected_zone_services.dart';
 import '../../models/mapMarker.dart';
 import '../../models/affectedZone.dart';
 import 'markerfactory.dart';

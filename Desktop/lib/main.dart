@@ -5,6 +5,7 @@ import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
 import 'package:solidarityhub/pages/tasks_screen.dart';
 import 'package:solidarityhub/utils/database.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
+import 'package:solidarityhub/widgets/ui/snack_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Solidarity Hub',
+      scaffoldMessengerKey: AppSnackBar.messengerKey,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.red), useMaterial3: true),
       home: const MyHomePage(title: 'Solidarity Hub '),
       debugShowCheckedModeBanner: false,

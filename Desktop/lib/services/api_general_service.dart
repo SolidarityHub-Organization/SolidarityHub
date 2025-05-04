@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../utils/app_config.dart';
 
@@ -6,44 +7,41 @@ extension StatusCodeExtension on int {
   bool get ok => this >= 200 && this < 300;
 }
 
-class ApiService {
-  final AppConfig _config = AppConfig();
+class ApiGeneralService {
+  static final AppConfig _config = AppConfig();
 
-  String get baseUrl => _config.apiBaseUrl;
-  bool get isDebugMode => _config.isDebugMode;
+  static String get baseUrl => _config.apiBaseUrl;
 
-  Map<String, String> get headers => {'Content-Type': 'application/json', 'Accept': 'application/json'};
+  static Map<String, String> get headers => {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
-  Future<http.Response> get(String endpoint, {Map<String, String>? queryParams}) async {
+  static Future<http.Response> get(String endpoint, {Map<String, String>? queryParams}) async {
     final Uri uri = _buildUri(endpoint, queryParams);
 
-    print(isDebugMode);
-
-    if (isDebugMode) {
+    if (kDebugMode) {
       print('🌐 GET Request: $uri');
     }
 
     try {
       final response = await http.get(uri, headers: headers);
 
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('📥 Response [${response.statusCode}]: ${response.statusCode.ok ? "" : response.body}');
       }
 
       return response;
     } catch (e) {
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('❌ Error en GET $endpoint: $e');
       }
       rethrow;
     }
   }
 
-  Future<http.Response> post(String endpoint, {Map<String, String>? queryParams, dynamic body}) async {
+  static Future<http.Response> post(String endpoint, {Map<String, String>? queryParams, dynamic body}) async {
     final Uri uri = _buildUri(endpoint, queryParams);
     final String jsonBody = json.encode(body);
 
-    if (isDebugMode) {
+    if (kDebugMode) {
       print('🌐 POST Request: $uri');
       print('📤 Body: $jsonBody');
     }
@@ -51,24 +49,24 @@ class ApiService {
     try {
       final response = await http.post(uri, headers: headers, body: jsonBody);
 
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('📥 Response [${response.statusCode}]: ${response.statusCode.ok ? "" : response.body}');
       }
 
       return response;
     } catch (e) {
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('❌ Error en POST $endpoint: $e');
       }
       rethrow;
     }
   }
 
-  Future<http.Response> put(String endpoint, {Map<String, String>? queryParams, dynamic body}) async {
+  static Future<http.Response> put(String endpoint, {Map<String, String>? queryParams, dynamic body}) async {
     final Uri uri = _buildUri(endpoint, queryParams);
     final String jsonBody = json.encode(body);
 
-    if (isDebugMode) {
+    if (kDebugMode) {
       print('🌐 PUT Request: $uri');
       print('📤 Body: $jsonBody');
     }
@@ -76,43 +74,43 @@ class ApiService {
     try {
       final response = await http.put(uri, headers: headers, body: jsonBody);
 
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('📥 Response [${response.statusCode}]: ${response.statusCode.ok ? "" : response.body}');
       }
 
       return response;
     } catch (e) {
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('❌ Error en PUT $endpoint: $e');
       }
       rethrow;
     }
   }
 
-  Future<http.Response> delete(String endpoint, {Map<String, String>? queryParams}) async {
+  static Future<http.Response> delete(String endpoint, {Map<String, String>? queryParams}) async {
     final Uri uri = _buildUri(endpoint, queryParams);
 
-    if (isDebugMode) {
+    if (kDebugMode) {
       print('🌐 DELETE Request: $uri');
     }
 
     try {
       final response = await http.delete(uri, headers: headers);
 
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('📥 Response [${response.statusCode}]: ${response.statusCode.ok ? "" : response.body}');
       }
 
       return response;
     } catch (e) {
-      if (isDebugMode) {
+      if (kDebugMode) {
         print('❌ Error en DELETE $endpoint: $e');
       }
       rethrow;
     }
   }
 
-  Uri _buildUri(String endpoint, Map<String, String>? queryParams) {
+  static Uri _buildUri(String endpoint, Map<String, String>? queryParams) {
     if (endpoint.startsWith('/')) {
       endpoint = endpoint.substring(1);
     }

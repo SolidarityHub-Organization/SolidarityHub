@@ -4,10 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/task_service.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
-import 'package:solidarityhub/models/volunteer.dart';
+import 'package:solidarityhub/models/donation.dart' show Volunteer;
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
+import 'package:solidarityhub/widgets/ui/snack_bar.dart';
+import 'package:solidarityhub/utils/safe_execute.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(
@@ -127,7 +128,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           });
         }
       } catch (error) {
-        AppSnackBar.show(context: context, message: 'Error loading location: $error', type: SnackBarType.error);
+        AppSnackBar.show(message: 'Error loading location: $error', type: SnackBarType.error);
       }
     }
   }
@@ -147,64 +148,60 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       setState(() {
         isLoading = false;
       });
-      AppSnackBar.show(context: context, message: error.toString(), type: SnackBarType.error);
+      AppSnackBar.show(message: error.toString(), type: SnackBarType.error);
     }
   }
 
   Future<void> _handleCreateTask() async {
     final name = nameController.text.trim();
     final description = descriptionController.text.trim();
-    final latitude = latitudeController.text.trim();
-    final longitude = longitudeController.text.trim();
 
     if (startDate == null) {
-      AppSnackBar.show(
-        context: context,
-        message: 'Por favor, selecciona una fecha de inicio',
-        type: SnackBarType.error,
-      );
+      AppSnackBar.show(message: 'Por favor, selecciona una fecha de inicio', type: SnackBarType.error);
       return;
     }
 
-    try {
-      final result = await TaskService.createTask(
-        name: name,
-        description: description,
-        selectedVolunteers: selectedVolunteers,
-        latitude: latitude,
-        longitude: longitude,
-        startDate: startDate!,
-        endDate: endDate,
-        selectedVictim: selectedVictim,
-        taskId: widget.taskToEdit?.id,
-      );
-
-      if (result.startsWith('OK:')) {
-        widget.onTaskCreated();
-        if (mounted) {
-          Navigator.pop(context);
-        }
-        AppSnackBar.show(
-          context: context,
-          message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
-          type: SnackBarType.success,
+    final result = await SafeExecute.runAsync(
+      action: () async {
+        return await TaskService.createTask(
+          TaskWithDetails(
+            name: name,
+            description: description,
+            startDate: startDate!,
+            endDate: endDate,
+            locationId: widget.taskToEdit?.locationId ?? 0,
+            assignedVictim: victim.where((v) => selectedVictim.contains(v.id)).toList(),
+            assignedVolunteers: volunteers.where((v) => selectedVolunteers.contains(v.id)).toList(),
+            adminId: widget.taskToEdit?.adminId ?? 1,
+            id: widget.taskToEdit?.id ?? 0,
+          ),
         );
-      } else {
-        AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
+      },
+      context: 'createTask',
+      onError: (error, stackTrace) {
+        AppSnackBar.show(message: 'Error: $error', type: SnackBarType.error);
+      },
+      defaultValue: 'ERROR: No se pudo crear la tarea',
+    );
+
+    if (result?.startsWith('OK:') ?? false) {
+      widget.onTaskCreated();
+      if (mounted) {
+        Navigator.pop(context);
       }
-    } catch (error) {
-      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
+      AppSnackBar.show(
+        message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
+        type: SnackBarType.success,
+      );
+    } else {
+      AppSnackBar.show(message: result ?? 'Error desconocido', type: SnackBarType.error);
     }
   }
 
   Future<void> _searchAddress() async {
     final address = searchAddressController.text.trim();
     if (address.isEmpty) {
-      AppSnackBar.show(
-        context: context,
-        message: 'Por favor, introduce una dirección para buscar',
-        type: SnackBarType.error,
-      );
+      AppSnackBar.show(message: 'Por favor, introduce una dirección para buscar', type: SnackBarType.error);
       return;
     }
 
@@ -231,21 +228,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             _mapController.move(location, 15.0); // Zoom in to the found location
           });
         } else {
-          AppSnackBar.show(
-            context: context,
-            message: 'No se encontró ninguna ubicación con esa dirección',
-            type: SnackBarType.warning,
-          );
+          AppSnackBar.show(message: 'No se encontró ninguna ubicación con esa dirección', type: SnackBarType.warning);
         }
       } else {
-        AppSnackBar.show(
-          context: context,
-          message: 'Error al buscar la dirección: ${response.statusCode}',
-          type: SnackBarType.error,
-        );
+        AppSnackBar.show(message: 'Error al buscar la dirección: ${response.statusCode}', type: SnackBarType.error);
       }
     } catch (error) {
-      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
+      AppSnackBar.show(message: 'Error: $error', type: SnackBarType.error);
     }
   }
 
@@ -256,9 +245,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
     final query = searchVolunteersController.text.toLowerCase();
     return volunteers.where((volunteer) {
-      return volunteer.name.toLowerCase().contains(query) ||
-          volunteer.surname.toLowerCase().contains(query) ||
-          volunteer.email.toLowerCase().contains(query);
+      return volunteer.name.toLowerCase().contains(query) || volunteer.surname.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -540,7 +527,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       '${volunteer.name} ${volunteer.surname}',
                       style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                     ),
-                    subtitle: Text(volunteer.email),
+                    subtitle: Text(volunteer.name),
                     trailing: Checkbox(
                       activeColor: Colors.red,
                       value: isSelected,
