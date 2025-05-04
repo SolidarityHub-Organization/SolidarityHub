@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class HomeScreenController {
 
-  VoidCallback onSettingsPressed(BuildContext context, String email) {
+  VoidCallback onSettingsPressed(BuildContext context, String email, String role) {
     return () {
       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AjustesCuenta(email: email),),
+        context, MaterialPageRoute(builder: (context) => AjustesCuenta(email: email, role: role),),
       );
     };
   }

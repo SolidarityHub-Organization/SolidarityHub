@@ -1,10 +1,16 @@
+import 'package:app/controllers/settingsController.dart';
 import 'package:flutter/material.dart';
+import '../models/button_creator.dart';
+import '../interface/dataModification.dart';
+import '../controllers/settingsController.dart';
 
 class AjustesCuenta extends StatelessWidget {
 
   final String email;
+  final String role;
 
-  AjustesCuenta({required this.email});
+  SettingsController settingsController = SettingsController();
+  AjustesCuenta({required this.email, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,16 @@ class AjustesCuenta extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 30),
-                      _buildButton("Modificar datos"),
+                      SizedBox(
+                        width: double.infinity,
+                        child: buildCustomButton(
+                          "Cambiar Datos",
+                          settingsController.onDataModificationPressed(context, email, role),
+                          verticalPadding: 14,
+                          horizontalPadding: 0,
+                          backgroundColor: Colors.red,
+                        ),
+                      ),
                       SizedBox(height: 16),
                       _buildButton("Cambiar Horario"),
                       SizedBox(height: 16),
