@@ -99,10 +99,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () async {
-                        AutoAssigner(RandomAssignmentStrategy()).assignTasks(
+                        AutoAssigner(BalancedAssignmentStrategy()).assignTasks(
                           _controller.tasks,
                           await VolunteerService.fetchVolunteers(),
-                          3,
+                          2,
                         );
                       },
                       style: ElevatedButton.styleFrom(
