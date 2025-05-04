@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../LogicBusiness/services/generalServices.dart';
+import '../../../services/generalServices.dart';
 
 class GeneralTab extends StatefulWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
 
-  const GeneralTab({
-    Key? key,
-    required this.fechaFin,
-    required this.fechaInicio,
-  }) : super(key: key);
+  const GeneralTab({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -18,9 +14,7 @@ class GeneralTab extends StatefulWidget {
 }
 
 class _GeneralTabState extends State<GeneralTab> {
-  final GeneralService _generalService = GeneralService(
-    'http://localhost:5170',
-  );
+  final GeneralService _generalService = GeneralService('http://localhost:5170');
 
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
@@ -53,8 +47,7 @@ class _GeneralTabState extends State<GeneralTab> {
   @override
   void didUpdateWidget(covariant GeneralTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fechaInicio != widget.fechaInicio ||
-        oldWidget.fechaFin != widget.fechaFin) {
+    if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
         _victimCountFuture = _generalService.fetchVictimCount(
           _adjustStartDate(widget.fechaInicio),
@@ -77,11 +70,7 @@ class _GeneralTabState extends State<GeneralTab> {
           const SizedBox(height: 50), // Espacio superior
           const Text(
             'Resumen General',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
           ),
           const SizedBox(height: 20), // Espacio debajo del texto
           Row(
@@ -103,10 +92,7 @@ class _GeneralTabState extends State<GeneralTab> {
                     // Verificamos si no hay datos aunque no haya error
                     return _buildInfoCard('Personas Afectadas', 'Sin datos');
                   } else {
-                    return _buildInfoCard(
-                      'Personas Afectadas',
-                      snapshot.data.toString(),
-                    );
+                    return _buildInfoCard('Personas Afectadas', snapshot.data.toString());
                   }
                 },
               ),
@@ -118,10 +104,7 @@ class _GeneralTabState extends State<GeneralTab> {
                   } else if (snapshot.hasError) {
                     return _buildInfoCard('Voluntarios Totales', 'Error');
                   } else {
-                    return _buildInfoCard(
-                      'Voluntarios Totales',
-                      snapshot.data.toString(),
-                    );
+                    return _buildInfoCard('Voluntarios Totales', snapshot.data.toString());
                   }
                 },
               ),
@@ -131,14 +114,8 @@ class _GeneralTabState extends State<GeneralTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoCard(
-                'Donaciones Recibidas',
-                '0',
-              ), // Valor predeterminado
-              _buildInfoCard(
-                'Eventos Realizados',
-                '0',
-              ), // Título y valor corregidos
+              _buildInfoCard('Donaciones Recibidas', '0'), // Valor predeterminado
+              _buildInfoCard('Eventos Realizados', '0'), // Título y valor corregidos
             ],
           ),
         ],
@@ -166,23 +143,9 @@ class _GeneralTabState extends State<GeneralTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
           const SizedBox(height: 12.0),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+          Text(value, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
         ],
       ),
     );

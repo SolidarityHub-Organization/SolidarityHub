@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
+import 'package:solidarityhub/controllers/task_table_controller.dart';
+import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:intl/intl.dart';
 import 'package:solidarityhub/models/task.dart';
 

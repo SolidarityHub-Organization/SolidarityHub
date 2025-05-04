@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
+import 'package:solidarityhub/handlers/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
 
 class TaskService {

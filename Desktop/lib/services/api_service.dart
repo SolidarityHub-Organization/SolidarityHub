@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../utils/app_config.dart';
+import '../utils/app_config.dart';
 
 extension StatusCodeExtension on int {
   bool get ok => this >= 200 && this < 300;

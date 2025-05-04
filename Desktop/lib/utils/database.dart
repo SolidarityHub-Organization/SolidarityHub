@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 
-class PopulateDatabase {
+class Database {
   static final client = http.Client();
 
   static Future<void> populateDatabase() async {

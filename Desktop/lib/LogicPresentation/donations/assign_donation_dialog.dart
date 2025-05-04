@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicBusiness/services/victimServices.dart';
+import 'package:solidarityhub/services/victimServices.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:intl/intl.dart';

@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
-import 'package:solidarityhub/LogicBusiness/services/volunteer_service.dart';
+import 'package:solidarityhub/services/volunteer_service.dart';
 
 class VolunteerTab extends StatefulWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
 
-  const VolunteerTab({
-    Key? key,
-    required this.fechaFin,
-    required this.fechaInicio,
-  }) : super(key: key);
+  const VolunteerTab({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
 
   @override
   _VolunteerTabState createState() => _VolunteerTabState();
@@ -42,29 +38,19 @@ class _VolunteerTabState extends State<VolunteerTab> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    final start = _adjustStartDate(
-      widget.fechaInicio ?? now.subtract(const Duration(days: 365)),
-    );
+    final start = _adjustStartDate(widget.fechaInicio ?? now.subtract(const Duration(days: 365)));
     final end = _adjustEndDate(widget.fechaFin);
-    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(
-      start,
-      end,
-    );
+    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
   }
 
   @override
   void didUpdateWidget(covariant VolunteerTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fechaInicio != widget.fechaInicio ||
-        oldWidget.fechaFin != widget.fechaFin) {
+    if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        final start = _adjustStartDate(
-          widget.fechaInicio ??
-              DateTime.now().subtract(const Duration(days: 365)),
-        );
+        final start = _adjustStartDate(widget.fechaInicio ?? DateTime.now().subtract(const Duration(days: 365)));
         final end = _adjustEndDate(widget.fechaFin);
-        _volunteerNeedsFuture =
-            VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
+        _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
       });
     }
   }
@@ -81,9 +67,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
   double _calculateMaxTitleWidth(List<Map<String, dynamic>> data) {
     final textPainter = TextPainter(
       textDirection: TextDirection.ltr,
-      text: TextSpan(
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      text: TextSpan(style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
     );
 
     double maxWidth = 0;
@@ -111,10 +95,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
             child: IntrinsicHeight(
               child: Container(
                 width: math.max(800, constraints.maxWidth),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 16.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
                   future: _volunteerNeedsFuture,
                   builder: (context, snapshot) {
@@ -135,41 +116,30 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                   x: entry.key,
                                   barRods: [
                                     BarChartRodData(
-                                      toY:
-                                          (entry.value['item2'] as int)
-                                              .toDouble(),
+                                      toY: (entry.value['item2'] as int).toDouble(),
                                       color: const Color(0xFFF44336),
                                       width: 30,
                                       borderRadius: BorderRadius.circular(4),
-                                      borderSide: const BorderSide(
-                                        color: Color.fromARGB(70, 103, 0, 0),
-                                        width: 2,
-                                      ),
+                                      borderSide: const BorderSide(color: Color.fromARGB(70, 103, 0, 0), width: 2),
                                     ),
                                   ],
                                 ),
                               )
                               .toList();
 
-                      final totalValue = data.fold<int>(
-                        0,
-                        (sum, entry) => sum + (entry['item2'] as int),
-                      );
+                      final totalValue = data.fold<int>(0, (sum, entry) => sum + (entry['item2'] as int));
 
-                      final double threshold =
-                          10.0; // minimum percentage threshold
+                      final double threshold = 10.0; // minimum percentage threshold
 
                       final Map<String, int> groupedData = {};
                       int otherTotal = 0;
 
                       for (var entry in data) {
-                        double percentage =
-                            (entry['item2'] as int) / totalValue * 100;
+                        double percentage = (entry['item2'] as int) / totalValue * 100;
                         if (percentage < threshold) {
                           otherTotal += entry['item2'] as int;
                         } else {
-                          groupedData[entry['item1'] as String] =
-                              entry['item2'] as int;
+                          groupedData[entry['item1'] as String] = entry['item2'] as int;
                         }
                       }
 
@@ -182,16 +152,11 @@ class _VolunteerTabState extends State<VolunteerTab> {
                               .map(
                                 (entry) => PieChartSectionData(
                                   value: entry.value.toDouble(),
-                                  title:
-                                      entry.key.length > 10
-                                          ? '${entry.key.substring(0, 10)}...'
-                                          : entry.key,
+                                  title: entry.key.length > 10 ? '${entry.key.substring(0, 10)}...' : entry.key,
                                   color:
                                       entry.key == 'Other'
                                           ? Colors.grey
-                                          : Colors.primaries[groupedData.keys
-                                                  .toList()
-                                                  .indexOf(entry.key) %
+                                          : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) %
                                               Colors.primaries.length],
                                   radius: 120,
                                   titleStyle: const TextStyle(
@@ -223,8 +188,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                       // map to store the original data before grouping
                       final Map<String, int> originalData = {};
                       for (var entry in data) {
-                        originalData[entry['item1'] as String] =
-                            entry['item2'] as int;
+                        originalData[entry['item1'] as String] = entry['item2'] as int;
                       }
 
                       return Column(
@@ -243,12 +207,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             height: 500,
                             width: math.max(800, constraints.maxWidth - 16),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                40.0,
-                                0,
-                                20.0,
-                                40.0,
-                              ),
+                              padding: const EdgeInsets.fromLTRB(40.0, 0, 20.0, 40.0),
                               child: BarChart(
                                 BarChartData(
                                   barGroups: barGroups,
@@ -263,18 +222,11 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                         getTitlesWidget: (value, meta) {
                                           if (value % 1 == 0) {
                                             return Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 8.0,
-                                              ),
+                                              padding: const EdgeInsets.only(right: 8.0),
                                               child: Text(
                                                 value.toInt().toString(),
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                    255,
-                                                    0,
-                                                    0,
-                                                    0,
-                                                  ),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 14,
                                                 ),
@@ -285,41 +237,25 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                         },
                                       ),
                                     ),
-                                    rightTitles: AxisTitles(
-                                      sideTitles: SideTitles(showTitles: false),
-                                    ),
-                                    topTitles: AxisTitles(
-                                      sideTitles: SideTitles(showTitles: false),
-                                    ),
+                                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                     bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        reservedSize: _calculateMaxTitleWidth(
-                                          data,
-                                        ),
+                                        reservedSize: _calculateMaxTitleWidth(data),
                                         getTitlesWidget: (value, meta) {
                                           return Container(
                                             width: 0,
                                             height: 100,
-                                            padding: const EdgeInsets.only(
-                                              top: 10,
-                                            ),
+                                            padding: const EdgeInsets.only(top: 10),
                                             alignment: Alignment.topCenter,
                                             child: Transform(
                                               alignment: Alignment.topCenter,
-                                              transform: Matrix4.rotationZ(
-                                                45 * (3.1415927 / 180),
-                                              ),
+                                              transform: Matrix4.rotationZ(45 * (3.1415927 / 180)),
                                               child: Text(
-                                                data[value.toInt()]['item1']
-                                                    as String,
+                                                data[value.toInt()]['item1'] as String,
                                                 style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                    255,
-                                                    0,
-                                                    0,
-                                                    0,
-                                                  ),
+                                                  color: Color.fromARGB(255, 0, 0, 0),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 12,
                                                 ),
@@ -337,28 +273,17 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                     drawHorizontalLine: true,
                                     drawVerticalLine: false,
                                     getDrawingHorizontalLine: (value) {
-                                      return FlLine(
-                                        color: Colors.black12,
-                                        strokeWidth: 1,
-                                      );
+                                      return FlLine(color: Colors.black12, strokeWidth: 1);
                                     },
                                   ),
                                   borderData: FlBorderData(show: false),
                                   barTouchData: BarTouchData(
                                     touchTooltipData: BarTouchTooltipData(
                                       tooltipBgColor: const Color(0xFFF44336),
-                                      getTooltipItem: (
-                                        group,
-                                        groupIndex,
-                                        rod,
-                                        rodIndex,
-                                      ) {
+                                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
                                         return BarTooltipItem(
                                           '${data[group.x.toInt()]['item1']}: ${rod.toY.toInt()}',
-                                          const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                         );
                                       },
                                     ),
@@ -378,22 +303,14 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                   flex: 1,
                                   child: Center(
                                     child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        50.0,
-                                        0.0,
-                                        30.0,
-                                        50.0,
-                                      ),
+                                      padding: const EdgeInsets.fromLTRB(50.0, 0.0, 30.0, 50.0),
                                       child: PieChart(
                                         PieChartData(
                                           sections: pieSections,
                                           centerSpaceRadius: 50,
                                           sectionsSpace: 8,
                                           pieTouchData: PieTouchData(
-                                            touchCallback: (
-                                              FlTouchEvent event,
-                                              pieTouchResponse,
-                                            ) {
+                                            touchCallback: (FlTouchEvent event, pieTouchResponse) {
                                               // could add touch instructions here for pie chart
                                             },
                                           ),
@@ -407,69 +324,40 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                   flex: 1,
                                   child: Center(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxHeight: 350,
-                                      ),
+                                      constraints: const BoxConstraints(maxHeight: 350),
                                       child: Scrollbar(
                                         controller: _legendScrollController,
                                         thumbVisibility: true,
                                         child: SingleChildScrollView(
                                           controller: _legendScrollController,
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0,
-                                            ),
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 // main items
                                                 ...originalData.entries
-                                                    .where(
-                                                      (entry) =>
-                                                          (entry.value /
-                                                              totalValue *
-                                                              100) >=
-                                                          threshold,
-                                                    )
+                                                    .where((entry) => (entry.value / totalValue * 100) >= threshold)
                                                     .map((entry) {
-                                                      final double percentage =
-                                                          (entry.value /
-                                                              totalValue *
-                                                              100);
-                                                      return _buildLegendItem(
-                                                        entry,
-                                                        percentage,
-                                                        false,
-                                                        groupedData,
-                                                      );
+                                                      final double percentage = (entry.value / totalValue * 100);
+                                                      return _buildLegendItem(entry, percentage, false, groupedData);
                                                     }),
                                                 // divider
                                                 if (originalData.entries.any(
-                                                  (entry) =>
-                                                      (entry.value /
-                                                          totalValue *
-                                                          100) <
-                                                      threshold,
+                                                  (entry) => (entry.value / totalValue * 100) < threshold,
                                                 ))
                                                   Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       SizedBox(
                                                         width: 266,
                                                         child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.symmetric(
-                                                                vertical: 8.0,
-                                                              ),
+                                                          padding: EdgeInsets.symmetric(vertical: 8.0),
                                                           child: Divider(
                                                             height: 1,
                                                             thickness: 1,
-                                                            color:
-                                                                Colors.black26,
+                                                            color: Colors.black26,
                                                             indent: 0,
                                                             endIndent: 10,
                                                           ),
@@ -479,24 +367,10 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                                   ),
                                                 // "Other" items
                                                 ...originalData.entries
-                                                    .where(
-                                                      (entry) =>
-                                                          (entry.value /
-                                                              totalValue *
-                                                              100) <
-                                                          threshold,
-                                                    )
+                                                    .where((entry) => (entry.value / totalValue * 100) < threshold)
                                                     .map((entry) {
-                                                      final double percentage =
-                                                          (entry.value /
-                                                              totalValue *
-                                                              100);
-                                                      return _buildLegendItem(
-                                                        entry,
-                                                        percentage,
-                                                        true,
-                                                        groupedData,
-                                                      );
+                                                      final double percentage = (entry.value / totalValue * 100);
+                                                      return _buildLegendItem(entry, percentage, true, groupedData);
                                                     }),
                                               ],
                                             ),
@@ -524,12 +398,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
   }
 }
 
-Widget _buildLegendItem(
-  MapEntry<String, int> entry,
-  double percentage,
-  bool isInOther,
-  Map<String, int> groupedData,
-) {
+Widget _buildLegendItem(MapEntry<String, int> entry, double percentage, bool isInOther, Map<String, int> groupedData) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 6.0),
     child: Column(
@@ -560,10 +429,7 @@ Widget _buildLegendItem(
                   valueColor: AlwaysStoppedAnimation(
                     isInOther
                         ? Colors.grey
-                        : Colors.primaries[groupedData.keys.toList().indexOf(
-                              entry.key,
-                            ) %
-                            Colors.primaries.length],
+                        : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) % Colors.primaries.length],
                   ),
                 ),
               ),
@@ -593,12 +459,10 @@ class TwoDimensionalScrollWidget extends StatefulWidget {
   const TwoDimensionalScrollWidget({super.key, required this.child});
 
   @override
-  State<TwoDimensionalScrollWidget> createState() =>
-      _TwoDimensionalScrollWidgetState();
+  State<TwoDimensionalScrollWidget> createState() => _TwoDimensionalScrollWidgetState();
 }
 
-class _TwoDimensionalScrollWidgetState
-    extends State<TwoDimensionalScrollWidget> {
+class _TwoDimensionalScrollWidgetState extends State<TwoDimensionalScrollWidget> {
   final ScrollController _verticalController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
 

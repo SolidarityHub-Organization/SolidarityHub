@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
-import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/models/column_data.dart';
+import 'package:solidarityhub/services/coordenadasServices.dart';
+import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/models/task_table.dart';
 import 'package:solidarityhub/models/task.dart';
 
 class TaskTableController {
@@ -22,7 +22,7 @@ class TaskTableController {
   String sortField = 'name';
   bool sortAscending = true;
 
-  List<ColumnData> columns = [];
+  List<TaskTableColumnData> columns = [];
 
   TaskTableController({required this.coordenadasService}) {
     _initColumns();
@@ -30,27 +30,63 @@ class TaskTableController {
 
   void _initColumns() {
     columns = [
-      ColumnData(id: 'name', label: 'Nombre', width: 0.1, tooltip: 'Nombre de la tarea', sortable: true),
-      ColumnData(
+      TaskTableColumnData(id: 'name', label: 'Nombre', width: 0.1, tooltip: 'Nombre de la tarea', sortable: true),
+      TaskTableColumnData(
         id: 'description',
         label: 'Descripción',
         width: 0.15,
         tooltip: 'Descripción de la tarea',
         sortable: true,
       ),
-      ColumnData(id: 'address', label: 'Dirección', width: 0.15, tooltip: 'Dirección de la tarea', sortable: true),
-      ColumnData(
+      TaskTableColumnData(
+        id: 'address',
+        label: 'Dirección',
+        width: 0.15,
+        tooltip: 'Dirección de la tarea',
+        sortable: true,
+      ),
+      TaskTableColumnData(
         id: 'start_date',
         label: 'Fecha Inicio',
         width: 0.1,
         tooltip: 'Fecha de inicio de la tarea',
         sortable: true,
       ),
-      ColumnData(id: 'end_date', label: 'Fecha Fin', width: 0.1, tooltip: 'Fecha de fin de la tarea', sortable: true),
-      ColumnData(id: 'status', label: 'Estado', width: 0.1, tooltip: 'Estado actual de la tarea', sortable: true),
-      ColumnData(id: 'priority', label: 'Prioridad', width: 0.1, tooltip: 'Prioridad de la tarea', sortable: true),
-      ColumnData(id: 'volunteers', label: 'Voluntarios', width: 0.1, tooltip: 'Voluntarios asignados', sortable: false),
-      ColumnData(id: 'actions', label: 'Acciones', width: 0.1, tooltip: 'Acciones disponibles', sortable: false),
+      TaskTableColumnData(
+        id: 'end_date',
+        label: 'Fecha Fin',
+        width: 0.1,
+        tooltip: 'Fecha de fin de la tarea',
+        sortable: true,
+      ),
+      TaskTableColumnData(
+        id: 'status',
+        label: 'Estado',
+        width: 0.1,
+        tooltip: 'Estado actual de la tarea',
+        sortable: true,
+      ),
+      TaskTableColumnData(
+        id: 'priority',
+        label: 'Prioridad',
+        width: 0.1,
+        tooltip: 'Prioridad de la tarea',
+        sortable: true,
+      ),
+      TaskTableColumnData(
+        id: 'volunteers',
+        label: 'Voluntarios',
+        width: 0.1,
+        tooltip: 'Voluntarios asignados',
+        sortable: false,
+      ),
+      TaskTableColumnData(
+        id: 'actions',
+        label: 'Acciones',
+        width: 0.1,
+        tooltip: 'Acciones disponibles',
+        sortable: false,
+      ),
     ];
   }
 
@@ -198,7 +234,7 @@ class TaskTableController {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
-    final ColumnData item = columns.removeAt(oldIndex);
+    final TaskTableColumnData item = columns.removeAt(oldIndex);
     columns.insert(newIndex, item);
   }
 

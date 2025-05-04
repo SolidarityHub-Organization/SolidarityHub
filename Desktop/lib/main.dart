@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/tasks_screen.dart';
-import 'package:solidarityhub/populate_database.dart';
+import 'package:solidarityhub/pages/tasks_screen.dart';
+import 'package:solidarityhub/utils/database.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
 
 void main() {
@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: PopulateDatabase.populateDatabase,
+                  onPressed: Database.populateDatabase,
                   icon: const Icon(Icons.add_box),
                   label: const Text('Populate Database'),
                   style: ElevatedButton.styleFrom(
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton.icon(
-                  onPressed: PopulateDatabase.clearDatabase,
+                  onPressed: Database.clearDatabase,
                   icon: const Icon(Icons.delete),
                   label: const Text('Clear Database'),
                   style: ElevatedButton.styleFrom(

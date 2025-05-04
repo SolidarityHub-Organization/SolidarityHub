@@ -1,24 +1,16 @@
 import 'dart:math';
 
-import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
+import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/task.dart';
 
 abstract class AssignmentStrategy {
-  void assignTasks(
-    List<TaskWithDetails> tasks,
-    List<Volunteer> volunteers,
-    int volunteersPerTask,
-  );
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask);
 }
 
 class RandomAssignmentStrategy implements AssignmentStrategy {
   @override
-  void assignTasks(
-    List<TaskWithDetails> tasks,
-    List<Volunteer> volunteers,
-    int volunteersPerTask,
-  ) {
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     final random = Random();
 
     for (var task in tasks) {
@@ -27,8 +19,7 @@ class RandomAssignmentStrategy implements AssignmentStrategy {
       final needed = volunteersPerTask - assignedIds.length;
       if (needed <= 0) continue;
 
-      final availableVolunteers =
-          volunteers.where((v) => !assignedIds.contains(v.id)).toList();
+      final availableVolunteers = volunteers.where((v) => !assignedIds.contains(v.id)).toList();
 
       availableVolunteers.shuffle(random);
       final toAssign = availableVolunteers.take(needed);
@@ -41,11 +32,7 @@ class RandomAssignmentStrategy implements AssignmentStrategy {
 
 class BalancedAssignmentStrategy implements AssignmentStrategy {
   @override
-  void assignTasks(
-    List<TaskWithDetails> tasks,
-    List<Volunteer> volunteers,
-    int volunteersPerTask,
-  ) {
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     final taskCountPerVolunteer = <int, int>{};
 
     for (var task in tasks) {
@@ -59,8 +46,7 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
       final needed = volunteersPerTask - assignedIds.length;
       if (needed <= 0) continue;
 
-      final available =
-          volunteers.where((v) => !assignedIds.contains(v.id)).toList();
+      final available = volunteers.where((v) => !assignedIds.contains(v.id)).toList();
 
       available.sort((a, b) {
         final countA = taskCountPerVolunteer[a.id] ?? 0;
@@ -88,11 +74,7 @@ class AutoAssigner {
     _strategy = strategy;
   }
 
-  void assignTasks(
-    List<TaskWithDetails> tasks,
-    List<Volunteer> volunteers,
-    int volunteersPerTask,
-  ) {
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     _strategy.assignTasks(tasks, volunteers, volunteersPerTask);
   }
 }

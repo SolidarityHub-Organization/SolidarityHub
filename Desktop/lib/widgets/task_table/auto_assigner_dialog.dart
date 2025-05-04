@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicBusiness/handlers/auto_assigner.dart';
-import 'package:solidarityhub/LogicBusiness/services/volunteer_service.dart';
+import 'package:solidarityhub/handlers/auto_assigner.dart';
+import 'package:solidarityhub/services/volunteer_service.dart';
 import 'package:solidarityhub/models/task.dart';
 
 enum AssignmentStrategyType { balanced, random }
 
-Future<void> showAutoAssignerDialog(
-  BuildContext context,
-  List<TaskWithDetails> tasks,
-) async {
+Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> tasks) async {
   AssignmentStrategyType selectedStrategy = AssignmentStrategyType.balanced;
   int volunteersPerTask = 1;
 
@@ -23,8 +20,7 @@ Future<void> showAutoAssignerDialog(
       return;
     }
 
-    final count =
-        tasks.where((task) => (task.assignedVolunteers.length) < value).length;
+    final count = tasks.where((task) => (task.assignedVolunteers.length) < value).length;
     affectedTasksNotifier.value = count;
   }
 
@@ -46,10 +42,7 @@ Future<void> showAutoAssignerDialog(
                 decoration: const InputDecoration(labelText: 'Strategy'),
                 items:
                     AssignmentStrategyType.values.map((strategy) {
-                      return DropdownMenuItem(
-                        value: strategy,
-                        child: Text(strategy.name),
-                      );
+                      return DropdownMenuItem(value: strategy, child: Text(strategy.name));
                     }).toList(),
                 onChanged: (value) {
                   if (value != null) selectedStrategy = value;
@@ -57,9 +50,7 @@ Future<void> showAutoAssignerDialog(
               ),
               TextFormField(
                 controller: numberController,
-                decoration: const InputDecoration(
-                  labelText: 'Volunteers per Task',
-                ),
+                decoration: const InputDecoration(labelText: 'Volunteers per Task'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   final num = int.tryParse(value ?? '');
@@ -73,20 +64,14 @@ Future<void> showAutoAssignerDialog(
               ValueListenableBuilder<int>(
                 valueListenable: affectedTasksNotifier,
                 builder: (context, value, child) {
-                  return Text(
-                    'Tasks needing assignment: $value',
-                    style: TextStyle(color: Colors.grey[700]),
-                  );
+                  return Text('Tasks needing assignment: $value', style: TextStyle(color: Colors.grey[700]));
                 },
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
@@ -95,11 +80,7 @@ Future<void> showAutoAssignerDialog(
                     selectedStrategy == AssignmentStrategyType.balanced
                         ? BalancedAssignmentStrategy()
                         : RandomAssignmentStrategy();
-                AutoAssigner(strategy).assignTasks(
-                  tasks,
-                  await VolunteerService.fetchVolunteers(),
-                  volunteersPerTask,
-                );
+                AutoAssigner(strategy).assignTasks(tasks, await VolunteerService.fetchVolunteers(), volunteersPerTask);
                 Navigator.of(context).pop();
               }
             },

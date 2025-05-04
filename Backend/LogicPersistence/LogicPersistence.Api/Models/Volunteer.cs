@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace LogicPersistence.Api.Models;
 
-public class Volunteer : IUser{
+public class Volunteer : IUser {
 	// this id is used for many to many relationships (as volunteer_id) as a connection
 	public int id { get; set; }
 	public string email { get; set; } = string.Empty;
@@ -13,10 +13,10 @@ public class Volunteer : IUser{
 	public string name { get; set; } = string.Empty;
 	public string surname { get; set; } = string.Empty;
 	public int prefix { get; set; }
-	public string phone_number { get; set; }
+	public required string phone_number { get; set; }
 	public string address { get; set; } = string.Empty;
 	public string identification { get; set; } = string.Empty;
-    public DateTime created_at { get; set; } 
+	public DateTime created_at { get; set; }
 
 	// FKs
 	// connections to other tables/entities that aren't many to many

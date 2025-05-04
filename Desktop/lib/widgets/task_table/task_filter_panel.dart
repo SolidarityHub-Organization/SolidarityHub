@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
+import 'package:solidarityhub/controllers/task_table_controller.dart';
 
 /// Widget que muestra el panel de filtros para la tabla de tareas
 class TaskFilterPanel extends StatelessWidget {
