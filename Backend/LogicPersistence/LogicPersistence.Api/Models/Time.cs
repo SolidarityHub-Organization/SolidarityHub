@@ -22,12 +22,14 @@ public enum DayOfWeek {
 public abstract class Time {
 	public int id { get; set; }
 	public TimeOnly start_time { get; set; }
-	public TimeOnly? end_time { get; set; }
+	public TimeOnly end_time { get; set; }
+	//public TimeOnly? end_time { get; set; }	//TODO
 }
 
 public class TaskTime : Time {
-	public DateOnly start_date { get; set; }
-	public DateOnly? end_date { get; set; }
+	public DateOnly date { get; set; }
+	//public DateOnly start_date { get; set; }	//TODO
+	//public DateOnly? end_date { get; set; }
 
 	// FKs
 	public int task_id { get; set; }
