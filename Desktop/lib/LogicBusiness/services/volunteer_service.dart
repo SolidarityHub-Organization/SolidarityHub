@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
+import 'package:solidarityhub/models/donation.dart';
 
 class VolunteerService {
   static String baseUrl = 'http://localhost:5170/api/v1';
@@ -12,14 +12,12 @@ class VolunteerService {
       final response = await http.get(url);
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> data = json.decode(response.body);
-        return data
-            .map((item) => Volunteer.fromJson(item as Map<String, dynamic>))
-            .toList();
+        return data.map((item) => Volunteer.fromJson(item as Map<String, dynamic>)).toList();
       } else {
-        throw Exception("Error fetching volunteers: ${response.statusCode}");
+        throw Exception('Error fetching volunteers: ${response.statusCode}');
       }
     } catch (error) {
-      throw Exception("Error: $error");
+      throw Exception('Error: $error');
     }
   }
 
@@ -38,9 +36,7 @@ class VolunteerService {
     if (response.statusCode == 200) {
       // Convert dictionary to list
       final Map<String, dynamic> data = json.decode(response.body);
-      return data.entries
-          .map((entry) => {'item1': entry.key, 'item2': entry.value})
-          .toList();
+      return data.entries.map((entry) => {'item1': entry.key, 'item2': entry.value}).toList();
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
       throw Exception('Failed to load filtered volunteer skills count');
@@ -49,9 +45,7 @@ class VolunteerService {
 
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/api/v1/map/volunteers-with-location'),
-      );
+      final response = await http.get(Uri.parse('$baseUrl/api/v1/map/volunteers-with-location'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {

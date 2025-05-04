@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text(
-                  "Welcome to Solidarity Hub",
+                  'Welcome to Solidarity Hub',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton.icon(
                   onPressed: PopulateDatabase.populateDatabase,
                   icon: const Icon(Icons.add_box),
-                  label: const Text("Populate Database"),
+                  label: const Text('Populate Database'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton.icon(
                   onPressed: PopulateDatabase.clearDatabase,
                   icon: const Icon(Icons.delete),
-                  label: const Text("Clear Database"),
+                  label: const Text('Clear Database'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const Dashboard()));
                   },
                   icon: const Icon(Icons.dashboard),
-                  label: const Text("Go to Dashboard"),
+                  label: const Text('Go to Dashboard'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const Loginadmin()));
                   },
                   icon: const Icon(Icons.login),
-                  label: const Text("Log in Admin"),
+                  label: const Text('Log in Admin'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const MapScreen()));
                   },
                   icon: const Icon(Icons.map),
-                  label: const Text("Open Map"),
+                  label: const Text('Open Map'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const TasksScreen()));
                   },
                   icon: const Icon(Icons.task),
-                  label: const Text("Crear tareas"),
+                  label: const Text('Crear tareas'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   },
                   icon: const Icon(Icons.book),
-                  label: const Text("Donaciones"),
+                  label: const Text('Donaciones'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,

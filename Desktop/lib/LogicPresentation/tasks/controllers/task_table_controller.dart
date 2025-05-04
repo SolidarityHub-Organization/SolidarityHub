@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
 import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
-import 'package:solidarityhub/LogicPersistence/models/task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/models/column_data.dart';
+import 'package:solidarityhub/models/task.dart';
 
 class TaskTableController {
   final CoordenadasService coordenadasService;
@@ -30,13 +30,7 @@ class TaskTableController {
 
   void _initColumns() {
     columns = [
-      ColumnData(
-        id: 'name',
-        label: 'Nombre',
-        width: 0.1,
-        tooltip: 'Nombre de la tarea',
-        sortable: true,
-      ),
+      ColumnData(id: 'name', label: 'Nombre', width: 0.1, tooltip: 'Nombre de la tarea', sortable: true),
       ColumnData(
         id: 'description',
         label: 'Descripción',
@@ -44,13 +38,7 @@ class TaskTableController {
         tooltip: 'Descripción de la tarea',
         sortable: true,
       ),
-      ColumnData(
-        id: 'address',
-        label: 'Dirección',
-        width: 0.15,
-        tooltip: 'Dirección de la tarea',
-        sortable: true,
-      ),
+      ColumnData(id: 'address', label: 'Dirección', width: 0.15, tooltip: 'Dirección de la tarea', sortable: true),
       ColumnData(
         id: 'start_date',
         label: 'Fecha Inicio',
@@ -58,62 +46,25 @@ class TaskTableController {
         tooltip: 'Fecha de inicio de la tarea',
         sortable: true,
       ),
-      ColumnData(
-        id: 'end_date',
-        label: 'Fecha Fin',
-        width: 0.1,
-        tooltip: 'Fecha de fin de la tarea',
-        sortable: true,
-      ),
-      ColumnData(
-        id: 'status',
-        label: 'Estado',
-        width: 0.1,
-        tooltip: 'Estado actual de la tarea',
-        sortable: true,
-      ),
-      ColumnData(
-        id: 'priority',
-        label: 'Prioridad',
-        width: 0.1,
-        tooltip: 'Prioridad de la tarea',
-        sortable: true,
-      ),
-      ColumnData(
-        id: 'volunteers',
-        label: 'Voluntarios',
-        width: 0.1,
-        tooltip: 'Voluntarios asignados',
-        sortable: false,
-      ),
-      ColumnData(
-        id: 'actions',
-        label: 'Acciones',
-        width: 0.1,
-        tooltip: 'Acciones disponibles',
-        sortable: false,
-      ),
+      ColumnData(id: 'end_date', label: 'Fecha Fin', width: 0.1, tooltip: 'Fecha de fin de la tarea', sortable: true),
+      ColumnData(id: 'status', label: 'Estado', width: 0.1, tooltip: 'Estado actual de la tarea', sortable: true),
+      ColumnData(id: 'priority', label: 'Prioridad', width: 0.1, tooltip: 'Prioridad de la tarea', sortable: true),
+      ColumnData(id: 'volunteers', label: 'Voluntarios', width: 0.1, tooltip: 'Voluntarios asignados', sortable: false),
+      ColumnData(id: 'actions', label: 'Acciones', width: 0.1, tooltip: 'Acciones disponibles', sortable: false),
     ];
   }
 
   Future<void> loadTaskAddresses([Function? onTaskChanged]) async {
     for (var task in tasks) {
       try {
-        final locationResponse = await http.get(
-          Uri.parse(
-            'http://localhost:5170/api/v1/locations/${task.locationId}',
-          ),
-        );
+        final locationResponse = await http.get(Uri.parse('http://localhost:5170/api/v1/locations/${task.locationId}'));
 
         if (locationResponse.statusCode == 200) {
           final locationData = json.decode(locationResponse.body);
           final double lat = locationData['latitude'];
           final double lon = locationData['longitude'];
 
-          final address = await coordenadasService.getAddressFromLatLon(
-            lat,
-            lon,
-          );
+          final address = await coordenadasService.getAddressFromLatLon(lat, lon);
           taskAddresses[task.id] = address;
 
           applyFilters();
@@ -137,15 +88,12 @@ class TaskTableController {
     isLoading = true;
 
     try {
-      final response = await http.get(
-        Uri.parse('http://localhost:5170/api/v1/tasks-with-details'),
-      );
+      final response = await http.get(Uri.parse('http://localhost:5170/api/v1/tasks-with-details'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
 
-        tasks =
-            data.map((taskJson) => TaskWithDetails.fromJson(taskJson)).toList();
+        tasks = data.map((taskJson) => TaskWithDetails.fromJson(taskJson)).toList();
         filteredTasks = List.from(tasks);
 
         for (var task in tasks) {
@@ -211,23 +159,13 @@ class TaskTableController {
   void applyFilters() {
     filteredTasks =
         tasks.where((task) {
-          final nameMatches =
-              nameFilter.isEmpty ||
-              task.name.toLowerCase().contains(nameFilter.toLowerCase());
+          final nameMatches = nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase());
           final address = taskAddresses[task.id] ?? '';
-          final addressMatches =
-              addressFilter.isEmpty ||
-              address.toLowerCase().contains(addressFilter.toLowerCase());
-          final statusMatches =
-              statusFilter == 'Todos' || getTaskStatus(task) == statusFilter;
-          final priorityMatches =
-              priorityFilter == 'Todas' ||
-              getTaskPriority(task) == priorityFilter;
+          final addressMatches = addressFilter.isEmpty || address.toLowerCase().contains(addressFilter.toLowerCase());
+          final statusMatches = statusFilter == 'Todos' || getTaskStatus(task) == statusFilter;
+          final priorityMatches = priorityFilter == 'Todas' || getTaskPriority(task) == priorityFilter;
 
-          return nameMatches &&
-              addressMatches &&
-              statusMatches &&
-              priorityMatches;
+          return nameMatches && addressMatches && statusMatches && priorityMatches;
         }).toList();
 
     _sortTasks();

@@ -4,23 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
-import 'package:solidarityhub/LogicPersistence/models/task.dart';
-import 'package:solidarityhub/LogicPersistence/models/victim.dart';
-import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
+import 'package:solidarityhub/models/volunteer.dart';
+import 'package:solidarityhub/models/task.dart';
+import 'package:solidarityhub/models/victim.dart';
 
-Future<void> showCreateTaskModal(
-  BuildContext context,
-  VoidCallback onTaskCreated,
-  TaskWithDetails? taskToEdit,
-) {
+Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(
     context: context,
-    builder:
-        (context) => CreateTaskModal(
-          onTaskCreated: onTaskCreated,
-          taskToEdit: taskToEdit,
-        ),
+    builder: (context) => CreateTaskModal(onTaskCreated: onTaskCreated, taskToEdit: taskToEdit),
   );
 }
 
@@ -28,34 +20,25 @@ class CreateTaskModal extends StatefulWidget {
   final VoidCallback onTaskCreated;
   final TaskWithDetails? taskToEdit;
 
-  const CreateTaskModal({
-    super.key,
-    required this.onTaskCreated,
-    this.taskToEdit,
-  });
+  const CreateTaskModal({super.key, required this.onTaskCreated, this.taskToEdit});
 
   @override
   State<CreateTaskModal> createState() => _CreateTaskModalState();
 }
 
-Future<List<T>> fetchData<T>(
-  String endpoint,
-  T Function(Map<String, dynamic>) fromJson,
-) async {
-  final url = Uri.parse("http://localhost:5170/api/v1/$endpoint");
+Future<List<T>> fetchData<T>(String endpoint, T Function(Map<String, dynamic>) fromJson) async {
+  final url = Uri.parse('http://localhost:5170/api/v1/$endpoint');
 
   try {
     final response = await http.get(url);
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       final List<dynamic> data = json.decode(response.body);
-      return data
-          .map((item) => fromJson(item as Map<String, dynamic>))
-          .toList();
+      return data.map((item) => fromJson(item as Map<String, dynamic>)).toList();
     } else {
-      throw Exception("Error fetching $endpoint: ${response.statusCode}");
+      throw Exception('Error fetching $endpoint: ${response.statusCode}');
     }
   } catch (error) {
-    throw Exception("Error: $error");
+    throw Exception('Error: $error');
   }
 }
 
@@ -65,18 +48,14 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   final TextEditingController latitudeController = TextEditingController();
   final TextEditingController longitudeController = TextEditingController();
   final TextEditingController searchAddressController = TextEditingController();
-  final TextEditingController searchVolunteersController =
-      TextEditingController();
+  final TextEditingController searchVolunteersController = TextEditingController();
   final TextEditingController searchVictimController = TextEditingController();
   DateTime? startDate;
   DateTime? endDate;
 
   final MapController _mapController = MapController();
   List<Marker> _markers = [];
-  LatLng selectedLocation = const LatLng(
-    39.4699,
-    -0.3776,
-  ); // Valencia por defecto
+  LatLng selectedLocation = const LatLng(39.4699, -0.3776); // Valencia por defecto
   List<Volunteer> volunteers = [];
   List<Victim> victim = [];
   List<int> selectedVolunteers = [];
@@ -95,12 +74,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       startDate = widget.taskToEdit!.startDate;
       endDate = widget.taskToEdit!.endDate;
       _loadTaskLocation();
-      selectedVolunteers =
-          widget.taskToEdit!.assignedVolunteers
-              .map((volunteer) => volunteer.id)
-              .toList();
-      selectedVictim =
-          widget.taskToEdit!.assignedVictim.map((victim) => victim.id).toList();
+      selectedVolunteers = widget.taskToEdit!.assignedVolunteers.map((volunteer) => volunteer.id).toList();
+      selectedVictim = widget.taskToEdit!.assignedVictim.map((victim) => victim.id).toList();
     } else {
       _updateLocationControllers(selectedLocation);
       _updateMarker(selectedLocation);
@@ -136,9 +111,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _loadTaskLocation() async {
     if (widget.taskToEdit != null) {
       try {
-        final url = Uri.parse(
-          "http://localhost:5170/api/v1/locations/${widget.taskToEdit!.locationId}",
-        );
+        final url = Uri.parse('http://localhost:5170/api/v1/locations/${widget.taskToEdit!.locationId}');
         final response = await http.get(url);
 
         if (response.statusCode >= 200 && response.statusCode <= 299) {
@@ -154,11 +127,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           });
         }
       } catch (error) {
-        AppSnackBar.show(
-          context: context,
-          message: "Error loading location: $error",
-          type: SnackBarType.error,
-        );
+        AppSnackBar.show(context: context, message: 'Error loading location: $error', type: SnackBarType.error);
       }
     }
   }
@@ -166,8 +135,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _loadData() async {
     try {
       final results = await Future.wait([
-        fetchData("volunteers", Volunteer.fromJson),
-        fetchData("victims", Victim.fromJson),
+        fetchData('volunteers', Volunteer.fromJson),
+        fetchData('victims', Victim.fromJson),
       ]);
       setState(() {
         volunteers = results[0] as List<Volunteer>;
@@ -178,11 +147,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       setState(() {
         isLoading = false;
       });
-      AppSnackBar.show(
-        context: context,
-        message: error.toString(),
-        type: SnackBarType.error,
-      );
+      AppSnackBar.show(context: context, message: error.toString(), type: SnackBarType.error);
     }
   }
 
@@ -195,7 +160,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     if (startDate == null) {
       AppSnackBar.show(
         context: context,
-        message: "Por favor, selecciona una fecha de inicio",
+        message: 'Por favor, selecciona una fecha de inicio',
         type: SnackBarType.error,
       );
       return;
@@ -214,32 +179,21 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         taskId: widget.taskToEdit?.id,
       );
 
-      if (result.startsWith("OK:")) {
+      if (result.startsWith('OK:')) {
         widget.onTaskCreated();
         if (mounted) {
           Navigator.pop(context);
         }
         AppSnackBar.show(
           context: context,
-          message:
-              widget.taskToEdit != null
-                  ? "Tarea actualizada correctamente"
-                  : "Tarea creada correctamente",
+          message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
           type: SnackBarType.success,
         );
       } else {
-        AppSnackBar.show(
-          context: context,
-          message: result,
-          type: SnackBarType.error,
-        );
+        AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
       }
     } catch (error) {
-      AppSnackBar.show(
-        context: context,
-        message: "Error: $error",
-        type: SnackBarType.error,
-      );
+      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
     }
   }
 
@@ -248,7 +202,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     if (address.isEmpty) {
       AppSnackBar.show(
         context: context,
-        message: "Por favor, introduce una dirección para buscar",
+        message: 'Por favor, introduce una dirección para buscar',
         type: SnackBarType.error,
       );
       return;
@@ -258,14 +212,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       // Encode the address for URL
       final encodedAddress = Uri.encodeComponent(address);
       // Use Nominatim geocoding service (OpenStreetMap)
-      final url = Uri.parse(
-        "https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1",
-      );
+      final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
 
-      final response = await http.get(
-        url,
-        headers: {"User-Agent": "SolidarityHub/1.0"},
-      );
+      final response = await http.get(url, headers: {'User-Agent': 'SolidarityHub/1.0'});
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -279,31 +228,24 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             selectedLocation = location;
             _updateLocationControllers(location);
             _updateMarker(location);
-            _mapController.move(
-              location,
-              15.0,
-            ); // Zoom in to the found location
+            _mapController.move(location, 15.0); // Zoom in to the found location
           });
         } else {
           AppSnackBar.show(
             context: context,
-            message: "No se encontró ninguna ubicación con esa dirección",
+            message: 'No se encontró ninguna ubicación con esa dirección',
             type: SnackBarType.warning,
           );
         }
       } else {
         AppSnackBar.show(
           context: context,
-          message: "Error al buscar la dirección: ${response.statusCode}",
+          message: 'Error al buscar la dirección: ${response.statusCode}',
           type: SnackBarType.error,
         );
       }
     } catch (error) {
-      AppSnackBar.show(
-        context: context,
-        message: "Error: $error",
-        type: SnackBarType.error,
-      );
+      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
     }
   }
 
@@ -360,12 +302,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         children: [
           _buildHeader(widget.taskToEdit != null),
           const Divider(),
-          Expanded(
-            child:
-                isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _buildForm(),
-          ),
+          Expanded(child: isLoading ? const Center(child: CircularProgressIndicator()) : _buildForm()),
         ],
       ),
     );
@@ -379,10 +316,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           isEditing ? 'Editar Tarea' : 'Crear Tarea',
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
+        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
       ],
     );
   }
@@ -396,17 +330,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField(
-                controller: nameController,
-                label: 'Nombre',
-                maxLines: 1,
-              ),
+              _buildTextField(controller: nameController, label: 'Nombre', maxLines: 1),
               const SizedBox(height: 8),
-              _buildTextField(
-                controller: descriptionController,
-                label: 'Descripción',
-                maxLines: 2,
-              ),
+              _buildTextField(controller: descriptionController, label: 'Descripción', maxLines: 2),
               const SizedBox(height: 8),
               _buildDateFields(),
               const SizedBox(height: 8),
@@ -434,10 +360,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Fechas de la tarea',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        const Text('Fechas de la tarea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -496,10 +419,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(6.0),
-            ),
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -509,10 +429,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       : isOptional
                       ? 'No especificada'
                       : 'Selecciona una fecha',
-                  style: TextStyle(
-                    color: date != null ? Colors.black : Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: date != null ? Colors.black : Colors.grey, fontSize: 12),
                 ),
                 const Icon(Icons.calendar_today, size: 16),
               ],
@@ -527,19 +444,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Ubicación',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        const Text('Ubicación', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
-              child: _buildTextField(
-                controller: searchAddressController,
-                label: 'Buscar dirección',
-                maxLines: 1,
-              ),
+              child: _buildTextField(controller: searchAddressController, label: 'Buscar dirección', maxLines: 1),
             ),
             const SizedBox(width: 8),
             ElevatedButton(
@@ -548,9 +458,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               ),
               child: const Icon(Icons.search),
             ),
@@ -560,23 +468,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         Expanded(
           flex: 2,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.grey),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: FlutterMap(
                 mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: selectedLocation,
-                  initialZoom: 13,
-                  onTap: _onMapTap,
-                ),
+                options: MapOptions(initialCenter: selectedLocation, initialZoom: 13, onTap: _onMapTap),
                 children: [
                   TileLayer(
-                    urlTemplate:
-                        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                    urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
                   ),
                   MarkerLayer(markers: _markers),
@@ -593,10 +493,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Voluntarios disponibles',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        const Text('Voluntarios disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: searchVolunteersController,
@@ -614,9 +511,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       },
                     )
                     : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
           ),
           onChanged: (value) {
             setState(() {});
@@ -625,10 +520,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const SizedBox(height: 8),
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.grey),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: _filteredVolunteers().length,
@@ -636,26 +528,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final volunteer = _filteredVolunteers()[index];
                 final isSelected = selectedVolunteers.contains(volunteer.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4.0,
-                    horizontal: 8.0,
-                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    side: BorderSide(
-                      color: isSelected ? Colors.red : Colors.transparent,
-                      width: 1,
-                    ),
+                    side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
                     title: Text(
                       '${volunteer.name} ${volunteer.surname}',
-                      style: TextStyle(
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                     ),
                     subtitle: Text(volunteer.email),
                     trailing: Checkbox(
@@ -685,10 +568,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Afectados disponibles',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        const Text('Afectados disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
           controller: searchVictimController,
@@ -706,9 +586,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       },
                     )
                     : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
           ),
           onChanged: (value) {
             setState(() {});
@@ -717,10 +595,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const SizedBox(height: 8),
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.grey),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: _filteredVictim().length,
@@ -728,26 +603,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final person = _filteredVictim()[index];
                 final isSelected = selectedVictim.contains(person.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4.0,
-                    horizontal: 8.0,
-                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    side: BorderSide(
-                      color: isSelected ? Colors.red : Colors.transparent,
-                      width: 1,
-                    ),
+                    side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
                     title: Text(
                       '${person.name} ${person.surname}',
-                      style: TextStyle(
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                     ),
                     subtitle: Text(person.email),
                     trailing: Checkbox(
@@ -786,9 +652,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        contentPadding:
-            contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -811,16 +675,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         ),
         onPressed: _handleCreateTask,
         icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white),
-        label: Text(
-          isEditing ? 'Actualizar Tarea' : 'Crear Tarea',
-          style: const TextStyle(fontSize: 16),
-        ),
+        label: Text(isEditing ? 'Actualizar Tarea' : 'Crear Tarea', style: const TextStyle(fontSize: 16)),
       ),
     );
   }

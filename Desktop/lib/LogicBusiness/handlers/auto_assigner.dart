@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
-import 'package:solidarityhub/LogicPersistence/models/task.dart';
-import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
+import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/task.dart';
 
 abstract class AssignmentStrategy {
   void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers);

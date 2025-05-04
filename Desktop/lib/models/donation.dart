@@ -1,4 +1,4 @@
-import 'package:solidarityhub/LogicPersistence/models/victim.dart';
+import 'package:solidarityhub/models/victim.dart';
 
 enum PhysicalDonationType { Other, Food, Tools, Clothes, Medicine, Furniture }
 
@@ -77,20 +77,14 @@ class MonetaryDonation {
                 surname: json['volunteer_surname'] ?? '',
               )
               : null,
-      donationDate:
-          json['donation_date'] != null
-              ? DateTime.parse(json['donation_date'])
-              : DateTime.now(),
+      donationDate: json['donation_date'] != null ? DateTime.parse(json['donation_date']) : DateTime.now(),
     );
   }
 
   static Currency _parseCurrency(dynamic value) {
     if (value == null) return Currency.Other;
     if (value is int) {
-      return Currency.values.firstWhere(
-        (type) => type.index == value,
-        orElse: () => Currency.Other,
-      );
+      return Currency.values.firstWhere((type) => type.index == value, orElse: () => Currency.Other);
     } else if (value is String) {
       return Currency.values.firstWhere(
         (type) => type.name.toLowerCase() == value.toLowerCase(),
@@ -103,10 +97,7 @@ class MonetaryDonation {
   static PaymentStatus _parsePaymentStatus(dynamic value) {
     if (value == null) return PaymentStatus.Pending;
     if (value is int) {
-      return PaymentStatus.values.firstWhere(
-        (type) => type.index == value,
-        orElse: () => PaymentStatus.Pending,
-      );
+      return PaymentStatus.values.firstWhere((type) => type.index == value, orElse: () => PaymentStatus.Pending);
     } else if (value is String) {
       return PaymentStatus.values.firstWhere(
         (type) => type.name.toLowerCase() == value.toLowerCase(),
@@ -119,10 +110,7 @@ class MonetaryDonation {
   static PaymentService _parsePaymentService(dynamic value) {
     if (value == null) return PaymentService.Other;
     if (value is int) {
-      return PaymentService.values.firstWhere(
-        (type) => type.index == value,
-        orElse: () => PaymentService.Other,
-      );
+      return PaymentService.values.firstWhere((type) => type.index == value, orElse: () => PaymentService.Other);
     } else if (value is String) {
       return PaymentService.values.firstWhere(
         (type) => type.name.toLowerCase() == value.toLowerCase(),
@@ -213,8 +201,7 @@ class Donation {
                 'prefix': json['victim_prefix']?.toInt() ?? 0,
                 'phone_number': json['victim_phone_number']?.toString() ?? '',
                 'address': json['victim_address']?.toString() ?? '',
-                'identification':
-                    json['victim_identification']?.toString() ?? '',
+                'identification': json['victim_identification']?.toString() ?? '',
                 'location_id': json['victim_location_id']?.toInt() ?? 0,
               })
               : null,
@@ -226,10 +213,7 @@ class Donation {
                 surname: json['volunteer_surname']?.toString() ?? '',
               )
               : null,
-      donationDate:
-          json['donation_date'] != null
-              ? DateTime.parse(json['donation_date'])
-              : DateTime.now(),
+      donationDate: json['donation_date'] != null ? DateTime.parse(json['donation_date']) : DateTime.now(),
     );
   }
 
