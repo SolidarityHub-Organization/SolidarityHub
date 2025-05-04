@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicBusiness/services/victimServices.dart';
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
-import 'package:solidarityhub/LogicPersistence/models/victim.dart';
+import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/victim.dart';
 import 'package:intl/intl.dart';
 
 class AssignDonationDialog extends StatefulWidget {
@@ -50,9 +50,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error al cargar víctimas: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al cargar víctimas: $e')));
       }
     }
   }
@@ -65,12 +63,9 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.red,
-              onPrimary: Colors.white,
-            ),
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: const ColorScheme.light(primary: Colors.red, onPrimary: Colors.white)),
           child: SizedBox(height: 400, width: 300, child: child!),
         );
       },
@@ -98,18 +93,13 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
             children: [
               DropdownButtonFormField<Donation>(
                 value: _selectedDonation,
-                decoration: const InputDecoration(
-                  labelText: 'Recurso',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Recurso', border: OutlineInputBorder()),
                 items:
                     widget.availableDonations
                         .map(
                           (d) => DropdownMenuItem(
                             value: d,
-                            child: Text(
-                              '${d.itemName} (${d.availableQuantity} disponibles)',
-                            ),
+                            child: Text('${d.itemName} (${d.availableQuantity} disponibles)'),
                           ),
                         )
                         .toList(),
@@ -131,19 +121,8 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
               const SizedBox(height: 16),
               DropdownButtonFormField<Victim>(
                 value: _selectedVictim,
-                decoration: const InputDecoration(
-                  labelText: 'Afectado',
-                  border: OutlineInputBorder(),
-                ),
-                items:
-                    _victims
-                        .map(
-                          (v) => DropdownMenuItem(
-                            value: v,
-                            child: Text('${v.name} ${v.surname}'),
-                          ),
-                        )
-                        .toList(),
+                decoration: const InputDecoration(labelText: 'Afectado', border: OutlineInputBorder()),
+                items: _victims.map((v) => DropdownMenuItem(value: v, child: Text('${v.name} ${v.surname}'))).toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedVictim = value;
@@ -159,10 +138,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 initialValue: _quantity.toString(),
-                decoration: const InputDecoration(
-                  labelText: 'Cantidad',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: const InputDecoration(labelText: 'Cantidad', border: OutlineInputBorder()),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -190,9 +166,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(Icons.calendar_today),
                     ),
-                    controller: TextEditingController(
-                      text: _dateFormat.format(_selectedDate),
-                    ),
+                    controller: TextEditingController(text: _dateFormat.format(_selectedDate)),
                   ),
                 ),
               ),
@@ -201,10 +175,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
-        ),
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState?.validate() ?? false) {
@@ -216,10 +187,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
               });
             }
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
           child: const Text('Asignar'),
         ),
       ],

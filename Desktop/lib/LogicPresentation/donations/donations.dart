@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicBusiness/services/donationService.dart';
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
-import 'package:solidarityhub/LogicPersistence/models/victim.dart';
+import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/physical_donations_tab.dart';
@@ -15,8 +15,7 @@ class DonationsPage extends StatefulWidget {
   _DonationsPageState createState() => _DonationsPageState();
 }
 
-class _DonationsPageState extends State<DonationsPage>
-    with SingleTickerProviderStateMixin {
+class _DonationsPageState extends State<DonationsPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late final DonationService _service;
   List<Donation> _donations = [];
@@ -151,16 +150,11 @@ class _DonationsPageState extends State<DonationsPage>
                   ),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context, true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
                     child: const Text('Eliminar'),
                   ),
                 ],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               ),
         ) ??
         false;
@@ -171,26 +165,20 @@ class _DonationsPageState extends State<DonationsPage>
       await _service.deleteDonation(donation.id);
       await _fetchDonations();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Donación eliminada correctamente')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación eliminada correctamente')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
       }
     }
   }
 
   Future<void> _showCreateDonationDialog() async {
     if (_volunteers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No hay voluntarios disponibles para crear donaciones'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles para crear donaciones')));
       return;
     }
 
@@ -204,15 +192,11 @@ class _DonationsPageState extends State<DonationsPage>
         await _service.createDonation(newDonation);
         await _fetchDonations();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Donación creada correctamente')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada correctamente')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error al crear: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al crear: $e')));
         }
       }
     }
@@ -224,8 +208,7 @@ class _DonationsPageState extends State<DonationsPage>
       builder:
           (context) => AssignDonationDialog(
             baseUrl: widget.baseUrl,
-            availableDonations:
-                _donations.where((d) => !d.isFullyDistributed).toList(),
+            availableDonations: _donations.where((d) => !d.isFullyDistributed).toList(),
             selectedDonation: donation,
           ),
     );
@@ -237,23 +220,14 @@ class _DonationsPageState extends State<DonationsPage>
         final quantity = result['quantity'] as int;
         final selectedDate = result['date'] as DateTime;
 
-        await _service.assignDonation(
-          selectedDonation.id,
-          selectedVictim.id,
-          quantity,
-          selectedDate,
-        );
+        await _service.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
         await _fetchDonations();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Donación asignada correctamente')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al asignar donación: $e')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al asignar donación: $e')));
         }
       }
     }
@@ -265,10 +239,7 @@ class _DonationsPageState extends State<DonationsPage>
       builder: (BuildContext context) {
         DateTimeRange tempDateRange =
             _selectedDateRange ??
-            DateTimeRange(
-              start: DateTime.now().subtract(const Duration(days: 30)),
-              end: DateTime.now(),
-            );
+            DateTimeRange(start: DateTime.now().subtract(const Duration(days: 30)), end: DateTime.now());
 
         return AlertDialog(
           title: const Text('Seleccionar rango de fechas'),
@@ -287,21 +258,15 @@ class _DonationsPageState extends State<DonationsPage>
                     lastDate: tempDateRange.end,
                     builder: (context, child) {
                       return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,
-                          ),
-                        ),
+                        data: Theme.of(
+                          context,
+                        ).copyWith(colorScheme: const ColorScheme.light(primary: Colors.red, onPrimary: Colors.white)),
                         child: child!,
                       );
                     },
                   );
                   if (picked != null) {
-                    tempDateRange = DateTimeRange(
-                      start: picked,
-                      end: tempDateRange.end,
-                    );
+                    tempDateRange = DateTimeRange(start: picked, end: tempDateRange.end);
                     (context as Element).markNeedsBuild();
                   }
                 },
@@ -318,21 +283,15 @@ class _DonationsPageState extends State<DonationsPage>
                     lastDate: DateTime.now(),
                     builder: (context, child) {
                       return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,
-                          ),
-                        ),
+                        data: Theme.of(
+                          context,
+                        ).copyWith(colorScheme: const ColorScheme.light(primary: Colors.red, onPrimary: Colors.white)),
                         child: child!,
                       );
                     },
                   );
                   if (picked != null) {
-                    tempDateRange = DateTimeRange(
-                      start: tempDateRange.start,
-                      end: picked,
-                    );
+                    tempDateRange = DateTimeRange(start: tempDateRange.start, end: picked);
                     (context as Element).markNeedsBuild();
                   }
                 },
@@ -349,10 +308,7 @@ class _DonationsPageState extends State<DonationsPage>
               },
               child: const Text('Limpiar filtro'),
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -360,10 +316,7 @@ class _DonationsPageState extends State<DonationsPage>
                 });
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
               child: const Text('Aplicar'),
             ),
           ],
@@ -388,33 +341,17 @@ class _DonationsPageState extends State<DonationsPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    r.itemName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(r.itemName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Text(
-                    r.category.name,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
+                  Text(r.category.name, style: const TextStyle(fontSize: 14, color: Colors.grey)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text(
-                        'Total: ${r.donated}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
+                      Text('Total: ${r.donated}', style: const TextStyle(fontSize: 14)),
                       const SizedBox(width: 16),
                       Text(
                         'Disponible: ${r.availableQuantity}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green),
                       ),
                     ],
                   ),
@@ -426,11 +363,7 @@ class _DonationsPageState extends State<DonationsPage>
                     const SizedBox(height: 8),
                     Text(
                       'Donado por: ${r.volunteer!.name} ${r.volunteer!.surname}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey),
                     ),
                   ],
                 ],
@@ -442,19 +375,13 @@ class _DonationsPageState extends State<DonationsPage>
                 if (!r.isFullyDistributed)
                   ElevatedButton(
                     onPressed: () => _showAssignDonationDialog(r),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
                     child: const Text('Asignar'),
                   ),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () => _deleteDonation(r),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    foregroundColor: Colors.white,
-                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, foregroundColor: Colors.white),
                   child: const Text('Eliminar'),
                 ),
               ],
@@ -474,26 +401,18 @@ class _DonationsPageState extends State<DonationsPage>
           filtered
               .where(
                 (d) =>
-                    d.itemName.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    ) ||
-                    d.description.toLowerCase().contains(
-                      _searchQuery.toLowerCase(),
-                    ),
+                    d.itemName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    d.description.toLowerCase().contains(_searchQuery.toLowerCase()),
               )
               .toList();
     }
 
     if (_selectedFilterVolunteer != null) {
-      filtered =
-          filtered
-              .where((d) => d.volunteer?.id == _selectedFilterVolunteer!.id)
-              .toList();
+      filtered = filtered.where((d) => d.volunteer?.id == _selectedFilterVolunteer!.id).toList();
     }
 
     if (_selectedFilterCategory != null) {
-      filtered =
-          filtered.where((d) => d.category == _selectedFilterCategory).toList();
+      filtered = filtered.where((d) => d.category == _selectedFilterCategory).toList();
     }
 
     if (_selectedDateRange != null) {
@@ -502,35 +421,23 @@ class _DonationsPageState extends State<DonationsPage>
               .where(
                 (d) =>
                     d.donationDate.isAfter(_selectedDateRange!.start) &&
-                    d.donationDate.isBefore(
-                      _selectedDateRange!.end.add(const Duration(days: 1)),
-                    ),
+                    d.donationDate.isBefore(_selectedDateRange!.end.add(const Duration(days: 1))),
               )
               .toList();
     }
 
-    filtered =
-        filtered
-            .where(
-              (d) =>
-                  d.donated >= _quantityRange.start &&
-                  d.donated <= _quantityRange.end,
-            )
-            .toList();
+    filtered = filtered.where((d) => d.donated >= _quantityRange.start && d.donated <= _quantityRange.end).toList();
 
     return filtered;
   }
 
   // Método para agrupar donaciones por víctima
-  Map<String, List<Donation>> _groupDonationsByVictim(
-    List<Donation> donations,
-  ) {
+  Map<String, List<Donation>> _groupDonationsByVictim(List<Donation> donations) {
     final Map<String, List<Donation>> grouped = {};
 
     for (var donation in donations) {
       if (donation.assignedVictim != null) {
-        final victimKey =
-            '${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}';
+        final victimKey = '${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}';
         if (!grouped.containsKey(victimKey)) {
           grouped[victimKey] = [];
         }
@@ -550,10 +457,7 @@ class _DonationsPageState extends State<DonationsPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Historial de Asignaciones',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              const Text('Historial de Asignaciones', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               TextButton.icon(
                 onPressed: _showDateRangeDialog,
                 icon: const Icon(Icons.calendar_today, color: Colors.red),
@@ -574,8 +478,7 @@ class _DonationsPageState extends State<DonationsPage>
   }
 
   List<Donation> _getFilteredDonationsForHistory() {
-    List<Donation> filtered =
-        _donations.where((d) => d.assignedVictim != null).toList();
+    List<Donation> filtered = _donations.where((d) => d.assignedVictim != null).toList();
 
     if (_selectedDateRange != null) {
       filtered =
@@ -583,9 +486,7 @@ class _DonationsPageState extends State<DonationsPage>
               .where(
                 (d) =>
                     d.donationDate.isAfter(_selectedDateRange!.start) &&
-                    d.donationDate.isBefore(
-                      _selectedDateRange!.end.add(const Duration(days: 1)),
-                    ),
+                    d.donationDate.isBefore(_selectedDateRange!.end.add(const Duration(days: 1))),
               )
               .toList();
     }
@@ -616,10 +517,7 @@ class _DonationsPageState extends State<DonationsPage>
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text(
-            'No hay donaciones asignadas',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
+          child: Text('No hay donaciones asignadas', style: TextStyle(fontSize: 16, color: Colors.grey)),
         ),
       );
     }
@@ -646,13 +544,7 @@ class _DonationsPageState extends State<DonationsPage>
                   children: [
                     const Icon(Icons.person, color: Colors.red),
                     const SizedBox(width: 8),
-                    Text(
-                      'Asignado a: $victimName',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('Asignado a: $victimName', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -666,10 +558,7 @@ class _DonationsPageState extends State<DonationsPage>
                   return Column(
                     children: [
                       ListTile(
-                        leading: Icon(
-                          _iconForCategory(donation.category),
-                          color: Colors.red,
-                        ),
+                        leading: Icon(_iconForCategory(donation.category), color: Colors.red),
                         title: Text(
                           '${donation.itemName} (${donation.distributed} de ${donation.donated})',
                           style: const TextStyle(fontSize: 14),
@@ -680,17 +569,11 @@ class _DonationsPageState extends State<DonationsPage>
                             if (donation.volunteer != null)
                               Text(
                                 'Donado por: ${donation.volunteer!.name} ${donation.volunteer!.surname}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             Text(
                               'Asignado: ${_formatDate(donation.donationDate)}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
+                              style: const TextStyle(fontSize: 12, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -699,22 +582,15 @@ class _DonationsPageState extends State<DonationsPage>
                                 ? const Chip(
                                   label: Text('Completado'),
                                   backgroundColor: Colors.green,
-                                  labelStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
+                                  labelStyle: TextStyle(color: Colors.white, fontSize: 12),
                                 )
                                 : const Chip(
                                   label: Text('Parcial'),
                                   backgroundColor: Colors.orange,
-                                  labelStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
+                                  labelStyle: TextStyle(color: Colors.white, fontSize: 12),
                                 ),
                       ),
-                      if (donationIndex < victimDonations.length - 1)
-                        const Divider(height: 1, indent: 72),
+                      if (donationIndex < victimDonations.length - 1) const Divider(height: 1, indent: 72),
                     ],
                   );
                 },
@@ -732,10 +608,7 @@ class _DonationsPageState extends State<DonationsPage>
       child: Column(
         children: [
           ListTile(
-            title: const Text(
-              'Filtros',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            title: const Text('Filtros', style: TextStyle(fontWeight: FontWeight.bold)),
             trailing: IconButton(
               icon: Icon(_showFilters ? Icons.expand_less : Icons.expand_more),
               onPressed: () {
@@ -773,17 +646,9 @@ class _DonationsPageState extends State<DonationsPage>
                       border: OutlineInputBorder(),
                     ),
                     items: [
-                      const DropdownMenuItem(
-                        value: null,
-                        child: Text('Todos los voluntarios'),
-                      ),
+                      const DropdownMenuItem(value: null, child: Text('Todos los voluntarios')),
                       ..._volunteers
-                          .map(
-                            (v) => DropdownMenuItem(
-                              value: v,
-                              child: Text('${v.name} ${v.surname}'),
-                            ),
-                          )
+                          .map((v) => DropdownMenuItem(value: v, child: Text('${v.name} ${v.surname}')))
                           .toList(),
                     ],
                     onChanged: (value) {
@@ -796,22 +661,11 @@ class _DonationsPageState extends State<DonationsPage>
                   // Filtro de categoría
                   DropdownButtonFormField<PhysicalDonationType?>(
                     value: _selectedFilterCategory,
-                    decoration: const InputDecoration(
-                      labelText: 'Filtrar por categoría',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Filtrar por categoría', border: OutlineInputBorder()),
                     items: [
-                      const DropdownMenuItem(
-                        value: null,
-                        child: Text('Todas las categorías'),
-                      ),
+                      const DropdownMenuItem(value: null, child: Text('Todas las categorías')),
                       ...PhysicalDonationType.values
-                          .map(
-                            (type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type.name),
-                            ),
-                          )
+                          .map((type) => DropdownMenuItem(value: type, child: Text(type.name)))
                           .toList(),
                     ],
                     onChanged: (value) {
@@ -883,10 +737,7 @@ class _DonationsPageState extends State<DonationsPage>
           indicatorColor: Colors.white,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: 'Donaciones Físicas'),
-            Tab(text: 'Donaciones Monetarias'),
-          ],
+          tabs: const [Tab(text: 'Donaciones Físicas'), Tab(text: 'Donaciones Monetarias')],
         ),
       ),
       body: TabBarView(
@@ -910,13 +761,7 @@ class _DonationsPageState extends State<DonationsPage>
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(_errorMessage!),
-            ElevatedButton(
-              onPressed: _fetchDonations,
-              child: const Text('Reintentar'),
-            ),
-          ],
+          children: [Text(_errorMessage!), ElevatedButton(onPressed: _fetchDonations, child: const Text('Reintentar'))],
         ),
       );
     }
@@ -932,19 +777,14 @@ class _DonationsPageState extends State<DonationsPage>
           const SizedBox(height: 16),
           if (filteredDonations.isEmpty)
             const Center(
-              child: Text(
-                'No hay donaciones disponibles',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
+              child: Text('No hay donaciones disponibles', style: TextStyle(fontSize: 16, color: Colors.grey)),
             )
           else
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: filteredDonations.length,
-              itemBuilder:
-                  (context, index) =>
-                      _buildDonationCard(filteredDonations[index]),
+              itemBuilder: (context, index) => _buildDonationCard(filteredDonations[index]),
             ),
           const SizedBox(height: 32),
           _buildHistorySection(),
@@ -964,10 +804,7 @@ class _DonationsPageState extends State<DonationsPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(_errorMessage!),
-            ElevatedButton(
-              onPressed: _fetchMonetaryDonations,
-              child: const Text('Reintentar'),
-            ),
+            ElevatedButton(onPressed: _fetchMonetaryDonations, child: const Text('Reintentar')),
           ],
         ),
       );
@@ -978,10 +815,7 @@ class _DonationsPageState extends State<DonationsPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Donaciones Monetarias',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+          const Text('Donaciones Monetarias', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           if (_monetaryDonations.isEmpty)
             const Center(
@@ -995,9 +829,7 @@ class _DonationsPageState extends State<DonationsPage>
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _monetaryDonations.length,
-              itemBuilder:
-                  (context, index) =>
-                      _buildMonetaryDonationCard(_monetaryDonations[index]),
+              itemBuilder: (context, index) => _buildMonetaryDonationCard(_monetaryDonations[index]),
             ),
         ],
       ),
@@ -1042,16 +874,10 @@ class _DonationsPageState extends State<DonationsPage>
               children: [
                 Text(
                   '${getCurrencySymbol(donation.currency)}${donation.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Chip(
-                  label: Text(
-                    donation.paymentStatus.name,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  label: Text(donation.paymentStatus.name, style: const TextStyle(color: Colors.white)),
                   backgroundColor: getStatusColor(donation.paymentStatus),
                 ),
               ],
@@ -1067,24 +893,18 @@ class _DonationsPageState extends State<DonationsPage>
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person),
-                title: Text(
-                  'Donante: ${donation.volunteer!.name} ${donation.volunteer!.surname}',
-                ),
+                title: Text('Donante: ${donation.volunteer!.name} ${donation.volunteer!.surname}'),
               ),
             if (donation.assignedVictim != null)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person_outline),
-                title: Text(
-                  'Asignado a: ${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}',
-                ),
+                title: Text('Asignado a: ${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}'),
               ),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.calendar_today),
-              title: Text(
-                'Fecha: ${donation.donationDate.toLocal().toString().split('.')[0]}',
-              ),
+              title: Text('Fecha: ${donation.donationDate.toLocal().toString().split('.')[0]}'),
             ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
+import 'package:solidarityhub/models/donation.dart';
 
 class DonationService {
   final String baseUrl;
@@ -111,15 +111,8 @@ class DonationService {
     }
   }
 
-  Future<Donation> assignDonation(
-    int donationId,
-    int victimId,
-    int quantity,
-    DateTime donationDate,
-  ) async {
-    final uri = Uri.parse(
-      '$baseUrl/api/v1/physical-donations/$donationId/assign',
-    );
+  Future<Donation> assignDonation(int donationId, int victimId, int quantity, DateTime donationDate) async {
+    final uri = Uri.parse('$baseUrl/api/v1/physical-donations/$donationId/assign');
 
     final Map<String, dynamic> data = {
       'id': donationId,
@@ -132,11 +125,7 @@ class DonationService {
     };
 
     try {
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(data),
-      );
+      final response = await http.post(uri, headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -175,9 +164,7 @@ class DonationService {
     if (response.statusCode == 200) {
       return json.decode(response.body) as int;
     } else {
-      throw Exception(
-        'Error al obtener el total de donaciones: ${response.statusCode}',
-      );
+      throw Exception('Error al obtener el total de donaciones: ${response.statusCode}');
     }
   }
 
@@ -189,15 +176,11 @@ class DonationService {
       final List<dynamic> data = json.decode(response.body);
       return data.map((e) => MonetaryDonation.fromJson(e)).toList();
     } else {
-      throw Exception(
-        'Error al cargar donaciones monetarias: ${response.statusCode}',
-      );
+      throw Exception('Error al cargar donaciones monetarias: ${response.statusCode}');
     }
   }
 
-  Future<MonetaryDonation> createMonetaryDonation(
-    MonetaryDonation donation,
-  ) async {
+  Future<MonetaryDonation> createMonetaryDonation(MonetaryDonation donation) async {
     final uri = Uri.parse('$baseUrl/api/v1/monetary-donations');
 
     if (donation.volunteer == null) {
@@ -231,8 +214,7 @@ class DonationService {
           final errorData = json.decode(response.body);
           errorMessage = errorData is String ? errorData : errorData.toString();
         } catch (e) {
-          errorMessage =
-              'Error al crear donación monetaria: ${response.statusCode}';
+          errorMessage = 'Error al crear donación monetaria: ${response.statusCode}';
         }
         throw Exception(errorMessage);
       }

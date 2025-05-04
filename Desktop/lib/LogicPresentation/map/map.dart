@@ -6,8 +6,8 @@ import 'package:solidarityhub/LogicPresentation/map/infoSquareFactory.dart';
 import '../../LogicBusiness/services/victimServices.dart';
 import '../../LogicBusiness/services/volunteer_service.dart';
 import '../../LogicBusiness/services/affectedZoneServices.dart';
-import '../../LogicPersistence/models/mapMarker.dart';
-import '../../LogicPersistence/models/affectedZone.dart';
+import '../../models/mapMarker.dart';
+import '../../models/affectedZone.dart';
 import 'markerfactory.dart';
 
 class MapScreen extends StatefulWidget {
@@ -28,9 +28,7 @@ class _MapScreenState extends State<MapScreen> {
   MapMarker? _selectedMarker;
 
   final VictimService _victimServices = VictimService(baseUrl);
-  final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(
-    baseUrl,
-  );
+  final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(baseUrl);
   final MapController _mapController = MapController();
 
   @override
@@ -56,9 +54,7 @@ class _MapScreenState extends State<MapScreen> {
       });
     } catch (e) {
       // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
       print('Error al obtener las ubicaciones: $e');
     }
   }
@@ -77,9 +73,7 @@ class _MapScreenState extends State<MapScreen> {
       });
     } catch (e) {
       // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
       print('Error al obtener las ubicaciones: $e');
     }
   }
@@ -98,9 +92,7 @@ class _MapScreenState extends State<MapScreen> {
       });
     } catch (e) {
       // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al obtener las ubicaciones: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
       print('Error al obtener las ubicaciones: $e');
     }
   }
@@ -115,10 +107,7 @@ class _MapScreenState extends State<MapScreen> {
               final zone = AffectedZone.fromJson(zoneData);
 
               return Polygon(
-                points:
-                    zone.points
-                        .map((point) => LatLng(point.latitude, point.longitude))
-                        .toList(),
+                points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
                 color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.3),
                 borderColor: _getHazardLevelColor(zone.hazardLevel),
                 borderStrokeWidth: 2,
@@ -127,9 +116,7 @@ class _MapScreenState extends State<MapScreen> {
             }).toList();
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al obtener las zonas afectadas: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las zonas afectadas: $e')));
     }
   }
 
@@ -162,8 +149,6 @@ class _MapScreenState extends State<MapScreen> {
               return marker.type == 'volunteer'; // Solo mostrar voluntarios
             case MapViewMode.task:
               return marker.type == 'task'; // Solo mostrar tareas
-            default:
-              return true;
           }
         }).toList();
 
@@ -171,11 +156,7 @@ class _MapScreenState extends State<MapScreen> {
     List<Marker> flutterMapMarkers =
         filteredMarkers.map((mapMarker) {
           final creator = getMarkerCreator(mapMarker.type);
-          return creator.createMarker(
-            mapMarker,
-            context,
-            (marker) => _onMarkerTapped(marker),
-          );
+          return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
         }).toList();
 
     return Scaffold(
@@ -188,21 +169,12 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           // El mapa ocupará una parte del ancho, ahora con márgenes
           Expanded(
-            flex:
-                2, // Reducido de 3 a 2 para hacer más espacio para el panel de información
+            flex: 2, // Reducido de 3 a 2 para hacer más espacio para el panel de información
             child: Container(
-              margin: EdgeInsets.all(
-                12.0,
-              ), // Añadimos un margen alrededor del mapa
+              margin: EdgeInsets.all(12.0), // Añadimos un margen alrededor del mapa
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8.0,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8.0, offset: Offset(0, 3))],
               ),
               child: ClipRRect(
                 // Recortamos el mapa para que respete el borderRadius
@@ -215,14 +187,11 @@ class _MapScreenState extends State<MapScreen> {
                         initialCenter: LatLng(39.47391, -0.37966),
                         initialZoom: 13,
                         // Añadidos parámetros para mejorar interactividad
-                        interactionOptions: InteractionOptions(
-                          flags: InteractiveFlag.all,
-                        ),
+                        interactionOptions: InteractionOptions(flags: InteractiveFlag.all),
                       ),
                       children: [
                         TileLayer(
-                          urlTemplate:
-                              'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                          urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                           subdomains: ['a', 'b', 'c', 'd'],
                         ),
                         PolygonLayer(polygons: _polygons),
@@ -232,8 +201,7 @@ class _MapScreenState extends State<MapScreen> {
                     // Botones de filtrado en la esquina superior izquierda
                     Positioned(
                       top: 16,
-                      left:
-                          16, // Cambiado de right a left para ubicarlos a la izquierda
+                      left: 16, // Cambiado de right a left para ubicarlos a la izquierda
                       child: Column(
                         children: [
                           _buildFilterButton(
@@ -254,8 +222,7 @@ class _MapScreenState extends State<MapScreen> {
                           _buildFilterButton(
                             label: 'Voluntarios',
                             isSelected: _currentMode == MapViewMode.volunteer,
-                            onPressed:
-                                () => _setViewMode(MapViewMode.volunteer),
+                            onPressed: () => _setViewMode(MapViewMode.volunteer),
                             icon: Icons.volunteer_activism,
                             color: Colors.green,
                           ),
@@ -287,19 +254,10 @@ class _MapScreenState extends State<MapScreen> {
                     children: [
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.only(
-                          bottom: 20.0,
-                        ), // Más espacio inferior
-                        margin: EdgeInsets.only(
-                          bottom: 10.0,
-                        ), // Margen inferior
+                        padding: EdgeInsets.only(bottom: 20.0), // Más espacio inferior
+                        margin: EdgeInsets.only(bottom: 10.0), // Margen inferior
                         decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
-                              width: 1.5,
-                            ),
-                          ),
+                          border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,31 +290,21 @@ class _MapScreenState extends State<MapScreen> {
                         constraints: BoxConstraints(
                           minHeight: 350, // Altura mínima más grande
                         ),
-                        child: getInfoSquare(
-                          _selectedMarker!.type,
-                        ).buildInfoSquare(_selectedMarker!),
+                        child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
                       ),
                       SizedBox(height: 24), // Más espacio
                       // Información adicional con contenedor más grande
                       Container(
                         constraints: BoxConstraints(
-                          minHeight:
-                              150, // Altura mínima más grande para acciones
+                          minHeight: 150, // Altura mínima más grande para acciones
                         ),
                         padding: EdgeInsets.all(20), // Padding más grande
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.grey.shade300,
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: Colors.grey.shade300, width: 1.5),
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              offset: Offset(0, 3),
-                              blurRadius: 6,
-                            ),
+                            BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 3), blurRadius: 6),
                           ],
                         ),
                         child: Column(
@@ -371,12 +319,7 @@ class _MapScreenState extends State<MapScreen> {
                               ),
                             ),
                             SizedBox(height: 20), // Más espacio
-                            _buildActionButton(
-                              "Contactar",
-                              Icons.phone,
-                              Colors.green,
-                              () {},
-                            ),
+                            _buildActionButton("Contactar", Icons.phone, Colors.green, () {}),
                           ],
                         ),
                       ),
@@ -391,12 +334,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Método para construir botones de acción en el panel de información
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed,
-  ) {
+  Widget _buildActionButton(String label, IconData icon, Color color, VoidCallback onPressed) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -408,10 +346,7 @@ class _MapScreenState extends State<MapScreen> {
             children: [
               Icon(icon, color: color, size: 24),
               SizedBox(width: 12),
-              Text(
-                label,
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              ),
+              Text(label, style: TextStyle(fontSize: 16, color: Colors.black87)),
             ],
           ),
         ),
@@ -445,10 +380,7 @@ class _MapScreenState extends State<MapScreen> {
           decoration: BoxDecoration(
             color: isSelected ? color.withOpacity(0.2) : Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? color : Colors.grey,
-              width: 1,
-            ),
+            border: Border.all(color: isSelected ? color : Colors.grey, width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

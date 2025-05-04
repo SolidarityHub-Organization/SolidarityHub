@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
+import 'package:solidarityhub/models/donation.dart';
 
 class CreateDonationDialog extends StatefulWidget {
   final List<Volunteer> volunteers;
 
-  const CreateDonationDialog({Key? key, required this.volunteers})
-    : super(key: key);
+  const CreateDonationDialog({Key? key, required this.volunteers}) : super(key: key);
 
   @override
   _CreateDonationDialogState createState() => _CreateDonationDialogState();
@@ -47,9 +46,7 @@ class _CreateDonationDialogState extends State<CreateDonationDialog> {
             children: [
               TextFormField(
                 controller: _itemNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del recurso',
-                ),
+                decoration: const InputDecoration(labelText: 'Nombre del recurso'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese un nombre';
@@ -82,12 +79,7 @@ class _CreateDonationDialogState extends State<CreateDonationDialog> {
                 decoration: const InputDecoration(labelText: 'Categoría'),
                 items:
                     PhysicalDonationType.values
-                        .map(
-                          (type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(type.name),
-                          ),
-                        )
+                        .map((type) => DropdownMenuItem(value: type, child: Text(type.name)))
                         .toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -104,12 +96,8 @@ class _CreateDonationDialogState extends State<CreateDonationDialog> {
                 items:
                     widget.volunteers
                         .map(
-                          (volunteer) => DropdownMenuItem(
-                            value: volunteer,
-                            child: Text(
-                              '${volunteer.name} ${volunteer.surname}',
-                            ),
-                          ),
+                          (volunteer) =>
+                              DropdownMenuItem(value: volunteer, child: Text('${volunteer.name} ${volunteer.surname}')),
                         )
                         .toList(),
                 onChanged: (value) {
@@ -148,10 +136,7 @@ class _CreateDonationDialogState extends State<CreateDonationDialog> {
               Navigator.pop(context, newDonation);
             }
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
           child: const Text('Crear'),
         ),
       ],

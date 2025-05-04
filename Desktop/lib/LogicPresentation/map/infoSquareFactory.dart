@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../LogicPersistence/models/mapMarker.dart';
+import '../../models/mapMarker.dart';
 
 abstract class InfoSquare {
   Widget buildInfoSquare(MapMarker mapMarker);
@@ -17,17 +17,8 @@ class VictimInfoSquare implements InfoSquare {
           colors: [Colors.red.shade50, Colors.red.shade100],
         ),
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withOpacity(0.3),
-            blurRadius: 10.0,
-            offset: Offset(0, 5),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.red.shade300,
-          width: 2.0,
-        ), // Borde más grueso
+        boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
+        border: Border.all(color: Colors.red.shade300, width: 2.0), // Borde más grueso
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,11 +26,7 @@ class VictimInfoSquare implements InfoSquare {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.person,
-                color: Colors.red.shade700,
-                size: 28,
-              ), // Icono más grande
+              Icon(Icons.person, color: Colors.red.shade700, size: 28), // Icono más grande
               SizedBox(width: 12),
               Text(
                 'Detalles del afectado',
@@ -51,11 +38,7 @@ class VictimInfoSquare implements InfoSquare {
               ),
             ],
           ),
-          Divider(
-            color: Colors.red.shade300,
-            thickness: 2.0,
-            height: 32,
-          ), // Divisor más grueso y alto
+          Divider(color: Colors.red.shade300, thickness: 2.0, height: 32), // Divisor más grueso y alto
           SizedBox(height: 20), // Más espacio
 
           SizedBox(height: 12),
@@ -76,13 +59,8 @@ class VictimInfoSquare implements InfoSquare {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade600,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ), // Botón más grande
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Botón más grande
                 textStyle: TextStyle(fontSize: 18), // Texto de botón más grande
               ),
               child: Text('Ver más detalles'),
@@ -101,9 +79,7 @@ class VictimInfoSquare implements InfoSquare {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: fontSize,
-            ), // Tamaño de texto parametrizado
+            style: TextStyle(fontSize: fontSize), // Tamaño de texto parametrizado
           ),
         ),
       ],
@@ -123,17 +99,8 @@ class VolunteerInfoSquare implements InfoSquare {
           colors: [Colors.red.shade50, Colors.red.shade100],
         ),
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withOpacity(0.3),
-            blurRadius: 10.0,
-            offset: Offset(0, 5),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.green.shade300,
-          width: 2.0,
-        ), // Borde más grueso
+        boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
+        border: Border.all(color: Colors.green.shade300, width: 2.0), // Borde más grueso
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,11 +108,7 @@ class VolunteerInfoSquare implements InfoSquare {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.volunteer_activism,
-                color: Colors.green,
-                size: 28,
-              ), // Icono más grande
+              Icon(Icons.volunteer_activism, color: Colors.green, size: 28), // Icono más grande
               SizedBox(width: 12),
               Text(
                 'Detalles del voluntario',
@@ -157,11 +120,7 @@ class VolunteerInfoSquare implements InfoSquare {
               ),
             ],
           ),
-          Divider(
-            color: Colors.green.shade300,
-            thickness: 2.0,
-            height: 32,
-          ), // Divisor más grueso y alto
+          Divider(color: Colors.green.shade300, thickness: 2.0, height: 32), // Divisor más grueso y alto
           SizedBox(height: 20), // Más espacio
 
           SizedBox(height: 12),
@@ -182,13 +141,8 @@ class VolunteerInfoSquare implements InfoSquare {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade600,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ), // Botón más grande
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Botón más grande
                 textStyle: TextStyle(fontSize: 18), // Texto de botón más grande
               ),
               child: Text('Ver más detalles'),
@@ -207,9 +161,7 @@ class VolunteerInfoSquare implements InfoSquare {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: fontSize,
-            ), // Tamaño de texto parametrizado
+            style: TextStyle(fontSize: fontSize), // Tamaño de texto parametrizado
           ),
         ),
       ],
@@ -229,17 +181,8 @@ class TaskInfoSquare implements InfoSquare {
           colors: [Colors.red.shade50, Colors.red.shade100],
         ),
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withOpacity(0.3),
-            blurRadius: 10.0,
-            offset: Offset(0, 5),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.orange.shade300,
-          width: 2.0,
-        ), // Borde más grueso
+        boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
+        border: Border.all(color: Colors.orange.shade300, width: 2.0), // Borde más grueso
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,11 +190,7 @@ class TaskInfoSquare implements InfoSquare {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.task_alt,
-                color: Colors.orange,
-                size: 28,
-              ), // Icono más grande
+              Icon(Icons.task_alt, color: Colors.orange, size: 28), // Icono más grande
               SizedBox(width: 12),
               Text(
                 'Detalles de la tarea',
@@ -263,11 +202,7 @@ class TaskInfoSquare implements InfoSquare {
               ),
             ],
           ),
-          Divider(
-            color: Colors.orange.shade300,
-            thickness: 2.0,
-            height: 32,
-          ), // Divisor más grueso y alto
+          Divider(color: Colors.orange.shade300, thickness: 2.0, height: 32), // Divisor más grueso y alto
           SizedBox(height: 20), // Más espacio
 
           SizedBox(height: 12),
@@ -288,13 +223,8 @@ class TaskInfoSquare implements InfoSquare {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange.shade600,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ), // Botón más grande
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Botón más grande
                 textStyle: TextStyle(fontSize: 18), // Texto de botón más grande
               ),
               child: Text('Ver más detalles'),
@@ -313,9 +243,7 @@ class TaskInfoSquare implements InfoSquare {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: fontSize,
-            ), // Tamaño de texto parametrizado
+            style: TextStyle(fontSize: fontSize), // Tamaño de texto parametrizado
           ),
         ),
       ],

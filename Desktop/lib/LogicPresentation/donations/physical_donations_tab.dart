@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicBusiness/services/donationService.dart';
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
+import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
 
@@ -42,18 +42,13 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
 
   List<Donation> _getFilteredDonations() {
     return widget.donations.where((donation) {
-      if (_selectedFilterVolunteer != null &&
-          donation.volunteer?.id != _selectedFilterVolunteer?.id) {
+      if (_selectedFilterVolunteer != null && donation.volunteer?.id != _selectedFilterVolunteer?.id) {
         return false;
       }
-      if (_selectedFilterCategory != null &&
-          donation.category != _selectedFilterCategory) {
+      if (_selectedFilterCategory != null && donation.category != _selectedFilterCategory) {
         return false;
       }
-      if (_searchQuery.isNotEmpty &&
-          !donation.itemName.toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          )) {
+      if (_searchQuery.isNotEmpty && !donation.itemName.toLowerCase().contains(_searchQuery.toLowerCase())) {
         return false;
       }
       if (_selectedDateRange != null &&
@@ -61,8 +56,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
               donation.donationDate.isAfter(_selectedDateRange!.end))) {
         return false;
       }
-      if (donation.donated < _quantityRange.start ||
-          donation.donated > _quantityRange.end) {
+      if (donation.donated < _quantityRange.start || donation.donated > _quantityRange.end) {
         return false;
       }
       return true;
@@ -72,9 +66,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
   Future<void> _showCreateDonationDialog() async {
     if (widget.volunteers.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No hay voluntarios disponibles')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles')));
       }
       return;
     }
@@ -89,15 +81,11 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
         final createdDonation = await widget.service.createDonation(result);
         widget.onDonationCreated(createdDonation);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Donación creada con éxito')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada con éxito')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al crear la donación: $e')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al crear la donación: $e')));
         }
       }
     }
@@ -109,8 +97,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
       builder:
           (context) => AssignDonationDialog(
             baseUrl: widget.baseUrl,
-            availableDonations:
-                widget.donations.where((d) => !d.isFullyDistributed).toList(),
+            availableDonations: widget.donations.where((d) => !d.isFullyDistributed).toList(),
             selectedDonation: donation,
           ),
     );
@@ -125,15 +112,11 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
         );
         widget.onDonationAssigned(updatedDonation);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Donación asignada correctamente')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al asignar donación: $e')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al asignar donación: $e')));
         }
       }
     }
@@ -146,10 +129,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           children: [
             Expanded(
               child: TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Buscar por nombre...',
-                  prefixIcon: Icon(Icons.search),
-                ),
+                decoration: const InputDecoration(hintText: 'Buscar por nombre...', prefixIcon: Icon(Icons.search)),
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value;
@@ -158,9 +138,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
               ),
             ),
             IconButton(
-              icon: Icon(
-                _showFilters ? Icons.filter_list_off : Icons.filter_list,
-              ),
+              icon: Icon(_showFilters ? Icons.filter_list_off : Icons.filter_list),
               onPressed: () {
                 setState(() {
                   _showFilters = !_showFilters;
@@ -173,20 +151,10 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           const SizedBox(height: 16),
           DropdownButtonFormField<Volunteer>(
             value: _selectedFilterVolunteer,
-            decoration: const InputDecoration(
-              labelText: 'Filtrar por voluntario',
-            ),
+            decoration: const InputDecoration(labelText: 'Filtrar por voluntario'),
             items: [
-              const DropdownMenuItem<Volunteer>(
-                value: null,
-                child: Text('Todos'),
-              ),
-              ...widget.volunteers.map(
-                (v) => DropdownMenuItem(
-                  value: v,
-                  child: Text('${v.name} ${v.surname}'),
-                ),
-              ),
+              const DropdownMenuItem<Volunteer>(value: null, child: Text('Todos')),
+              ...widget.volunteers.map((v) => DropdownMenuItem(value: v, child: Text('${v.name} ${v.surname}'))),
             ],
             onChanged: (value) {
               setState(() {
@@ -197,17 +165,10 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           const SizedBox(height: 8),
           DropdownButtonFormField<PhysicalDonationType>(
             value: _selectedFilterCategory,
-            decoration: const InputDecoration(
-              labelText: 'Filtrar por categoría',
-            ),
+            decoration: const InputDecoration(labelText: 'Filtrar por categoría'),
             items: [
-              const DropdownMenuItem<PhysicalDonationType>(
-                value: null,
-                child: Text('Todas'),
-              ),
-              ...PhysicalDonationType.values.map(
-                (type) => DropdownMenuItem(value: type, child: Text(type.name)),
-              ),
+              const DropdownMenuItem<PhysicalDonationType>(value: null, child: Text('Todas')),
+              ...PhysicalDonationType.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))),
             ],
             onChanged: (value) {
               setState(() {
@@ -238,38 +199,20 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        donation.itemName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        donation.category.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      Text(donation.itemName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(donation.category.name, style: const TextStyle(fontSize: 14, color: Colors.grey)),
                     ],
                   ),
                 ),
                 if (isAssigned)
                   const Chip(
-                    label: Text(
-                      'Asignado',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    label: Text('Asignado', style: TextStyle(color: Colors.white)),
                     backgroundColor: Colors.green,
                   )
                 else
                   ElevatedButton(
                     onPressed: () => _showAssignDonationDialog(donation),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
                     child: const Text('Asignar'),
                   ),
               ],
@@ -280,15 +223,9 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Cantidad: ${donation.donated}',
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Text('Cantidad: ${donation.donated}', style: const TextStyle(fontSize: 16)),
                 if (donation.distributed > 0)
-                  Text(
-                    'Distribuido: ${donation.distributed}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  Text('Distribuido: ${donation.distributed}', style: const TextStyle(fontSize: 16)),
               ],
             ),
             if (donation.volunteer != null) ...[
@@ -323,10 +260,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(widget.errorMessage!),
-            ElevatedButton(
-              onPressed: widget.onRefresh,
-              child: const Text('Reintentar'),
-            ),
+            ElevatedButton(onPressed: widget.onRefresh, child: const Text('Reintentar')),
           ],
         ),
       );
@@ -343,19 +277,14 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           const SizedBox(height: 16),
           if (filteredDonations.isEmpty)
             const Center(
-              child: Text(
-                'No hay donaciones disponibles',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
+              child: Text('No hay donaciones disponibles', style: TextStyle(fontSize: 16, color: Colors.grey)),
             )
           else
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: filteredDonations.length,
-              itemBuilder:
-                  (context, index) =>
-                      _buildDonationCard(filteredDonations[index]),
+              itemBuilder: (context, index) => _buildDonationCard(filteredDonations[index]),
             ),
         ],
       ),

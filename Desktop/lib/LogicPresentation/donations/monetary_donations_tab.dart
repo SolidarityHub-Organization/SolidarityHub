@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPersistence/models/donation.dart';
+import 'package:solidarityhub/models/donation.dart';
 
 class MonetaryDonationsTab extends StatefulWidget {
   final List<MonetaryDonation> donations;
@@ -58,16 +58,10 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
               children: [
                 Text(
                   '${getCurrencySymbol(donation.currency)}${donation.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Chip(
-                  label: Text(
-                    donation.paymentStatus.name,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  label: Text(donation.paymentStatus.name, style: const TextStyle(color: Colors.white)),
                   backgroundColor: getStatusColor(donation.paymentStatus),
                 ),
               ],
@@ -83,24 +77,18 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person),
-                title: Text(
-                  'Donante: ${donation.volunteer!.name} ${donation.volunteer!.surname}',
-                ),
+                title: Text('Donante: ${donation.volunteer!.name} ${donation.volunteer!.surname}'),
               ),
             if (donation.assignedVictim != null)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person_outline),
-                title: Text(
-                  'Asignado a: ${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}',
-                ),
+                title: Text('Asignado a: ${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}'),
               ),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.calendar_today),
-              title: Text(
-                'Fecha: ${donation.donationDate.toLocal().toString().split('.')[0]}',
-              ),
+              title: Text('Fecha: ${donation.donationDate.toLocal().toString().split('.')[0]}'),
             ),
           ],
         ),
@@ -120,10 +108,7 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(widget.errorMessage!),
-            ElevatedButton(
-              onPressed: widget.onRefresh,
-              child: const Text('Reintentar'),
-            ),
+            ElevatedButton(onPressed: widget.onRefresh, child: const Text('Reintentar')),
           ],
         ),
       );
@@ -134,10 +119,7 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Donaciones Monetarias',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+          const Text('Donaciones Monetarias', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           if (widget.donations.isEmpty)
             const Center(
@@ -151,9 +133,7 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.donations.length,
-              itemBuilder:
-                  (context, index) =>
-                      _buildMonetaryDonationCard(widget.donations[index]),
+              itemBuilder: (context, index) => _buildMonetaryDonationCard(widget.donations[index]),
             ),
         ],
       ),

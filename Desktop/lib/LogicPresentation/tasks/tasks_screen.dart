@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicBusiness/handlers/auto_assigner.dart';
 import 'package:solidarityhub/LogicBusiness/services/coordenadasServices.dart';
 import 'package:solidarityhub/LogicBusiness/services/volunteer_service.dart';
-import 'package:solidarityhub/LogicPersistence/models/task.dart';
+import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/create_task.dart';
 import 'package:solidarityhub/LogicPresentation/tasks/widgets/task_filter_panel.dart';
@@ -21,9 +21,7 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = TaskTableController(
-      coordenadasService: CoordenadasService('http://localhost:5170/api/v1'),
-    );
+    _controller = TaskTableController(coordenadasService: CoordenadasService('http://localhost:5170/api/v1'));
     _loadData();
   }
 
@@ -40,10 +38,7 @@ class _TasksScreenState extends State<TasksScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al cargar las tareas: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error al cargar las tareas: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     }
@@ -57,17 +52,11 @@ class _TasksScreenState extends State<TasksScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Gestión de Tareas',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
         centerTitle: true,
         elevation: 4,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -80,18 +69,9 @@ class _TasksScreenState extends State<TasksScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text(
-                      'Gestión de Tareas',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('Gestión de Tareas', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text(
-                      'Crea y asigna tareas a voluntarios',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                    Text('Crea y asigna tareas a voluntarios', style: TextStyle(fontSize: 16, color: Colors.grey)),
                   ],
                 ),
                 Row(
@@ -99,34 +79,18 @@ class _TasksScreenState extends State<TasksScreen> {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () async {
-                        final volunteers =
-                            await VolunteerService.fetchVolunteers();
-                        List<TaskWithDetails> tasksWithoutVolunteers =
-                            _controller.tasks
-                                .where(
-                                  (task) => task.assignedVolunteers.isEmpty,
-                                )
-                                .toList();
                         AutoAssigner(
-                          RandomAssignmentStrategy(),
-                        ).assignTasks(tasksWithoutVolunteers, volunteers);
+                          BalancedAssignmentStrategy(),
+                        ).assignTasks(_controller.tasks, await VolunteerService.fetchVolunteers(), 2);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 13.0,
-                          vertical: 16.0,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                       ),
                       icon: const Icon(Icons.auto_fix_high),
-                      label: const Text(
-                        'Auto Asignar',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      label: const Text('Auto Asignar', style: TextStyle(fontSize: 16)),
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
@@ -137,45 +101,26 @@ class _TasksScreenState extends State<TasksScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 13.0,
-                          vertical: 16.0,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                       ),
                       icon: const Icon(Icons.add, color: Colors.white),
-                      label: const Text(
-                        'Nueva Tarea',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      label: const Text('Nueva Tarea', style: TextStyle(fontSize: 16)),
                     ),
                   ],
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            TaskFilterPanel(
-              controller: _controller,
-              onFilterChanged: () => setState(() {}),
-            ),
+            TaskFilterPanel(controller: _controller, onFilterChanged: () => setState(() {})),
             const SizedBox(height: 16),
             _controller.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _controller.tasks.isEmpty
                 ? const Center(
-                  child: Text(
-                    'No hay tareas disponibles.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
+                  child: Text('No hay tareas disponibles.', style: TextStyle(fontSize: 16, color: Colors.grey)),
                 )
-                : Expanded(
-                  child: TaskTable(
-                    controller: _controller,
-                    onTaskChanged: () => setState(() {}),
-                  ),
-                ),
+                : Expanded(child: TaskTable(controller: _controller, onTaskChanged: () => setState(() {}))),
           ],
         ),
       ),
