@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:solidarityhub/LogicPersistence/models/volunteer.dart';
 
 class VolunteerService {
-  static String baseUrl = 'http://localhost:5170/api/v1';
+  static const String baseUrl = 'http://localhost:5170/api/v1';
 
   static Future<List<Volunteer>> fetchVolunteers() async {
     final url = Uri.parse('$baseUrl/volunteers');
@@ -27,23 +27,27 @@ class VolunteerService {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final response = await http.get(
-      Uri.parse(
-        '$baseUrl/api/v1/skills/volunteer-counts'
-        '?fromDate=${startDate.toIso8601String()}'
-        '&toDate=${endDate.toIso8601String()}',
-      ),
-    );
+    final url = '$baseUrl/skills/volunteer-counts?fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
+    //print('Calling URL: $url'); // debug log
 
-    if (response.statusCode == 200) {
-      // Convert dictionary to list
-      final Map<String, dynamic> data = json.decode(response.body);
-      return data.entries
-          .map((entry) => {'item1': entry.key, 'item2': entry.value})
-          .toList();
-    } else {
-      print('Error: ${response.statusCode} - ${response.body}');
-      throw Exception('Failed to load filtered volunteer skills count');
+    try {
+      final response = await http.get(Uri.parse(url));
+      //print('Response status: ${response.statusCode}'); // debug log
+      //print('Response body: ${response.body}'); // debug log
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data.entries.map((entry) => {
+          'item1': entry.key,
+          'item2': entry.value,
+        }).toList();
+      } else {
+        throw Exception('Server returned ${response.statusCode}: ${response.body}');
+      }
+    } catch (e, stackTrace) {
+      //print('Error in fetchFilteredVolunteerSkillsCount: $e'); // debug log
+      //print('Stack trace: $stackTrace'); // debug log
+      throw Exception('Failed to load filtered volunteer skills count: $e');
     }
   }
 
