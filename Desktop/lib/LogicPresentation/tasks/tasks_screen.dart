@@ -99,17 +99,11 @@ class _TasksScreenState extends State<TasksScreen> {
                   children: [
                     ElevatedButton.icon(
                       onPressed: () async {
-                        final volunteers =
-                            await VolunteerService.fetchVolunteers();
-                        List<TaskWithDetails> tasksWithoutVolunteers =
-                            _controller.tasks
-                                .where(
-                                  (task) => task.assignedVolunteers.isEmpty,
-                                )
-                                .toList();
-                        AutoAssigner(
-                          RandomAssignmentStrategy(),
-                        ).assignTasks(tasksWithoutVolunteers, volunteers);
+                        AutoAssigner(RandomAssignmentStrategy()).assignTasks(
+                          _controller.tasks,
+                          await VolunteerService.fetchVolunteers(),
+                          3,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
