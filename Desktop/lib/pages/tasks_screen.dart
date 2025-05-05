@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/controllers/task_controller.dart';
 import 'package:solidarityhub/services/coordenadasServices.dart';
 import 'package:solidarityhub/controllers/task_table_controller.dart';
 import 'package:solidarityhub/controllers/task_controller.dart';
@@ -6,6 +7,7 @@ import 'package:solidarityhub/widgets/task_table/task_table.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:solidarityhub/widgets/task_table/auto_assigner_dialog.dart';
 import 'package:solidarityhub/widgets/task_table/task_filter_panel.dart';
+import 'package:solidarityhub/widgets/task_table/task_table.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -105,7 +107,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 ? const Center(
                   child: Text('No hay tareas disponibles.', style: TextStyle(fontSize: 16, color: Colors.grey)),
                 )
-                : Expanded(child: TaskTable(controller: _tableController, onTaskChanged: () => setState(() {}))),
+                : Expanded(child: TaskTable(controller: _tableController, onTaskChanged: _loadTasks)),
           ],
         ),
       ),

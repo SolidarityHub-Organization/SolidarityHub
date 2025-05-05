@@ -4,11 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/task_service.dart';
-import 'package:solidarityhub/models/donation.dart' show Volunteer;
+import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/widgets/ui/snack_bar.dart';
-import 'package:solidarityhub/utils/safe_execute.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:solidarityhub/services/api_general_service.dart';
+import 'package:solidarityhub/services/api_service.dart';
 
 abstract class TaskHandler {
   TaskHandler? nextHandler;
@@ -41,7 +41,7 @@ class LocationHandler extends TaskHandler {
   Future<String> handle(Map<String, dynamic> taskData) async {
     final locationResponse = await ApiGeneralService.post('locations', body: json.encode(taskData['location']));
 
-    if (locationResponse.statusCode.ok) {
+    if (!locationResponse.statusCode.ok) {
       return 'Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}';
     }
 

@@ -3,23 +3,14 @@ import 'package:flutter/material.dart';
 enum SnackBarType { success, error, info, warning }
 
 class AppSnackBar {
-  static final GlobalKey<ScaffoldMessengerState> messengerKey = GlobalKey<ScaffoldMessengerState>();
-
   static void show({
-    BuildContext? context,
+    required BuildContext context,
     required String message,
     SnackBarType type = SnackBarType.info,
     Duration duration = const Duration(seconds: 4),
     SnackBarAction? action,
   }) {
-    final scaffoldMessenger = context != null ? ScaffoldMessenger.of(context) : messengerKey.currentState;
-
-    if (scaffoldMessenger == null) {
-      debugPrint('No se pudo encontrar un ScaffoldMessenger válido para mostrar la SnackBar');
-      return;
-    }
-
-    scaffoldMessenger.hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     final Color backgroundColor;
     final Color textColor = Colors.white;
@@ -60,6 +51,6 @@ class AppSnackBar {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
 
-    scaffoldMessenger.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

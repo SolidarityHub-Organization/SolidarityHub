@@ -7,7 +7,7 @@ extension StatusCodeExtension on int {
   bool get ok => this >= 200 && this < 300;
 }
 
-class ApiGeneralService {
+class ApiService {
   static final AppConfig _config = AppConfig();
 
   static String get baseUrl => _config.apiBaseUrl;
