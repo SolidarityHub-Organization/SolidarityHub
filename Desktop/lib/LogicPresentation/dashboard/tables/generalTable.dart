@@ -34,6 +34,7 @@ class _GeneralTabState extends State<GeneralTab> {
   late Future<int> _volunteerCountFuture;
   late Future<double> _donationTotalFuture;
   late Future<int> _completedTasksCountFuture;
+  late Future<List<dynamic>> _recentActivityFuture;
 
   @override
   void initState() {
@@ -55,6 +56,10 @@ class _GeneralTabState extends State<GeneralTab> {
         .then((value) => value.toDouble());
     _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
       'Completed',
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+    );
+    _recentActivityFuture = _generalService.fetchRecentActivity(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
@@ -82,6 +87,10 @@ class _GeneralTabState extends State<GeneralTab> {
             .then((value) => value.toDouble());
         _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
           'Completed',
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
+        );
+        _recentActivityFuture = _generalService.fetchRecentActivity(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
@@ -197,6 +206,20 @@ class _GeneralTabState extends State<GeneralTab> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Historial de Registros Recientes',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 15),
+                          _buildRecentActivityTable(),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -209,11 +232,11 @@ class _GeneralTabState extends State<GeneralTab> {
 
   Widget _buildInfoCard(String title, String value) {
     return Container(
-      height: 200,
+      height: 120,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.grey, width: 1),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
       ),
@@ -222,9 +245,121 @@ class _GeneralTabState extends State<GeneralTab> {
         children: [
           Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
           const SizedBox(height: 12.0),
-          Text(value, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black)),
+          Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.red)),
         ],
       ),
     );
+  }
+
+  Widget _buildRecentActivityTable() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: FutureBuilder<List<dynamic>>(
+        future: _recentActivityFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: Padding(padding: EdgeInsets.all(20.0), child: CircularProgressIndicator()));
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text('Error al cargar los datos: ${snapshot.error}', style: const TextStyle(color: Colors.red)),
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Padding(padding: EdgeInsets.all(20.0), child: Text('No hay actividad reciente que mostrar')),
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.all(12.0),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, index) => Divider(color: Colors.grey.shade200, height: 1),
+                itemBuilder: (context, index) {
+                  final item = snapshot.data![index];
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                    leading: CircleAvatar(
+                      backgroundColor: _getTypeColor(item['type']),
+                      child: Icon(_getTypeIcon(item['type']), color: Colors.white, size: 20),
+                    ),
+                    title: Text(
+                      _buildRegistrationMessage(item),
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        item['date'] != null ? _formatDate(item['date']) : 'Fecha desconocida',
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  String _buildRegistrationMessage(dynamic item) {
+    String name = item['name'] ?? 'Persona';
+    String type = item['type']?.toString().toLowerCase() ?? '';
+
+    if (type.contains('victim') || type.contains('víctima')) {
+      return '$name se ha registrado como afectado';
+    } else if (type.contains('volunteer') || type.contains('voluntario')) {
+      return '$name se ha registrado como voluntario';
+    } else if (type.contains('donation') || type.contains('donación')) {
+      return '$name ha realizado una donación';
+    } else {
+      return '$name se ha registrado';
+    }
+  }
+
+  IconData _getTypeIcon(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'victim':
+      case 'víctima':
+        return Icons.person_add_alt_1;
+      case 'volunteer':
+      case 'voluntario':
+        return Icons.volunteer_activism;
+      case 'donation':
+      case 'donación':
+        return Icons.card_giftcard;
+      default:
+        return Icons.person;
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  Color _getTypeColor(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'victim':
+      case 'víctima':
+        return const Color.fromARGB(255, 255, 164, 163); // Rojo más intenso para afectados
+      case 'volunteer':
+      case 'voluntario':
+        return const Color(0xFFC62828); // Rojo más oscuro para voluntarios
+      case 'donation':
+      case 'donación':
+        return const Color(0xFF4CAF50); // Verde para donaciones
+      default:
+        return Colors.grey;
+    }
   }
 }
