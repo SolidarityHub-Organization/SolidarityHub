@@ -12,24 +12,14 @@ class CoordenadasService {
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
 
-      final response = await http.get(
-        url,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SolidarityHub App',
-        },
-      );
+      final response = await http.get(url, headers: {'Accept': 'application/json', 'User-Agent': 'SolidarityHub App'});
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final address = data['address'];
 
         final road = address['road'] ?? 'Unknown road';
-        final city =
-            address['city'] ??
-            address['town'] ??
-            address['village'] ??
-            'Unknown city';
+        final city = address['city'] ?? address['town'] ?? address['village'] ?? 'Unknown city';
         final state = address['state'] ?? 'Unknown state';
         final country = address['country'] ?? 'Unknown country';
 
@@ -39,7 +29,7 @@ class CoordenadasService {
         throw Exception('Failed to get address');
       }
     } catch (e) {
-      return "Error fetching address: $e";
+      return 'Error fetching address: $e';
     }
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/LogicBusiness/services/task_service.dart';
+import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/LogicPresentation/map/infoSquareFactory.dart';
-import '../../LogicBusiness/services/victimServices.dart';
-import '../../LogicBusiness/services/volunteer_service.dart';
-import '../../LogicBusiness/services/affectedZoneServices.dart';
+import '../../services/victimServices.dart';
+import '../../services/volunteer_service.dart';
+import '../../services/affected_zone_services.dart';
 import '../../models/mapMarker.dart';
 import '../../models/affectedZone.dart';
 import 'markerfactory.dart';
@@ -193,6 +193,7 @@ class _MapScreenState extends State<MapScreen> {
                         TileLayer(
                           urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                           subdomains: ['a', 'b', 'c', 'd'],
+                          retinaMode: RetinaMode.isHighDensity(context),
                         ),
                         PolygonLayer(polygons: _polygons),
                         MarkerLayer(markers: flutterMapMarkers),

@@ -11,11 +11,7 @@ class VolunteerTab extends StatefulWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
 
-  const VolunteerTab({
-    Key? key,
-    required this.fechaFin,
-    required this.fechaInicio,
-  }) : super(key: key);
+  const VolunteerTab({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
 
   @override
   _VolunteerTabState createState() => _VolunteerTabState();
@@ -45,29 +41,19 @@ class _VolunteerTabState extends State<VolunteerTab> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    final start = _adjustStartDate(
-      widget.fechaInicio ?? now.subtract(const Duration(days: 365)),
-    );
+    final start = _adjustStartDate(widget.fechaInicio ?? now.subtract(const Duration(days: 365)));
     final end = _adjustEndDate(widget.fechaFin);
-    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(
-      start,
-      end,
-    );
+    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
   }
 
   @override
   void didUpdateWidget(covariant VolunteerTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fechaInicio != widget.fechaInicio ||
-        oldWidget.fechaFin != widget.fechaFin) {
+    if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        final start = _adjustStartDate(
-          widget.fechaInicio ??
-              DateTime.now().subtract(const Duration(days: 365)),
-        );
+        final start = _adjustStartDate(widget.fechaInicio ?? DateTime.now().subtract(const Duration(days: 365)));
         final end = _adjustEndDate(widget.fechaFin);
-        _volunteerNeedsFuture =
-            VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
+        _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
       });
     }
   }
@@ -84,9 +70,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
   double _calculateMaxTitleWidth(List<Map<String, dynamic>> data) {
     final textPainter = TextPainter(
       textDirection: TextDirection.ltr,
-      text: TextSpan(
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+      text: TextSpan(style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
     );
 
     double maxWidth = 0;
@@ -114,10 +98,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
             child: IntrinsicHeight(
               child: Container(
                 width: math.max(800, constraints.maxWidth),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 16.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
                   future: _volunteerNeedsFuture,
                   builder: (context, snapshot) {
@@ -179,12 +160,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
   }
 }
 
-Widget _buildLegendItem(
-  MapEntry<String, int> entry,
-  double percentage,
-  bool isInOther,
-  Map<String, int> groupedData,
-) {
+Widget _buildLegendItem(MapEntry<String, int> entry, double percentage, bool isInOther, Map<String, int> groupedData) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 6.0),
     child: Column(
@@ -215,10 +191,7 @@ Widget _buildLegendItem(
                   valueColor: AlwaysStoppedAnimation(
                     isInOther
                         ? Colors.grey
-                        : Colors.primaries[groupedData.keys.toList().indexOf(
-                              entry.key,
-                            ) %
-                            Colors.primaries.length],
+                        : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) % Colors.primaries.length],
                   ),
                 ),
               ),

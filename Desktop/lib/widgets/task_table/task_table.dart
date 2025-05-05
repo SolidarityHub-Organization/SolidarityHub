@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/controllers/task_table_controller.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/models/column_data.dart';
-import 'package:solidarityhub/LogicPresentation/tasks/widgets/task_table_cell.dart';
+import 'package:solidarityhub/controllers/task_table_controller.dart';
+import 'package:solidarityhub/models/task_table.dart';
+import 'package:solidarityhub/widgets/task_table/task_table_cell.dart';
 
 class TaskTable extends StatelessWidget {
   final TaskTableController controller;
@@ -46,7 +46,7 @@ class TaskTable extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnHeader(BuildContext context, ColumnData column, int columnIndex) {
+  Widget _buildColumnHeader(BuildContext context, TaskTableColumnData column, int columnIndex) {
     return Container(
       color: Colors.grey[200],
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -118,7 +118,7 @@ class TaskTable extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnData(BuildContext context, ColumnData column) {
+  Widget _buildColumnData(BuildContext context, TaskTableColumnData column) {
     return SizedBox(
       height: 450,
       child: ListView.builder(

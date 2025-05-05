@@ -11,11 +11,7 @@ class VictimsTab extends StatefulWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
 
-  const VictimsTab({
-    Key? key,
-    required this.fechaFin,
-    required this.fechaInicio,
-  }) : super(key: key);
+  const VictimsTab({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
 
   @override
   _VictimsTabState createState() => _VictimsTabState();
@@ -35,17 +31,15 @@ class _VictimsTabState extends State<VictimsTab> {
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
-  late final Future<List<Map<String, dynamic>>> _victimCountFuture =
-      _victimService.fetchVictimCountByDate().catchError((error) {
-        print('Error al obtener datos de víctimas por fecha: $error');
-        return <Map<String, dynamic>>[];
-      });
+  late final Future<List<Map<String, dynamic>>> _victimCountFuture = _victimService.fetchVictimCountByDate().catchError(
+    (error) {
+      print('Error al obtener datos de víctimas por fecha: $error');
+      return <Map<String, dynamic>>[];
+    },
+  );
 
   late Future<List<Map<String, dynamic>>> _victimNeedsFuture = _victimService
-      .fetchFilteredVictimCounts(
-        _adjustStartDate(widget.fechaInicio),
-        _adjustEndDate(widget.fechaFin),
-      )
+      .fetchFilteredVictimCounts(_adjustStartDate(widget.fechaInicio), _adjustEndDate(widget.fechaFin))
       .catchError((error) {
         print('Error al obtener datos filtrados de víctimas: $error');
         return <Map<String, dynamic>>[];
@@ -54,14 +48,10 @@ class _VictimsTabState extends State<VictimsTab> {
   @override
   void didUpdateWidget(covariant VictimsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.fechaInicio != widget.fechaInicio ||
-        oldWidget.fechaFin != widget.fechaFin) {
+    if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
         _victimNeedsFuture = _victimService
-            .fetchFilteredVictimCounts(
-              _adjustStartDate(widget.fechaInicio),
-              _adjustEndDate(widget.fechaFin),
-            )
+            .fetchFilteredVictimCounts(_adjustStartDate(widget.fechaInicio), _adjustEndDate(widget.fechaFin))
             .catchError((error) {
               print('Error al actualizar datos filtrados de víctimas: $error');
               return <Map<String, dynamic>>[];

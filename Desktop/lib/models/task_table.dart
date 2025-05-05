@@ -1,11 +1,11 @@
-class ColumnData {
+class TaskTableColumnData {
   final String id;
   final String label;
   double width;
   final String tooltip;
   final bool sortable;
 
-  ColumnData({
+  TaskTableColumnData({
     required this.id,
     required this.label,
     required this.width,

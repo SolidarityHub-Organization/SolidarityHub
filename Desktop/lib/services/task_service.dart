@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:solidarityhub/LogicBusiness/handlers/task_handler.dart';
+import 'package:solidarityhub/handlers/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
+import 'package:solidarityhub/services/api_general_service.dart';
 
 class TaskService {
-  static String baseUrl = 'http://localhost:5170/api/v1';
-
   static Future<String> createTask({
     required String name,
     required String description,
@@ -39,7 +37,6 @@ class TaskService {
   }
 
   static Future<void> updateTask(TaskWithDetails task) async {
-    final url = Uri.parse('$baseUrl/tasks/${task.id}');
     final body = {
       'id': task.id,
       'name': task.name,
@@ -51,27 +48,22 @@ class TaskService {
       'volunteer_ids': task.assignedVolunteers.map((v) => v.id).toList(),
       'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
     };
-    final response = await http.put(url, headers: {'Content-Type': 'application/json'}, body: json.encode(body));
-    if (response.statusCode != 200) {
+
+    final response = await ApiGeneralService.put('tasks/${task.id}', body: json.encode(body));
+
+    if (!response.statusCode.ok) {
       throw Exception('Failed to update task');
     }
   }
 
   static Future<Map<String, dynamic>> fetchTaskTypeCount(DateTime startDate, DateTime endDate) async {
-    print(
-      'Fetching task type count with query parameters: '
+    final response = await ApiGeneralService.get(
+      'tasks/states/count'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
     );
-    final response = await http.get(
-      Uri.parse(
-        '$baseUrl/tasks/states/count'
-        '?fromDate=${startDate.toIso8601String()}'
-        '&toDate=${endDate.toIso8601String()}',
-      ),
-    );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode.ok) {
       final Map<String, dynamic> data = json.decode(response.body);
       return data.map((key, value) => MapEntry(key, value as int));
     } else {
@@ -80,15 +72,13 @@ class TaskService {
   }
 
   static Future<List<Map<String, dynamic>>> fetchAllTasks(DateTime startDate, DateTime endDate) async {
-    final response = await http.get(
-      Uri.parse(
-        '$baseUrl/tasks/dashboard'
-        '?fromDate=${startDate.toIso8601String()}'
-        '&toDate=${endDate.toIso8601String()}',
-      ),
+    final response = await ApiGeneralService.get(
+      'tasks/dashboard'
+      '?fromDate=${startDate.toIso8601String()}'
+      '&toDate=${endDate.toIso8601String()}',
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode.ok) {
       final List<dynamic> data = json.decode(response.body);
       return data.map((task) => task as Map<String, dynamic>).toList();
     } else {
@@ -97,9 +87,9 @@ class TaskService {
   }
 
   static Future<String> deleteTask(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/tasks/$id'));
+    final response = await ApiGeneralService.delete('tasks/$id');
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    if (response.statusCode.ok) {
       return 'Task deleted successfully';
     } else {
       throw Exception('Failed to delete task with id $id');
@@ -108,8 +98,8 @@ class TaskService {
 
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/map/tasks-with-location'));
-      if (response.statusCode == 200) {
+      final response = await ApiGeneralService.get('map/tasks-with-location');
+      if (response.statusCode.ok) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {
           return {

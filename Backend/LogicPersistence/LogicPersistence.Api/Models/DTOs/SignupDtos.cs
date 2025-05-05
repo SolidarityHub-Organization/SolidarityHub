@@ -27,7 +27,7 @@ public class SignupDto {
 	public int prefix { get; set; }
 
 	[Required]
-	[Range(100000000, 99999999999)]
+	[MaxLength(20)]
 	public required string phone_number { get; set; }
 
 	[Required]
