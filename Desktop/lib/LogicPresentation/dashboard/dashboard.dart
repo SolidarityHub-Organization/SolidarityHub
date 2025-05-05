@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importar intl para manejar fechas
+import 'package:intl/intl.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/tables/taskTable.dart';
 import 'tables/generalTable.dart';
 import 'tables/victimTable.dart';
@@ -18,10 +18,18 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
 
+  final ScrollController _tabScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabScrollController.dispose();
+    super.dispose();
   }
 
   void _refreshCurrentTab() {
@@ -58,6 +66,38 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
     }
   }
 
+  List<Widget> _buildDateFilters() {
+    return [
+      TextButton(
+        onPressed: () => _selectFechaInicio(context),
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(
+          _fechaInicio != null
+              ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}'
+              : 'Seleccionar inicio',
+          style: const TextStyle(color: Colors.red),
+        ),
+      ),
+      const SizedBox(width: 8),
+      TextButton(
+        onPressed: () => _selectFechaFin(context),
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(
+          _fechaFin != null
+              ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}'
+              : 'Seleccionar fin',
+          style: const TextStyle(color: Colors.red),
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,67 +111,121 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         children: [
           Container(
             color: Colors.red,
+            width: double.infinity, // red container full width
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TabBar(
-                          controller: _tabController,
-                          isScrollable: true,
-                          indicatorColor: Colors.white,
-                          labelColor: Colors.white,
-                          unselectedLabelColor: Colors.white70,
-                          tabs: const [
-                            Tab(text: 'General'),
-                            Tab(text: 'Afectados'),
-                            Tab(text: 'Recursos'),
-                            Tab(text: 'Voluntarios'),
-                            Tab(text: 'Tareas'),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      // transition threshold
+                      final bool hasEnoughSpace = constraints.maxWidth > 775;
+                      
+                      if (hasEnoughSpace) {
+                        // wide layout
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                // tabs left
+                                Expanded(
+                                  child: Scrollbar(
+                                    controller: _tabScrollController,
+                                    thumbVisibility: true,
+                                    thickness: 6.0,
+                                    radius: Radius.circular(10.0),
+                                    scrollbarOrientation: ScrollbarOrientation.bottom,
+                                    child: SingleChildScrollView(
+                                      controller: _tabScrollController,
+                                      scrollDirection: Axis.horizontal,
+                                      child: TabBar(
+                                        controller: _tabController,
+                                        isScrollable: true,
+                                        indicatorColor: Colors.white,
+                                        labelColor: Colors.white,
+                                        unselectedLabelColor: Colors.white70,
+                                        dividerColor: Colors.transparent,
+                                        tabs: const [
+                                          Tab(text: 'General', icon: Icon(Icons.dashboard, size: 16)),
+                                          Tab(text: 'Afectados', icon: Icon(Icons.people, size: 16)),
+                                          Tab(text: 'Recursos', icon: Icon(Icons.inventory, size: 16)),
+                                          Tab(text: 'Voluntarios', icon: Icon(Icons.volunteer_activism, size: 16)),
+                                          Tab(text: 'Tareas', icon: Icon(Icons.task, size: 16)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // filters on right
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: _buildDateFilters(),
+                                ),
+                              ],
+                            ),
+                            // indicator line
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.white70,
+                              margin: const EdgeInsets.only(top: 0),
+                            ),
                           ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              TextButton(
-                                onPressed: () => _selectFechaInicio(context),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.white, // Fondo blanco
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                child: Text(
-                                  _fechaInicio != null
-                                      ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}'
-                                      : 'Seleccionar inicio',
-                                  style: const TextStyle(color: Colors.red), // Texto rojo
+                        );
+                      } else {
+                        // narrow layout
+                        return Column(
+                          children: [
+                            Scrollbar(
+                              controller: _tabScrollController,
+                              thumbVisibility: true,
+                              thickness: 6.0,
+                              radius: Radius.circular(10.0),
+                              scrollbarOrientation: ScrollbarOrientation.bottom,
+                              child: SingleChildScrollView(
+                                controller: _tabScrollController,
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    // regular tabs
+                                    TabBar(
+                                      controller: _tabController,
+                                      isScrollable: true,
+                                      indicatorColor: Colors.white,
+                                      labelColor: Colors.white,
+                                      unselectedLabelColor: Colors.white70,
+                                      dividerColor: Colors.transparent,
+                                      tabs: const [
+                                        Tab(text: 'General', icon: Icon(Icons.dashboard, size: 16)),
+                                        Tab(text: 'Afectados', icon: Icon(Icons.people, size: 16)),
+                                        Tab(text: 'Recursos', icon: Icon(Icons.inventory, size: 16)),
+                                        Tab(text: 'Voluntarios', icon: Icon(Icons.volunteer_activism, size: 16)),
+                                        Tab(text: 'Tareas', icon: Icon(Icons.task, size: 16)),
+                                      ],
+                                    ),
+                                    // add spacer and date filters in the same scrollable area
+                                    const SizedBox(width: 20),
+                                    ...(_buildDateFilters().map((widget) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                      child: widget,
+                                    ))),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              TextButton(
-                                onPressed: () => _selectFechaFin(context),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.white, // Fondo blanco
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                child: Text(
-                                  _fechaFin != null
-                                      ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}'
-                                      : 'Seleccionar fin',
-                                  style: const TextStyle(color: Colors.red), // Texto rojo
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                            ),
+                            // indicator line
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.white,
+                              margin: const EdgeInsets.only(top: 0),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 16),
                 ],

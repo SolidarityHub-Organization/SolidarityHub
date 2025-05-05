@@ -160,7 +160,7 @@ class _VictimsTabState extends State<VictimsTab> {
                             title: 'Número de afectados por día',
                           ),
                           CustomBarChart(
-                            data: transformedNeedsData, // Use transformed data
+                            data: transformedNeedsData,
                             barColor: Colors.red,
                           ),
                           Container(
@@ -173,9 +173,9 @@ class _VictimsTabState extends State<VictimsTab> {
                               data: needsData.map((item) => {
                                 'type': (item['type'] ?? 'Unknown').toString(),  
                                 'count': item['count'] ?? 0,
-                              }).toList(), // Transform data for pie chart
+                              }).toList(),
                               legendScrollController: _legendScrollController,
-                              padding: const EdgeInsets.fromLTRB(30, 0, 20, 50), // Add extra left padding
+                              padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),
                           ),
                           const SizedBox(height: 10),

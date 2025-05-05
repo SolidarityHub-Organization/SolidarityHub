@@ -23,7 +23,6 @@ class CustomLineChart extends StatelessWidget {
     this.padding = const EdgeInsets.fromLTRB(60.0, 0.0, 60.0, 50.0),
   });
 
-  // Add a helper method to calculate max title width
   double _calculateMaxTitleWidth(BuildContext context, List<String> labels) {
     final textPainter = TextPainter(
       textDirection: TextDirection.ltr,
@@ -55,7 +54,6 @@ class CustomLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate reserved size for bottom labels
     final bottomReservedSize = _calculateMaxTitleWidth(context, xLabels);
 
     return Column(
@@ -136,12 +134,12 @@ class CustomLineChart extends StatelessWidget {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: bottomReservedSize, // Use the calculated size here
+                      reservedSize: bottomReservedSize,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
                         if (index >= 0 && index < xLabels.length) {
                           return Container(
-                            width: 0, // Let the text define width
+                            width: 0,
                             height: 100,
                             padding: const EdgeInsets.only(top: 10),
                             alignment: Alignment.topCenter,

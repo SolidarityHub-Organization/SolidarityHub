@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../services/generalServices.dart';
+import 'package:solidarityhub/services/generalServices.dart';
+import 'dart:math' as math;
+import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
 
 class GeneralTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -63,70 +65,99 @@ class _GeneralTabState extends State<GeneralTab> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 50), // Espacio superior
-          const Text(
-            'Resumen General',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
-          ),
-          const SizedBox(height: 20), // Espacio debajo del texto
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FutureBuilder<int>(
-                future: _victimCountFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return _buildInfoCard('Personas Afectadas', 'Cargando...');
-                  } else if (snapshot.hasError) {
-                    // Mostrar más detalles sobre el error
-
-                    return _buildInfoCard(
-                      'Personas Afectadas',
-                      'Error: ${snapshot.error.toString().substring(0, snapshot.error.toString().length > 30 ? 30 : snapshot.error.toString().length)}...',
-                    );
-                  } else if (!snapshot.hasData) {
-                    // Verificamos si no hay datos aunque no haya error
-                    return _buildInfoCard('Personas Afectadas', 'Sin datos');
-                  } else {
-                    return _buildInfoCard('Personas Afectadas', snapshot.data.toString());
-                  }
-                },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final minContentWidth = math.max(1100.0, constraints.maxWidth);
+        
+        return TwoDimensionalScrollWidget(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: minContentWidth,
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicWidth(
+              child: Container(
+                width: minContentWidth,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 30),
+                    const Text(
+                      'Resumen General',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: FutureBuilder<int>(
+                              future: _victimCountFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildInfoCard('Personas Afectadas', 'Cargando...');
+                                } else if (snapshot.hasError) {
+                                  return _buildInfoCard(
+                                    'Personas Afectadas',
+                                    'Error: ${snapshot.error.toString().substring(0, math.min(30, snapshot.error.toString().length))}...',
+                                  );
+                                } else if (!snapshot.hasData) {
+                                  return _buildInfoCard('Personas Afectadas', 'Sin datos');
+                                } else {
+                                  return _buildInfoCard('Personas Afectadas', snapshot.data.toString());
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: FutureBuilder<int>(
+                              future: _volunteerCountFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildInfoCard('Voluntarios Totales', 'Cargando...');
+                                } else if (snapshot.hasError) {
+                                  return _buildInfoCard('Voluntarios Totales', 'Error');
+                                } else {
+                                  return _buildInfoCard('Voluntarios Totales', snapshot.data.toString());
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: _buildInfoCard('Donaciones Recibidas', '0'),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _buildInfoCard('Eventos Realizados', '0'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              FutureBuilder<int>(
-                future: _volunteerCountFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return _buildInfoCard('Voluntarios Totales', 'Cargando...');
-                  } else if (snapshot.hasError) {
-                    return _buildInfoCard('Voluntarios Totales', 'Error');
-                  } else {
-                    return _buildInfoCard('Voluntarios Totales', snapshot.data.toString());
-                  }
-                },
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 20), // Espacio entre filas
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildInfoCard('Donaciones Recibidas', '0'), // Valor predeterminado
-              _buildInfoCard('Eventos Realizados', '0'), // Título y valor corregidos
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildInfoCard(String title, String value) {
     return Container(
-      width: 500, // Ancho del recuadro
-      height: 200, // Alto del recuadro
+      height: 200,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -136,7 +167,7 @@ class _GeneralTabState extends State<GeneralTab> {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: const Offset(0, 4), // Sombra hacia abajo
+            offset: const Offset(0, 4),
           ),
         ],
       ),

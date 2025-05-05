@@ -113,20 +113,18 @@ class CustomPieChart extends StatelessWidget {
     Map<String, int> otherItems,
     int totalValue,
   ) {
-    // Create a combined list of all items for the legend
+    // combined list of all items for the legend
     final List<MapEntry<String, int>> legendItems = [];
     
-    // Add regular items first
+    // regular items first
     legendItems.addAll(groupedData.entries.where((e) => e.key != 'Other'));
     
-    // Add "Other" category with a separator if it exists
+    // other category with a separator if it exists
     if (otherItems.isNotEmpty) {
-      // Add a separator before "Other" items
       if (legendItems.isNotEmpty) {
         legendItems.add(const MapEntry('---', 0)); // Separator
       }
       
-      // Add all items from "Other" category
       legendItems.addAll(otherItems.entries);
     }
 
@@ -144,7 +142,7 @@ class CustomPieChart extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Show regular items
+                  // regular items
                   ...groupedData.entries
                       .where((e) => e.key != 'Other')
                       .map((entry) {
@@ -157,11 +155,11 @@ class CustomPieChart extends StatelessWidget {
                     );
                   }),
                   
-                  // Add a divider before "Other" items
+                  // divider before other
                   if (otherItems.isNotEmpty && groupedData.entries.any((e) => e.key != 'Other'))
                     const Divider(thickness: 1, height: 24),
                     
-                  // Add "Other" section header if there are items in "Other"
+                  // other header if there are items
                   if (otherItems.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -176,7 +174,7 @@ class CustomPieChart extends StatelessWidget {
                       ),
                     ),
                     
-                  // Show all the items grouped as "Other"
+                  // items grouped as other
                   ...otherItems.entries.map((entry) {
                     final percentage = (entry.value / totalValue * 100);
                     return _buildLegendItem(

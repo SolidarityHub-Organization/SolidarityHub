@@ -142,7 +142,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                                 'count': item['item2'],
                               }).toList(),
                               legendScrollController: _legendScrollController,
-                              padding: const EdgeInsets.fromLTRB(30, 0, 20, 50), // Add extra left padding
+                              padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),
                           ),
                           const SizedBox(height: 10),
