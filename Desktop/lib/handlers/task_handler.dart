@@ -1,6 +1,7 @@
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../services/api_general_service.dart';
+import 'package:solidarityhub/services/api_service.dart';
 
 abstract class TaskHandler {
   TaskHandler? nextHandler;
@@ -39,7 +40,13 @@ class ValidationHandler extends TaskHandler {
 class LocationHandler extends TaskHandler {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
-    final locationResponse = await ApiService.post('locations', body: json.encode(taskData['location']));
+    final locationUrl = Uri.parse('http://localhost:5170/api/v1/locations');
+
+    final locationResponse = await http.post(
+      locationUrl,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(taskData['location']),
+    );
 
     if (!locationResponse.statusCode.ok) {
       return 'Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}';
@@ -56,9 +63,15 @@ class PersistenceHandler extends TaskHandler {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
     final isUpdate = taskData['id'] != null;
-    final url = isUpdate ? 'tasks/${taskData['id']}' : 'tasks';
-    final requestFn = isUpdate ? ApiService.put : ApiService.post;
-    final response = await requestFn(url, body: json.encode(taskData));
+
+    final url =
+        isUpdate
+            ? Uri.parse("http://localhost:5170/api/v1/tasks/${taskData['id']}")
+            : Uri.parse('http://localhost:5170/api/v1/tasks');
+
+    final requestFn = isUpdate ? http.put : http.post;
+
+    final response = await requestFn(url, headers: {'Content-Type': 'application/json'}, body: json.encode(taskData));
 
     if (response.statusCode.ok) {
       return isUpdate ? 'OK: La tarea ha sido actualizada con éxito' : 'OK: La tarea ha sido creada con éxito';

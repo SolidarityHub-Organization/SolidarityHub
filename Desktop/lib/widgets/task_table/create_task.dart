@@ -7,7 +7,6 @@ import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
-import 'package:solidarityhub/utils/logger.dart';
 import 'package:solidarityhub/widgets/ui/snack_bar.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
@@ -56,7 +55,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   final MapController _mapController = MapController();
   List<Marker> _markers = [];
-  LatLng selectedLocation = const LatLng(39.4699, -0.3776);
+  LatLng selectedLocation = const LatLng(39.4699, -0.3776); // Valencia por defecto
   List<Volunteer> volunteers = [];
   List<Victim> victim = [];
   List<int> selectedVolunteers = [];
@@ -67,7 +66,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   void initState() {
     super.initState();
     _loadData();
-    startDate = DateTime.now();
+    startDate = DateTime.now(); // Set default start date to current date
 
     if (widget.taskToEdit != null) {
       nameController.text = widget.taskToEdit!.name;
@@ -167,8 +166,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       return;
     }
 
-    final result = await SafeExecute.runAsync(
-      () => TaskService.createTask(
+    try {
+      final result = await TaskService.createTask(
         name: name,
         description: description,
         selectedVolunteers: selectedVolunteers,
@@ -178,21 +177,23 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         endDate: endDate,
         selectedVictim: selectedVictim,
         taskId: widget.taskToEdit?.id,
-      ),
-    );
-
-    if (result.startsWith('OK')) {
-      widget.onTaskCreated();
-      if (mounted) {
-        Navigator.pop(context);
-      }
-      AppSnackBar.show(
-        context: context,
-        message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
-        type: SnackBarType.success,
       );
-    } else {
-      AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
+
+      if (result.startsWith('OK:')) {
+        widget.onTaskCreated();
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        AppSnackBar.show(
+          context: context,
+          message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
+          type: SnackBarType.success,
+        );
+      } else {
+        AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
+      }
+    } catch (error) {
+      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
     }
   }
 
@@ -208,7 +209,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
+      // Encode the address for URL
       final encodedAddress = Uri.encodeComponent(address);
+      // Use Nominatim geocoding service (OpenStreetMap)
       final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
 
       final response = await http.get(url, headers: {'User-Agent': 'SolidarityHub/1.0'});
@@ -225,7 +228,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             selectedLocation = location;
             _updateLocationControllers(location);
             _updateMarker(location);
-            _mapController.move(location, 15.0);
+            _mapController.move(location, 15.0); // Zoom in to the found location
           });
         } else {
           AppSnackBar.show(
@@ -253,7 +256,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
     final query = searchVolunteersController.text.toLowerCase();
     return volunteers.where((volunteer) {
-      return volunteer.name.toLowerCase().contains(query) || volunteer.surname.toLowerCase().contains(query);
+      return volunteer.name.toLowerCase().contains(query) ||
+          volunteer.surname.toLowerCase().contains(query) ||
+          volunteer.email.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -536,7 +541,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       '${volunteer.name} ${volunteer.surname}',
                       style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                     ),
-                    subtitle: Text(volunteer.name),
+                    subtitle: Text(volunteer.email),
                     trailing: Checkbox(
                       activeColor: Colors.red,
                       value: isSelected,
