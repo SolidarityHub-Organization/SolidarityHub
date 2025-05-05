@@ -99,6 +99,24 @@ namespace LogicPersistence.Api.Controllers
 			}
 		}
 
+		[HttpGet("map/risk-zones-with-points")]
+		public async Task<ActionResult> GetAllRiskZonesWithPointsAsync()
+		{
+			try
+			{
+				var riskZones = await _mapServices.GetAllRiskZonesWithPointsAsync();
+				return Ok(riskZones);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 
     }
 }

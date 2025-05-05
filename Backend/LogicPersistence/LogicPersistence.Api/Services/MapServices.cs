@@ -75,7 +75,7 @@ namespace LogicPersistence.Api.Services {
                 throw new InvalidOperationException("Failed to retrieve affected zones.");
             }
             var result = new List<AffectedZoneWithPointsDTO>();
-            foreach (var affectedZone in affectedZones) 
+            foreach (var affectedZone in affectedZones.Where(a => a.hazard_level != HazardLevel.None)) 
             {
                 var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(affectedZone.id);
                 if (points.ToList().Count >= 3) {
@@ -85,6 +85,32 @@ namespace LogicPersistence.Api.Services {
                         description = affectedZone.description,
                         hazard_level = affectedZone.hazard_level,
                         admin_id = affectedZone.admin_id,
+                        points = points.Select(p => p.ToLocationDisplayDto()).ToList()
+                    });
+                }
+                
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllRiskZonesWithPointsAsync() 
+        {
+            var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
+            if (affectedZones == null) 
+            {
+                throw new InvalidOperationException("Failed to retrieve risk zones.");
+            }
+            var result = new List<AffectedZoneWithPointsDTO>();
+            foreach (var riskZone in affectedZones.Where(a => a.hazard_level == HazardLevel.None)) 
+            {
+                var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(riskZone.id);
+                if (points.ToList().Count >= 3) {
+                    result.Add(new AffectedZoneWithPointsDTO {
+                        id = riskZone.id,
+                        name = riskZone.name,
+                        description = riskZone.description,
+                        hazard_level = riskZone.hazard_level,
+                        admin_id = riskZone.admin_id,
                         points = points.Select(p => p.ToLocationDisplayDto()).ToList()
                     });
                 }

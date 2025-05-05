@@ -15,7 +15,7 @@ public class InitialMigration : Migration {
 			DO $$
 			BEGIN
 				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'hazard_level') THEN
-					CREATE TYPE hazard_level AS ENUM ('Unknown', 'Low', 'Medium', 'High', 'Critical');
+					CREATE TYPE hazard_level AS ENUM ('Unknown', 'None', 'Low', 'Medium', 'High', 'Critical');
 				END IF;
 
 				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN

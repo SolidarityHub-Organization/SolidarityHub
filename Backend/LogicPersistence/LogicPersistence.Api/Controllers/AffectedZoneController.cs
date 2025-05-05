@@ -118,6 +118,24 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("affected-zones/risk-zones")]
+        public async Task<ActionResult> GetAllRiskZonesAsync()
+        {
+            try
+            {
+                var riskZones = await _affectedZoneServices.GetAllRiskZonesAsync();
+                return Ok(riskZones);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 
 }

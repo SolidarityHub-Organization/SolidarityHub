@@ -1,11 +1,17 @@
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
+using System.Data;
 
 namespace LogicPersistence.Api.Repositories;
 
 public class AffectedZoneRepository : IAffectedZoneRepository {
 	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+
+	public AffectedZoneRepository()
+	{
+		SqlMapper.AddTypeHandler(new HazardLevelTypeHandler());
+	}
 
 	public async Task<AffectedZone> CreateAffectedZoneAsync(AffectedZone affectedZone) {
 		using var connection = new NpgsqlConnection(connectionString);
@@ -49,3 +55,25 @@ public class AffectedZoneRepository : IAffectedZoneRepository {
 		return await connection.QuerySingleAsync<AffectedZone>(sql, affectedZone);
 	}
 }
+
+#region HazardLevelTypeHandler
+
+//sin esto, ningun método me funcionaba
+public class HazardLevelTypeHandler : SqlMapper.TypeHandler<HazardLevel>
+{
+    public override HazardLevel Parse(object value)
+    {
+        return value switch
+        {
+            string str => Enum.Parse<HazardLevel>(str),
+            int i => (HazardLevel)i,
+            _ => HazardLevel.None
+        };
+    }
+
+    public override void SetValue(IDbDataParameter parameter, HazardLevel value)
+    {
+        parameter.Value = value.ToString();
+    }
+}
+#endregion

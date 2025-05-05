@@ -13,7 +13,10 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4852, -0.3504),  -- Playa de la Malvarrosa
   (39.4581, -0.3322),  -- Puerto Este
   (39.4803, -0.3407),  -- Playa de las Arenas
-  (39.4650, -0.3773);
+  (39.4650, -0.3773),
+  (39.4860, -0.3557),  -- Plaza de Benimaclet
+  (39.4845, -0.3571),  -- Calle Emilio Baró
+  (39.4853, -0.3543);  -- Estación de Benimaclet
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
@@ -51,14 +54,16 @@ INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") 
   ('Zona de Incendio B', 'Áreas forestales del noroeste con incendios activos', 'Critical', 2),
   ('Zona de Huracán C', 'Regiones costeras afectadas por huracán reciente', 'Medium', 3),
   ('Zona de Terremoto D', 'Áreas con daños estructurales por terremoto reciente', 'High', 1),
-  ('Región de Sequía E', 'Zonas agrícolas afectadas por sequía prolongada', 'Medium', 2);
+  ('Región de Sequía E', 'Zonas agrícolas afectadas por sequía prolongada', 'Medium', 2),
+  ('Zona Afectada Benimaclet', 'Área residencial con daños por temporal', 'None', 1);
 
 INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
   (1, 1), (1, 2), (1, 3),
   (2, 4), (2, 5), 
   (3, 6), (3, 7),
   (4, 8), (4, 9),
-  (5, 10);
+  (5, 10),
+  (6, 16), (6, 17), (6, 18);
 
 INSERT INTO "physical_donation" ("item_name", "description", "quantity", "item_type", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
   ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-03-25 10:00:00', 1, NULL, NULL),

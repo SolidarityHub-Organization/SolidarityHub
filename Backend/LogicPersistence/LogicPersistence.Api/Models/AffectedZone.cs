@@ -5,14 +5,17 @@ namespace LogicPersistence.Api.Models;
 public enum HazardLevel {
 	[Display(Name = "Desconocido")]
 	Unknown = -1,
+	// representa las zonas de riesgo
+	[Display(Name = "Ninguno")]
+	None = 0,
 	[Display(Name = "Bajo")]
-	Low = 0,
+	Low = 1,
 	[Display(Name = "Medio")]
-	Medium = 1,
+	Medium = 2,
 	[Display(Name = "Alto")]
-	High = 2,
+	High = 3,
 	[Display(Name = "Crítico")]
-	Critical = 3
+	Critical = 4
 }
 
 public class AffectedZone {

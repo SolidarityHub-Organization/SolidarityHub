@@ -71,8 +71,18 @@ namespace LogicPersistence.Api.Services
             if (affectedZones == null) {
                 throw new InvalidOperationException("Failed to retrieve affected zones.");
             }
-            return affectedZones;
+            return affectedZones.Where(a => a.hazard_level != HazardLevel.None).ToList();
         }
+
+        public async Task<IEnumerable<AffectedZone>> GetAllRiskZonesAsync() 
+        {
+            var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
+            if (affectedZones == null) {
+                throw new InvalidOperationException("Failed to retrieve risk zones.");
+            }
+            return affectedZones.Where(a => a.hazard_level == HazardLevel.None).ToList();
+        }
+
 #region Internal methods
 
         public static bool IsPointInAffectedZone(double latitude, double longitude, AffectedZoneWithPointsDTO affectedZone)
