@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:solidarityhub/handlers/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
-import 'package:solidarityhub/services/api_general_service.dart';
+import 'package:solidarityhub/services/api_service.dart';
 
 class TaskService {
   static Future<String> createTask({
@@ -48,9 +48,7 @@ class TaskService {
       'volunteer_ids': task.assignedVolunteers.map((v) => v.id).toList(),
       'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
     };
-
-    final response = await ApiService.put('tasks/${task.id}', body: json.encode(body));
-
+    final response = await http.put(url, headers: {'Content-Type': 'application/json'}, body: json.encode(body));
     if (!response.statusCode.ok) {
       throw Exception('Failed to update task');
     }
@@ -98,7 +96,7 @@ class TaskService {
 
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await ApiService.get('map/tasks-with-location');
+      final response = await http.get(Uri.parse('$baseUrl/map/tasks-with-location'));
       if (response.statusCode.ok) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {
