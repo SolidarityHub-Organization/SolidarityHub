@@ -66,18 +66,17 @@ public class SkillRepository : ISkillRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT COUNT(v.id)
+            SELECT COALESCE(COUNT(v.id), 0)
             FROM skill s
             LEFT JOIN volunteer_skill vs ON s.id = vs.skill_id
             LEFT JOIN volunteer v ON vs.volunteer_id = v.id
             WHERE s.id = @id
-            AND v.created_at BETWEEN @fromDate AND @toDate
-            GROUP BY s.id";
+            AND (v.created_at BETWEEN @fromDate AND @toDate OR v.id IS NULL)";
 
-        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { 
+        return await connection.QuerySingleAsync<int>(sql, new { 
             id,
-            FromDate = fromDate,
-            ToDate = toDate
+            fromDate,
+            toDate
         });
     }
 }
