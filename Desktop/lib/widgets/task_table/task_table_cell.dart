@@ -168,9 +168,13 @@ class TaskTableCell extends StatelessWidget {
           onTaskChanged();
         });
 
-        AppSnackBar.show(message: 'Tarea eliminada con éxito', type: SnackBarType.info);
+        AppSnackBar.show(context: context, message: 'Tarea eliminada con éxito', type: SnackBarType.info);
       } catch (e) {
-        AppSnackBar.show(message: 'Error al eliminar la tarea: ${e.toString()}', type: SnackBarType.info);
+        AppSnackBar.show(
+          context: context,
+          message: 'Error al eliminar la tarea: ${e.toString()}',
+          type: SnackBarType.info,
+        );
       }
     }
   }

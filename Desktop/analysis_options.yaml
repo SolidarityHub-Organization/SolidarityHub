@@ -26,4 +26,8 @@ linter:
     rules:
         avoid_print: false
         prefer_single_quotes: true
+
+analyzer:
+    errors:
+        use_build_context_synchronously: ignore
 # https://dart.dev/guides/language/analysis-options

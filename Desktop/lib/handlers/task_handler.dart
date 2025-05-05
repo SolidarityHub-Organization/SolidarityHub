@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:solidarityhub/services/api_service.dart';
+import '../services/api_general_service.dart';
 
 abstract class TaskHandler {
   TaskHandler? nextHandler;
@@ -39,7 +39,7 @@ class ValidationHandler extends TaskHandler {
 class LocationHandler extends TaskHandler {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
-    final locationResponse = await ApiGeneralService.post('locations', body: json.encode(taskData['location']));
+    final locationResponse = await ApiService.post('locations', body: json.encode(taskData['location']));
 
     if (!locationResponse.statusCode.ok) {
       return 'Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}';
@@ -57,7 +57,7 @@ class PersistenceHandler extends TaskHandler {
   Future<String> handle(Map<String, dynamic> taskData) async {
     final isUpdate = taskData['id'] != null;
     final url = isUpdate ? 'tasks/${taskData['id']}' : 'tasks';
-    final requestFn = isUpdate ? ApiGeneralService.put : ApiGeneralService.post;
+    final requestFn = isUpdate ? ApiService.put : ApiService.post;
     final response = await requestFn(url, body: json.encode(taskData));
 
     if (response.statusCode.ok) {

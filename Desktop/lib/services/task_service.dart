@@ -49,7 +49,7 @@ class TaskService {
       'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
     };
 
-    final response = await ApiGeneralService.put('tasks/${task.id}', body: json.encode(body));
+    final response = await ApiService.put('tasks/${task.id}', body: json.encode(body));
 
     if (!response.statusCode.ok) {
       throw Exception('Failed to update task');
@@ -57,7 +57,7 @@ class TaskService {
   }
 
   static Future<Map<String, dynamic>> fetchTaskTypeCount(DateTime startDate, DateTime endDate) async {
-    final response = await ApiGeneralService.get(
+    final response = await ApiService.get(
       'tasks/states/count'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
@@ -72,7 +72,7 @@ class TaskService {
   }
 
   static Future<List<Map<String, dynamic>>> fetchAllTasks(DateTime startDate, DateTime endDate) async {
-    final response = await ApiGeneralService.get(
+    final response = await ApiService.get(
       'tasks/dashboard'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
@@ -87,7 +87,7 @@ class TaskService {
   }
 
   static Future<String> deleteTask(int id) async {
-    final response = await ApiGeneralService.delete('tasks/$id');
+    final response = await ApiService.delete('tasks/$id');
 
     if (response.statusCode.ok) {
       return 'Task deleted successfully';
@@ -98,7 +98,7 @@ class TaskService {
 
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await ApiGeneralService.get('map/tasks-with-location');
+      final response = await ApiService.get('map/tasks-with-location');
       if (response.statusCode.ok) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {

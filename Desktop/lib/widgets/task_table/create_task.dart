@@ -7,6 +7,7 @@ import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
+import 'package:solidarityhub/utils/logger.dart';
 import 'package:solidarityhub/widgets/ui/snack_bar.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
@@ -127,7 +128,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           });
         }
       } catch (error) {
-        AppSnackBar.show(message: 'Error loading location: $error', type: SnackBarType.error);
+        AppSnackBar.show(context: context, message: 'Error loading location: $error', type: SnackBarType.error);
       }
     }
   }
@@ -147,7 +148,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       setState(() {
         isLoading = false;
       });
-      AppSnackBar.show(message: error.toString(), type: SnackBarType.error);
+      AppSnackBar.show(context: context, message: error.toString(), type: SnackBarType.error);
     }
   }
 
@@ -158,7 +159,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     final longitude = longitudeController.text.trim();
 
     if (startDate == null) {
-      AppSnackBar.show(message: 'Por favor, selecciona una fecha de inicio', type: SnackBarType.error);
+      AppSnackBar.show(
+        context: context,
+        message: 'Por favor, selecciona una fecha de inicio',
+        type: SnackBarType.error,
+      );
       return;
     }
 
@@ -182,18 +187,23 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         Navigator.pop(context);
       }
       AppSnackBar.show(
+        context: context,
         message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
         type: SnackBarType.success,
       );
     } else {
-      AppSnackBar.show(message: result, type: SnackBarType.error);
+      AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
     }
   }
 
   Future<void> _searchAddress() async {
     final address = searchAddressController.text.trim();
     if (address.isEmpty) {
-      AppSnackBar.show(message: 'Por favor, introduce una dirección para buscar', type: SnackBarType.error);
+      AppSnackBar.show(
+        context: context,
+        message: 'Por favor, introduce una dirección para buscar',
+        type: SnackBarType.error,
+      );
       return;
     }
 
@@ -218,13 +228,21 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             _mapController.move(location, 15.0);
           });
         } else {
-          AppSnackBar.show(message: 'No se encontró ninguna ubicación con esa dirección', type: SnackBarType.warning);
+          AppSnackBar.show(
+            context: context,
+            message: 'No se encontró ninguna ubicación con esa dirección',
+            type: SnackBarType.warning,
+          );
         }
       } else {
-        AppSnackBar.show(message: 'Error al buscar la dirección: ${response.statusCode}', type: SnackBarType.error);
+        AppSnackBar.show(
+          context: context,
+          message: 'Error al buscar la dirección: ${response.statusCode}',
+          type: SnackBarType.error,
+        );
       }
     } catch (error) {
-      AppSnackBar.show(message: 'Error: $error', type: SnackBarType.error);
+      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
     }
   }
 

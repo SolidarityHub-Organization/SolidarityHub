@@ -6,7 +6,7 @@ class AffectedZoneServices {
   AffectedZoneServices(this.baseUrl);
 
   Future<List<Map<String, dynamic>>> fetchAffectedZones() async {
-    final response = await ApiGeneralService.get('map/affected-zones-with-points');
+    final response = await ApiService.get('map/affected-zones-with-points');
 
     if (response.statusCode.ok) {
       final List<dynamic> data = json.decode(response.body);
