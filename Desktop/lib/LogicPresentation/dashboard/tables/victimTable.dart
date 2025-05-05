@@ -83,42 +83,35 @@ class _VictimsTabState extends State<VictimsTab> {
                 } else {
                   final lineData = snapshotCount.data!;
                   final sortedLineData = lineData..sort((a, b) => (a['date'] ?? '').compareTo(b['date'] ?? ''));
-                  
+
                   final startDate = _adjustStartDate(widget.fechaInicio);
                   final endDate = _adjustEndDate(widget.fechaFin);
 
-                  final filteredLineData = sortedLineData.where((entry) {
-                    final rawDate = entry['date'] ?? '';
-                    final parts = rawDate.split('-');
-                    DateTime? entryDate;
+                  final filteredLineData =
+                      sortedLineData.where((entry) {
+                        final rawDate = entry['date'] ?? '';
+                        final parts = rawDate.split('-');
+                        DateTime? entryDate;
 
-                    if (parts.length == 3) {
-                      final formattedDate = '${parts[2]}-${parts[1]}-${parts[0]}';
-                      entryDate = DateTime.tryParse(formattedDate);
-                    }
+                        if (parts.length == 3) {
+                          final formattedDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+                          entryDate = DateTime.tryParse(formattedDate);
+                        }
 
-                    if (entryDate == null) return false;
-                    final entryEndOfDay = DateTime(
-                      entryDate.year,
-                      entryDate.month,
-                      entryDate.day,
-                      23,
-                      59,
-                      59,
-                    );
-                    return (entryDate.isAfter(startDate) || entryDate.isAtSameMomentAs(startDate)) &&
-                        (entryEndOfDay.isBefore(endDate) || entryEndOfDay.isAtSameMomentAs(endDate));
-                  }).toList();
+                        if (entryDate == null) return false;
+                        final entryEndOfDay = DateTime(entryDate.year, entryDate.month, entryDate.day, 23, 59, 59);
+                        return (entryDate.isAfter(startDate) || entryDate.isAtSameMomentAs(startDate)) &&
+                            (entryEndOfDay.isBefore(endDate) || entryEndOfDay.isAtSameMomentAs(endDate));
+                      }).toList();
 
-                  final lineSpots = filteredLineData.asMap().entries.map((entry) {
-                    final index = entry.key.toDouble();
-                    final value = (entry.value['num'] ?? 0).toDouble();
-                    return FlSpot(index, value < 0 ? 0 : value);
-                  }).toList();
+                  final lineSpots =
+                      filteredLineData.asMap().entries.map((entry) {
+                        final index = entry.key.toDouble();
+                        final value = (entry.value['num'] ?? 0).toDouble();
+                        return FlSpot(index, value < 0 ? 0 : value);
+                      }).toList();
 
-                  final xLabels = filteredLineData
-                      .map((entry) => (entry['date'] ?? '').toString())
-                      .toList();
+                  final xLabels = filteredLineData.map((entry) => (entry['date'] ?? '').toString()).toList();
 
                   return FutureBuilder<List<Map<String, dynamic>>>(
                     future: _victimNeedsFuture,
@@ -133,13 +126,11 @@ class _VictimsTabState extends State<VictimsTab> {
 
                       final needsData = snapshotNeeds.data!;
 
-                      final transformedNeedsData = needsData.map((item) {
-                        // make sure keys exist and values are properly typed
-                        return {
-                          'item1': (item['type'] ?? 'Unknown').toString(),
-                          'item2': item['count'] ?? 0,
-                        };
-                      }).toList();
+                      final transformedNeedsData =
+                          needsData.map((item) {
+                            // make sure keys exist and values are properly typed
+                            return {'item1': (item['type'] ?? 'Unknown').toString(), 'item2': item['count'] ?? 0};
+                          }).toList();
 
                       return Column(
                         children: [
@@ -158,22 +149,23 @@ class _VictimsTabState extends State<VictimsTab> {
                             spots: lineSpots,
                             xLabels: xLabels,
                             title: 'Número de afectados por día',
+                            titleBottomMargin: 25.0, // Añadimos más margen inferior
                           ),
-                          CustomBarChart(
-                            data: transformedNeedsData,
-                            barColor: Colors.red,
-                          ),
+                          CustomBarChart(data: transformedNeedsData, barColor: Colors.red),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
-                            constraints: BoxConstraints(
-                              minWidth: math.max(700, constraints.maxWidth * 0.8),
-                            ),
+                            constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
                             height: 400,
                             child: CustomPieChart(
-                              data: needsData.map((item) => {
-                                'type': (item['type'] ?? 'Unknown').toString(),  
-                                'count': item['count'] ?? 0,
-                              }).toList(),
+                              data:
+                                  needsData
+                                      .map(
+                                        (item) => {
+                                          'type': (item['type'] ?? 'Unknown').toString(),
+                                          'count': item['count'] ?? 0,
+                                        },
+                                      )
+                                      .toList(),
                               legendScrollController: _legendScrollController,
                               padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),

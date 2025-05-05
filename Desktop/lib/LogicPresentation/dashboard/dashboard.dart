@@ -52,18 +52,24 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   }
 
   Future<void> _selectFechaFin(BuildContext context) async {
+    if (_fechaInicio == null) {
+      // Mostrar aviso de que debe seleccionar primero la fecha de inicio
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor, seleccione primero una fecha de inicio'),
+          backgroundColor: Colors.red[700],
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _fechaFin ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: _fechaFin ?? _fechaInicio ?? DateTime.now(),
+      firstDate: _fechaInicio ?? DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
-      setState(() {
-        _fechaFin = picked;
-        _refreshCurrentTab();
-      });
-    }
   }
 
   List<Widget> _buildDateFilters() {
@@ -75,9 +81,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
-          _fechaInicio != null
-              ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}'
-              : 'Seleccionar inicio',
+          _fechaInicio != null ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}' : 'Seleccionar inicio',
           style: const TextStyle(color: Colors.red),
         ),
       ),
@@ -89,9 +93,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
-          _fechaFin != null
-              ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}'
-              : 'Seleccionar fin',
+          _fechaFin != null ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}' : 'Seleccionar fin',
           style: const TextStyle(color: Colors.red),
         ),
       ),
@@ -121,8 +123,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                   LayoutBuilder(
                     builder: (context, constraints) {
                       // transition threshold
-                      final bool hasEnoughSpace = constraints.maxWidth > 775; // could change so it auto calculates the needed space
-                      
+                      final bool hasEnoughSpace =
+                          constraints.maxWidth > 775; // could change so it auto calculates the needed space
+
                       if (hasEnoughSpace) {
                         // wide layout
                         return Column(
@@ -159,10 +162,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                   ),
                                 ),
                                 // filters on right
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: _buildDateFilters(),
-                                ),
+                                Row(mainAxisSize: MainAxisSize.min, children: _buildDateFilters()),
                               ],
                             ),
                             // indicator line
@@ -207,10 +207,10 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                     ),
                                     // add spacer and date filters in the same scrollable area
                                     const SizedBox(width: 20),
-                                    ...(_buildDateFilters().map((widget) => Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                      child: widget,
-                                    ))),
+                                    ...(_buildDateFilters().map(
+                                      (widget) =>
+                                          Padding(padding: const EdgeInsets.symmetric(vertical: 4.0), child: widget),
+                                    )),
                                   ],
                                 ),
                               ),
