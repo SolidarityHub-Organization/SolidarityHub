@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/task_service.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/common_widgets.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
+import 'package:solidarityhub/widgets/ui/snack_bar.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(
@@ -478,6 +478,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                   TileLayer(
                     urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
+                    retinaMode: RetinaMode.isHighDensity(context),
                   ),
                   MarkerLayer(markers: _markers),
                 ],

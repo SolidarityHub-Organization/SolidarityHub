@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:solidarityhub/services/api_service.dart';
+
 abstract class TaskHandler {
   TaskHandler? nextHandler;
 
@@ -46,7 +48,7 @@ class LocationHandler extends TaskHandler {
       body: json.encode(taskData['location']),
     );
 
-    if (locationResponse.statusCode < 200 || locationResponse.statusCode > 299) {
+    if (!locationResponse.statusCode.ok) {
       return 'Error creating location: ${locationResponse.statusCode} - ${locationResponse.body}';
     }
 
@@ -71,7 +73,7 @@ class PersistenceHandler extends TaskHandler {
 
     final response = await requestFn(url, headers: {'Content-Type': 'application/json'}, body: json.encode(taskData));
 
-    if (response.statusCode >= 200 && response.statusCode <= 299) {
+    if (response.statusCode.ok) {
       return isUpdate ? 'OK: La tarea ha sido actualizada con éxito' : 'OK: La tarea ha sido creada con éxito';
     } else {
       return 'Persistence Error: ${response.statusCode} - ${response.body}';
