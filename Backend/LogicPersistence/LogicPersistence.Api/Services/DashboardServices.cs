@@ -20,26 +20,30 @@ namespace LogicPersistence.Api.Services
             _donationRepository = donationRepository;
         }
 
-        public async Task<IEnumerable<RecentActivityDto>> GetRecentActivityAsync()
+        public async Task<IEnumerable<ActivityLogDto>> GetActivityLogDataAsync(DateTime fromDate, DateTime toDate)
         {
+            if (fromDate > toDate)
+            {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
             var recentVictims = await GetRecentVictimsAsync();
             var recentVolunteers = await GetRecentVolunteersAsync();
             var recentMonetaryDonations = await GetRecentMonetaryDonationsAsync();
             
-            var res = new List<RecentActivityDto>();
+            var res = new List<ActivityLogDto>();
             res.AddRange(recentVictims);
             res.AddRange(recentVolunteers);
             res.AddRange(recentMonetaryDonations);
 
-            return res.OrderByDescending(x => x.date).Take(10).ToList();
+            return res.Where(x => x.date >= fromDate && x.date <= toDate).OrderByDescending(x => x.date).Take(10).ToList();
         }
 
 #region InternalMethods
 
-        private async Task<List<RecentActivityDto>> GetRecentVictimsAsync()
+        private async Task<List<ActivityLogDto>> GetRecentVictimsAsync()
         {
             var recentVictims = await _victimRepository.GetAllVictimsAsync();
-            return recentVictims.Select(v => new RecentActivityDto
+            return recentVictims.Select(v => new ActivityLogDto
             {
                 id = v.id,
                 name = v.name + " " + v.surname,
@@ -48,10 +52,10 @@ namespace LogicPersistence.Api.Services
             }).ToList();
         }
 
-        private async Task<List<RecentActivityDto>> GetRecentVolunteersAsync()
+        private async Task<List<ActivityLogDto>> GetRecentVolunteersAsync()
         {
             var recentVolunteers = await _volunteerRepository.GetAllVolunteersAsync();
-            return recentVolunteers.Select(v => new RecentActivityDto
+            return recentVolunteers.Select(v => new ActivityLogDto
             {
                 id = v.id,
                 name = v.name + " " + v.surname,
@@ -60,15 +64,15 @@ namespace LogicPersistence.Api.Services
             }).ToList();
         }
 
-        private async Task<List<RecentActivityDto>> GetRecentMonetaryDonationsAsync()
+        private async Task<List<ActivityLogDto>> GetRecentMonetaryDonationsAsync()
         {
             var recentMonetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync();
-            var result = new List<RecentActivityDto>();
+            var result = new List<ActivityLogDto>();
 
             foreach (var d in recentMonetaryDonations.Where(d => d.volunteer_id.HasValue && d.payment_status == PaymentStatus.Completed))
             {
                 var volunteer = await _volunteerRepository.GetVolunteerByIdAsync(d.volunteer_id.Value);
-                result.Add(new RecentActivityDto
+                result.Add(new ActivityLogDto
                 {
                     id = d.id,
                     name = volunteer.name + " " + volunteer.surname,

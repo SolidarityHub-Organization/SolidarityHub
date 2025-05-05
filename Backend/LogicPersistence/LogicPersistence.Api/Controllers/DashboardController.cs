@@ -16,13 +16,13 @@ namespace LogicPersistence.Api.Controllers
             _dashboardServices = dashboardServices;
         }
 
-        [HttpGet("dashboard/recent-activity")]
-        public async Task<IActionResult> GetRecentActivity()
+        [HttpGet("dashboard/activity-log")]
+        public async Task<IActionResult> GetActivityLogData([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
             try
             {
-                var donations = await _dashboardServices.GetRecentActivityAsync();
-                return Ok(donations);
+                var data = await _dashboardServices.GetActivityLogDataAsync(fromDate, toDate);
+                return Ok(data);
             }
             catch (InvalidOperationException ex)
             {

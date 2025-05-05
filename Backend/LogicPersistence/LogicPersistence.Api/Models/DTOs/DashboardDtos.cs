@@ -1,6 +1,6 @@
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class RecentActivityDto
+public class ActivityLogDto
 {
     public int id { get; set; }
     public string name { get; set; } = string.Empty;
