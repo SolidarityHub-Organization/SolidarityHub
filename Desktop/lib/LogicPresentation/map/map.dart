@@ -108,10 +108,11 @@ class _MapScreenState extends State<MapScreen> {
 
               return Polygon(
                 points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
-                color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.3),
+                color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.2),
                 borderColor: _getHazardLevelColor(zone.hazardLevel),
-                borderStrokeWidth: 2,
-                isDotted: true,
+                borderStrokeWidth: 3,
+                isFilled: true,
+                isDotted: false, // líneas sólidas para un look más moderno
               );
             }).toList();
       });
@@ -122,14 +123,14 @@ class _MapScreenState extends State<MapScreen> {
 
   Color _getHazardLevelColor(int hazardLevel) {
     switch (hazardLevel) {
-      case 0:
-        return Colors.green;
-      case 1:
-        return Colors.yellow;
-      case 2:
-        return Colors.orange;
-      case 3:
-        return Colors.red;
+      case 0: // Low
+        return Color(0xFF008B8A); // Color teal #008b8a
+      case 1: // Medium
+        return Color(0xFFFF9600); // Color naranja #ff9600
+      case 2: // High
+        return Color(0xFFE21C1C); // Color rojo #e21c1c
+      case 3: // Critical
+        return Color(0xFF460707); // Color rojo oscuro #460707
       default:
         return Colors.grey;
     }

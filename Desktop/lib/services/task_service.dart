@@ -58,11 +58,6 @@ class TaskService {
   }
 
   static Future<Map<String, dynamic>> fetchTaskTypeCount(DateTime startDate, DateTime endDate) async {
-    print(
-      'Fetching task type count with query parameters: '
-      '?fromDate=${startDate.toIso8601String()}'
-      '&toDate=${endDate.toIso8601String()}',
-    );
     final response = await http.get(
       Uri.parse(
         '$baseUrl/tasks/states/count'
