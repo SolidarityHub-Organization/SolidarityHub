@@ -47,7 +47,7 @@ namespace LogicPersistence.Api.Services
             {
                 id = v.id,
                 name = v.name + " " + v.surname,
-                type = "Victim",
+                type = "Víctima",
                 date = v.created_at
             }).ToList();
         }
@@ -59,7 +59,7 @@ namespace LogicPersistence.Api.Services
             {
                 id = v.id,
                 name = v.name + " " + v.surname,
-                type = "Volunteer",
+                type = "Voluntario",
                 date = v.created_at
             }).ToList();
         }
@@ -77,7 +77,7 @@ namespace LogicPersistence.Api.Services
                     id = d.id,
                     name = volunteer.name + " " + volunteer.surname,
                     amount = d.amount,
-                    type = "Monetary Donation",
+                    type = "Donación monetaria",
                     date = d.donation_date,
                     currency = d.currency.GetDisplayName()
                 });
