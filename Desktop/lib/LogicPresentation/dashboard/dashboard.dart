@@ -117,11 +117,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 0),
                   LayoutBuilder(
                     builder: (context, constraints) {
                       // transition threshold
-                      final bool hasEnoughSpace = constraints.maxWidth > 775;
+                      final bool hasEnoughSpace = constraints.maxWidth > 775; // could change so it auto calculates the needed space
                       
                       if (hasEnoughSpace) {
                         // wide layout
