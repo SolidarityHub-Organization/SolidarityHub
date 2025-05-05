@@ -25,7 +25,8 @@ class VolunteerService {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final url = '$baseUrl/skills/volunteer-counts?fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
+    final url =
+        '$baseUrl/skills/volunteer-counts?fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
     //print('Calling URL: $url'); // debug log
 
     try {
@@ -35,10 +36,7 @@ class VolunteerService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        return data.entries.map((entry) => {
-          'item1': entry.key,
-          'item2': entry.value,
-        }).toList();
+        return data.entries.map((entry) => {'item1': entry.key, 'item2': entry.value}).toList();
       } else {
         throw Exception('Server returned ${response.statusCode}: ${response.body}');
       }
@@ -51,7 +49,7 @@ class VolunteerService {
 
   static Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/v1/map/volunteers-with-location'));
+      final response = await http.get(Uri.parse('$baseUrl/map/volunteers-with-location'));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((location) {

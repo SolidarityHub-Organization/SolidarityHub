@@ -32,6 +32,8 @@ class _GeneralTabState extends State<GeneralTab> {
 
   late Future<int> _victimCountFuture;
   late Future<int> _volunteerCountFuture;
+  late Future<double> _donationTotalFuture;
+  late Future<int> _completedTasksCountFuture;
 
   @override
   void initState() {
@@ -41,6 +43,18 @@ class _GeneralTabState extends State<GeneralTab> {
       _adjustEndDate(widget.fechaFin),
     );
     _volunteerCountFuture = _generalService.fetchVolunteerCount(
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+    );
+    _donationTotalFuture = _generalService
+        .fetchTotalQuantityFiltered(
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
+          currency: 'EUR',
+        )
+        .then((value) => value.toDouble());
+    _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
+      'Completed',
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
@@ -59,6 +73,18 @@ class _GeneralTabState extends State<GeneralTab> {
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
+        _donationTotalFuture = _generalService
+            .fetchTotalQuantityFiltered(
+              _adjustStartDate(widget.fechaInicio),
+              _adjustEndDate(widget.fechaFin),
+              currency: 'EUR',
+            )
+            .then((value) => value.toDouble());
+        _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
+          'Completed',
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
+        );
       });
     }
   }
@@ -68,13 +94,10 @@ class _GeneralTabState extends State<GeneralTab> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final minContentWidth = math.max(1100.0, constraints.maxWidth);
-        
+
         return TwoDimensionalScrollWidget(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: minContentWidth,
-              minHeight: constraints.maxHeight,
-            ),
+            constraints: BoxConstraints(minWidth: minContentWidth, minHeight: constraints.maxHeight),
             child: IntrinsicWidth(
               child: Container(
                 width: minContentWidth,
@@ -136,11 +159,40 @@ class _GeneralTabState extends State<GeneralTab> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
-                            child: _buildInfoCard('Donaciones Recibidas', '0'),
+                            child: FutureBuilder<double>(
+                              future: _donationTotalFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildInfoCard('Donaciones Recibidas', 'Cargando...');
+                                } else if (snapshot.hasError) {
+                                  print("Error en FutureBuilder de donaciones: ${snapshot.error}");
+                                  return _buildInfoCard('Donaciones Recibidas', 'Error al cargar');
+                                } else {
+                                  // Manejar el caso donde snapshot.data sea null de forma segura
+                                  double value = snapshot.data ?? 0.0;
+                                  // Ya es double, no necesita conversión
+                                  return _buildInfoCard('Donaciones Recibidas', '€${value.toStringAsFixed(2)}');
+                                }
+                              },
+                            ),
                           ),
                           const SizedBox(width: 20),
                           Expanded(
-                            child: _buildInfoCard('Eventos Realizados', '0'),
+                            child: FutureBuilder<int>(
+                              future: _completedTasksCountFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildInfoCard('Tareas Completadas', 'Cargando...');
+                                } else if (snapshot.hasError) {
+                                  print("Error en FutureBuilder de tareas: ${snapshot.error}");
+                                  return _buildInfoCard('Tareas Completadas', 'Error al cargar');
+                                } else {
+                                  // Manejar el caso donde snapshot.data sea null de forma segura
+                                  int value = snapshot.data ?? 0;
+                                  return _buildInfoCard('Tareas Completadas', value.toString());
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -163,13 +215,7 @@ class _GeneralTabState extends State<GeneralTab> {
         color: Colors.white,
         border: Border.all(color: Colors.grey, width: 1),
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
