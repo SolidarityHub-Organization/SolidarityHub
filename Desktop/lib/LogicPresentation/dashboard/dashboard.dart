@@ -102,7 +102,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('Dashboard'), //should we remove the title and leave only the arrow at the height of the tabs?
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         elevation: 0,
