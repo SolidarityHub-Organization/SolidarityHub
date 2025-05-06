@@ -2,6 +2,7 @@ import 'package:app/interface/ajustes.dart';
 import 'package:app/interface/dataModification.dart';
 import 'package:app/interface/homeScreenVoluntario.dart';
 import 'package:app/interface/logoScreen.dart';
+import 'package:app/interface/taskListScreen.dart';
 import 'package:flutter/material.dart';
 import 'interface/homeScreenAfectado.dart';
 import 'interface/loginUI.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/homeScreenAfectado': (context) => HomeScreenAfectado(id: id, userName: userName, role: role),
         '/ajustes': (context) => AjustesCuenta(id:id, role: role),
         '/dataModification': (context) => DataModification(id:id, role: role),
+        '/taskListScreen': (context) => TaskListScreen(id: id),
       }
     );
   }

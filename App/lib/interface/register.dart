@@ -141,7 +141,7 @@ class _RegisterState extends State<Register> {
                   ),
                   SizedBox(height: 20),
                   const Text(
-                    "Bienvenido a Solidary Hub",
+                    "Bienvenido a Solidarity Hub",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
