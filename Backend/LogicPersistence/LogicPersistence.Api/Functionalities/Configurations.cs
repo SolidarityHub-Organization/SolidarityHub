@@ -114,6 +114,8 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IAffectedZoneServices, AffectedZoneServices>();
 		builder.Services.AddScoped<IMapServices, MapServices>();
 		builder.Services.AddScoped<IDashboardServices, DashboardServices>();
+		builder.Services.AddScoped<IPointServices, PointServices>();
+		builder.Services.AddScoped<IPointRepository, PointRepository>();
 	}
 
 }
