@@ -89,7 +89,10 @@ class AjustesCuenta extends StatelessWidget {
                       SizedBox(height: 16),
                       _buildButton("Cambiar Zona De\nPreferencia"),
                       SizedBox(height: 40),
-                      _buildButton("Eliminar cuenta"),
+                      buildCustomButton(
+                          "Eliminar cuenta",
+                          settingsController.onDeleteAccountPressed(context, id, role),
+                      ),
                     ],
                   ),
                 ),
