@@ -4,6 +4,8 @@ import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/task.dart';
 
+enum AssignmentStrategyType { balanced, random, proximity }
+
 abstract class AssignmentStrategy {
   void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask);
 }
@@ -67,16 +69,32 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
 
 class ProximityAssignmentStrategy implements AssignmentStrategy {
   @override
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {}
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
+    print("Tasks: $tasks");
+    print("Volunteers: $volunteers");
+    print("Volunteers per task: $volunteersPerTask");
+  }
 }
 
 class AutoAssigner {
-  AssignmentStrategy _strategy;
+  late AssignmentStrategy _strategy;
 
-  AutoAssigner(this._strategy);
+  AutoAssigner(AssignmentStrategyType strategyType) {
+    setStrategy(strategyType);
+  }
 
-  void setStrategy(AssignmentStrategy strategy) {
-    _strategy = strategy;
+  void setStrategy(AssignmentStrategyType strategy) {
+    switch (strategy) {
+      case AssignmentStrategyType.balanced:
+        _strategy = BalancedAssignmentStrategy();
+        break;
+      case AssignmentStrategyType.random:
+        _strategy = RandomAssignmentStrategy();
+        break;
+      case AssignmentStrategyType.proximity:
+        _strategy = ProximityAssignmentStrategy();
+        break;
+    }
   }
 
   void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {

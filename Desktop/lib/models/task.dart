@@ -1,4 +1,5 @@
 import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/location.dart';
 import 'package:solidarityhub/models/victim.dart';
 
 class TaskWithDetails {
@@ -11,6 +12,7 @@ class TaskWithDetails {
   final DateTime? endDate;
   final List<Volunteer> assignedVolunteers;
   final List<Victim> assignedVictim;
+  final Location? location;
 
   TaskWithDetails({
     required this.id,
@@ -22,6 +24,7 @@ class TaskWithDetails {
     this.endDate,
     required this.assignedVolunteers,
     required this.assignedVictim,
+    this.location,
   });
 
   factory TaskWithDetails.fromJson(Map<String, dynamic> json) {
@@ -39,6 +42,7 @@ class TaskWithDetails {
           json['assigned_victims'] != null
               ? (json['assigned_victims'] as List).map((victim) => Victim.fromJson(victim)).toList()
               : [],
+      location: json['location'] != null ? Location.fromJson(json['location']) : null,
     );
   }
 }

@@ -3,8 +3,6 @@ import 'package:solidarityhub/handlers/auto_assigner.dart';
 import 'package:solidarityhub/services/volunteer_service.dart';
 import 'package:solidarityhub/models/task.dart';
 
-enum AssignmentStrategyType { balanced, random }
-
 Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> tasks) async {
   AssignmentStrategyType selectedStrategy = AssignmentStrategyType.balanced;
   int volunteersPerTask = 1;
@@ -76,11 +74,10 @@ Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> 
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
                 volunteersPerTask = int.parse(numberController.text);
-                AssignmentStrategy strategy =
-                    selectedStrategy == AssignmentStrategyType.balanced
-                        ? BalancedAssignmentStrategy()
-                        : RandomAssignmentStrategy();
-                AutoAssigner(strategy).assignTasks(tasks, await VolunteerService.fetchVolunteers(), volunteersPerTask);
+
+                AutoAssigner(
+                  selectedStrategy,
+                ).assignTasks(tasks, await VolunteerService.fetchVolunteers(), volunteersPerTask);
                 Navigator.of(context).pop();
               }
             },

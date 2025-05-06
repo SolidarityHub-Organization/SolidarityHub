@@ -1,3 +1,5 @@
+import 'package:solidarityhub/models/location.dart';
+
 class Volunteer {
   final int id;
   final String email;
@@ -8,6 +10,7 @@ class Volunteer {
   final String address;
   final String identification;
   final int? locationId;
+  final Location? location;
 
   Volunteer({
     required this.id,
@@ -19,6 +22,7 @@ class Volunteer {
     required this.address,
     required this.identification,
     required this.locationId,
+    this.location,
   });
 
   factory Volunteer.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,7 @@ class Volunteer {
       address: json['address'],
       identification: json['identification'],
       locationId: json['location_id'],
+      location: json['location'] != null ? Location.fromJson(json['location']) : null,
     );
   }
 }
