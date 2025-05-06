@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/location_service.dart';
 import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquareFactory.dart';
+import 'package:solidarityhub/services/volunteer_service.dart';
 import '../../services/victim_services.dart';
 import '../../services/affected_zone_services.dart';
 import '../../models/mapMarker.dart';
@@ -27,7 +28,6 @@ class _MapScreenState extends State<MapScreen> {
   MapViewMode _currentMode = MapViewMode.all;
   MapMarker? _selectedMarker;
 
-  final VictimService _victimServices = VictimService(baseUrl);
   final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(baseUrl);
   final MapController _mapController = MapController();
 
@@ -42,7 +42,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchVictimLocations() async {
     try {
-      final locations = await _victimServices.fetchLocations();
+      final locations = await LocationService.fetchVolunteerLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {
