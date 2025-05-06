@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/services/donation-services.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
+import 'package:solidarityhub/services/donation_services.dart';
 
 class PhysicalDonationsTab extends StatefulWidget {
   final String baseUrl;
-  final DonationService service;
   final List<Donation> donations;
   final List<Volunteer> volunteers;
   final bool isLoading;
@@ -18,7 +17,6 @@ class PhysicalDonationsTab extends StatefulWidget {
   const PhysicalDonationsTab({
     Key? key,
     required this.baseUrl,
-    required this.service,
     required this.donations,
     required this.volunteers,
     required this.isLoading,
@@ -63,7 +61,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
     }).toList();
   }
 
-  Future<void> _showCreateDonationDialog() async {
+  Future<void> showCreateDonationDialog() async {
     if (widget.volunteers.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles')));
@@ -78,7 +76,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
 
     if (result != null && mounted) {
       try {
-        final createdDonation = await widget.service.createDonation(result);
+        final createdDonation = await DonationService.createDonation(result);
         widget.onDonationCreated(createdDonation);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada con éxito')));
@@ -104,7 +102,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
 
     if (result != null) {
       try {
-        final updatedDonation = await widget.service.assignDonation(
+        final updatedDonation = await DonationService.assignDonation(
           result['donation'].id,
           result['victim'].id,
           result['quantity'],

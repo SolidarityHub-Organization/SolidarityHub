@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/controllers/task_controller.dart';
-import 'package:solidarityhub/services/coordenadasServices.dart';
 import 'package:solidarityhub/controllers/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:solidarityhub/widgets/task_table/auto_assigner_dialog.dart';
@@ -20,7 +19,6 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
     super.initState();
-    _tableController = TaskTableController(coordenadasService: CoordenadasService('http://localhost:5170/api/v1'));
     _loadTasks();
   }
 

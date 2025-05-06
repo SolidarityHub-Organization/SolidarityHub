@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:solidarityhub/models/donation.dart';
 
-import 'api_general_service.dart';
+import 'api_services.dart';
 
 class DonationService {
-  final String baseUrl;
-  DonationService(this.baseUrl);
-
   static Future<List<Donation>> fetchAllDonations() async {
     final response = await ApiService.get('physical-donations');
     List<Donation> donations = [];
@@ -106,22 +102,20 @@ class DonationService {
     }
   }
 
-  Future<int> fetchTotalQuantity() async {
-    final uri = Uri.parse('$baseUrl/api/v1/physical-donations/total-amount');
-    final response = await http.get(uri);
+  static Future<int> fetchTotalQuantity() async {
+    final response = await ApiService.get('physical-donations/total-amount');
 
-    if (response.statusCode == 200) {
+    if (response.statusCode.ok) {
       return json.decode(response.body) as int;
     } else {
       throw Exception('Error al obtener el total de donaciones: ${response.statusCode}');
     }
   }
 
-  Future<List<MonetaryDonation>> fetchAllMonetaryDonations() async {
-    final uri = Uri.parse('$baseUrl/api/v1/monetary-donations');
-    final response = await http.get(uri);
+  static Future<List<MonetaryDonation>> fetchAllMonetaryDonations() async {
+    final response = await ApiService.get('monetary-donations');
 
-    if (response.statusCode == 200) {
+    if (response.statusCode.ok) {
       final List<dynamic> data = json.decode(response.body);
       return data.map((e) => MonetaryDonation.fromJson(e)).toList();
     } else {
@@ -129,9 +123,7 @@ class DonationService {
     }
   }
 
-  Future<MonetaryDonation> createMonetaryDonation(MonetaryDonation donation) async {
-    final uri = Uri.parse('$baseUrl/api/v1/monetary-donations');
-
+  static Future<MonetaryDonation> createMonetaryDonation(MonetaryDonation donation) async {
     if (donation.volunteer == null) {
       throw Exception('Se requiere especificar un voluntario para la donación');
     }
@@ -148,27 +140,12 @@ class DonationService {
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    try {
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(donationData),
-      );
+    final response = await ApiService.post('monetary-donations', body: json.encode(donationData));
 
-      if (response.statusCode == 201) {
-        return MonetaryDonation.fromJson(json.decode(response.body));
-      } else {
-        String errorMessage;
-        try {
-          final errorData = json.decode(response.body);
-          errorMessage = errorData is String ? errorData : errorData.toString();
-        } catch (e) {
-          errorMessage = 'Error al crear donación monetaria: ${response.statusCode}';
-        }
-        throw Exception(errorMessage);
-      }
-    } catch (e) {
-      throw Exception('Error al crear donación monetaria: $e');
+    if (response.statusCode.ok) {
+      return MonetaryDonation.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Error al crear donación monetaria: ${response.statusCode}');
     }
   }
 

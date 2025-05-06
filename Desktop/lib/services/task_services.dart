@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:solidarityhub/handlers/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
-import 'package:solidarityhub/services/api_service.dart';
+import 'package:solidarityhub/services/api_services.dart';
 
 class TaskService {
   static Future<String> createTask({

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:solidarityhub/services/api_general_service.dart';
+import 'package:solidarityhub/services/api_services.dart';
 
 class AffectedZoneServices {
   final String baseUrl;
@@ -7,25 +7,26 @@ class AffectedZoneServices {
 
   Future<List<Map<String, dynamic>>> fetchAffectedZones() async {
     final response = await ApiService.get('map/affected-zones-with-points');
+    List<Map<String, dynamic>> affectedZones = [];
 
     if (response.statusCode.ok) {
       final List<dynamic> data = json.decode(response.body);
-
-      return data.map((affectedZone) {
-        return {
-          'id': affectedZone['id'],
-          'name': affectedZone['name'],
-          'description': affectedZone['description'],
-          'hazard_level': affectedZone['hazard_level'],
-          'admin_id': affectedZone['admin_id'],
-          'points':
-              (affectedZone['points'] as List)
-                  .map((point) => {'latitude': point['latitude'], 'longitude': point['longitude']})
-                  .toList(),
-        };
-      }).toList();
+      affectedZones =
+          data.map((affectedZone) {
+            return {
+              'id': affectedZone['id'],
+              'name': affectedZone['name'],
+              'description': affectedZone['description'],
+              'hazard_level': affectedZone['hazard_level'],
+              'admin_id': affectedZone['admin_id'],
+              'points':
+                  (affectedZone['points'] as List)
+                      .map((point) => {'latitude': point['latitude'], 'longitude': point['longitude']})
+                      .toList(),
+            };
+          }).toList();
     }
 
-    return [];
+    return affectedZones;
   }
 }

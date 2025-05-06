@@ -3,10 +3,9 @@ import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
-import 'package:solidarityhub/LogicPresentation/donations/physical_donations_tab.dart';
-import 'package:solidarityhub/LogicPresentation/donations/monetary_donations_tab.dart';
 import 'package:solidarityhub/services/donation_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
+import 'package:solidarityhub/utils/logger.dart';
 
 class DonationsPage extends StatefulWidget {
   final String baseUrl;
@@ -48,7 +47,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchDonations() async {
     try {
-      final donations = await DonationService.fetchAllDonations();
+      final donations = await Logger.runAsync(() => DonationService.fetchAllDonations(), 'fetchDonations');
       if (mounted) {
         setState(() {
           _donations = donations;
@@ -67,7 +66,10 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchMonetaryDonations() async {
     try {
-      final donations = await DonationService.fetchAllMonetaryDonations();
+      final donations = await Logger.runAsync(
+        () => DonationService.fetchAllMonetaryDonations(),
+        'fetchMonetaryDonations',
+      );
       if (mounted) {
         setState(() {
           _monetaryDonations = donations;
@@ -86,10 +88,10 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchVolunteers() async {
     try {
-      final volunteers = await VolunteerService.fetchVolunteers();
+      final volunteers = await Logger.runAsync(() => VolunteerService.fetchVolunteers(), 'fetchVolunteers');
       if (mounted) {
         setState(() {
-          _volunteers = volunteers;
+          _volunteers = volunteers.cast<Volunteer>();
         });
       }
     } catch (e) {
@@ -101,13 +103,13 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
     }
   }
 
-  void _handleDonationCreated(Donation donation) {
+  void handleDonationCreated(Donation donation) {
     setState(() {
       _donations.add(donation);
     });
   }
 
-  void _handleDonationAssigned(Donation donation) {
+  void handleDonationAssigned(Donation donation) {
     setState(() {
       final index = _donations.indexWhere((d) => d.id == donation.id);
       if (index != -1) {
@@ -161,7 +163,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
     if (!confirm) return;
 
     try {
-      await _service.deleteDonation(donation.id);
+      await DonationService.deleteDonation(donation.id);
       await _fetchDonations();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación eliminada correctamente')));
@@ -188,7 +190,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
     if (newDonation != null && mounted) {
       try {
-        await _service.createDonation(newDonation);
+        await DonationService.createDonation(newDonation);
         await _fetchDonations();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada correctamente')));
@@ -219,7 +221,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         final quantity = result['quantity'] as int;
         final selectedDate = result['date'] as DateTime;
 
-        await _service.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
+        await DonationService.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
         await _fetchDonations();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));

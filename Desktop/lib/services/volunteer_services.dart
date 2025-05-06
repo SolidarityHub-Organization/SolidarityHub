@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:solidarityhub/controllers/general_controller.dart';
 import 'package:solidarityhub/models/volunteer.dart';
-import 'api_general_service.dart';
+import 'api_services.dart';
 
 class VolunteerService {
   static Future<List<Volunteer>> fetchVolunteersWithDetails() async {
@@ -16,7 +16,7 @@ class VolunteerService {
     return volunteers;
   }
 
-  Future<List<Volunteer>> fetchVolunteers() async {
+  static Future<List<Volunteer>> fetchVolunteers() async {
     final response = await ApiService.get('volunteers');
     List<Volunteer> volunteers = [];
 

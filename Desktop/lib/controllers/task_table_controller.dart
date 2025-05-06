@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/services/coordenadasServices.dart';
+import 'package:solidarityhub/services/coordinates_services.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/task_table.dart';
 import 'package:solidarityhub/models/task.dart';
 
 class TaskTableController {
-  final CoordenadasService coordenadasService;
-
   List<TaskWithDetails> tasks = [];
   List<TaskWithDetails> filteredTasks = [];
   bool isLoading = true;
@@ -24,7 +22,7 @@ class TaskTableController {
 
   List<TaskTableColumnData> columns = [];
 
-  TaskTableController({required this.coordenadasService}) {
+  TaskTableController() {
     _initColumns();
   }
 
@@ -100,7 +98,7 @@ class TaskTableController {
           final double lat = locationData['latitude'];
           final double lon = locationData['longitude'];
 
-          final address = await coordenadasService.getAddressFromLatLon(lat, lon);
+          final address = await CoordinatesServices.getAddressFromLatLon(lat, lon);
           taskAddresses[task.id] = address;
 
           applyFilters();

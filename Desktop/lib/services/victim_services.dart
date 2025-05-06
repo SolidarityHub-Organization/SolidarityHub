@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'package:solidarityhub/controllers/general_controller.dart';
 import 'package:solidarityhub/models/victim.dart';
-import 'package:solidarityhub/services/api_service.dart';
+import 'package:solidarityhub/services/api_services.dart';
 
 class VictimService {
-  final String baseUrl;
-  VictimService(this.baseUrl);
-
   static Future<List<Map<String, dynamic>>> fetchVictimCountByDate() async {
     final response = await ApiService.get('victims/count-by-date');
     List<Map<String, dynamic>> victims = [];

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
-class SafeExecute {
+class Logger {
   static Future<T> runAsync<T>(Future<T> Function() action, [String? context]) async {
     try {
       return await action();
