@@ -14,7 +14,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
 
-  String email = "example@email.com";
+  int id = 122;
   String userName = "ExampleName";
   String role = 'example';
   @override
@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
         '/login': (context) => loginUI(), // Ruta nombrada para LogIn
         '/register': (context) => Register(), // Ruta nombrada para registro
         //'/registerChoose': (context) => RegisterChoose(), // Ruta nombrada para registro especifico
-        '/homeScreenVoluntario': (context) => HomeScreenVoluntario(email: email, userName: userName, role: role),
-        '/homeScreenAfectado': (context) => HomeScreenAfectado(email: email, userName: userName, role: role),
-        '/ajustes': (context) => AjustesCuenta(email:email, role: role),
-        '/dataModification': (context) => DataModification(email:email, role: role),
+        '/homeScreenVoluntario': (context) => HomeScreenVoluntario(id: id, userName: userName, role: role),
+        '/homeScreenAfectado': (context) => HomeScreenAfectado(id: id, userName: userName, role: role),
+        '/ajustes': (context) => AjustesCuenta(id:id, role: role),
+        '/dataModification': (context) => DataModification(id:id, role: role),
       }
     );
   }

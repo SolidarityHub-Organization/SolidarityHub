@@ -23,16 +23,17 @@ class AuthController {
         final data = jsonDecode(response.body);
         String userName = data['name'];
         String role = data['role'];
+        int id = data['id'];
         print(jsonDecode(response.body));
         if (role == 'voluntario') {
           print('Login exitoso');
           Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreenVoluntario(email: email, userName: userName, role: role),),
+            context, MaterialPageRoute(builder: (context) => HomeScreenVoluntario(id: id, userName: userName, role: role),),
           );
         }
         else if(role == 'victima'){
           Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreenAfectado(email: email, userName: userName, role: role),),
+            context, MaterialPageRoute(builder: (context) => HomeScreenAfectado(id: id, userName: userName, role: role),),
           );
         }
       } else {

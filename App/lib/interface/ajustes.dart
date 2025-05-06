@@ -6,11 +6,11 @@ import '../controllers/settingsController.dart';
 
 class AjustesCuenta extends StatelessWidget {
 
-  final String email;
+  final int id;
   final String role;
 
   SettingsController settingsController = SettingsController();
-  AjustesCuenta({required this.email, required this.role});
+  AjustesCuenta({required this.id, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class AjustesCuenta extends StatelessWidget {
                         width: double.infinity,
                         child: buildCustomButton(
                           "Cambiar Datos",
-                          settingsController.onDataModificationPressed(context, email, role),
+                          settingsController.onDataModificationPressed(context, id, role),
                           verticalPadding: 14,
                           horizontalPadding: 0,
                           backgroundColor: Colors.red,
@@ -89,7 +89,10 @@ class AjustesCuenta extends StatelessWidget {
                       SizedBox(height: 16),
                       _buildButton("Cambiar Zona De\nPreferencia"),
                       SizedBox(height: 40),
-                      _buildButton("Eliminar cuenta"),
+                      buildCustomButton(
+                          "Eliminar cuenta",
+                          settingsController.onDeleteAccountPressed(context, id, role),
+                      ),
                     ],
                   ),
                 ),

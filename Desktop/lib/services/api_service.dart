@@ -9,9 +9,7 @@ extension StatusCodeExtension on int {
 
 class ApiService {
   static final AppConfig _config = AppConfig();
-
   static String get baseUrl => _config.apiBaseUrl;
-
   static Map<String, String> get headers => {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
   static Future<http.Response> get(String endpoint, {Map<String, String>? queryParams}) async {

@@ -12,7 +12,7 @@ class DataModificationController {
   final TextEditingController fechaNacimientoController = TextEditingController();
   final TextEditingController telefonoController = TextEditingController();
 
-  Future<void> saveData(BuildContext context, String emailDado, String rolDado) async {
+  Future<void> saveData(BuildContext context, int id, String rolDado) async {
 
     final data = UserRegistrationData()
       ..email = correoController.text

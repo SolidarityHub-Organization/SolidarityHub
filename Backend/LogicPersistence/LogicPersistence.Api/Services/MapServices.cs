@@ -1,8 +1,10 @@
+using LogicPersistence.Api.Functionalities;
 using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using Microsoft.OpenApi.Extensions;
 
 namespace LogicPersistence.Api.Services {
     public class MapServices : IMapServices {
@@ -26,10 +28,10 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve victims.");
 			}
 			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
-			var result = new List<MapMarkerDTO>();
+			var result = new List<VictimMapMarkerDTO>();
 			foreach (var victim in victimsWithLocation) {
 				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
-				result.Add(new MapMarkerDTO {
+				result.Add(new VictimMapMarkerDTO {
 					id = victim.id,
 					name = victim.name,
 					type = "victim",
@@ -46,10 +48,10 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve volunteers.");
 			}
 			var volunteersWithLocation = volunteers.Where(v => v.location_id != null).ToList();
-			var result = new List<MapMarkerDTO>();
+			var result = new List<VolunteerMapMarkerDTO>();
 			foreach (var volunteer in volunteersWithLocation) {
 				var location = await _locationRepository.GetLocationByIdAsync(volunteer.location_id.Value);
-				result.Add(new MapMarkerDTO {
+				result.Add(new VolunteerMapMarkerDTO {
 					id = volunteer.id,
 					name = volunteer.name,
 					type = "volunteer",
@@ -120,19 +122,31 @@ namespace LogicPersistence.Api.Services {
         }
 
         public async Task<IEnumerable<MapMarkerDTO>> GetAllTasksWithLocationAsync() {
-            var tasks = await _taskRepository.GetAllTasksAsync();
+            var tasks = await _taskRepository.GetAllTasksWithDetailsAsync();
             if (tasks == null) {
                 throw new InvalidOperationException("Failed to retrieve tasks.");
             }
-            var result = new List<MapMarkerDTO>();
+            var result = new List<TaskMapMarkerDTO>();
             foreach (var task in tasks) {
                 var location = await _locationRepository.GetLocationByIdAsync(task.location_id);
-                result.Add(new MapMarkerDTO {
+                var urgencyLevel = await _taskRepository.GetMaxUrgencyLevelForTaskAsync(task.id);
+                var assignedVolunteersIds = task.assigned_volunteers.Select(v => v.id).ToList();
+                var assignedVolunteers = new List<Volunteer>();
+
+                foreach (var id in assignedVolunteersIds) {
+                    var volunteer = await _volunteerRepository.GetVolunteerByIdAsync(id);
+                    if (volunteer != null) {
+                        assignedVolunteers.Add(volunteer);
+                    }   
+                }
+                result.Add(new TaskMapMarkerDTO {
                     id = task.id,
                     name = task.name,
                     type = "task",
                     latitude = location.latitude,
                     longitude = location.longitude,
+                    urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel),
+                    assigned_volunteers = assignedVolunteers.ToList(),
                 });
             }
             return result;
