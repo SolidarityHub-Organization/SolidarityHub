@@ -126,7 +126,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                           CustomBarChart(
                             data: data,
                             barColor: const Color(0xFFF44336),
-                            //padding: const EdgeInsets.fromLTRB(40, 0, 20, 40),  // you can overrife the default padding
+                            padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),  // you can override the default padding
                           ),
                           const SizedBox(height: 30),
                           // pie chart
@@ -137,7 +137,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             child: CustomPieChart(
                               data: data.map((item) => {'type': item['item1'], 'count': item['item2']}).toList(),
                               legendScrollController: _legendScrollController,
-                              padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
+                              //padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),
                           ),
                           const SizedBox(height: 10),

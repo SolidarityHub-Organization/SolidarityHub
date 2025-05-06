@@ -151,6 +151,7 @@ class _VictimsTabState extends State<VictimsTab> {
                             xLabels: xLabels,
                             title: 'Número de afectados por día',
                             titleBottomMargin: 25.0, // Añadimos más margen inferior
+                            padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
                           ),
                           CustomBarChart(data: transformedNeedsData, barColor: Colors.red),
                           Container(
