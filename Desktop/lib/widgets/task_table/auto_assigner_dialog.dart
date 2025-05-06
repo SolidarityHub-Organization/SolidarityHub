@@ -4,7 +4,7 @@ import 'package:solidarityhub/services/volunteer_service.dart';
 import 'package:solidarityhub/models/task.dart';
 
 Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> tasks) async {
-  AssignmentStrategyType selectedStrategy = AssignmentStrategyType.balanced;
+  AssignmentStrategyType selectedStrategy = AssignmentStrategyType.proximity;
   int volunteersPerTask = 1;
 
   final formKey = GlobalKey<FormState>();
@@ -40,7 +40,10 @@ Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> 
                 decoration: const InputDecoration(labelText: 'Strategy'),
                 items:
                     AssignmentStrategyType.values.map((strategy) {
-                      return DropdownMenuItem(value: strategy, child: Text(strategy.name));
+                      return DropdownMenuItem(
+                        value: strategy,
+                        child: Text(strategy.name[0].toUpperCase() + strategy.name.substring(1)),
+                      );
                     }).toList(),
                 onChanged: (value) {
                   if (value != null) selectedStrategy = value;
