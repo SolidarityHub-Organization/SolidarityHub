@@ -92,7 +92,7 @@ public class VolunteerRepository : IVolunteerRepository
             v.identification,
             v.created_at,
             v.location_id,
-            COALESCE(vs.skills, '[]') as skills_json
+            COALESCE(vs.skills, '[]') as skillsJson
         FROM
             volunteer v
         LEFT JOIN
