@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:solidarityhub/services/api_general_service.dart';
+import 'package:solidarityhub/services/api_services.dart';
 
 class CoordinatesServices {
   static Future<String> getAddressFromLatLon(double lat, double lon) async {

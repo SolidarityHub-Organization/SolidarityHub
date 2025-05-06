@@ -43,7 +43,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
     final now = DateTime.now();
     final start = _adjustStartDate(widget.fechaInicio ?? now.subtract(const Duration(days: 365)));
     final end = _adjustEndDate(widget.fechaFin);
-    _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
+    _volunteerNeedsFuture = VolunteerServices.fetchFilteredVolunteerSkillsCount(start, end);
   }
 
   @override
@@ -53,7 +53,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
       setState(() {
         final start = _adjustStartDate(widget.fechaInicio ?? DateTime.now().subtract(const Duration(days: 365)));
         final end = _adjustEndDate(widget.fechaFin);
-        _volunteerNeedsFuture = VolunteerService.fetchFilteredVolunteerSkillsCount(start, end);
+        _volunteerNeedsFuture = VolunteerServices.fetchFilteredVolunteerSkillsCount(start, end);
       });
     }
   }

@@ -3,7 +3,7 @@ import 'package:solidarityhub/handlers/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/services/api_services.dart';
 
-class TaskService {
+class TaskServices {
   static Future<String> createTask({
     required String name,
     required String description,
@@ -48,7 +48,7 @@ class TaskService {
       'volunteer_ids': task.assignedVolunteers.map((v) => v.id).toList(),
       'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
     };
-    final response = await ApiService.put('tasks/${task.id}', body: body);
+    final response = await ApiServices.put('tasks/${task.id}', body: body);
 
     if (!response.statusCode.ok) {
       throw Exception('Failed to update task');
@@ -56,7 +56,7 @@ class TaskService {
   }
 
   static Future<Map<String, dynamic>> fetchTaskTypeCount(DateTime startDate, DateTime endDate) async {
-    final response = await ApiService.get(
+    final response = await ApiServices.get(
       'tasks/states/count'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
@@ -72,7 +72,7 @@ class TaskService {
   }
 
   static Future<List<Map<String, dynamic>>> fetchAllTasks(DateTime startDate, DateTime endDate) async {
-    final response = await ApiService.get(
+    final response = await ApiServices.get(
       'tasks/dashboard'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
@@ -88,7 +88,7 @@ class TaskService {
   }
 
   static Future<String> deleteTask(int id) async {
-    final response = await ApiService.delete('tasks/$id');
+    final response = await ApiServices.delete('tasks/$id');
 
     if (response.statusCode.ok) {
       return 'Task deleted successfully';
@@ -99,7 +99,7 @@ class TaskService {
 
   static Future<int> fetchTaskCountByStateFiltered(String state, DateTime startDate, DateTime endDate) async {
     final String params = 'fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
-    final response = await ApiService.get('tasks/states/$state/count?$params');
+    final response = await ApiServices.get('tasks/states/$state/count?$params');
     int count = 0;
 
     if (response.statusCode.ok) {

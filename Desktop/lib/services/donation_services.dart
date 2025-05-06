@@ -3,9 +3,9 @@ import 'package:solidarityhub/models/donation.dart';
 
 import 'api_services.dart';
 
-class DonationService {
+class DonationServices {
   static Future<List<Donation>> fetchAllDonations() async {
-    final response = await ApiService.get('physical-donations');
+    final response = await ApiServices.get('physical-donations');
     List<Donation> donations = [];
 
     if (response.statusCode.ok) {
@@ -28,7 +28,7 @@ class DonationService {
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    final response = await ApiService.post('physical-donations', body: json.encode(donationData));
+    final response = await ApiServices.post('physical-donations', body: json.encode(donationData));
 
     if (response.statusCode.ok) {
       return Donation.fromJson(json.decode(response.body));
@@ -50,7 +50,7 @@ class DonationService {
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    final response = await ApiService.put('physical-donations/${donation.id}', body: json.encode(donationData));
+    final response = await ApiServices.put('physical-donations/${donation.id}', body: json.encode(donationData));
 
     if (response.statusCode.ok) {
       return Donation.fromJson(json.decode(response.body));
@@ -60,7 +60,7 @@ class DonationService {
   }
 
   static Future<void> deleteDonation(int id) async {
-    final response = await ApiService.delete('physical-donations/$id');
+    final response = await ApiServices.delete('physical-donations/$id');
 
     if (!response.statusCode.ok) {
       throw Exception('Error al eliminar donación: ${response.statusCode}');
@@ -80,7 +80,7 @@ class DonationService {
       'admin_id': 1,
     };
 
-    final response = await ApiService.post(uri, body: json.encode(data));
+    final response = await ApiServices.post(uri, body: json.encode(data));
 
     if (response.statusCode.ok) {
       final responseData = json.decode(response.body);
@@ -103,7 +103,7 @@ class DonationService {
   }
 
   static Future<int> fetchTotalQuantity() async {
-    final response = await ApiService.get('physical-donations/total-amount');
+    final response = await ApiServices.get('physical-donations/total-amount');
 
     if (response.statusCode.ok) {
       return json.decode(response.body) as int;
@@ -113,7 +113,7 @@ class DonationService {
   }
 
   static Future<List<MonetaryDonation>> fetchAllMonetaryDonations() async {
-    final response = await ApiService.get('monetary-donations');
+    final response = await ApiServices.get('monetary-donations');
 
     if (response.statusCode.ok) {
       final List<dynamic> data = json.decode(response.body);
@@ -140,7 +140,7 @@ class DonationService {
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    final response = await ApiService.post('monetary-donations', body: json.encode(donationData));
+    final response = await ApiServices.post('monetary-donations', body: json.encode(donationData));
 
     if (response.statusCode.ok) {
       return MonetaryDonation.fromJson(json.decode(response.body));
@@ -157,7 +157,7 @@ class DonationService {
     final String params =
         'currency=$currency&fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'monetary-donations/total-amount?$params';
-    final response = await ApiService.get(uri);
+    final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
       final value = json.decode(response.body);

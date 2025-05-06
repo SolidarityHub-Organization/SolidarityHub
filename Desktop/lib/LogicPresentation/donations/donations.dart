@@ -47,7 +47,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchDonations() async {
     try {
-      final donations = await Logger.runAsync(() => DonationService.fetchAllDonations(), 'fetchDonations');
+      final donations = await Logger.runAsync(() => DonationServices.fetchAllDonations(), 'fetchDonations');
       if (mounted) {
         setState(() {
           _donations = donations;
@@ -67,7 +67,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
   Future<void> _fetchMonetaryDonations() async {
     try {
       final donations = await Logger.runAsync(
-        () => DonationService.fetchAllMonetaryDonations(),
+        () => DonationServices.fetchAllMonetaryDonations(),
         'fetchMonetaryDonations',
       );
       if (mounted) {
@@ -88,7 +88,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchVolunteers() async {
     try {
-      final volunteers = await Logger.runAsync(() => VolunteerService.fetchVolunteers(), 'fetchVolunteers');
+      final volunteers = await Logger.runAsync(() => VolunteerServices.fetchVolunteers(), 'fetchVolunteers');
       if (mounted) {
         setState(() {
           _volunteers = volunteers.cast<Volunteer>();
@@ -163,7 +163,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
     if (!confirm) return;
 
     try {
-      await DonationService.deleteDonation(donation.id);
+      await DonationServices.deleteDonation(donation.id);
       await _fetchDonations();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación eliminada correctamente')));
@@ -190,7 +190,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
     if (newDonation != null && mounted) {
       try {
-        await DonationService.createDonation(newDonation);
+        await DonationServices.createDonation(newDonation);
         await _fetchDonations();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada correctamente')));
@@ -221,7 +221,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         final quantity = result['quantity'] as int;
         final selectedDate = result['date'] as DateTime;
 
-        await DonationService.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
+        await DonationServices.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
         await _fetchDonations();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));

@@ -217,7 +217,7 @@ class TaskTableController {
     isLoading = true;
 
     try {
-      await TaskService.deleteTask(task.id);
+      await TaskServices.deleteTask(task.id);
       await fetchTasks();
       if (onComplete != null) {
         onComplete();

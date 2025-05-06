@@ -80,7 +80,7 @@ Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> 
 
                 AutoAssigner(
                   selectedStrategy,
-                ).assignTasks(tasks, await VolunteerService.fetchVolunteersWithDetails(), volunteersPerTask);
+                ).assignTasks(tasks, await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
                 Navigator.of(context).pop();
               }
             },

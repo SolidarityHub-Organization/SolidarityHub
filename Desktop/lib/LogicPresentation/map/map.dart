@@ -25,7 +25,6 @@ class _MapScreenState extends State<MapScreen> {
   MapViewMode _currentMode = MapViewMode.all;
   MapMarker? _selectedMarker;
 
-  final AffectedZoneServices _affectedZoneServices = AffectedZoneServices(baseUrl);
   final MapController _mapController = MapController();
 
   @override
@@ -39,7 +38,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchVictimLocations() async {
     try {
-      final locations = await LocationService.fetchVolunteerLocations();
+      final locations = await LocationServices.fetchVolunteerLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {
@@ -58,7 +57,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchVolunteerLocations() async {
     try {
-      final locations = await LocationService.fetchVolunteerLocations();
+      final locations = await LocationServices.fetchVolunteerLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {
@@ -77,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchTaskLocations() async {
     try {
-      final locations = await LocationService.fetchVolunteerLocations();
+      final locations = await LocationServices.fetchVolunteerLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {
@@ -96,7 +95,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchAffectedZones() async {
     try {
-      final zones = await _affectedZoneServices.fetchAffectedZones();
+      final zones = await AffectedZoneServices.fetchAffectedZones();
 
       setState(() {
         _polygons =
