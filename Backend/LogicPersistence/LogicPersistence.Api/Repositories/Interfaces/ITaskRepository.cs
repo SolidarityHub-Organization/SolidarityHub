@@ -16,4 +16,5 @@ public interface ITaskRepository {
 	Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state);
 	Task<State> GetTaskStateByIdAsync(int taskId);
 	Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId);
+	Task<IEnumerable<Models.Task>> GetTasksAssignedToVolunteerAsync(int volunteerId);
 }

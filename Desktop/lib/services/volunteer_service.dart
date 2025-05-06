@@ -4,7 +4,7 @@ import 'api_general_service.dart';
 
 class VolunteerService {
   static Future<List<Volunteer>> fetchVolunteers() async {
-    final response = await ApiService.get('volunteers');
+    final response = await ApiService.get('volunteers-with-details');
     List<Volunteer> volunteers = [];
 
     if (response.statusCode.ok) {

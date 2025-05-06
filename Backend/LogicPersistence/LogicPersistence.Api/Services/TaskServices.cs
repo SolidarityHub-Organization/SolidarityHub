@@ -202,6 +202,14 @@ namespace LogicPersistence.Api.Services {
 
 			return null;
 		}
+
+		public Task<IEnumerable<Models.Task>> GetTasksAssignedToVolunteerAsync(int volunteerId) {
+			var tasks = _taskRepository.GetTasksAssignedToVolunteerAsync(volunteerId);
+			if (tasks == null) {
+				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
+			}
+			return tasks;
+		}
 		#endregion
 	}
 }

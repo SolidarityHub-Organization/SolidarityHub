@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/services/location_service.dart';
-import 'package:solidarityhub/LogicPresentation/map/infoSquareFactory.dart';
+import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquareFactory.dart';
 import '../../services/victim_services.dart';
 import '../../services/affected_zone_services.dart';
 import '../../models/mapMarker.dart';
 import '../../models/affectedZone.dart';
-import 'markerfactory.dart';
+import 'factoryMethod_Markers/markerFactory.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -124,13 +124,13 @@ class _MapScreenState extends State<MapScreen> {
   Color _getHazardLevelColor(int hazardLevel) {
     switch (hazardLevel) {
       case 0: // Low
-        return Color(0xFF008B8A); // Color teal #008b8a
+        return Color(0xFF008B8A);
       case 1: // Medium
-        return Color(0xFFFF9600); // Color naranja #ff9600
+        return Color(0xFFFF9600);
       case 2: // High
-        return Color(0xFFE21C1C); // Color rojo #e21c1c
+        return Color(0xFFE21C1C);
       case 3: // Critical
-        return Color(0xFF460707); // Color rojo oscuro #460707
+        return Color(0xFF460707);
       default:
         return Colors.grey;
     }
@@ -154,6 +154,7 @@ class _MapScreenState extends State<MapScreen> {
         }).toList();
 
     // Usamos los marcadores filtrados para crear los Marker de flutter_map
+    // Usando el factory method de los marcadores
     List<Marker> flutterMapMarkers =
         filteredMarkers.map((mapMarker) {
           final creator = getMarkerCreator(mapMarker.type);
@@ -287,43 +288,11 @@ class _MapScreenState extends State<MapScreen> {
                           ],
                         ),
                       ),
-                      // Widget de información con contenedor más grande
+                      //contenedor para el panel de información
                       Container(
-                        constraints: BoxConstraints(
-                          minHeight: 350, // Altura mínima más grande
-                        ),
+                        constraints: BoxConstraints(minHeight: 725),
+
                         child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
-                      ),
-                      SizedBox(height: 24), // Más espacio
-                      // Información adicional con contenedor más grande
-                      Container(
-                        constraints: BoxConstraints(
-                          minHeight: 150, // Altura mínima más grande para acciones
-                        ),
-                        padding: EdgeInsets.all(20), // Padding más grande
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 3), blurRadius: 6),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Acciones disponibles",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22, // Texto más grande
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
-                            SizedBox(height: 20), // Más espacio
-                            _buildActionButton("Contactar", Icons.phone, Colors.green, () {}),
-                          ],
-                        ),
                       ),
                     ],
                   ),
@@ -331,27 +300,6 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
         ],
-      ),
-    );
-  }
-
-  // Método para construir botones de acción en el panel de información
-  Widget _buildActionButton(String label, IconData icon, Color color, VoidCallback onPressed) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              SizedBox(width: 12),
-              Text(label, style: TextStyle(fontSize: 16, color: Colors.black87)),
-            ],
-          ),
-        ),
       ),
     );
   }

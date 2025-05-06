@@ -15,5 +15,6 @@ namespace LogicPersistence.Api.Services {
 		Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString);
 		Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync(DateTime fromDate, DateTime toDate);
 		Task<IEnumerable<Models.Task>> GetTasksByStateAsync(string stateString, DateTime fromDate, DateTime toDate);
+		Task<IEnumerable<Models.Task>> GetTasksAssignedToVolunteerAsync(int volunteerId);
 	}
 }
