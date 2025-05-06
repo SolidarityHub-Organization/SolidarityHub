@@ -70,6 +70,14 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       firstDate: _fechaInicio ?? DateTime(2000),
       lastDate: DateTime.now(),
     );
+
+    // actualizar el estado si se seleccionó una fecha
+    if (picked != null) {
+      setState(() {
+        _fechaFin = picked;
+        _refreshCurrentTab();
+      });
+    }
   }
 
   List<Widget> _buildDateFilters() {
