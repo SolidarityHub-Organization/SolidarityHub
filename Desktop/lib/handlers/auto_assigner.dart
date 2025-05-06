@@ -1,10 +1,11 @@
 import 'dart:math';
 
+import 'package:solidarityhub/models/location.dart';
 import 'package:solidarityhub/services/task_service.dart';
-import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 
-enum AssignmentStrategyType { balanced, random, proximity }
+enum AssignmentStrategyType { proximity, balanced, random }
 
 abstract class AssignmentStrategy {
   void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask);
@@ -68,11 +69,45 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
 }
 
 class ProximityAssignmentStrategy implements AssignmentStrategy {
+  double _calculateDistance(Location a, Location b) {
+    const earthRadius = 6371; // in kilometers
+    final dLat = _degreesToRadians(b.latitude - a.latitude);
+    final dLon = _degreesToRadians(b.longitude - a.longitude);
+
+    final lat1 = _degreesToRadians(a.latitude);
+    final lat2 = _degreesToRadians(b.latitude);
+
+    final aCalc = sin(dLat / 2) * sin(dLat / 2) + sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2);
+    final c = 2 * atan2(sqrt(aCalc), sqrt(1 - aCalc));
+    return earthRadius * c;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * pi / 180;
+  }
+
   @override
   void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
-    print("Tasks: $tasks");
-    print("Volunteers: $volunteers");
-    print("Volunteers per task: $volunteersPerTask");
+    for (var task in tasks) {
+      if (task.location == null) continue;
+
+      final assignedIds = task.assignedVolunteers.map((v) => v.id).toSet();
+      final needed = volunteersPerTask - assignedIds.length;
+      if (needed <= 0) continue;
+
+      final availableVolunteers = volunteers.where((v) => v.location != null && !assignedIds.contains(v.id)).toList();
+
+      availableVolunteers.sort((a, b) {
+        final distA = _calculateDistance(task.location!, a.location!);
+        final distB = _calculateDistance(task.location!, b.location!);
+        return distA.compareTo(distB);
+      });
+
+      final toAssign = availableVolunteers.take(needed);
+
+      task.assignedVolunteers.addAll(toAssign);
+      TaskService.updateTask(task);
+    }
   }
 }
 

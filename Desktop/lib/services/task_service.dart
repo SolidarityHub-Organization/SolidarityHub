@@ -48,7 +48,7 @@ class TaskService {
       'volunteer_ids': task.assignedVolunteers.map((v) => v.id).toList(),
       'victim_ids': task.assignedVictim.map((v) => v.id).toList(),
     };
-    final response = await ApiService.put('tasks/${task.id}', body: json.encode(body));
+    final response = await ApiService.put('tasks/${task.id}', body: body);
 
     if (!response.statusCode.ok) {
       throw Exception('Failed to update task');

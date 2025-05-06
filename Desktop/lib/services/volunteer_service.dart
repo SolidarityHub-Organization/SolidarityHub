@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/volunteer.dart';
 import 'api_general_service.dart';
 
 class VolunteerService {

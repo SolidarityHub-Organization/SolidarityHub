@@ -1,4 +1,4 @@
-import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/location.dart';
 import 'package:solidarityhub/models/victim.dart';
 
