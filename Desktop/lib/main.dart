@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
-import 'package:solidarityhub/pages/tasks_screen.dart';
+import 'package:solidarityhub/screens/tasks_screen.dart';
 import 'package:solidarityhub/utils/database.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
 

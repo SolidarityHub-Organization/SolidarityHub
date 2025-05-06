@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:solidarityhub/services/coordenadasServices.dart';
-import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/task_table.dart';
 import 'package:solidarityhub/models/task.dart';
 

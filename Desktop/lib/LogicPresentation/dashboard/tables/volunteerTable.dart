@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
-import 'package:solidarityhub/services/volunteer_service.dart';
+import 'package:solidarityhub/services/volunteer_services.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/custom_bar_chart.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/custom_pie_chart.dart';
@@ -132,15 +132,10 @@ class _VolunteerTabState extends State<VolunteerTab> {
                           // pie chart
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
-                            constraints: BoxConstraints(
-                              minWidth: math.max(700, constraints.maxWidth * 0.8),
-                            ),
+                            constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
                             height: 400,
                             child: CustomPieChart(
-                              data: data.map((item) => {
-                                'type': item['item1'],
-                                'count': item['item2'],
-                              }).toList(),
+                              data: data.map((item) => {'type': item['item1'], 'count': item['item2']}).toList(),
                               legendScrollController: _legendScrollController,
                               padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),

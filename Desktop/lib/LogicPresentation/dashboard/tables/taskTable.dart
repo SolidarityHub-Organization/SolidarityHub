@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
-import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/services/task_services.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
 
@@ -134,7 +134,9 @@ class _TaskTableState extends State<TaskTable> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12.0),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4)),
+                          ],
                         ),
                         child: Column(
                           children: [
@@ -280,7 +282,10 @@ class _TaskTableState extends State<TaskTable> {
                                           'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
                                           style: const TextStyle(fontSize: 14),
                                         ),
-                                        Text('Estado: ${task['state'] ?? 'Desconocido'}', style: const TextStyle(fontSize: 14)),
+                                        Text(
+                                          'Estado: ${task['state'] ?? 'Desconocido'}',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
                                         Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
                                       ],
                                     ),
@@ -318,32 +323,25 @@ class _TaskTableState extends State<TaskTable> {
     // filter out unknown tasks
     final filteredData = Map<String, dynamic>.from(data)
       ..removeWhere((key, value) => key == 'Unknown' || key == 'Desconocido');
-    
+
     return filteredData.entries.map((entry) {
       final value = (entry.value as int).toDouble();
       final translatedKey = _translateTaskType(entry.key);
-      
+
       final String truncatedKey = _truncateWithEllipsis(translatedKey, 10);
-      
+
       return PieChartSectionData(
         value: value,
         title: '$truncatedKey\n$value',
         color: _getColorForTaskType(entry.key),
         radius: 80,
-        titleStyle: const TextStyle(
-          fontSize: 12, 
-          fontWeight: FontWeight.bold, 
-          color: Colors.white,
-        ),
+        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
       );
     }).toList();
   }
 
-
   String _truncateWithEllipsis(String text, int maxLength) {
-    return (text.length <= maxLength)
-        ? text
-        : '${text.substring(0, maxLength)}...';
+    return (text.length <= maxLength) ? text : '${text.substring(0, maxLength)}...';
   }
 
   String _translateTaskType(String taskType) {

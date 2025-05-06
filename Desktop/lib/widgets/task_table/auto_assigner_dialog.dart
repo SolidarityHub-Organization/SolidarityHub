@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/handlers/auto_assigner.dart';
-import 'package:solidarityhub/services/volunteer_service.dart';
+import 'package:solidarityhub/services/volunteer_services.dart';
 import 'package:solidarityhub/models/task.dart';
 
 Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> tasks) async {
@@ -80,7 +80,7 @@ Future<void> showAutoAssignerDialog(BuildContext context, List<TaskWithDetails> 
 
                 AutoAssigner(
                   selectedStrategy,
-                ).assignTasks(tasks, await VolunteerService.fetchVolunteers(), volunteersPerTask);
+                ).assignTasks(tasks, await VolunteerService.fetchVolunteersWithDetails(), volunteersPerTask);
                 Navigator.of(context).pop();
               }
             },

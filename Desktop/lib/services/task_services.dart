@@ -97,25 +97,15 @@ class TaskService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> fetchLocations() async {
-    final response = await ApiService.get('map/tasks-with-location');
-    List<Map<String, dynamic>> locations = [];
+  static Future<int> fetchTaskCountByStateFiltered(String state, DateTime startDate, DateTime endDate) async {
+    final String params = 'fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
+    final response = await ApiService.get('tasks/states/$state/count?$params');
+    int count = 0;
 
     if (response.statusCode.ok) {
-      final List<dynamic> data = json.decode(response.body);
-
-      locations =
-          data.map((location) {
-            return {
-              'id': location['id'],
-              'name': location['name'],
-              'latitude': location['latitude'],
-              'longitude': location['longitude'],
-              'type': location['type'],
-            };
-          }).toList();
+      count = json.decode(response.body);
     }
 
-    return locations;
+    return count;
   }
 }

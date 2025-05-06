@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/services/donationService.dart';
+import 'package:solidarityhub/services/donation-services.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';

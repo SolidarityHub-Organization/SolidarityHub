@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/services/generalServices.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
+import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/services/dashboard_services.dart';
+import 'package:solidarityhub/services/task_services.dart';
+import 'package:solidarityhub/services/victim_services.dart';
+import 'package:solidarityhub/services/volunteer_services.dart';
+import 'package:solidarityhub/services/donation_services.dart';
 
 class GeneralTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -16,8 +21,6 @@ class GeneralTab extends StatefulWidget {
 }
 
 class _GeneralTabState extends State<GeneralTab> {
-  final GeneralService _generalService = GeneralService('http://localhost:5170');
-
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
     // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
@@ -39,27 +42,25 @@ class _GeneralTabState extends State<GeneralTab> {
   @override
   void initState() {
     super.initState();
-    _victimCountFuture = _generalService.fetchVictimCount(
+    _victimCountFuture = VictimService.fetchVictimCount(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    _volunteerCountFuture = _generalService.fetchVolunteerCount(
+    _volunteerCountFuture = VolunteerService.fetchVolunteerCount(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    _donationTotalFuture = _generalService
-        .fetchTotalQuantityFiltered(
-          _adjustStartDate(widget.fechaInicio),
-          _adjustEndDate(widget.fechaFin),
-          currency: 'EUR',
-        )
-        .then((value) => value.toDouble());
-    _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
+    _donationTotalFuture = DonationService.fetchTotalQuantityFiltered(
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+      currency: 'EUR',
+    ).then((value) => value.toDouble());
+    _completedTasksCountFuture = TaskService.fetchTaskCountByStateFiltered(
       'Completed',
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    _recentActivityFuture = _generalService.fetchRecentActivity(
+    _recentActivityFuture = DashboardServices.fetchRecentActivity(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
@@ -70,27 +71,25 @@ class _GeneralTabState extends State<GeneralTab> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        _victimCountFuture = _generalService.fetchVictimCount(
+        _victimCountFuture = VictimService.fetchVictimCount(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
-        _volunteerCountFuture = _generalService.fetchVolunteerCount(
+        _volunteerCountFuture = VolunteerService.fetchVolunteerCount(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
-        _donationTotalFuture = _generalService
-            .fetchTotalQuantityFiltered(
-              _adjustStartDate(widget.fechaInicio),
-              _adjustEndDate(widget.fechaFin),
-              currency: 'EUR',
-            )
-            .then((value) => value.toDouble());
-        _completedTasksCountFuture = _generalService.fetchTaskCountByStateFiltered(
+        _donationTotalFuture = DonationService.fetchTotalQuantityFiltered(
+          _adjustStartDate(widget.fechaInicio),
+          _adjustEndDate(widget.fechaFin),
+          currency: 'EUR',
+        ).then((value) => value.toDouble());
+        _completedTasksCountFuture = TaskService.fetchTaskCountByStateFiltered(
           'Completed',
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
-        _recentActivityFuture = _generalService.fetchRecentActivity(
+        _recentActivityFuture = DashboardServices.fetchRecentActivity(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/services/donationService.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
 import 'package:solidarityhub/LogicPresentation/donations/physical_donations_tab.dart';
 import 'package:solidarityhub/LogicPresentation/donations/monetary_donations_tab.dart';
+import 'package:solidarityhub/services/donation_services.dart';
+import 'package:solidarityhub/services/volunteer_services.dart';
 
 class DonationsPage extends StatefulWidget {
   final String baseUrl;
@@ -17,7 +18,6 @@ class DonationsPage extends StatefulWidget {
 
 class _DonationsPageState extends State<DonationsPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late final DonationService _service;
   List<Donation> _donations = [];
   List<MonetaryDonation> _monetaryDonations = [];
   List<Volunteer> _volunteers = [];
@@ -35,7 +35,6 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _service = DonationService(widget.baseUrl);
     _fetchDonations();
     _fetchMonetaryDonations();
     _fetchVolunteers();
@@ -49,7 +48,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchDonations() async {
     try {
-      final donations = await _service.fetchAllDonations();
+      final donations = await DonationService.fetchAllDonations();
       if (mounted) {
         setState(() {
           _donations = donations;
@@ -68,7 +67,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchMonetaryDonations() async {
     try {
-      final donations = await _service.fetchAllMonetaryDonations();
+      final donations = await DonationService.fetchAllMonetaryDonations();
       if (mounted) {
         setState(() {
           _monetaryDonations = donations;
@@ -87,7 +86,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
 
   Future<void> _fetchVolunteers() async {
     try {
-      final volunteers = await _service.fetchVolunteers();
+      final volunteers = await VolunteerService.fetchVolunteers();
       if (mounted) {
         setState(() {
           _volunteers = volunteers;

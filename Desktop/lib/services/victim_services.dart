@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:solidarityhub/controllers/general_controller.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/services/api_service.dart';
 
@@ -6,7 +7,7 @@ class VictimService {
   final String baseUrl;
   VictimService(this.baseUrl);
 
-  Future<List<Map<String, dynamic>>> fetchVictimCountByDate() async {
+  static Future<List<Map<String, dynamic>>> fetchVictimCountByDate() async {
     final response = await ApiService.get('victims/count-by-date');
     List<Map<String, dynamic>> victims = [];
 
@@ -21,7 +22,7 @@ class VictimService {
     return victims;
   }
 
-  Future<List<Victim>> fetchAllVictims() async {
+  static Future<List<Victim>> fetchAllVictims() async {
     final response = await ApiService.get('victims');
     List<Victim> victims = [];
 
@@ -33,7 +34,7 @@ class VictimService {
     return victims;
   }
 
-  Future<List<Map<String, dynamic>>> fetchFilteredVictimCounts(DateTime startDate, DateTime endDate) async {
+  static Future<List<Map<String, dynamic>>> fetchFilteredVictimCounts(DateTime startDate, DateTime endDate) async {
     final response = await ApiService.get(
       'need-types/victim-counts/filtered'
       '?fromDate=${startDate.toIso8601String()}'
@@ -49,5 +50,29 @@ class VictimService {
     }
 
     return victims;
+  }
+
+  static Future<int> fetchVictimCount(DateTime startDate, DateTime endDate) async {
+    final adjustedStartDate = GeneralController.adjustEndDate(startDate);
+    final adjustedEndDate = GeneralController.adjustEndDate(endDate);
+    int count = 0;
+
+    final url =
+        'victims/count'
+        '?fromDate=${adjustedStartDate.toIso8601String()}'
+        '&toDate=${adjustedEndDate.toIso8601String()}';
+    final response = await ApiService.get(url);
+
+    if (response.statusCode.ok) {
+      if (response.body.isEmpty) {
+        count = 0;
+      }
+
+      count = int.parse(response.body);
+    } else {
+      throw Exception('Error al obtener víctimas filtrados: ${response.statusCode}, Respuesta: ${response.body}');
+    }
+
+    return count;
   }
 }

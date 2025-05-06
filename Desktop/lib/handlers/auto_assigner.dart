@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:solidarityhub/models/location.dart';
-import 'package:solidarityhub/services/task_service.dart';
+import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 
