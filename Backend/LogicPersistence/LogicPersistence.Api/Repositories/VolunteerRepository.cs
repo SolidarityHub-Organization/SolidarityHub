@@ -1,8 +1,8 @@
 namespace LogicPersistence.Api.Repositories;
-
-using System.Data;
 using Dapper;
 using LogicPersistence.Api.Models;
+using LogicPersistence.Api.Models.DTOs;
+using Newtonsoft.Json;
 using Npgsql;
 
 public class VolunteerRepository : IVolunteerRepository
@@ -24,7 +24,7 @@ public class VolunteerRepository : IVolunteerRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            UPDATE volunteer 
+            UPDATE volunteer
             SET email = @email,
                 password = @password,
                 name = @name,
@@ -55,6 +55,59 @@ public class VolunteerRepository : IVolunteerRepository
         const string sql = "SELECT * FROM volunteer";
 
         return await connection.QueryAsync<Volunteer>(sql);
+    }
+
+    public async Task<IEnumerable<VolunteerWithDetailsDisplayDto>> GetAllVolunteersWithDetailsAsync()
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+        WITH volunteer_skills AS (
+            SELECT
+                v.id as volunteer_id,
+                json_agg(
+                    json_build_object(
+                        'id', s.id,
+                        'name', s.name,
+                        'level', s.level,
+                        'admin_id', s.admin_id
+                    )
+                ) FILTER (WHERE s.id IS NOT NULL) AS skills
+            FROM
+                volunteer v
+            LEFT JOIN
+                volunteer_skill vs ON v.id = vs.volunteer_id
+            LEFT JOIN
+                skill s ON vs.skill_id = s.id
+            GROUP BY
+                v.id
+        )
+        SELECT
+            v.id,
+            v.email,
+            v.name,
+            v.surname,
+            v.prefix,
+            v.phone_number,
+            v.address,
+            v.identification,
+            v.created_at,
+            v.location_id,
+            COALESCE(vs.skills, '[]') as skills_json
+        FROM
+            volunteer v
+        LEFT JOIN
+            volunteer_skills vs ON v.id = vs.volunteer_id
+        ";
+
+        var volunteers = await connection.QueryAsync<VolunteerWithDetailsDisplayDto>(sql);
+
+        foreach (var volunteer in volunteers)
+        {
+            volunteer.skills = JsonConvert.DeserializeObject<IEnumerable<SkillDisplayDto>>(volunteer.skillsJson) ?? [];
+            volunteer.skillsJson = "";
+        }
+
+        return volunteers;
     }
 
     public async Task<Volunteer?> GetVolunteerByIdAsync(int id)
