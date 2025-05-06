@@ -64,7 +64,7 @@ class _LoginScreenState extends State<loginUI> {
 
                   // Texto de bienvenida
                   Text(
-                    'Bienvenido a Solidary Hub',
+                    'Bienvenido a Solidarity Hub',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),

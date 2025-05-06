@@ -1,3 +1,4 @@
+import 'package:app/interface/taskListScreen.dart';
 import 'package:flutter/material.dart';
 import 'ajustes.dart';
 import '../controllers/homeScreenController.dart';
@@ -63,7 +64,19 @@ class HomeScreenVoluntario extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 30),
-                        buildButton("Ver tareas inscritas"),
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Ver tareas inscritas",
+                            () => Navigator.push(
+                              context, MaterialPageRoute(
+                              builder: (context) => TaskListScreen(id: id),),
+                            ),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
                         SizedBox(height: 16),
                         buildButton("Ver tareas disponibles"),
                         SizedBox(height: 16),

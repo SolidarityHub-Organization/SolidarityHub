@@ -5,9 +5,9 @@ import '../models/task_card_creator.dart';
 import '../services/fetch_tasks.dart';
 
 class TaskListScreen extends StatelessWidget {
-  final int volunteerId;
+  final int id;
 
-  const TaskListScreen({super.key, required this.volunteerId});
+  const TaskListScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class TaskListScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: FutureBuilder<List<Task>>(
-        future: TaskService.fetchAssignedTasks(volunteerId),
+        future: TaskService.fetchAssignedTasks(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: Colors.white));
