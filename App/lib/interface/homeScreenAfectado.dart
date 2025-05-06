@@ -4,11 +4,11 @@ import '../controllers/homeScreenController.dart';
 
 class HomeScreenAfectado extends StatelessWidget {
   final String userName;
-  final String email;
+  final int id;
   final String role;
   final HomeScreenController homeScreenController = HomeScreenController();
 
-  HomeScreenAfectado({required this.email, required this.userName, required this.role});
+  HomeScreenAfectado({required this.id, required this.userName, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,7 @@ class HomeScreenAfectado extends StatelessWidget {
                           width: double.infinity,
                           child: buildCustomButton(
                             "Ajustes",
-                            homeScreenController.onSettingsPressed(context, email, role),
+                            homeScreenController.onSettingsPressed(context, id, role),
                             verticalPadding: 14,
                             horizontalPadding: 0,
                             backgroundColor: Colors.red,

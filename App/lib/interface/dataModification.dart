@@ -5,10 +5,10 @@ import '../services/login_validators.dart';
 import '../controllers/dataModificationController.dart';
 
 class DataModification extends StatefulWidget {
-  final String email;
+  final int id;
   final String role;
 
-  DataModification({required this.email, required this.role});
+  DataModification({required this.id, required this.role});
 
   @override
   _DataModificationState createState() => _DataModificationState();
@@ -91,7 +91,7 @@ class _DataModificationState extends State<DataModification> {
                           "Guardar y Salir",
                               () {
                             if (_formKey.currentState!.validate()) {
-                              controller.saveData(context, widget.email, widget.role);
+                              controller.saveData(context, widget.id, widget.role);
                             }
                           },
                           verticalPadding: 15,
