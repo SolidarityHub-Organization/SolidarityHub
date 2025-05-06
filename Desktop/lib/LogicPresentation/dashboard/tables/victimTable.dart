@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
-import 'package:solidarityhub/services/victimServices.dart';
+import 'package:solidarityhub/services/victim_services.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/custom_line_chart.dart';
 import 'package:solidarityhub/LogicPresentation/common_widgets/custom_bar_chart.dart';

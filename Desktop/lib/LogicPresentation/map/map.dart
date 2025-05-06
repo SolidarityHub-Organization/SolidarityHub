@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/location_service.dart';
 import 'package:solidarityhub/services/task_service.dart';
 import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquareFactory.dart';
-import '../../services/victimServices.dart';
+import '../../services/victim_services.dart';
 import '../../services/affected_zone_services.dart';
 import '../../models/mapMarker.dart';
 import '../../models/affectedZone.dart';
@@ -61,7 +61,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _fetchVolunteerLocations() async {
     try {
-      final locations = await LocationService.fetchLocations();
+      final locations = await LocationService.fetchVolunteerLocations();
 
       List<MapMarker> mapMarkers =
           locations.map((location) {
