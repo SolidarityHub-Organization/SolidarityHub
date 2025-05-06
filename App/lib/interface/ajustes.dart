@@ -76,7 +76,7 @@ class AjustesCuenta extends StatelessWidget {
                         width: double.infinity,
                         child: buildCustomButton(
                           "Cambiar Datos",
-                          settingsController.onDataModificationPressed(context, id, role),
+                            () => settingsController.onDataModificationPressed(context, id, role),
                           verticalPadding: 14,
                           horizontalPadding: 0,
                           backgroundColor: Colors.red,
@@ -91,7 +91,7 @@ class AjustesCuenta extends StatelessWidget {
                       SizedBox(height: 40),
                       buildCustomButton(
                           "Eliminar cuenta",
-                          settingsController.onDeleteAccountPressed(context, id, role),
+                          () => settingsController.onDeleteAccountPressed(context, id, role),
                       ),
                     ],
                   ),

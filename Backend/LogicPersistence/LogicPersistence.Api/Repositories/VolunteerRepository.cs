@@ -80,6 +80,19 @@ public class VolunteerRepository : IVolunteerRepository
                 skill s ON vs.skill_id = s.id
             GROUP BY
                 v.id
+        ),
+        volunteer_locations AS (
+            SELECT
+                v.id as volunteer_id,
+                json_build_object(
+                    'id', l.id,
+                    'latitude', l.latitude,
+                    'longitude', l.longitude,
+                    'victim_id', l.victim_id,
+                    'volunteer_id', l.volunteer_id
+                ) AS location_data
+            FROM volunteer v
+            LEFT JOIN location l ON v.location_id = l.id
         )
         SELECT
             v.id,
@@ -92,11 +105,14 @@ public class VolunteerRepository : IVolunteerRepository
             v.identification,
             v.created_at,
             v.location_id,
-            COALESCE(vs.skills, '[]') as skillsJson
+            COALESCE(vs.skills, '[]') as skillsJson,
+            vl.location_data as locationJson
         FROM
             volunteer v
         LEFT JOIN
             volunteer_skills vs ON v.id = vs.volunteer_id
+        LEFT JOIN
+            volunteer_locations vl ON v.id = vl.volunteer_id
         ";
 
         var volunteers = await connection.QueryAsync<VolunteerWithDetailsDisplayDto>(sql);
@@ -105,6 +121,12 @@ public class VolunteerRepository : IVolunteerRepository
         {
             volunteer.skills = JsonConvert.DeserializeObject<IEnumerable<SkillDisplayDto>>(volunteer.skillsJson) ?? [];
             volunteer.skillsJson = "";
+
+            if (volunteer.locationJson != null)
+            {
+                volunteer.location = JsonConvert.DeserializeObject<LocationDisplayDto>(volunteer.locationJson);
+                volunteer.locationJson = "";
+            }
         }
 
         return volunteers;
