@@ -30,66 +30,21 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchVictimLocations();
-    _fetchVolunteerLocations();
+    _fetchLocations(LocationServices.fetchVictimLocations);
+    _fetchLocations(LocationServices.fetchVolunteerLocations);
+    _fetchLocations(LocationServices.fetchTaskLocations);
+
     _fetchAffectedZones();
-    _fetchTaskLocations();
   }
 
-  Future<void> _fetchVictimLocations() async {
+  Future<void> _fetchLocations(Future<List<Map<String, dynamic>>> Function() fetcher) async {
     try {
-      final locations = await LocationServices.fetchVolunteerLocations();
-
-      List<MapMarker> mapMarkers =
-          locations.map((location) {
-            return MapMarker.fromJson(location);
-          }).toList();
-
-      setState(() {
-        _mapMarkers.addAll(mapMarkers);
-      });
+      final locations = await fetcher();
+      final markers = locations.map((j) => MapMarker.fromJson(j)).toList();
+      setState(() => _mapMarkers.addAll(markers));
     } catch (e) {
-      // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
-      print('Error al obtener las ubicaciones: $e');
-    }
-  }
-
-  Future<void> _fetchVolunteerLocations() async {
-    try {
-      final locations = await LocationServices.fetchVolunteerLocations();
-
-      List<MapMarker> mapMarkers =
-          locations.map((location) {
-            return MapMarker.fromJson(location);
-          }).toList();
-
-      setState(() {
-        _mapMarkers.addAll(mapMarkers);
-      });
-    } catch (e) {
-      // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
-      print('Error al obtener las ubicaciones: $e');
-    }
-  }
-
-  Future<void> _fetchTaskLocations() async {
-    try {
-      final locations = await LocationServices.fetchVolunteerLocations();
-
-      List<MapMarker> mapMarkers =
-          locations.map((location) {
-            return MapMarker.fromJson(location);
-          }).toList();
-
-      setState(() {
-        _mapMarkers.addAll(mapMarkers);
-      });
-    } catch (e) {
-      // Mejora la gestión de errores
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las ubicaciones: $e')));
-      print('Error al obtener las ubicaciones: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener ubicaciones: $e')));
+      print(e);
     }
   }
 
