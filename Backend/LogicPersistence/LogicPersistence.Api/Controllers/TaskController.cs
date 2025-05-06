@@ -184,5 +184,19 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+		
+		[HttpGet("tasks/assigned-to-volunteer/{volunteerId}")]
+		public async Task<IActionResult> GetTasksAssignedToVolunteerAsync(int volunteerId) {
+			try {
+				var tasks = await _taskServices.GetTasksAssignedToVolunteerAsync(volunteerId);
+				return Ok(tasks);
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

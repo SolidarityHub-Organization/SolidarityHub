@@ -319,4 +319,15 @@ public class TaskRepository : ITaskRepository {
 		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { taskId });
 		return result != null ? Enum.Parse<UrgencyLevel>(result) : UrgencyLevel.Unknown;
 	}
+
+	public async Task<IEnumerable<Task>> GetTasksAssignedToVolunteerAsync(int volunteerId) {
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT t.*
+			FROM task t
+			JOIN volunteer_task vt ON t.id = vt.task_id
+			WHERE vt.volunteer_id = @volunteerId";
+
+		return await connection.QueryAsync<Task>(sql, new { volunteerId });
+	}
 }
