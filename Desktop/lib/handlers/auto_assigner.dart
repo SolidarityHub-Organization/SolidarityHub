@@ -65,6 +65,11 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
   }
 }
 
+class ProximityAssignmentStrategy implements AssignmentStrategy {
+  @override
+  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {}
+}
+
 class AutoAssigner {
   AssignmentStrategy _strategy;
 

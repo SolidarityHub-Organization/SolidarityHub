@@ -113,4 +113,7 @@ public class VolunteerWithDetailsDisplayDto
     public String skillsJson { get; set; } = string.Empty;
 
     public int? location_id { get; set; }
+    public LocationDisplayDto? location { get; set; }
+    public String locationJson { get; set; } = string.Empty;
+
 }
