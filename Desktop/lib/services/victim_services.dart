@@ -3,9 +3,9 @@ import 'package:solidarityhub/controllers/general_controller.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/services/api_services.dart';
 
-class VictimService {
+class VictimServices {
   static Future<List<Map<String, dynamic>>> fetchVictimCountByDate() async {
-    final response = await ApiService.get('victims/count-by-date');
+    final response = await ApiServices.get('victims/count-by-date');
     List<Map<String, dynamic>> victims = [];
 
     if (response.statusCode.ok) {
@@ -20,7 +20,7 @@ class VictimService {
   }
 
   static Future<List<Victim>> fetchAllVictims() async {
-    final response = await ApiService.get('victims');
+    final response = await ApiServices.get('victims');
     List<Victim> victims = [];
 
     if (response.statusCode.ok) {
@@ -32,7 +32,7 @@ class VictimService {
   }
 
   static Future<List<Map<String, dynamic>>> fetchFilteredVictimCounts(DateTime startDate, DateTime endDate) async {
-    final response = await ApiService.get(
+    final response = await ApiServices.get(
       'need-types/victim-counts/filtered'
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
@@ -58,7 +58,7 @@ class VictimService {
         'victims/count'
         '?fromDate=${adjustedStartDate.toIso8601String()}'
         '&toDate=${adjustedEndDate.toIso8601String()}';
-    final response = await ApiService.get(url);
+    final response = await ApiServices.get(url);
 
     if (response.statusCode.ok) {
       if (response.body.isEmpty) {

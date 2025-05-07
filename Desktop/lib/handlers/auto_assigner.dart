@@ -28,7 +28,7 @@ class RandomAssignmentStrategy implements AssignmentStrategy {
       final toAssign = availableVolunteers.take(needed);
 
       task.assignedVolunteers.addAll(toAssign);
-      TaskService.updateTask(task);
+      TaskServices.updateTask(task);
     }
   }
 }
@@ -63,7 +63,7 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
         taskCountPerVolunteer[v.id] = (taskCountPerVolunteer[v.id] ?? 0) + 1;
       }
 
-      TaskService.updateTask(task);
+      TaskServices.updateTask(task);
     }
   }
 }
@@ -106,7 +106,7 @@ class ProximityAssignmentStrategy implements AssignmentStrategy {
       final toAssign = availableVolunteers.take(needed);
 
       task.assignedVolunteers.addAll(toAssign);
-      TaskService.updateTask(task);
+      TaskServices.updateTask(task);
     }
   }
 }

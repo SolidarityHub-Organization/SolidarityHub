@@ -3,9 +3,9 @@ import 'package:solidarityhub/controllers/general_controller.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'api_services.dart';
 
-class VolunteerService {
+class VolunteerServices {
   static Future<List<Volunteer>> fetchVolunteersWithDetails() async {
-    final response = await ApiService.get('volunteers-with-details');
+    final response = await ApiServices.get('volunteers-with-details');
     List<Volunteer> volunteers = [];
 
     if (response.statusCode.ok) {
@@ -17,7 +17,7 @@ class VolunteerService {
   }
 
   static Future<List<Volunteer>> fetchVolunteers() async {
-    final response = await ApiService.get('volunteers');
+    final response = await ApiServices.get('volunteers');
     List<Volunteer> volunteers = [];
 
     if (response.statusCode.ok) {
@@ -33,7 +33,7 @@ class VolunteerService {
     DateTime endDate,
   ) async {
     final url = 'skills/volunteer-counts?fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
-    final response = await ApiService.get(url);
+    final response = await ApiServices.get(url);
     List<Map<String, dynamic>> volunteers = [];
 
     if (response.statusCode.ok) {
@@ -53,7 +53,7 @@ class VolunteerService {
         'volunteers/count'
         '?fromDate=${adjustedStartDate.toIso8601String()}'
         '&toDate=${adjustedEndDate.toIso8601String()}';
-    final response = await ApiService.get(url);
+    final response = await ApiServices.get(url);
 
     if (response.statusCode.ok) {
       if (response.body.isEmpty) {

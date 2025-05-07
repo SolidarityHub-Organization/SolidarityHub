@@ -37,9 +37,9 @@ class CustomLineChart extends StatelessWidget {
       maxWidth = math.max(maxWidth, textPainter.width);
     }
 
-    //return maxWidth * 1.4;  // simple version
-    final double rotationAngle = rotation * (math.pi / 180); // convert to radians
-    return maxWidth * math.cos(rotationAngle) + maxWidth * math.sin(rotationAngle);
+    return maxWidth * 1.4;  // simple version
+    //final double rotationAngle = rotation * (math.pi / 180); // convert to radians
+    //return maxWidth * math.cos(rotationAngle) + maxWidth * math.sin(rotationAngle);
   }
 
   @override
@@ -120,9 +120,9 @@ class CustomLineChart extends StatelessWidget {
                             width: 0,
                             height: 100,
                             padding: const EdgeInsets.only(top: 10),
-                            alignment: Alignment.topCenter,
+                            alignment: Alignment.topLeft,
                             child: Transform(
-                              alignment: Alignment.topCenter,
+                              alignment: Alignment.topLeft,
                               transform: Matrix4.rotationZ(rotation * (3.1415927 / 180)),
                               child: Text(
                                 xLabels[index],

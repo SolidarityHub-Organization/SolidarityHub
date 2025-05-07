@@ -30,14 +30,14 @@ class _VictimsTabState extends State<VictimsTab> {
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
-  late final Future<List<Map<String, dynamic>>> _victimCountFuture = VictimService.fetchVictimCountByDate().catchError((
-    error,
-  ) {
-    print('Error al obtener datos de víctimas por fecha: $error');
-    return <Map<String, dynamic>>[];
-  });
+  late final Future<List<Map<String, dynamic>>> _victimCountFuture = VictimServices.fetchVictimCountByDate().catchError(
+    (error) {
+      print('Error al obtener datos de víctimas por fecha: $error');
+      return <Map<String, dynamic>>[];
+    },
+  );
 
-  late Future<List<Map<String, dynamic>>> _victimNeedsFuture = VictimService.fetchFilteredVictimCounts(
+  late Future<List<Map<String, dynamic>>> _victimNeedsFuture = VictimServices.fetchFilteredVictimCounts(
     _adjustStartDate(widget.fechaInicio),
     _adjustEndDate(widget.fechaFin),
   ).catchError((error) {
@@ -50,7 +50,7 @@ class _VictimsTabState extends State<VictimsTab> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        _victimNeedsFuture = VictimService.fetchFilteredVictimCounts(
+        _victimNeedsFuture = VictimServices.fetchFilteredVictimCounts(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         ).catchError((error) {
@@ -151,6 +151,7 @@ class _VictimsTabState extends State<VictimsTab> {
                             xLabels: xLabels,
                             title: 'Número de afectados por día',
                             titleBottomMargin: 25.0, // Añadimos más margen inferior
+                            padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
                           ),
                           CustomBarChart(data: transformedNeedsData, barColor: Colors.red),
                           Container(

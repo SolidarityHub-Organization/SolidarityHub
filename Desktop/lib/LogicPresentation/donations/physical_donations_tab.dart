@@ -76,7 +76,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
 
     if (result != null && mounted) {
       try {
-        final createdDonation = await DonationService.createDonation(result);
+        final createdDonation = await DonationServices.createDonation(result);
         widget.onDonationCreated(createdDonation);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada con éxito')));
@@ -102,7 +102,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
 
     if (result != null) {
       try {
-        final updatedDonation = await DonationService.assignDonation(
+        final updatedDonation = await DonationServices.assignDonation(
           result['donation'].id,
           result['victim'].id,
           result['quantity'],

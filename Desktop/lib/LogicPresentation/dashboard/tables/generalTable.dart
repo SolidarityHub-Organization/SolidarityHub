@@ -42,20 +42,20 @@ class _GeneralTabState extends State<GeneralTab> {
   @override
   void initState() {
     super.initState();
-    _victimCountFuture = VictimService.fetchVictimCount(
+    _victimCountFuture = VictimServices.fetchVictimCount(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    _volunteerCountFuture = VolunteerService.fetchVolunteerCount(
+    _volunteerCountFuture = VolunteerServices.fetchVolunteerCount(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    _donationTotalFuture = DonationService.fetchTotalQuantityFiltered(
+    _donationTotalFuture = DonationServices.fetchTotalQuantityFiltered(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
       currency: 'EUR',
     ).then((value) => value.toDouble());
-    _completedTasksCountFuture = TaskService.fetchTaskCountByStateFiltered(
+    _completedTasksCountFuture = TaskServices.fetchTaskCountByStateFiltered(
       'Completed',
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
@@ -71,20 +71,20 @@ class _GeneralTabState extends State<GeneralTab> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       setState(() {
-        _victimCountFuture = VictimService.fetchVictimCount(
+        _victimCountFuture = VictimServices.fetchVictimCount(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
-        _volunteerCountFuture = VolunteerService.fetchVolunteerCount(
+        _volunteerCountFuture = VolunteerServices.fetchVolunteerCount(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
         );
-        _donationTotalFuture = DonationService.fetchTotalQuantityFiltered(
+        _donationTotalFuture = DonationServices.fetchTotalQuantityFiltered(
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),
           currency: 'EUR',
         ).then((value) => value.toDouble());
-        _completedTasksCountFuture = TaskService.fetchTaskCountByStateFiltered(
+        _completedTasksCountFuture = TaskServices.fetchTaskCountByStateFiltered(
           'Completed',
           _adjustStartDate(widget.fechaInicio),
           _adjustEndDate(widget.fechaFin),

@@ -39,7 +39,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
 
   Future<void> _fetchVictims() async {
     try {
-      final response = await VictimService.fetchAllVictims();
+      final response = await VictimServices.fetchAllVictims();
       setState(() {
         _victims = response;
         _isLoading = false;

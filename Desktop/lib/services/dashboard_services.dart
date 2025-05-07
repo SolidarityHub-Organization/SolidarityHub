@@ -4,7 +4,7 @@ import 'api_services.dart';
 class DashboardServices {
   static Future<List<Map<String, dynamic>>> fetchRecentActivity(DateTime startDate, DateTime endDate) async {
     final String params = 'fromDate=${startDate.toIso8601String()}&toDate=${endDate.toIso8601String()}';
-    final response = await ApiService.get('dashboard/activity-log?$params');
+    final response = await ApiServices.get('dashboard/activity-log?$params');
     List<Map<String, dynamic>> activity = [];
 
     if (response.statusCode.ok) {

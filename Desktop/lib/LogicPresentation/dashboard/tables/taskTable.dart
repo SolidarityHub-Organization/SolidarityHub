@@ -29,11 +29,11 @@ class _TaskTableState extends State<TaskTable> {
   }
 
   // Inicializar el Future correctamente
-  late final Future<Map<String, dynamic>> _taskTypeCount = TaskService.fetchTaskTypeCount(
+  late final Future<Map<String, dynamic>> _taskTypeCount = TaskServices.fetchTaskTypeCount(
     _adjustStartDate(widget.fechaInicio),
     _adjustEndDate(widget.fechaFin),
   );
-  late final Future<List<Map<String, dynamic>>> _allTasks = TaskService.fetchAllTasks(
+  late final Future<List<Map<String, dynamic>>> _allTasks = TaskServices.fetchAllTasks(
     _adjustStartDate(widget.fechaInicio),
     _adjustEndDate(widget.fechaFin),
   );

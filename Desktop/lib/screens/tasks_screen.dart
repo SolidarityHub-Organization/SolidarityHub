@@ -14,7 +14,7 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
-  late TaskTableController _tableController;
+  final TaskTableController _tableController = TaskTableController();
 
   @override
   void initState() {

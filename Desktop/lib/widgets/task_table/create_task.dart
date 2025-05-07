@@ -167,7 +167,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
-      final result = await TaskService.createTask(
+      final result = await TaskServices.createTask(
         name: name,
         description: description,
         selectedVolunteers: selectedVolunteers,
