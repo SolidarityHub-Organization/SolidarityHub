@@ -6,61 +6,79 @@ class VictimInfoSquare implements InfoSquare {
   @override
   Widget buildInfoSquare(MapMarker mapMarker) {
     return Container(
-      padding: const EdgeInsets.all(24.0), // Padding más grande
+      padding: const EdgeInsets.all(32.0), // Aumentado el padding
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Colors.red.shade50, Colors.red.shade100],
         ),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(16.0), // Aumentado el radio
         boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
-        border: Border.all(color: Colors.red.shade300, width: 2.0), // Borde más grueso
+        border: Border.all(color: Colors.red.shade300, width: 2.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Encabezado con icono y título
           Row(
             children: [
-              Icon(Icons.person, color: Colors.red.shade700, size: 28), // Icono más grande
-              SizedBox(width: 12),
-              Text(
-                'Detalles del afectado',
-                style: TextStyle(
-                  fontSize: 24, // Texto más grande
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red.shade800,
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red.shade300),
+                ),
+                child: Icon(Icons.person, color: Colors.red.shade700, size: 36),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Detalles del afectado',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.red.shade800),
                 ),
               ),
             ],
           ),
-          Divider(color: Colors.red.shade300, thickness: 2.0, height: 32), // Divisor más grueso y alto
-          SizedBox(height: 20), // Más espacio
 
-          SizedBox(height: 12),
-          _buildInfoRow(Icons.person_pin, 'Nombre: ${mapMarker.name}', 22),
-          SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.location_on,
-            'Ubicación: ${mapMarker.position.latitude.toStringAsFixed(4)}, ${mapMarker.position.longitude.toStringAsFixed(4)}',
-            22,
+          SizedBox(height: 40), // Mayor espacio vertical
+
+          Divider(color: Colors.red.shade300, thickness: 2.0, height: 32),
+
+          SizedBox(height: 40), // Mayor espacio vertical
+          // Información con diseño mejorado
+          _buildInfoRowEnhanced(icon: Icons.person_pin, label: 'Nombre', value: mapMarker.name),
+
+          SizedBox(height: 30), // Mayor espacio entre elementos
+
+          _buildInfoRowEnhanced(
+            icon: Icons.location_on,
+            label: 'Ubicación',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(4)}, ${mapMarker.position.longitude.toStringAsFixed(4)}',
           ),
-          SizedBox(height: 50), // Espacio mayor antes del botón
+
+          SizedBox(height: 30), // Mayor espacio entre elementos
+
+          _buildInfoRowEnhanced(
+            icon: Icons.priority_high,
+            label: 'Nivel de urgencia',
+            value: mapMarker.urgencyLevel ?? 'Desconocido',
+            valueColor: _getUrgencyColor(mapMarker.urgencyLevel),
+          ),
+
+          SizedBox(height: 50), // Espacio al final
+          // Decoración adicional en la parte inferior
+          Divider(color: Colors.red.shade200, thickness: 1.0),
+
+          SizedBox(height: 20),
+
           Center(
-            // Aseguramos que está centrado horizontalmente
-            child: ElevatedButton(
-              onPressed: () {
-                // Acción para ver más detalles
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Botón más grande
-                textStyle: TextStyle(fontSize: 18), // Texto de botón más grande
-              ),
-              child: Text('Ver más detalles'),
+            child: Text(
+              'Información actualizada',
+              style: TextStyle(color: Colors.red.shade400, fontStyle: FontStyle.italic, fontSize: 14),
             ),
           ),
         ],
@@ -68,18 +86,63 @@ class VictimInfoSquare implements InfoSquare {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text, double fontSize) {
-    return Row(
-      children: [
-        Icon(icon, size: 24, color: Colors.red.shade600), // Icono más grande
-        SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: fontSize), // Tamaño de texto parametrizado
+  // Método para obtener el color según el nivel de urgencia
+  Color _getUrgencyColor(String? urgencyLevel) {
+    if (urgencyLevel == null) return Colors.grey;
+
+    String level = urgencyLevel.toLowerCase().trim();
+
+    if (level.contains('low') || level.contains('bajo')) {
+      return Colors.green;
+    } else if (level.contains('medium') || level.contains('medio')) {
+      return Colors.orange;
+    } else if (level.contains('high') || level.contains('alto')) {
+      return Colors.red;
+    } else if (level.contains('critical') || level.contains('crítico')) {
+      return Colors.red.shade900;
+    } else {
+      return Colors.grey;
+    }
+  }
+
+  // Widget mejorado para las filas de información
+  Widget _buildInfoRowEnhanced({
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 22, color: Colors.red.shade600),
+              SizedBox(width: 10),
+              Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+            ],
           ),
-        ),
-      ],
+          SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 32.0),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                color: valueColor ?? Colors.black87,
+                fontWeight: valueColor != null ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
