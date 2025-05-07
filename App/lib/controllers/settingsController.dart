@@ -38,7 +38,7 @@ class SettingsController {
             );
           }
         }
-        else{
+        else if(role == 'afectado'){
           final url = Uri.parse('http://localhost:5170/api/v1/victims/$id');
           final response = await http.delete(
             url,
