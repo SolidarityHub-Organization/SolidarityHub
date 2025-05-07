@@ -125,7 +125,7 @@ public class InitialMigration : Migration {
 			.WithColumn("quantity").AsInt32().NotNullable()
 			.WithColumn("item_type").AsCustom("item_type").NotNullable()
 			.WithColumn("donation_date").AsDateTime().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Volunteer", "volunteer", "id")
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Volunteer", "volunteer", "id").OnDelete(Rule.SetNull)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Admin", "admin", "id")
 			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Victim", "victim", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
@@ -139,7 +139,7 @@ public class InitialMigration : Migration {
 			.WithColumn("transaction_id").AsString(255).NotNullable()
 			.WithColumn("payment_service").AsCustom("payment_service").NotNullable()
 			.WithColumn("donation_date").AsDateTime().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Volunteer", "volunteer", "id")
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Volunteer", "volunteer", "id").OnDelete(Rule.SetNull)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Admin", "admin", "id")
 			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Victim", "victim", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
