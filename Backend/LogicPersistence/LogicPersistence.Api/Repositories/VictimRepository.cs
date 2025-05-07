@@ -60,4 +60,17 @@ public class VictimRepository : IVictimRepository {
 		
 		return await connection.QuerySingleAsync<Victim>(sql, victim);
 	}
+
+	public async Task<UrgencyLevel> GetVictimMaxUrgencyLevelByIdAsync(int victimId)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+			SELECT MAX(n.urgency_level)
+			FROM victim v
+			JOIN need n ON v.id = n.victim_id
+			WHERE v.id = @victimId";
+
+        var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { victimId });
+        return result != null ? Enum.Parse<UrgencyLevel>(result) : UrgencyLevel.Unknown;
+    }
 }
