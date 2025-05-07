@@ -185,10 +185,40 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 		
+		// Returns a list of all the tasks which are assigned to a volunteer
 		[HttpGet("tasks/assigned-to-volunteer/{volunteerId}")]
 		public async Task<IActionResult> GetTasksAssignedToVolunteerAsync(int volunteerId) {
 			try {
 				var tasks = await _taskServices.GetTasksAssignedToVolunteerAsync(volunteerId);
+				return Ok(tasks);
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+		// Returns a list of task which are assigned to a volunteer and are in the pending state meaning they still havent been accepted or refused by the volunteer
+		[HttpGet("tasks/assigned-to-volunteer/pending/{volunteerId}")]
+		public async Task<IActionResult> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+			try {
+				var tasks = await _taskServices.GetPendingTasksAssignedToVolunteerAsync(volunteerId);
+				return Ok(tasks);
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+		// Returns a list of task which are assigned to a volunteer and are in the assigned state meaning they where accepted by the volunteer
+		[HttpGet("tasks/assigned-to-volunteer/assigned/{volunteerId}")]
+		public async Task<IActionResult> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+			try {
+				var tasks = await _taskServices.GetAssignedTasksAssignedToVolunteerAsync(volunteerId);
 				return Ok(tasks);
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);

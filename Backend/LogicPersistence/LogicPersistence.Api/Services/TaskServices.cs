@@ -210,6 +210,22 @@ namespace LogicPersistence.Api.Services {
 			}
 			return tasks;
 		}
+
+		public Task<IEnumerable<Models.Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+			var tasks = _taskRepository.GetPendingTasksAssignedToVolunteerAsync(volunteerId);
+			if (tasks == null) {
+				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
+			}
+			return tasks;
+		}
+
+		public Task<IEnumerable<Models.Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+			var tasks = _taskRepository.GetAssignedTasksAssignedToVolunteerAsync(volunteerId);
+			if (tasks == null) {
+				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
+			}
+			return tasks;
+		}
 		#endregion
 	}
 }
