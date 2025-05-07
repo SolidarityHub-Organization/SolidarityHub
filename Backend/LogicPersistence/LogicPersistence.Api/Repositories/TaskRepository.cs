@@ -397,4 +397,20 @@ public class TaskRepository : ITaskRepository
 
         return await connection.QueryAsync<Task>(sql, new { volunteerId });
 	}
+
+	public async Task<Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state) {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            UPDATE volunteer_task
+            SET state = @state::state
+            WHERE volunteer_id = @volunteerId AND task_id = @taskId
+            RETURNING *";
+
+        var result = await connection.QuerySingleOrDefaultAsync<Task>(sql, new { volunteerId, taskId, state });
+        if (result == null)
+        {
+            throw new InvalidOperationException("Task not found or update failed.");
+        }
+        return result;
+	}
 }

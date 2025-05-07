@@ -18,5 +18,6 @@ namespace LogicPersistence.Api.Services {
 		Task<IEnumerable<Models.Task>> GetTasksAssignedToVolunteerAsync(int volunteerId);
 		Task<IEnumerable<Models.Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId);
 		Task<IEnumerable<Models.Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId);
+		Task<Models.Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, UpdateTaskStateDto updateTaskStateDto);
 	}
 }

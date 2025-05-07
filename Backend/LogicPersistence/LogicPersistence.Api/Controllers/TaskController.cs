@@ -228,5 +228,24 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		// Lets you modify the state of a task for a volunteer
+		[HttpPut("tasks/assigned-to-volunteer/{volunteerId}/{taskId}")]
+		public async Task<IActionResult> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, UpdateTaskStateDto updateTaskStateDto) {
+			if (updateTaskStateDto == null) {
+				return BadRequest("State cannot be null.");
+			}
+			try {
+				var task = await _taskServices.UpdateTaskStateForVolunteerAsync(volunteerId, taskId, updateTaskStateDto);
+				return Ok(task);
+				//TODO: return the task with the new state correctly
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }
