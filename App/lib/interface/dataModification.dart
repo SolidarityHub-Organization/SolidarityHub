@@ -47,14 +47,69 @@ class _DataModificationState extends State<DataModification> {
                     child: CustomFormBuilder(
                       formKey: _formKey,
                       children: [
-                        _buildField(Icons.person, 'Nombre', controller.nombreController, validateIsEmpty),
-                        _buildField(Icons.person, 'Apellidos', controller.apellidosController, validateIsEmpty),
-                        _buildField(Icons.email, 'Correo electrónico', controller.correoController, validateEmail),
-                        _buildField(Icons.lock, 'Contraseña', controller.passwordController, validatePassword, obscure: true),
-                        _buildField(Icons.lock_outline, 'Repite Contraseña', controller.repetirPasswordController,
-                                (value) => validateWithConfirmPassword(controller.passwordController.text, value), obscure: true),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.nombreController,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.person, color: Colors.black),
+                              labelText: 'Nombre',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.apellidosController,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.person, color: Colors.black),
+                              labelText: 'Apellidos',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.correoController,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.email, color: Colors.black),
+                              labelText: 'Correo electrónico',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
 
-                        // Fecha de nacimiento
+                            ),
+                            validator: validateEmailWithoutEmpty,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.lock, color: Colors.black),
+                              labelText: 'Contraseña',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.repetirPasswordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.lock_outline, color: Colors.black),
+                              labelText: 'Repite Contraseña',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            validator: (value) => validateConfirmPasswordWithoutEmpty(
+                              controller.passwordController.text,
+                              value,
+                            ),
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: TextFormField(
@@ -76,17 +131,26 @@ class _DataModificationState extends State<DataModification> {
                                 });
                               }
                             },
-                            validator: validateIsEmpty,
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.calendar_today, color: Colors.black),
                               labelText: 'Fecha de nacimiento',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                             ),
                           ),
                         ),
-
-                        _buildField(Icons.phone, 'Número de teléfono', controller.telefonoController, validatePhone),
-                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: TextFormField(
+                            controller: controller.telefonoController,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.phone, color: Colors.black),
+                              labelText: 'Número de teléfono',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            validator: validatePhoneWithoutEmpty,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         buildCustomButton(
                           "Guardar y Salir",
                               () {
@@ -98,6 +162,7 @@ class _DataModificationState extends State<DataModification> {
                           horizontalPadding: 50,
                         )
                       ],
+
                     ),
                   ),
                 ],

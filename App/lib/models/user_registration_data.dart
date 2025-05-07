@@ -10,6 +10,7 @@ class UserRegistrationData {
   String? schedule;
   String? preferences;
   String? needs;
+  int? prefix;
   String? identification;
 
   Map<String, dynamic> toJson() {
