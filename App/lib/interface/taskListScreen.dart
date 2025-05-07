@@ -20,7 +20,7 @@ class TaskListScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: FutureBuilder<List<Task>>(
-        future: TaskServices.fetchAssignedTasks(id),
+        future: TaskService.fetchAssignedTasks(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: Colors.white));
