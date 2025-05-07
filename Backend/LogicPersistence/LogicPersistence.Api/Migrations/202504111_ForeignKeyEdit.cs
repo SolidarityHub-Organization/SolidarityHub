@@ -17,7 +17,6 @@ public class AddCascadeDeleteToTimeRelations : Migration {
 			.ToTable("volunteer").PrimaryColumn("id")
 			.OnDelete(Rule.Cascade);
 	}
-
 	public override void Down() {
 		Delete.ForeignKey("FK_TaskTime_Task").OnTable("task_time");
 		Delete.ForeignKey("FK_VolunteerTime_Volunteer").OnTable("volunteer_time");

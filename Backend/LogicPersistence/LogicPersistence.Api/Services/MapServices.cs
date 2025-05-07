@@ -31,12 +31,15 @@ namespace LogicPersistence.Api.Services {
 			var result = new List<VictimMapMarkerDTO>();
 			foreach (var victim in victimsWithLocation) {
 				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
+                var urgencyLevel = await _victimRepository.GetVictimMaxUrgencyLevelByIdAsync(victim.id);
+
 				result.Add(new VictimMapMarkerDTO {
 					id = victim.id,
 					name = victim.name,
 					type = "victim",
 					latitude = location.latitude,
 					longitude = location.longitude,
+                    urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel),
 				});
 			}
 			return result;
@@ -129,7 +132,7 @@ namespace LogicPersistence.Api.Services {
             var result = new List<TaskMapMarkerDTO>();
             foreach (var task in tasks) {
                 var location = await _locationRepository.GetLocationByIdAsync(task.location_id);
-                var urgencyLevel = await _taskRepository.GetMaxUrgencyLevelForTaskAsync(task.id);
+                var taskState = await _taskRepository.GetTaskStateByIdAsync(task.id);
                 var assignedVolunteersIds = task.assigned_volunteers.Select(v => v.id).ToList();
                 var assignedVolunteers = new List<Volunteer>();
 
@@ -145,7 +148,7 @@ namespace LogicPersistence.Api.Services {
                     type = "task",
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel),
+                    state = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(taskState),
                     assigned_volunteers = assignedVolunteers.ToList(),
                 });
             }
