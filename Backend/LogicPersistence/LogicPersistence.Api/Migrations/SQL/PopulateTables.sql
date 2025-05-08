@@ -178,6 +178,9 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (2, 2, 'Pending'),
   (3, 3, 'Completed'),
   (4, 4, 'Assigned'),
+  (5, 1, 'Pending'),
+  (5, 2, 'Pending'),
+  (5, 3, 'Pending'),
   (5, 5, 'Assigned');
 
 INSERT INTO "volunteer_place" ("volunteer_id", "place_id") VALUES
