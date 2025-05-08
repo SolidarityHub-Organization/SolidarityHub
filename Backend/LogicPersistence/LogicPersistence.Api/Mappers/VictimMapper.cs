@@ -45,13 +45,13 @@ public static class VictimMapper {
 		return new VictimDisplayDto {
 			id = victim.id,
 			email = victim.email,
+			password = victim.password,
 			name = victim.name,
 			surname = victim.surname,
 			prefix = victim.prefix,
 			phone_number = victim.phone_number,
 			address = victim.address,
 			identification = victim.identification,
-			// Password is intentionally omitted.
 			created_at = victim.created_at,
 
 			location_id = victim.location_id

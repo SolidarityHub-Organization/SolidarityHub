@@ -82,7 +82,6 @@ class TaskTable extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 24, maxHeight: 24),
               padding: EdgeInsets.zero,
             ),
-          // Resize handle in header
           if (columnIndex < controller.columns.length - 1)
             MouseRegion(
               cursor: SystemMouseCursors.resizeLeftRight,

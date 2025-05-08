@@ -1,19 +1,18 @@
 import 'dart:math';
-
 import 'package:solidarityhub/models/location.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 
-enum AssignmentStrategyType { proximity, balanced, random }
+enum AssignmentStrategyType { proximidad, balanceado, aleatorio }
 
 abstract class AssignmentStrategy {
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask);
+  List<TaskWithDetails> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask);
 }
 
 class RandomAssignmentStrategy implements AssignmentStrategy {
   @override
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
+  List<TaskWithDetails> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     final random = Random();
 
     for (var task in tasks) {
@@ -28,14 +27,15 @@ class RandomAssignmentStrategy implements AssignmentStrategy {
       final toAssign = availableVolunteers.take(needed);
 
       task.assignedVolunteers.addAll(toAssign);
-      TaskServices.updateTask(task);
     }
+
+    return tasks;
   }
 }
 
 class BalancedAssignmentStrategy implements AssignmentStrategy {
   @override
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
+  List<TaskWithDetails> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     final taskCountPerVolunteer = <int, int>{};
 
     for (var task in tasks) {
@@ -62,15 +62,15 @@ class BalancedAssignmentStrategy implements AssignmentStrategy {
         task.assignedVolunteers.add(v);
         taskCountPerVolunteer[v.id] = (taskCountPerVolunteer[v.id] ?? 0) + 1;
       }
-
-      TaskServices.updateTask(task);
     }
+
+    return tasks;
   }
 }
 
 class ProximityAssignmentStrategy implements AssignmentStrategy {
   double _calculateDistance(Location a, Location b) {
-    const earthRadius = 6371; // in kilometers
+    const earthRadius = 6371;
     final dLat = _degreesToRadians(b.latitude - a.latitude);
     final dLon = _degreesToRadians(b.longitude - a.longitude);
 
@@ -87,7 +87,7 @@ class ProximityAssignmentStrategy implements AssignmentStrategy {
   }
 
   @override
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
+  List<TaskWithDetails> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
     for (var task in tasks) {
       if (task.location == null) continue;
 
@@ -106,8 +106,9 @@ class ProximityAssignmentStrategy implements AssignmentStrategy {
       final toAssign = availableVolunteers.take(needed);
 
       task.assignedVolunteers.addAll(toAssign);
-      TaskServices.updateTask(task);
     }
+
+    return tasks;
   }
 }
 
@@ -120,19 +121,26 @@ class AutoAssigner {
 
   void setStrategy(AssignmentStrategyType strategy) {
     switch (strategy) {
-      case AssignmentStrategyType.balanced:
+      case AssignmentStrategyType.balanceado:
         _strategy = BalancedAssignmentStrategy();
         break;
-      case AssignmentStrategyType.random:
+      case AssignmentStrategyType.aleatorio:
         _strategy = RandomAssignmentStrategy();
         break;
-      case AssignmentStrategyType.proximity:
+      case AssignmentStrategyType.proximidad:
         _strategy = ProximityAssignmentStrategy();
         break;
     }
   }
 
-  void assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) {
-    _strategy.assignTasks(tasks, volunteers, volunteersPerTask);
+  Future<void> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) async {
+    List<TaskWithDetails> tasksToUpdate = _strategy.assignTasks(tasks, volunteers, volunteersPerTask);
+    List<Future> futures = [];
+
+    for (var task in tasksToUpdate) {
+      futures.add(TaskServices.updateTask(task));
+    }
+
+    await Future.wait(futures);
   }
 }

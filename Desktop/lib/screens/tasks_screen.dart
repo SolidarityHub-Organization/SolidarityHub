@@ -63,8 +63,10 @@ class _TasksScreenState extends State<TasksScreen> {
                   spacing: 8,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () async {
-                        await showAutoAssignerDialog(context, _tableController.tasks);
+                      onPressed: () {
+                        showAutoAssignerDialog(context, _tableController.tasks, () {
+                          _loadTasks();
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
