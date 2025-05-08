@@ -6,12 +6,10 @@ using Npgsql;
 using LogicPersistence.Api.Models.DTOs;
 using Newtonsoft.Json;
 
-public class TaskRepository : ITaskRepository
-{
+public class TaskRepository : ITaskRepository {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
-    public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds, int[] victimIds)
-    {
+    public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds, int[] victimIds) {
         using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
         using var transaction = await connection.BeginTransactionAsync();
@@ -29,34 +27,28 @@ public class TaskRepository : ITaskRepository
             INSERT INTO victim_task (victim_id, task_id, state)
             VALUES (@victim_id, @task_id, @state::state)";
 
-        try
-        {
+        try {
             var createdTask = await connection.QuerySingleAsync<Task>(taskSql, task, transaction);
 
-            if (volunteerIds.Length > 0)
-            {
+            if (volunteerIds.Length > 0) {
                 var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = createdTask.id, state = "Assigned" });
                 await connection.ExecuteAsync(volunteerTaskSql, volunteerTasks, transaction);
             }
 
-            if (victimIds.Length > 0)
-            {
+            if (victimIds.Length > 0) {
                 var victimTasks = victimIds.Select(id => new { victim_id = id, task_id = createdTask.id, state = "Assigned" });
                 await connection.ExecuteAsync(victimTaskSql, victimTasks, transaction);
             }
 
             await transaction.CommitAsync();
             return createdTask;
-        }
-        catch
-        {
+        } catch {
             await transaction.RollbackAsync();
             throw;
         }
     }
 
-    public async Task<Task> UpdateTaskAsync(Task task, int[] volunteerIds, int[] victimIds)
-    {
+    public async Task<Task> UpdateTaskAsync(Task task, int[] volunteerIds, int[] victimIds) {
         using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
         using var transaction = await connection.BeginTransactionAsync();
@@ -96,45 +88,38 @@ public class TaskRepository : ITaskRepository
 			DELETE FROM victim_task
 			WHERE task_id = @task_id AND victim_id <> ALL(@victimIds)";
 
-        try
-        {
+        try {
             var updatedTask = await connection.QuerySingleAsync<Task>(updateTaskSql, task, transaction);
 
             await connection.ExecuteAsync(deleteVolunteerTaskSql, new { task_id = updatedTask.id, volunteerIds }, transaction);
 
-            if (volunteerIds.Length > 0)
-            {
+            if (volunteerIds.Length > 0) {
                 var volunteerTasks = volunteerIds.Select(id => new { volunteer_id = id, task_id = updatedTask.id, state = "Assigned" });
                 await connection.ExecuteAsync(insertVolunteerTaskSql, volunteerTasks, transaction);
             }
 
             await connection.ExecuteAsync(deleteVictimTaskSql, new { task_id = updatedTask.id, victimIds }, transaction);
 
-            if (victimIds.Length > 0)
-            {
+            if (victimIds.Length > 0) {
                 var victimTasks = victimIds.Select(id => new { victim_id = id, task_id = updatedTask.id, state = "Assigned" });
                 await connection.ExecuteAsync(insertVictimTaskSql, victimTasks, transaction);
             }
 
             await transaction.CommitAsync();
             return updatedTask;
-        }
-        catch
-        {
+        } catch {
             await transaction.RollbackAsync();
             throw;
         }
     }
 
-    public async Task<Task?> GetTaskByIdAsync(int id)
-    {
+    public async Task<Task?> GetTaskByIdAsync(int id) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "SELECT * FROM task WHERE id = @id";
         return await connection.QueryFirstOrDefaultAsync<Task>(sql, new { id });
     }
 
-    public async Task<bool> DeleteTaskAsync(int id)
-    {
+    public async Task<bool> DeleteTaskAsync(int id) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "DELETE FROM task WHERE id = @id";
 
@@ -142,14 +127,12 @@ public class TaskRepository : ITaskRepository
         return rowsAffected > 0;
     }
 
-    public async Task<IEnumerable<Task>> GetAllTasksAsync()
-    {
+    public async Task<IEnumerable<Task>> GetAllTasksAsync() {
         using var connection = new NpgsqlConnection(connectionString);
         return await connection.QueryAsync<Task>("SELECT * FROM task");
     }
 
-    public async Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync()
-    {
+    public async Task<IEnumerable<TaskWithDetailsDto>> GetAllTasksWithDetailsAsync() {
         using var connection = new NpgsqlConnection(connectionString);
 
         const string sql = @"
@@ -203,6 +186,20 @@ public class TaskRepository : ITaskRepository
                 ) AS location_data
             FROM task t
             LEFT JOIN location l ON t.location_id = l.id
+        ),
+        task_skills AS (
+            SELECT
+                t.id as task_id,
+                COALESCE(json_agg(json_build_object(
+                    'id', s.id,
+                    'name', s.name,
+                    'level', s.level,
+                    'admin_id', s.admin_id
+                )) FILTER (WHERE s.id IS NOT NULL), '[]') AS skills
+            FROM task t
+            LEFT JOIN task_skill ts ON t.id = ts.task_id
+            LEFT JOIN skill s ON ts.skill_id = s.id
+            GROUP BY t.id
         )
         SELECT
             t.id,
@@ -214,34 +211,36 @@ public class TaskRepository : ITaskRepository
             t.end_date,
             tv.volunteers AS assigned_volunteersJson,
             tvi.victims AS assigned_victimsJson,
-            tl.location_data AS locationJson
+            tl.location_data AS locationJson,
+            ts.skills AS skillsJson
         FROM task t
         LEFT JOIN task_volunteers tv ON t.id = tv.task_id
         LEFT JOIN task_victims tvi ON t.id = tvi.task_id
-        LEFT JOIN task_location tl ON t.id = tl.task_id";
+        LEFT JOIN task_location tl ON t.id = tl.task_id
+        LEFT JOIN task_skills ts ON t.id = ts.task_id";
 
         var tasks = await connection.QueryAsync<TaskWithDetailsDto>(sql);
 
-        foreach (var task in tasks)
-        {
+        foreach (var task in tasks) {
             task.assigned_volunteers = JsonConvert.DeserializeObject<IEnumerable<VolunteerDisplayDto>>(task.assigned_volunteersJson) ?? [];
             task.assigned_volunteersJson = "";
 
             task.assigned_victims = JsonConvert.DeserializeObject<IEnumerable<VictimDisplayDto>>(task.assigned_victimsJson) ?? [];
             task.assigned_victimsJson = "";
 
-            if (task.locationJson != null)
-            {
+            if (task.locationJson != null) {
                 task.location = JsonConvert.DeserializeObject<LocationDisplayDto>(task.locationJson);
                 task.locationJson = "";
             }
+
+            task.skills = JsonConvert.DeserializeObject<IEnumerable<SkillDisplayDto>>(task.skillsJson) ?? [];
+            task.skillsJson = "";
         }
 
         return tasks;
     }
 
-    public async Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync()
-    {
+    public async Task<IEnumerable<(State state, int[] task_ids)>> GetAllTaskIdsWithStatesAsync() {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT state, array_agg(task_id) AS task_ids
@@ -261,8 +260,7 @@ public class TaskRepository : ITaskRepository
         return await connection.QueryAsync<(State state, int[] task_ids)>(sql);
     }
 
-    public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate)
-    {
+    public async Task<IEnumerable<(State state, int count)>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT state, COUNT(task_id) as count
@@ -281,15 +279,13 @@ public class TaskRepository : ITaskRepository
 			) combined
 			GROUP BY state";
 
-        return await connection.QueryAsync<(State state, int count)>(sql, new
-        {
+        return await connection.QueryAsync<(State state, int count)>(sql, new {
             FromDate = fromDate,
             ToDate = toDate
         });
     }
 
-    public async Task<int> GetTaskCountByStateAsync(State state)
-    {
+    public async Task<int> GetTaskCountByStateAsync(State state) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT COUNT(DISTINCT task_id)
@@ -308,8 +304,7 @@ public class TaskRepository : ITaskRepository
         return await connection.QuerySingleOrDefaultAsync<int>(sql, new { state = state.ToString() });
     }
 
-    public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state)
-    {
+    public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(State state) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT DISTINCT task_id
@@ -328,8 +323,7 @@ public class TaskRepository : ITaskRepository
         return await connection.QueryAsync<int>(sql, new { state = state.ToString() });
     }
 
-    public async Task<State> GetTaskStateByIdAsync(int taskId)
-    {
+    public async Task<State> GetTaskStateByIdAsync(int taskId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT DISTINCT state::text
@@ -350,8 +344,7 @@ public class TaskRepository : ITaskRepository
         return result != null ? Enum.Parse<State>(result) : State.Unknown;
     }
 
-    public async Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId)
-    {
+    public async Task<UrgencyLevel> GetMaxUrgencyLevelForTaskAsync(int taskId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT MAX(n.urgency_level::text)
@@ -364,8 +357,7 @@ public class TaskRepository : ITaskRepository
         return result != null ? Enum.Parse<UrgencyLevel>(result) : UrgencyLevel.Unknown;
     }
 
-    public async Task<IEnumerable<Task>> GetTasksAssignedToVolunteerAsync(int volunteerId)
-    {
+    public async Task<IEnumerable<Task>> GetTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
 			SELECT t.*
@@ -376,7 +368,7 @@ public class TaskRepository : ITaskRepository
         return await connection.QueryAsync<Task>(sql, new { volunteerId });
     }
 
-	public async Task<IEnumerable<Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+    public async Task<IEnumerable<Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             SELECT t.*
@@ -385,9 +377,9 @@ public class TaskRepository : ITaskRepository
             WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Pending'";
 
         return await connection.QueryAsync<Task>(sql, new { volunteerId });
-	}
+    }
 
-	public async Task<IEnumerable<Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+    public async Task<IEnumerable<Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             SELECT t.*
@@ -396,9 +388,9 @@ public class TaskRepository : ITaskRepository
             WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Assigned'";
 
         return await connection.QueryAsync<Task>(sql, new { volunteerId });
-	}
+    }
 
-	public async Task<Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state) {
+    public async Task<Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             UPDATE volunteer_task
@@ -407,10 +399,9 @@ public class TaskRepository : ITaskRepository
             RETURNING *";
 
         var result = await connection.QuerySingleOrDefaultAsync<Task>(sql, new { volunteerId, taskId, state });
-        if (result == null)
-        {
+        if (result == null) {
             throw new InvalidOperationException("Task not found or update failed.");
         }
         return result;
-	}
+    }
 }
