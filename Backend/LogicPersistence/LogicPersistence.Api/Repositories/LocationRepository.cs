@@ -72,17 +72,16 @@ public class LocationRepository : ILocationRepository {
 
 	}
 
-	public async Task<IEnumerable<Place>> GetPlacesByLocationIdAsync(int id) {
+	public async Task<IEnumerable<AffectedZone>> GetAffectedZoneByLocationIdAsync(int id) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
-		SELECT p.*
+		SELECT az.*
 		FROM location L
-		JOIN affected_zone_location azl on azl.location_id = L.id
-		JOIN place_affected_zone paz ON az.id = paz.affected_zone_id
-		JOIN place p ON paz.place_id = p.id
+		join affected_zone_location azl on azl.location_id = L.id
+		JOIN affected_zone az ON azl.affected_zone_id = az.id
 		WHERE L.id = @id";
 
-		return await connection.QueryAsync<Place>(sql, new { id });
+		return await connection.QueryAsync<AffectedZone>(sql, new { id });
 
 	}
 }

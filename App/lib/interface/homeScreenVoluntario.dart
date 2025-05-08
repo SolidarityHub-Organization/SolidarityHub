@@ -1,3 +1,4 @@
+import 'package:app/interface/notificationScreen.dart';
 import 'package:app/interface/taskListScreen.dart';
 import 'package:flutter/material.dart';
 import 'ajustes.dart';
@@ -9,7 +10,12 @@ class HomeScreenVoluntario extends StatelessWidget {
   final int id;
   final String role;
   final HomeScreenController homeScreenController = HomeScreenController();
-  HomeScreenVoluntario({required this.id, required this.userName, required this.role});
+
+  HomeScreenVoluntario({
+    required this.id,
+    required this.userName,
+    required this.role,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +24,47 @@ class HomeScreenVoluntario extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // Icono superior izquierdo
+            // Botón de logout (esquina superior izquierda)
             Positioned(
               top: 16,
               left: 16,
               child: InkWell(
                 borderRadius: BorderRadius.circular(40),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/login'); // O la ruta que corresponda
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 hoverColor: Colors.white.withOpacity(0.1),
                 child: Icon(Icons.logout, color: Colors.white, size: 28),
               ),
             ),
 
+            // Botón de notificaciones (esquina superior derecha)
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, right: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(id: id),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                    backgroundColor: Colors.red,
+                    elevation: 4,
+                    shadowColor: Colors.black26,
+                  ),
+                  child: const Icon(Icons.mail_outline, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
 
-            // Contenedor blanco centrado
+            // Contenedor principal centrado
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -43,105 +74,72 @@ class HomeScreenVoluntario extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Stack(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 30),
-                        Text(
-                          "BIENVENIDO $userName".toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Eres un voluntario",
-                          style: TextStyle(fontSize: 16),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 30),
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildCustomButton(
-                            "Ver tareas inscritas",
-                            () => Navigator.push(
-                              context, MaterialPageRoute(
-                              builder: (context) => TaskListScreen(id: id),),
-                            ),
-                            verticalPadding: 14,
-                            horizontalPadding: 0,
-                            backgroundColor: Colors.red,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        buildButton("Ver tareas disponibles"),
-                        SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildCustomButton(
-                            "Ajustes",
-                            homeScreenController.onSettingsPressed(context, id, role),
-                            verticalPadding: 14,
-                            horizontalPadding: 0,
-                            backgroundColor: Colors.red,
-                          ),
-                        ),
-
-                        SizedBox(height: 40),
-
-                        // Botón separado
-                        SizedBox(
-                          width: double.infinity,
-                          child: buildCustomButton(
-                            "Cerrar sesión",
-                            homeScreenController.onCerrarSesionPressed(context),
-                            verticalPadding: 14,
-                            horizontalPadding: 0,
-                            backgroundColor: Colors.red,
-                          ),
-                        ),
-                      ],
+                    SizedBox(height: 30),
+                    Text(
+                      "BIENVENIDO $userName".toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-
-                    // Icono de mensaje
-                    Row(
-                      children: [
-                        const Spacer(), // Empuja el botón hacia la derecha
-                        GestureDetector(
-                          onTap: () {
-                            homeScreenController.onVerNotificacionesPressed(context);
-                            print("Botón de notificación presionado");
-                          },
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: const Icon(Icons.mail_outline, color: Colors.white),
-                            ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Eres un voluntario",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Ver tareas inscritas",
+                            () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TaskListScreen(id: id),
                           ),
                         ),
-                      ],
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Ver tareas disponibles",
+                        homeScreenController.onVerTareasPressed(context, id),
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Ajustes",
+                        homeScreenController.onSettingsPressed(context, id, role),
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Cerrar sesión",
+                        homeScreenController.onCerrarSesionPressed(context),
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
                     ),
                   ],
                 ),
@@ -152,5 +150,4 @@ class HomeScreenVoluntario extends StatelessWidget {
       ),
     );
   }
-
 }

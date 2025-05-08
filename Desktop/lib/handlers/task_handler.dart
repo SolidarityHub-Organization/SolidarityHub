@@ -3,18 +3,18 @@ import 'dart:convert';
 
 import 'package:solidarityhub/services/api_services.dart';
 
-abstract class TaskHandler {
-  TaskHandler? nextHandler;
+abstract class Handler<T> {
+  Handler<T>? nextHandler;
 
-  TaskHandler setNext(TaskHandler handler) {
+  Handler<T> setNext(Handler<T> handler) {
     nextHandler = handler;
     return handler;
   }
 
-  Future<String> handle(Map<String, dynamic> taskData);
+  Future<String> handle(T data);
 }
 
-class ValidationHandler extends TaskHandler {
+class ValidationHandler extends Handler<Map<String, dynamic>> {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
     if (taskData['name'].isEmpty || taskData['description'].isEmpty) {
@@ -37,7 +37,7 @@ class ValidationHandler extends TaskHandler {
   }
 }
 
-class LocationHandler extends TaskHandler {
+class LocationHandler extends Handler<Map<String, dynamic>> {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
     final locationUrl = Uri.parse('http://localhost:5170/api/v1/locations');
@@ -59,7 +59,7 @@ class LocationHandler extends TaskHandler {
   }
 }
 
-class PersistenceHandler extends TaskHandler {
+class PersistenceHandler extends Handler<Map<String, dynamic>> {
   @override
   Future<String> handle(Map<String, dynamic> taskData) async {
     final isUpdate = taskData['id'] != null;
@@ -79,4 +79,19 @@ class PersistenceHandler extends TaskHandler {
       return 'Persistence Error: ${response.statusCode} - ${response.body}';
     }
   }
+}
+
+Future<String> processTaskRequest(Map<String, dynamic> taskData) async {
+  final chain = _buildHandlerChain();
+  return chain.handle(taskData);
+}
+
+Handler<Map<String, dynamic>> _buildHandlerChain() {
+  final validation = ValidationHandler();
+  final location = LocationHandler();
+  final persistence = PersistenceHandler();
+
+  validation.setNext(location).setNext(persistence);
+
+  return validation;
 }

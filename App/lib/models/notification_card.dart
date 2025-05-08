@@ -3,34 +3,57 @@ import '../models/notification.dart';
 import 'package:intl/intl.dart';
 
 class NotificationCard extends StatelessWidget {
-  final AppNotification notification;
+  final NotificationModel notification;
 
   const NotificationCard({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
+    final formattedDate = DateFormat('dd/MM/yyyy – HH:mm').format(notification.createdAt);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const Icon(Icons.notifications, color: Colors.redAccent, size: 32),
-          const SizedBox(width: 12),
+          /// Icono circular
+          Container(
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.mail_outline, color: Colors.white),
+          ),
+          const SizedBox(width: 16),
+
+          /// Texto
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(notification.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(notification.message),
-                const SizedBox(height: 6),
                 Text(
-                  DateFormat('dd MMM yyyy • HH:mm').format(notification.createdAt),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  notification.name,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(notification.description),
+                const SizedBox(height: 4),
+                Text(
+                  formattedDate,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
@@ -40,3 +63,4 @@ class NotificationCard extends StatelessWidget {
     );
   }
 }
+

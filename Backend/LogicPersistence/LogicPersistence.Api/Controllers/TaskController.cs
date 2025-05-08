@@ -237,7 +237,7 @@ namespace LogicPersistence.Api.Controllers {
 			}
 			try {
 				var task = await _taskServices.UpdateTaskStateForVolunteerAsync(volunteerId, taskId, updateTaskStateDto);
-				return Ok(task);
+				return Ok();
 				//TODO: return the task with the new state correctly
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);

@@ -66,8 +66,8 @@ namespace LogicPersistence.Api.Services {
 			}
 			return locations;
 		}
-		public async Task<IEnumerable<Place>> GetPlacesByLocationIdAsync(int id) {
-			var locations = await _locationRepository.GetPlacesByLocationIdAsync(id);
+		public async Task<IEnumerable<AffectedZone>> GetAffectedZoneByLocationIdAsync(int id) {
+			var locations = await _locationRepository.GetAffectedZoneByLocationIdAsync(id);
 			if (locations == null) {
 				throw new InvalidOperationException("Failed to retrieve locations.");
 			}

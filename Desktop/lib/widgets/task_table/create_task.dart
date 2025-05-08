@@ -135,7 +135,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Future<void> _loadData() async {
     try {
       final results = await Future.wait([
-        fetchData('volunteers', Volunteer.fromJson),
+        fetchData('volunteers-with-details', Volunteer.fromJson),
         fetchData('victims', Victim.fromJson),
       ]);
       setState(() {
@@ -537,7 +537,21 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       '${volunteer.name} ${volunteer.surname}',
                       style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                     ),
-                    subtitle: Text(volunteer.email),
+                    subtitle: Wrap(
+                      spacing: 4.0,
+                      runSpacing: 4.0,
+                      children:
+                          volunteer.skills.map<Widget>((skill) {
+                            return Chip(
+                              label: Text(skill.name, style: TextStyle(fontSize: 10)),
+                              backgroundColor: Colors.transparent,
+                              shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.7)),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                            );
+                          }).toList(),
+                    ),
                     trailing: Checkbox(
                       activeColor: Colors.red,
                       value: isSelected,
