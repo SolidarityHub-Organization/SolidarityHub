@@ -23,7 +23,7 @@ final String baseUrl = 'http://localhost:5170';
 class _MapScreenState extends State<MapScreen> {
   List<MapMarker> _mapMarkers = [];
   List<Polygon> _polygons = [];
-  MapViewMode _currentMode = MapViewMode.all;
+  Set<MapViewMode> _selectedModes = {MapViewMode.victim, MapViewMode.volunteer, MapViewMode.task};
   MapMarker? _selectedMarker;
 
   final MapController _mapController = MapController();
@@ -65,19 +65,18 @@ class _MapScreenState extends State<MapScreen> {
       final zones = await AffectedZoneServices.fetchAffectedZones();
 
       setState(() {
-        _polygons =
-            zones.map((zoneData) {
-              final zone = AffectedZone.fromJson(zoneData);
+        _polygons = zones.map((zoneData) {
+          final zone = AffectedZone.fromJson(zoneData);
 
-              return Polygon(
-                points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
-                color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.2),
-                borderColor: _getHazardLevelColor(zone.hazardLevel),
-                borderStrokeWidth: 3,
-                isFilled: true,
-                isDotted: false, // líneas sólidas para un look más moderno
-              );
-            }).toList();
+          return Polygon(
+            points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
+            color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.2),
+            borderColor: _getHazardLevelColor(zone.hazardLevel),
+            borderStrokeWidth: 3,
+            isFilled: true,
+            isDotted: false, // líneas sólidas para un look más moderno
+          );
+        }).toList();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las zonas afectadas: $e')));
@@ -101,28 +100,20 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtramos los marcadores según el modo seleccionado
-    List<MapMarker> filteredMarkers =
-        _mapMarkers.where((marker) {
-          switch (_currentMode) {
-            case MapViewMode.all:
-              return true; // Mostrar todos los marcadores
-            case MapViewMode.victim:
-              return marker.type == 'victim'; // Solo mostrar víctimas
-            case MapViewMode.volunteer:
-              return marker.type == 'volunteer'; // Solo mostrar voluntarios
-            case MapViewMode.task:
-              return marker.type == 'task'; // Solo mostrar tareas
-          }
-        }).toList();
+    // Update filtering logic for multi-selection
+    List<MapMarker> filteredMarkers = _mapMarkers.where((marker) {
+      // If no modes are selected, show nothing
+      if (_selectedModes.isEmpty) return false;
+      // Show markers that match any of the selected modes
+      return _selectedModes.contains(_getMapViewMode(marker.type));
+    }).toList();
 
     // Usamos los marcadores filtrados para crear los Marker de flutter_map
     // Usando el factory method de los marcadores
-    List<Marker> flutterMapMarkers =
-        filteredMarkers.map((mapMarker) {
-          final creator = getMarkerCreator(mapMarker.type);
-          return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
-        }).toList();
+    List<Marker> flutterMapMarkers = filteredMarkers.map((mapMarker) {
+      final creator = getMarkerCreator(mapMarker.type);
+      return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -226,32 +217,25 @@ class _MapScreenState extends State<MapScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildFilterButton(
-                                    label: 'Todos',
-                                    isSelected: _currentMode == MapViewMode.all,
-                                    onPressed: () => _setViewMode(MapViewMode.all),
-                                    icon: Icons.map,
-                                  ),
-                                  SizedBox(height: 8),
-                                  _buildFilterButton(
                                     label: 'Afectados',
-                                    isSelected: _currentMode == MapViewMode.victim,
-                                    onPressed: () => _setViewMode(MapViewMode.victim),
+                                    isSelected: _selectedModes.contains(MapViewMode.victim),
+                                    onPressed: () => _toggleViewMode(MapViewMode.victim),
                                     icon: Icons.people,
                                     color: Colors.red,
                                   ),
                                   SizedBox(height: 8),
                                   _buildFilterButton(
                                     label: 'Voluntarios',
-                                    isSelected: _currentMode == MapViewMode.volunteer,
-                                    onPressed: () => _setViewMode(MapViewMode.volunteer),
+                                    isSelected: _selectedModes.contains(MapViewMode.volunteer),
+                                    onPressed: () => _toggleViewMode(MapViewMode.volunteer),
                                     icon: Icons.volunteer_activism,
                                     color: Color.fromARGB(255, 255, 79, 135),
                                   ),
                                   SizedBox(height: 8),
                                   _buildFilterButton(
                                     label: 'Tareas',
-                                    isSelected: _currentMode == MapViewMode.task,
-                                    onPressed: () => _setViewMode(MapViewMode.task),
+                                    isSelected: _selectedModes.contains(MapViewMode.task),
+                                    onPressed: () => _toggleViewMode(MapViewMode.task),
                                     icon: Icons.task,
                                     color: Colors.orange,
                                   ),
@@ -260,7 +244,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
 
                             // Leyenda de colores para marcadores de afectados
-                            if (_currentMode == MapViewMode.victim || _currentMode == MapViewMode.all)
+                            if (_selectedModes.contains(MapViewMode.victim))
                               Positioned(
                                 bottom: 16,
                                 right: 16, // Mantener en la derecha
@@ -295,9 +279,9 @@ class _MapScreenState extends State<MapScreen> {
                               ),
 
                             // Leyenda de colores e iconos para tareas
-                            if (_currentMode == MapViewMode.task || _currentMode == MapViewMode.all)
+                            if (_selectedModes.contains(MapViewMode.task))
                               Positioned(
-                                bottom: (_currentMode == MapViewMode.all) ? 250 : 16,
+                                bottom: _selectedModes.contains(MapViewMode.victim) ? 250 : 16,
                                 right: 16, // Mantener en la derecha
                                 child: Container(
                                   padding: EdgeInsets.all(12),
@@ -348,60 +332,59 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     ),
                   ),
-                  // Info panel
-                  if (_selectedMarker != null)
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        height: double.infinity,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(bottom: 20.0), // Más espacio inferior
-                                margin: EdgeInsets.only(bottom: 10.0), // Margen inferior
-                                decoration: BoxDecoration(
-                                  border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Información",
-                                      style: TextStyle(
-                                        fontSize: 28, // Texto más grande
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red.shade700,
+                  // Use ternary operator instead of if statement
+                  _selectedMarker != null
+                    ? Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: EdgeInsets.all(16.0),
+                          height: double.infinity,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.only(bottom: 20.0),
+                                  margin: EdgeInsets.only(bottom: 10.0),
+                                  decoration: BoxDecoration(
+                                    border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Información",
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red.shade700,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Colors.red.shade700,
-                                        size: 28, // Icono más grande
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: Colors.red.shade700,
+                                          size: 28,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedMarker = null;
+                                          });
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _selectedMarker = null;
-                                        });
-                                      },
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              //contenedor para el panel de información
-                              Container(
-                                constraints: BoxConstraints(minHeight: 725),
-
-                                child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
-                              ),
-                            ],
+                                Container(
+                                  constraints: BoxConstraints(minHeight: 725),
+                                  child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                    : Container(), // Empty container when no marker is selected
                 ],
               ),
             ),
@@ -411,10 +394,15 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _setViewMode(MapViewMode mode) {
+  void _toggleViewMode(MapViewMode mode) {
     setState(() {
-      _currentMode = mode;
-      // Cuando cambiamos el modo, limpiamos el marcador seleccionado
+      if (_selectedModes.contains(mode)) {
+        _selectedModes.remove(mode);
+      } else {
+        _selectedModes.add(mode);
+      }
+      
+      // Clear the selected marker when changing filters
       _selectedMarker = null;
     });
   }
@@ -504,5 +492,18 @@ class _MapScreenState extends State<MapScreen> {
         );
       }
     });
+  }
+
+  MapViewMode _getMapViewMode(String type) {
+    switch (type) {
+      case 'victim':
+        return MapViewMode.victim;
+      case 'volunteer':
+        return MapViewMode.volunteer;
+      case 'task':
+        return MapViewMode.task;
+      default:
+        return MapViewMode.all;
+    }
   }
 }
