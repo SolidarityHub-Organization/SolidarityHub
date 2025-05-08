@@ -108,28 +108,40 @@ class HomeScreenVoluntario extends StatelessWidget {
                     ),
 
                     // Icono de mensaje
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 22,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
+                    Row(
+                      children: [
+                        const Spacer(), // Empuja el botón hacia la derecha
+                        GestureDetector(
+                          onTap: () {
+                            homeScreenController.onVerNotificacionesPressed(context);
+                            print("Botón de notificación presionado");
+                          },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                            ],
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(Icons.mail_outline, color: Colors.white),
+                            ),
                           ),
-                          padding: EdgeInsets.all(8),
-                          child: Icon(Icons.mail_outline, color: Colors.white),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
