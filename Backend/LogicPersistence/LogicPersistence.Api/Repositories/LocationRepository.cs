@@ -76,11 +76,11 @@ public class LocationRepository : ILocationRepository {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
 		SELECT p.*
-		FROM affected_zone_location azl
-		JOIN affected_zone az ON azl.affected_zone_id = az.id
+		FROM location L
+		JOIN affected_zone_location azl on azl.location_id = L.id
 		JOIN place_affected_zone paz ON az.id = paz.affected_zone_id
 		JOIN place p ON paz.place_id = p.id
-		WHERE azl.location_id = @id";
+		WHERE L.id = 1";
 
 		return await connection.QueryAsync<Place>(sql, new { id });
 
