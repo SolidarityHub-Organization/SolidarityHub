@@ -6,11 +6,8 @@ import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquar
 import 'package:solidarityhub/services/affected_zone_services.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/affectedZone.dart';
-import 'package:solidarityhub/services/location_services.dart';
 import 'factoryMethod_Markers/markerFactory.dart';
-import 'dart:math' as math;
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
-import 'package:flutter/gestures.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
