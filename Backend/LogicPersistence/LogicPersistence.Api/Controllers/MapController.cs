@@ -117,6 +117,40 @@ namespace LogicPersistence.Api.Controllers
 			}
 		}
 
+		[HttpGet("map/pickup-points-with-location")]
+		public async Task<IActionResult> GetAllPickupPointsWithLocationAsync()
+		{
+			try
+			{
+				var pickupPointsWithLocation = await _mapServices.GetAllPickupPointsWithLocationAsync();
+				return Ok(pickupPointsWithLocation);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 
+		[HttpGet("map/meeting-points-with-location")]
+		public async Task<IActionResult> GetAllMeetingPointsWithLocationAsync()
+		{
+			try
+			{
+				var meetingPointsWithLocation = await _mapServices.GetAllMeetingPointsWithLocationAsync();
+				return Ok(meetingPointsWithLocation);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
     }
 }

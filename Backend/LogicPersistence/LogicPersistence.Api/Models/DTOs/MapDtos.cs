@@ -23,3 +23,15 @@ public class TaskMapMarkerDTO : MapMarkerDTO
     public string state { get; set; } = string.Empty;
     public ICollection<Volunteer> assigned_volunteers { get; set; } = new List<Volunteer>();
 }
+
+public class PickupPointMapMarkerDTO : MapMarkerDTO 
+{
+    public Time time { get; set; } 
+    public List<PhysicalDonation> physical_donation { get; set; } = new List<PhysicalDonation>();
+}
+
+public class MeetingPointMapMarkerDTO : MapMarkerDTO 
+{
+    public Time time { get; set; } 
+    public List<Volunteer> attending_volunteers { get; set; } = new List<Volunteer>();
+}

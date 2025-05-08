@@ -14,12 +14,15 @@ namespace LogicPersistence.Api.Services {
         private readonly IAffectedZoneRepository _affectedZoneRepository;
         private readonly ITaskRepository _taskRepository;
 
-        public MapServices(ILocationRepository locationRepository, IVictimRepository victimRepository, IVolunteerRepository volunteerRepository, IAffectedZoneRepository affectedZoneRepository, ITaskRepository taskRepository) {
+        private readonly IPointRepository _pointRepository;
+
+        public MapServices(ILocationRepository locationRepository, IVictimRepository victimRepository, IVolunteerRepository volunteerRepository, IAffectedZoneRepository affectedZoneRepository, ITaskRepository taskRepository, IPointRepository pointRepository) {
             _affectedZoneRepository = affectedZoneRepository;
             _locationRepository = locationRepository;
             _victimRepository = victimRepository;
             _volunteerRepository = volunteerRepository;
             _taskRepository = taskRepository;
+            _pointRepository = pointRepository;
         }
 
         public async Task<IEnumerable<MapMarkerDTO>> GetAllVictimsWithLocationAsync() {
@@ -142,6 +145,7 @@ namespace LogicPersistence.Api.Services {
                         assignedVolunteers.Add(volunteer);
                     }   
                 }
+                
                 result.Add(new TaskMapMarkerDTO {
                     id = task.id,
                     name = task.name,
@@ -154,5 +158,55 @@ namespace LogicPersistence.Api.Services {
             }
             return result;
         }
+
+        public async Task<IEnumerable<PickupPointMapMarkerDTO>> GetAllPickupPointsWithLocationAsync() {
+            var pickupPoints = await _pointRepository.GetAllPickupPointsAsync();
+            if (pickupPoints == null) {
+                throw new InvalidOperationException("Failed to retrieve pickup points.");
+            }
+
+            var result = new List<PickupPointMapMarkerDTO>();
+
+            foreach (var pickupPoint in pickupPoints) {
+                var location = await _locationRepository.GetLocationByIdAsync(pickupPoint.location_id);
+                var physicalDonations = await _pointRepository.GetPhysicalDonationsByPickupPointIdAsync(pickupPoint.id);
+
+                result.Add(new PickupPointMapMarkerDTO {
+                    id = pickupPoint.id,
+                    name = pickupPoint.name,
+                    type = "pickup_point",
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    physical_donation = physicalDonations.ToList(),
+                });
+            }
+
+            return result;       
+        }
+
+        public async Task<IEnumerable<MeetingPointMapMarkerDTO>> GetAllMeetingPointsWithLocationAsync() {
+            var meetingPoints = await _pointRepository.GetAllMeetingPointsAsync();
+            if (meetingPoints == null) {
+                throw new InvalidOperationException("Failed to retrieve meeting points.");
+            }
+
+            var result = new List<MeetingPointMapMarkerDTO>();
+
+            foreach (var meetingPoint in meetingPoints) {
+                var location = await _locationRepository.GetLocationByIdAsync(meetingPoint.location_id);
+                var attendingVolunteers = await _pointRepository.GetVolunteersByMeetingPointIdAsync(meetingPoint.id);
+
+                result.Add(new MeetingPointMapMarkerDTO {
+                    id = meetingPoint.id,
+                    name = meetingPoint.name,
+                    type = "meeting_point",
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    attending_volunteers = attendingVolunteers.ToList(),
+                });
+            }
+
+            return result;
+        }         
     }
 }

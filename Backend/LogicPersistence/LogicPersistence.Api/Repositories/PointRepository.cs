@@ -29,6 +29,11 @@ public class PointRepository : IPointRepository {
     {
         return null;
     }
+
+    public async Task<IEnumerable<PhysicalDonation>> GetPhysicalDonationsByPickupPointIdAsync(int id) 
+    {
+        return null;
+    }
 #endregion
 
 #region MeetingPoint
@@ -48,6 +53,11 @@ public class PointRepository : IPointRepository {
     }
 
     public async Task<IEnumerable<MeetingPoint>> GetAllMeetingPointsAsync() 
+    {
+        return null;
+    }
+
+    public async Task<IEnumerable<Volunteer>> GetVolunteersByMeetingPointIdAsync(int id) 
     {
         return null;
     }
