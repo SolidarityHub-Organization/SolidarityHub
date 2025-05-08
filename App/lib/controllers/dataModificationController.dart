@@ -43,7 +43,7 @@ class DataModificationController {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Perfil modificado correctamente')),
             );
-            Navigator.pushReplacementNamed(context, '/login');
+            Navigator.pushReplacementNamed(context, '/homeScreenVoluntario');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error al modificar perfil')),
@@ -83,7 +83,7 @@ class DataModificationController {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Perfil modificado correctamente')),
             );
-            Navigator.pushReplacementNamed(context, '/ajustes');
+            Navigator.pushReplacementNamed(context, '/homeScreenAfectado');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error al modificar perfil')),
