@@ -18,16 +18,18 @@ class NotificationScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: FutureBuilder<List<AppNotification>>(
-        future: NotificationService.fetchUserNotifications(id),
+      body: FutureBuilder<List<NotificationModel>>(
+        future: NotificationService.fetchNotifications(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            print(snapshot.data);
             return const Center(child: CircularProgressIndicator(color: Colors.white));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
           } else {
             final notifications = snapshot.data!;
             if (notifications.isEmpty) {
+              print(snapshot.data);
               return const Center(child: Text("No tienes notificaciones.", style: TextStyle(color: Colors.white)));
             }
             return ListView.builder(
