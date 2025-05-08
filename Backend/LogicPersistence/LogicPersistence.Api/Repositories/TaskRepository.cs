@@ -360,34 +360,41 @@ public class TaskRepository : ITaskRepository {
     public async Task<IEnumerable<Task>> GetTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-			SELECT t.*
+			SELECT *
 			FROM task t
 			JOIN volunteer_task vt ON t.id = vt.task_id
+			JOIN location l ON l.id = t.location_id
 			WHERE vt.volunteer_id = @volunteerId";
 
         return await connection.QueryAsync<Task>(sql, new { volunteerId });
     }
 
-    public async Task<IEnumerable<Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+    public async Task<IEnumerable<TaskWithLocationInfoDto>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT t.*
-			FROM task t
-			JOIN volunteer_task vt ON t.id = vt.task_id
-            WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Pending'";
+        SELECT t.*,
+        l.latitude,
+        l.longitude
+		FROM task t
+		JOIN volunteer_task vt ON t.id = vt.task_id
+		join location l on t.location_id = l.id
+        WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Pending'";
 
-        return await connection.QueryAsync<Task>(sql, new { volunteerId });
+        return await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId });
     }
 
-    public async Task<IEnumerable<Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+    public async Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT t.*
-			FROM task t
-			JOIN volunteer_task vt ON t.id = vt.task_id
-            WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Assigned'";
+        SELECT t.*,
+        l.latitude,
+        l.longitude
+		FROM task t
+		JOIN volunteer_task vt ON t.id = vt.task_id
+		join location l on t.location_id = l.id
+        WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Assigned'";
 
-        return await connection.QueryAsync<Task>(sql, new { volunteerId });
+        return await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId });
     }
 
     public async Task<Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state) {

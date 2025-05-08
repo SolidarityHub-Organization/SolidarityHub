@@ -211,7 +211,7 @@ namespace LogicPersistence.Api.Services {
 			return tasks;
 		}
 
-		public Task<IEnumerable<Models.Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+		public Task<IEnumerable<TaskWithLocationInfoDto>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
 			var tasks = _taskRepository.GetPendingTasksAssignedToVolunteerAsync(volunteerId);
 			if (tasks == null) {
 				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
@@ -219,7 +219,7 @@ namespace LogicPersistence.Api.Services {
 			return tasks;
 		}
 
-		public Task<IEnumerable<Models.Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+		public Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
 			var tasks = _taskRepository.GetAssignedTasksAssignedToVolunteerAsync(volunteerId);
 			if (tasks == null) {
 				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
