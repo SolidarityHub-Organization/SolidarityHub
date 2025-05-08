@@ -6,6 +6,7 @@ import 'package:app/interface/taskListScreen.dart';
 import 'package:flutter/material.dart';
 import 'interface/homeScreenAfectado.dart';
 import 'interface/loginUI.dart';
+import 'interface/notificationScreen.dart';
 import 'interface/register.dart';
 import 'interface/registerChoose.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/ajustes': (context) => AjustesCuenta(id:id, role: role),
         '/dataModification': (context) => DataModification(id:id, role: role),
         '/taskListScreen': (context) => TaskListScreen(id: id),
+        '/notificationScreen': (context) => NotificationScreen(id: id),
       }
     );
   }

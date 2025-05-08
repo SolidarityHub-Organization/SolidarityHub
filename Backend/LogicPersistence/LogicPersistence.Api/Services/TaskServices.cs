@@ -185,7 +185,6 @@ namespace LogicPersistence.Api.Services {
 
 			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository);
 			var locationServices = new LocationServices(locationRepository);
-
 			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
 			if (affectedZones == null) {
 				throw new InvalidOperationException("Failed to retrieve affected zones.");
