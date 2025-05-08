@@ -3,10 +3,14 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquareFactory.dart';
-import '../../services/affected_zone_services.dart';
-import '../../models/mapMarker.dart';
-import '../../models/affectedZone.dart';
+import 'package:solidarityhub/services/affected_zone_services.dart';
+import 'package:solidarityhub/models/mapMarker.dart';
+import 'package:solidarityhub/models/affectedZone.dart';
+import 'package:solidarityhub/services/location_services.dart';
 import 'factoryMethod_Markers/markerFactory.dart';
+import 'dart:math' as math;
+import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
+import 'package:flutter/gestures.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -29,6 +33,9 @@ class _MapScreenState extends State<MapScreen> {
   //MapViewMode _currentMode = MapViewMode.victim;
 
   final MapController _mapController = MapController();
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _horizontalScrollController = ScrollController();
+  final ScrollController _verticalScrollController = ScrollController();
 
   @override
   void initState() {
@@ -38,6 +45,14 @@ class _MapScreenState extends State<MapScreen> {
     _fetchLocations(LocationServices.fetchTaskLocations);
 
     _fetchAffectedZones();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchLocations(Future<List<Map<String, dynamic>>> Function() fetcher) async {
@@ -127,279 +142,283 @@ class _MapScreenState extends State<MapScreen> {
         backgroundColor: Colors.red,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Row(
-        children: [
-          // El mapa ocupará una parte del ancho, ahora con márgenes
-          Expanded(
-            flex: 2, // Reducido de 3 a 2 para hacer más espacio para el panel de información
-            child: Container(
-              margin: EdgeInsets.all(12.0), // Añadimos un margen alrededor del mapa
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8.0, offset: Offset(0, 3))],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // set mins here
+          final minWidth = 800.0;
+          final minHeight = 600.0;
+          final width = constraints.maxWidth < minWidth ? minWidth : constraints.maxWidth;
+          final height = constraints.maxHeight < minHeight ? minHeight : constraints.maxHeight;
+
+          return TwoDimensionalScrollWidget(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: minWidth,
+                minHeight: minHeight,
+                maxWidth: width,
+                maxHeight: height,
               ),
-              child: ClipRRect(
-                // Recortamos el mapa para que respete el borderRadius
-                borderRadius: BorderRadius.circular(12.0),
-                child: Stack(
-                  children: [
-                    FlutterMap(
-                      mapController: _mapController,
-                      options: MapOptions(
-                        initialCenter: LatLng(39.47391, -0.37966),
-                        initialZoom: 13,
-                        // Añadidos parámetros para mejorar interactividad
-                        interactionOptions: InteractionOptions(flags: InteractiveFlag.all),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      margin: EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8.0, offset: Offset(0, 3))],
                       ),
-                      children: [
-                        TileLayer(
-                          urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                          subdomains: ['a', 'b', 'c', 'd'],
-                          retinaMode: RetinaMode.isHighDensity(context),
-                        ),
-                        MarkerLayer(markers: flutterMapMarkers),
-                        PolygonLayer(polygons: _isHeatMapActive ? _polygons : []),
-                      ],
-                    ),
-                    // Botones de filtrado en la esquina superior izquierda
-                    Positioned(
-                      top: 16,
-                      left: 16, // Cambiado de right a left para ubicarlos a la izquierda
-                      child: Column(
-                        children: [
-                          SizedBox(height: 8),
-                          _buildFilterButton(
-                            label: 'Afectados',
-                            isSelected: _selectedModes.contains(MapViewMode.victim),
-                            onPressed: () => _toggleViewMode(MapViewMode.victim),
-                            icon: Icons.people,
-                            color: Colors.red,
-                          ),
-                          SizedBox(height: 8),
-                          _buildFilterButton(
-                            label: 'Voluntarios',
-                            isSelected: _selectedModes.contains(MapViewMode.volunteer),
-                            onPressed: () => _toggleViewMode(MapViewMode.volunteer),
-                            icon: Icons.volunteer_activism,
-                            color: Color.fromARGB(255, 255, 79, 135),
-                          ),
-                          SizedBox(height: 8),
-                          _buildFilterButton(
-                            label: 'Tareas',
-                            isSelected: _selectedModes.contains(MapViewMode.task),
-                            onPressed: () => _toggleViewMode(MapViewMode.task),
-                            icon: Icons.task,
-                            color: Colors.orange,
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Botón en la parte inferior izquierda
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      child: Row(
-                        children: [
-                          FloatingActionButton.extended(
-                            onPressed: () { 
-                              setState(() {
-                                _isHeatMapActive = !_isHeatMapActive;
-                                if (_isHeatMapActive) { _isRoutesActive = false;}
-                              });
-                            },
-                            backgroundColor: Colors.red,
-                            label: Text(
-                              _isHeatMapActive ? "Desactivar mapa de calor" : "Mapa de calor",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          SizedBox(height: 16, width: 16), // Espacio entre los botones
-                          FloatingActionButton.extended(
-                            onPressed: () {
-                              setState(() {
-                                _isRoutesActive = !_isRoutesActive;
-                                if (_isRoutesActive) {_isHeatMapActive = false; }
-                              });
-                            },
-                            backgroundColor: Colors.red,
-                            label: Text(
-                              _isRoutesActive ? "Desactivar mapa de rutas" : "Mapa de rutas",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (_isHeatMapActive)
-                      Positioned(
-                        top: 200,
-                        right: 16,
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Nivel de Peligro",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
-                              ),
-                              SizedBox(height: 8),
-                              _buildLegendHeat("Bajo", Color(0xFF008B8A)),
-                              _buildLegendHeat("Medio", Color(0xFFFF9600)),
-                              _buildLegendHeat("Alto", Color(0xFFE21C1C)),
-                              _buildLegendHeat("Crítico", Color(0xFF460707)),
-                            ],
-                          ),
-                        ),
-                      ),
-                       // Leyenda de colores para marcadores de afectados
-                      if (_selectedModes.contains(MapViewMode.victim) /*|| _currentMode == MapViewMode.all*/)
-                      Positioned(
-                        bottom: 16,
-                        right: 16, // Mantener en la derecha
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Text(
-                                  "Urgencia Afectados",
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                ),
-                              ),
-                              _buildLegendItem(Colors.grey, "Desconocido"),
-                              _buildLegendItem(Colors.green, "Bajo"),
-                              _buildLegendItem(Colors.orange, "Medio"),
-                              _buildLegendItem(Color.fromARGB(255, 255, 0, 0), "Alto"),
-                              _buildLegendItem(Color.fromARGB(255, 139, 0, 0), "Crítico"),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Leyenda de colores e iconos para tareas
-                    if (_selectedModes.contains(MapViewMode.task) /*|| _currentMode == MapViewMode.all*/)
-                      Positioned(
-                        //bottom: (_currentMode == MapViewMode.all) ? 250 : 16,
-                        right: 16, // Mantener en la derecha
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Text(
-                                  "Estado de Tareas",
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                ),
-                              ),
-                              _buildTaskLegendItem(
-                                icon: Icons.assignment_turned_in_rounded,
-                                color: Colors.green,
-                                label: "Completado",
-                              ),
-                              _buildTaskLegendItem(
-                                icon: Icons.assignment_outlined,
-                                color: Colors.orange,
-                                label: "Asignado",
-                              ),
-                              _buildTaskLegendItem(
-                                icon: Icons.assignment_return_rounded,
-                                color: Colors.blue,
-                                label: "Pendiente",
-                              ),
-                              _buildTaskLegendItem(
-                                icon: Icons.assignment_late_outlined,
-                                color: Colors.red,
-                                label: "Cancelado",
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Panel de información lateral (solo visible cuando hay un marcador seleccionado)
-          if (_selectedMarker != null)
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.all(16.0), // Aumentado el padding
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(bottom: 20.0), // Más espacio inferior
-                        margin: EdgeInsets.only(bottom: 10.0), // Margen inferior
-                        decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Stack(
                           children: [
-                            Text(
-                              "Información",
-                              style: TextStyle(
-                                fontSize: 28, // Texto más grande
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red.shade700,
+                            FlutterMap(
+                              mapController: _mapController,
+                              options: MapOptions(
+                                initialCenter: LatLng(39.47391, -0.37966),
+                                initialZoom: 13,
+                                interactionOptions: InteractionOptions(flags: InteractiveFlag.all),
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                                  subdomains: ['a', 'b', 'c', 'd'],
+                                  retinaMode: RetinaMode.isHighDensity(context),
+                                ),
+                                PolygonLayer(polygons: _polygons),
+                                MarkerLayer(markers: flutterMapMarkers),
+                              ],
+                            ),
+                            Positioned(
+                              top: 16,
+                              left: 16,
+                              right: 16,
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Buscar dirección...',
+                                    prefixIcon: IconButton(
+                                      icon: Icon(Icons.search, color: Colors.red.shade700),
+                                      onPressed: () {
+                                        _searchAddress(_searchController.text);
+                                      },
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(Icons.clear, color: Colors.grey),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                      },
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  ),
+                                  onSubmitted: (value) {
+                                    _searchAddress(value);
+                                  },
+                                ),
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: Colors.red.shade700,
-                                size: 28, // Icono más grande
+                            Positioned(
+                              top: 82,
+                              left: 16, 
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildFilterButton(
+                                    label: 'Todos',
+                                    isSelected: _currentMode == MapViewMode.all,
+                                    onPressed: () => _setViewMode(MapViewMode.all),
+                                    icon: Icons.map,
+                                  ),
+                                  SizedBox(height: 8),
+                                  _buildFilterButton(
+                                    label: 'Afectados',
+                                    isSelected: _currentMode == MapViewMode.victim,
+                                    onPressed: () => _setViewMode(MapViewMode.victim),
+                                    icon: Icons.people,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(height: 8),
+                                  _buildFilterButton(
+                                    label: 'Voluntarios',
+                                    isSelected: _currentMode == MapViewMode.volunteer,
+                                    onPressed: () => _setViewMode(MapViewMode.volunteer),
+                                    icon: Icons.volunteer_activism,
+                                    color: Color.fromARGB(255, 255, 79, 135),
+                                  ),
+                                  SizedBox(height: 8),
+                                  _buildFilterButton(
+                                    label: 'Tareas',
+                                    isSelected: _currentMode == MapViewMode.task,
+                                    onPressed: () => _setViewMode(MapViewMode.task),
+                                    icon: Icons.task,
+                                    color: Colors.orange,
+                                  ),
+                                ],
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedMarker = null;
-                                });
-                              },
                             ),
+
+                            // Leyenda de colores para marcadores de afectados
+                            if (_currentMode == MapViewMode.victim || _currentMode == MapViewMode.all)
+                              Positioned(
+                                bottom: 16,
+                                right: 16, // Mantener en la derecha
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          "Urgencia Afectados",
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        ),
+                                      ),
+                                      _buildLegendItem(Colors.grey, "Desconocido"),
+                                      _buildLegendItem(Colors.green, "Bajo"),
+                                      _buildLegendItem(Colors.orange, "Medio"),
+                                      _buildLegendItem(Color.fromARGB(255, 255, 0, 0), "Alto"),
+                                      _buildLegendItem(Color.fromARGB(255, 139, 0, 0), "Crítico"),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                            // Leyenda de colores e iconos para tareas
+                            if (_currentMode == MapViewMode.task || _currentMode == MapViewMode.all)
+                              Positioned(
+                                bottom: (_currentMode == MapViewMode.all) ? 250 : 16,
+                                right: 16, // Mantener en la derecha
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          "Estado de Tareas",
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        ),
+                                      ),
+                                      _buildTaskLegendItem(
+                                        icon: Icons.assignment_turned_in_rounded,
+                                        color: Colors.green,
+                                        label: "Completado",
+                                      ),
+                                      _buildTaskLegendItem(
+                                        icon: Icons.assignment_outlined,
+                                        color: Colors.orange,
+                                        label: "Asignado",
+                                      ),
+                                      _buildTaskLegendItem(
+                                        icon: Icons.assignment_return_rounded,
+                                        color: Colors.blue,
+                                        label: "Pendiente",
+                                      ),
+                                      _buildTaskLegendItem(
+                                        icon: Icons.assignment_late_outlined,
+                                        color: Colors.red,
+                                        label: "Cancelado",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
-                      //contenedor para el panel de información
-                      Container(
-                        constraints: BoxConstraints(minHeight: 725),
-
-                        child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  // Info panel
+                  if (_selectedMarker != null)
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.all(16.0),
+                        height: double.infinity,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.only(bottom: 20.0), // Más espacio inferior
+                                margin: EdgeInsets.only(bottom: 10.0), // Margen inferior
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Información",
+                                      style: TextStyle(
+                                        fontSize: 28, // Texto más grande
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red.shade700,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.red.shade700,
+                                        size: 28, // Icono más grande
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedMarker = null;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              //contenedor para el panel de información
+                              Container(
+                                constraints: BoxConstraints(minHeight: 725),
+
+                                child: getInfoSquare(_selectedMarker!.type).buildInfoSquare(_selectedMarker!),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -474,14 +493,20 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
-}
 
-Widget _buildLegendHeat(String label, Color color) {
-  return Row(
-    children: [
-      Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
-      SizedBox(width: 8),
-      Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
-    ],
-  );
+  void _searchAddress(String value) {
+    if (value.trim().isEmpty) return;
+    
+    LocationServices.searchAddress(value).then((result) {
+      if (result != null) {
+        final location = result['location'] as LatLng;
+        final zoomLevel = result['zoomLevel'] as double;
+        _mapController.move(location, zoomLevel);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Dirección no encontrada'))
+        );
+      }
+    });
+  }
 }

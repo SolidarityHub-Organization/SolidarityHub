@@ -46,4 +46,27 @@ public static class TimeMapper
             volunteer_id = volunteerTime.volunteer_id
         };
     }
+
+    public static PointTime ToPointTime(this PointTimeCreateDto pointTimeCreateDto)
+    {
+        return new PointTime {
+            start_time = pointTimeCreateDto.start_time,
+            end_time = pointTimeCreateDto.end_time,
+            start_date = pointTimeCreateDto.start_date,
+            end_date = pointTimeCreateDto.end_date,
+            point_id = pointTimeCreateDto.point_id
+        };
+    }
+
+    public static PointTimeDisplayDto ToPointTimeDisplayDto(this PointTime pointTime)
+    {
+        return new PointTimeDisplayDto {
+            id = pointTime.id,
+            start_time = pointTime.start_time,
+            end_time = pointTime.end_time,
+            start_date = pointTime.start_date,
+            end_date = pointTime.end_date,
+            point_id = pointTime.point_id
+        };
+    }
 }

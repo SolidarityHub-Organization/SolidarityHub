@@ -66,3 +66,38 @@ public class VolunteerTimeDisplayDto : TimeBaseDto
     public DayOfWeek day { get; set; }
     public int volunteer_id { get; set; }
 }
+
+#region PointTime DTOs
+public class PointTimeCreateDto : TimeBaseDto
+{
+    [Required]
+    public DateOnly start_date { get; set; }
+    
+    public DateOnly? end_date { get; set; }
+    
+    [Required]
+    public int point_id { get; set; }
+}
+
+public class PointTimeUpdateDto : TimeBaseDto
+{
+    [Required]
+    public int id { get; set; }
+    
+    [Required]
+    public DateOnly start_date { get; set; }
+    
+    public DateOnly? end_date { get; set; }
+    
+    [Required]
+    public int point_id { get; set; }
+}
+
+public class PointTimeDisplayDto : TimeBaseDto
+{
+    public int id { get; set; }
+    public DateOnly start_date { get; set; }
+    public DateOnly? end_date { get; set; }
+    public int point_id { get; set; }
+}
+#endregion

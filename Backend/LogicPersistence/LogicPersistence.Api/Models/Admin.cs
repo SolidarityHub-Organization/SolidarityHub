@@ -25,4 +25,5 @@ public class Admin {
 	//public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
 	//public virtual ICollection<Place> Places { get; set; } = new List<Place>();
 	//public virtual ICollection<NeedType> NeedTypes { get; set; } = new List<NeedType>();
+	//public virtual ICollection<PickupPoint/MeetingPoint> Points { get; set; } = new List<PickupPoint/MeetingPoin>();
 }

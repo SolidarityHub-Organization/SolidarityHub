@@ -18,6 +18,8 @@ public abstract class PointBaseDto
 
     [Required]
     public int location_id { get; set; }
+
+    public int? admin_id { get; set; }
 }
 
 #region Pickup Point DTOs

@@ -74,6 +74,11 @@ public class PhysicalDonation : Donation {
 	public string description { get; set; } = string.Empty;
 	public int quantity { get; set; }
 	public PhysicalDonationType item_type { get; set; }
+
+
+	// Navigation properties
+
+	//public virtual PickupPoint PickupPoint { get; set; } = new PickupPoint();	// in intermediate table
 }
 
 public class MonetaryDonation : Donation {
