@@ -74,47 +74,57 @@ class AvailableTasksScreenState extends State<AvailableTasksScreen> {
           final task = _tasks[_currentTaskIndex];
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.85,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(child: TaskCard(task: task)),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: buildCustomButton(
-                          'Rechazar',
-                              () {
-                            AvailableTasksController.declineTask(widget.id, task.id);
-                            _handleDecision();
-                          },
-                          backgroundColor: Colors.red,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TaskCard(task: task),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: buildCustomButton(
+                                    'Rechazar',
+                                        () {
+                                      AvailableTasksController.declineTask(widget.id, task.id);
+                                      _handleDecision();
+                                    },
+                                    backgroundColor: Colors.red,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: buildCustomButton(
+                                    '¡Quiero ir!',
+                                        () {
+                                      AvailableTasksController.acceptTask(widget.id, task.id);
+                                      _handleDecision();
+                                    },
+                                    backgroundColor: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: buildCustomButton(
-                          '¡Quiero ir!',
-                              () {
-                            AvailableTasksController.acceptTask(widget.id, task.id);
-                            _handleDecision();
-                          },
-                          backgroundColor: Colors.green,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
           );
         },
