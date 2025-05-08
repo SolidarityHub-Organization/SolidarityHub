@@ -232,7 +232,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                     if (_isHeatMapActive)
                       Positioned(
-                        top: 16,
+                        top: 200,
                         right: 16,
                         child: Container(
                           padding: EdgeInsets.all(12),
@@ -245,7 +245,7 @@ class _MapScreenState extends State<MapScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Leyenda mapa de calor",
+                                "Nivel de Peligro",
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
                               ),
                               SizedBox(height: 8),

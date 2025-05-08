@@ -120,7 +120,7 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IPointServices, PointServices>();
 		builder.Services.AddScoped<IPointRepository, PointRepository>();
 		builder.Services.AddScoped<IMapStrategy<AffectedZoneWithPointsDTO>, HeatMapStrategy>();
-		builder.Services.AddScoped<IMapServices, MapServices>();
-	}
+		builder.Services.AddScoped<StrategyContext<AffectedZoneWithPointsDTO>>();
 
+	}
 }

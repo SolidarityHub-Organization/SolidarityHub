@@ -7,49 +7,27 @@ namespace LogicPersistence.Api.Controllers {
     
 [ApiController]
 [Route("api/v1")]
-public class StrategyController : ControllerBase
+public abstract class StrategyController<T> : ControllerBase
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly StrategyContext<T> _context;
 
-    public StrategyController(IServiceProvider serviceProvider)
+    public StrategyController(StrategyContext<T> context)
     {
-        _serviceProvider = serviceProvider;
+        _context = context;
     }
 
-    [HttpGet("strategy")]
-    public async Task<IActionResult> GetStrategy([FromQuery] string strategyType)
+    [HttpGet("mostrar")]
+    public async Task<IActionResult> Mostrar()
     {
-        try
-        {
-            // Selecciona la estrategia en función del parámetro `strategyType`
-            var strategy = strategyType?.ToLower() switch
-            {
-                "heatmap" => _serviceProvider.GetService<IMapStrategy<AffectedZoneWithPointsDTO>>(),
-
-                // Agrega más estrategias aquí según sea necesario
-                _ => throw new ArgumentException("Invalid strategy type")
-            };
-
-            if (strategy == null)
-            {
-                return BadRequest("Estrategia no encontrada");
-            }
-
-            // Crea el contexto con la estrategia seleccionada
-            var strategyContext = new StrategyContext<AffectedZoneWithPointsDTO>(strategy);
-
-            // Llama al método MostrarStrategy para obtener los datos
-            var result = await strategyContext.MostrarStrategy();
-            return Ok(result);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message); // Devuelve un error 400 si el parámetro es inválido
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Error al ejecutar la estrategia: {ex.Message}");
-        }
+        var result = await _context.MostrarStrategy();
+        return Ok(result);
     }
-}     
+
+}
+
+[Route("api/v1/heatmap")]
+public class HeatMapController : StrategyController<AffectedZoneWithPointsDTO>
+{
+    public HeatMapController(StrategyContext<AffectedZoneWithPointsDTO> context) : base(context) { }
+}
 }

@@ -181,10 +181,11 @@ namespace LogicPersistence.Api.Services {
 			var volunteerRepository = new VolunteerRepository();
 			var affectedZoneRepository = new AffectedZoneRepository();
 			var taskRepository = _taskRepository;
-
-			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository);
+			var pointRepository = new PointRepository(); // Crea una instancia de PointRepository
+			
+			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository); // Crea una instancia de PointRepository
+			//var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository);
 			var locationServices = new LocationServices(locationRepository);
-
 			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
 			if (affectedZones == null) {
 				throw new InvalidOperationException("Failed to retrieve affected zones.");
