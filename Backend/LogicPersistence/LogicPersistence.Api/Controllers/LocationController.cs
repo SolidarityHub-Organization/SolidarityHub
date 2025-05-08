@@ -79,7 +79,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("location/affectedplaces/{id}")]
 		public async Task<IActionResult> GetPlacesByLocationIdAsync(int id) {
 			try {
-				var places = await _locationServices.GetPlacesByLocationIdAsync(id);
+				var places = await _locationServices.GetAffectedZoneByLocationIdAsync(id);
 				return Ok(places);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

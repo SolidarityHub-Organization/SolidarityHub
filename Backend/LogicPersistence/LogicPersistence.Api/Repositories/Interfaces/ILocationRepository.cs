@@ -10,5 +10,5 @@ public interface ILocationRepository {
 	Task<Location?> GetLocationByIdAsync(int id);
 	Task<IEnumerable<Location>> GetAllLocationsAsync();
 	Task<IEnumerable<Location>> GetLocationsByAffectedZoneIdAsync(int id);
-	Task<IEnumerable<Place>> GetPlacesByLocationIdAsync(int id);
+	Task<IEnumerable<AffectedZone>> GetAffectedZoneByLocationIdAsync(int id);
 }
