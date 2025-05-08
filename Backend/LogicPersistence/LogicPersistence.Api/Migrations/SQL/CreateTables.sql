@@ -269,6 +269,22 @@ CREATE TABLE IF NOT EXISTS "skill" (
     FOREIGN KEY ("admin_id") REFERENCES "admin"("id")
 );
 
+CREATE TABLE IF NOT EXISTS "notifications" (
+    "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "description" VARCHAR(1000) NOT NULL,
+    "volunteer_id" INT,
+    "victim_id" INT,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY ("volunteer_id") REFERENCES "volunteer"("id") ON DELETE CASCADE,
+    FOREIGN KEY ("victim_id") REFERENCES "victim"("id") ON DELETE CASCADE,
+    CHECK (
+        ("volunteer_id" IS NOT NULL AND "victim_id" IS NULL) OR
+        ("volunteer_id" IS NULL AND "victim_id" IS NOT NULL)
+    )
+);
+
 
 /* intermediate tables */
 

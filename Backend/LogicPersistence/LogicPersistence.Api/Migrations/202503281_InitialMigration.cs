@@ -289,6 +289,20 @@ public class InitialMigration : Migration {
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Create.PrimaryKey("PK_AffectedZoneLocation").OnTable("affected_zone_location")
 			.Columns(["affected_zone_id", "location_id"]);
+
+		Create.Table("notifications")
+			.WithColumn("id").AsInt32().PrimaryKey().Identity()
+			.WithColumn("name").AsString(255).NotNullable()
+			.WithColumn("description").AsString(1000).NotNullable()
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_Notifications_Volunteer", "volunteer", "id").OnDelete(Rule.Cascade)
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_Notifications_Victim", "victim", "id").OnDelete(Rule.Cascade)
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+		Execute.Sql(@"
+			ALTER TABLE notifications ADD CONSTRAINT CK_Notifications_VolunteerOrVictim CHECK (
+				(volunteer_id IS NOT NULL AND victim_id IS NULL) OR
+				(volunteer_id IS NULL AND victim_id IS NOT NULL)
+			);
+		");
 	}
 
 	public override void Down() {
@@ -377,6 +391,7 @@ public class InitialMigration : Migration {
 		Delete.Table("volunteer");
 		Delete.Table("victim");
 		Delete.Table("location");
+		Delete.Table("notifications");
 
 		// Delete types (enums) created (in inverse order with respect to creation)
 		Execute.Sql("DROP TYPE IF EXISTS state CASCADE;");
