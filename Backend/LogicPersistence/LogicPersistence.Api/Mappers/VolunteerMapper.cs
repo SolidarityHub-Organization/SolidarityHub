@@ -41,6 +41,7 @@ public static class VolunteerMapper {
         return new VolunteerDisplayDto {
             id = volunteer.id,
             email = volunteer.email,
+            password = volunteer.password,
             name = volunteer.name,
             surname = volunteer.surname,
             prefix = volunteer.prefix,
@@ -48,8 +49,6 @@ public static class VolunteerMapper {
             address = volunteer.address,
             identification = volunteer.identification,
             created_at = volunteer.created_at,
-            // Password is intentionally omitted.
-
             location_id = volunteer.location_id
         };
     }
