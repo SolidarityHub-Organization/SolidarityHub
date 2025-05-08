@@ -8,5 +8,7 @@ namespace LogicPersistence.Api.Services {
 		Task<Models.Location> UpdateLocationAsync(int id, LocationUpdateDto LocationUpdateDto);
 		System.Threading.Tasks.Task DeleteLocationAsync(int id);
 		Task<IEnumerable<Location>> GetAllLocationsAsync();
+		Task<IEnumerable<Place>> GetPlacesByLocationIdAsync(int id);
+
+		}
 	}
-}

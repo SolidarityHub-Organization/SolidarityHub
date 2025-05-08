@@ -1,4 +1,5 @@
 using LogicPersistence.Api.Models;
+using Npgsql;
 
 namespace LogicPersistence.Api.Repositories.Interfaces;
 
@@ -9,4 +10,5 @@ public interface ILocationRepository {
 	Task<Location?> GetLocationByIdAsync(int id);
 	Task<IEnumerable<Location>> GetAllLocationsAsync();
 	Task<IEnumerable<Location>> GetLocationsByAffectedZoneIdAsync(int id);
+	Task<IEnumerable<Place>> GetPlacesByLocationIdAsync(int id);
 }
