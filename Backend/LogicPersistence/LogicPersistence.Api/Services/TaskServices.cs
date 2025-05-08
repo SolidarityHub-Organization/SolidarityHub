@@ -180,9 +180,10 @@ namespace LogicPersistence.Api.Services {
 			var victimRepository = new VictimRepository();
 			var volunteerRepository = new VolunteerRepository();
 			var affectedZoneRepository = new AffectedZoneRepository();
+			var pointRepository = new PointRepository();
 			var taskRepository = _taskRepository;
 
-			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository);
+			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository);
 			var locationServices = new LocationServices(locationRepository);
 
 			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
