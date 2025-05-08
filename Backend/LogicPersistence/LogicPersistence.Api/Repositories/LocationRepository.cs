@@ -80,7 +80,7 @@ public class LocationRepository : ILocationRepository {
 		JOIN affected_zone_location azl on azl.location_id = L.id
 		JOIN place_affected_zone paz ON az.id = paz.affected_zone_id
 		JOIN place p ON paz.place_id = p.id
-		WHERE L.id = 1";
+		WHERE L.id = @id";
 
 		return await connection.QueryAsync<Place>(sql, new { id });
 
