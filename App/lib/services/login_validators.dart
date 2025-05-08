@@ -45,8 +45,14 @@ String? validateEmailWithoutEmpty(String? value) {
   return null;
 }
 
+String? validatePasswordWithoutEmpty(String? value) {
+  if (value == null || value.isEmpty) return null;
+  if(value.isNotEmpty && value.length < 6) return 'La contraseña debe tener un mínimo de 6 caracteres';
+  return null;
+}
 
 String? validateConfirmPasswordWithoutEmpty(String? value1, String? value2){
   if(value1 != value2) return 'Las contraseñas no coinciden';
+  if(value1!.isNotEmpty && value1.length < 6) return 'La contraseña debe tener un mínimo de 6 caracteres';
   return null;
 }

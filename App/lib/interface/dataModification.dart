@@ -92,6 +92,7 @@ class _DataModificationState extends State<DataModification> {
                               labelText: 'Contraseña',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                             ),
+                            validator: validatePasswordWithoutEmpty,
                           ),
                         ),
                         Padding(
