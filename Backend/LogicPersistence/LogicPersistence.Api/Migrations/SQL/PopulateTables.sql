@@ -210,3 +210,13 @@ SET created_at = CASE
     WHEN id IN (2, 3) THEN CURRENT_TIMESTAMP - INTERVAL '2 days'
     ELSE created_at
 END;
+
+INSERT INTO "notifications" ("name", "description", "volunteer_id", "victim_id", "created_at") VALUES
+  ('Water Distribution Reminder', 'Reminder to distribute water bottles at the community center.', 1, NULL, CURRENT_TIMESTAMP),
+  ('Medical Checkup Alert', 'Alert for scheduled medical checkups at the shelter.', 2, NULL, CURRENT_TIMESTAMP),
+  ('Debris Cleanup Notification', 'Notification for debris cleanup in the affected area.', 3, NULL, CURRENT_TIMESTAMP),
+  ('Food Service Update', 'Update about food service schedules at the community center.', 4, NULL, CURRENT_TIMESTAMP),
+  ('Childcare Duty Reminder', 'Reminder for childcare duties at the shelter.', 5, NULL, CURRENT_TIMESTAMP),
+  ('Emergency Food Request', 'Request for emergency food supplies for a family.', NULL, 1, CURRENT_TIMESTAMP),
+  ('Medicine Refill Needed', 'Notification for urgent medicine refill for a victim.', NULL, 2, CURRENT_TIMESTAMP),
+  ('Temporary Shelter Request', 'Request for temporary shelter for a displaced family.', NULL, 3, CURRENT_TIMESTAMP);
