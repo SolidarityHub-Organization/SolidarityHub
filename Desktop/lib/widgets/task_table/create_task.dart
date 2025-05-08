@@ -66,7 +66,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   void initState() {
     super.initState();
     _loadData();
-    startDate = DateTime.now(); // Set default start date to current date
+    startDate = DateTime.now();
 
     if (widget.taskToEdit != null) {
       nameController.text = widget.taskToEdit!.name;
@@ -209,9 +209,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
 
     try {
-      // Encode the address for URL
       final encodedAddress = Uri.encodeComponent(address);
-      // Use Nominatim geocoding service (OpenStreetMap)
       final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
 
       final response = await http.get(url, headers: {'User-Agent': 'SolidarityHub/1.0'});
@@ -228,7 +226,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             selectedLocation = location;
             _updateLocationControllers(location);
             _updateMarker(location);
-            _mapController.move(location, 15.0); // Zoom in to the found location
+            _mapController.move(location, 15.0);
           });
         } else {
           AppSnackBar.show(
@@ -249,7 +247,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }
   }
 
-  // Función para buscar voluntarios
   List<Volunteer> _filteredVolunteers() {
     if (searchVolunteersController.text.isEmpty) {
       return volunteers;
@@ -262,7 +259,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     }).toList();
   }
 
-  // Función para buscar afectados
   List<Victim> _filteredVictim() {
     if (searchVictimController.text.isEmpty) {
       return victim;
