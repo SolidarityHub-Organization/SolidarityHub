@@ -1,25 +1,28 @@
-class AppNotification {
+class NotificationModel {
   final int id;
-  final String title;
-  final String message;
+  final String name;
+  final String description;
+  final int? volunteerId;
+  final int? victimId;
   final DateTime createdAt;
-  final int userId;
 
-  AppNotification({
+  NotificationModel({
     required this.id,
-    required this.title,
-    required this.message,
+    required this.name,
+    required this.description,
+    this.volunteerId,
+    this.victimId,
     required this.createdAt,
-    required this.userId,
   });
 
-  factory AppNotification.fromJson(Map<String, dynamic> json) {
-    return AppNotification(
+  factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    return NotificationModel(
       id: json['id'],
-      title: json['title'],
-      message: json['message'],
+      name: json['name'],
+      description: json['description'],
+      volunteerId: json['volunteer_id'],
+      victimId: json['victim_id'],
       createdAt: DateTime.parse(json['created_at']),
-      userId: json['user_id'],
     );
   }
 }
