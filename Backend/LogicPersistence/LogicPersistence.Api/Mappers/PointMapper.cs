@@ -12,7 +12,8 @@ public static class PointMapper
             description = pickupPointCreateDto.description,
             created_at = pickupPointCreateDto.created_at,
             time_id = pickupPointCreateDto.time_id,
-            location_id = pickupPointCreateDto.location_id
+            location_id = pickupPointCreateDto.location_id,
+            admin_id = pickupPointCreateDto.admin_id
         };
     }
 
@@ -25,7 +26,8 @@ public static class PointMapper
                 description = pickupPointUpdateDto.description,
                 created_at = pickupPointUpdateDto.created_at,
                 time_id = pickupPointUpdateDto.time_id,
-                location_id = pickupPointUpdateDto.location_id
+                location_id = pickupPointUpdateDto.location_id,
+                admin_id = pickupPointUpdateDto.admin_id
             };
         }
 
@@ -38,7 +40,8 @@ public static class PointMapper
                 description = meetingPointCreateDto.description,
                 created_at = meetingPointCreateDto.created_at,
                 time_id = meetingPointCreateDto.time_id,
-                location_id = meetingPointCreateDto.location_id
+                location_id = meetingPointCreateDto.location_id,
+                admin_id = meetingPointCreateDto.admin_id
             };
         }
 
@@ -50,7 +53,8 @@ public static class PointMapper
                 description = meetingPointUpdateDto.description,
                 created_at = meetingPointUpdateDto.created_at,
                 time_id = meetingPointUpdateDto.time_id,
-                location_id = meetingPointUpdateDto.location_id
+                location_id = meetingPointUpdateDto.location_id,
+                admin_id = meetingPointUpdateDto.admin_id
             };
         }
 
@@ -62,7 +66,8 @@ public static class PointMapper
                 description = pickupPoint.description,
                 created_at = pickupPoint.created_at,
                 time_id = pickupPoint.time_id,
-                location_id = pickupPoint.location_id
+                location_id = pickupPoint.location_id,
+                admin_id = pickupPoint.admin_id
             };
         }
         public static MeetingPointDisplayDto ToMeetingPointDisplayDto(this MeetingPoint meetingPoint) 
@@ -73,7 +78,8 @@ public static class PointMapper
                 description = meetingPoint.description,
                 created_at = meetingPoint.created_at,
                 time_id = meetingPoint.time_id,
-                location_id = meetingPoint.location_id
+                location_id = meetingPoint.location_id,
+                admin_id = meetingPoint.admin_id
             };
         }
 }

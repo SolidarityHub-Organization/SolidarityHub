@@ -51,3 +51,16 @@ public class VolunteerTime : Time {
 
 	//public virtual Volunteer Volunteer { get; set; }
 }
+
+public class PointTime : Time {
+	public DateOnly start_date { get; set; }
+	public DateOnly? end_date { get; set; }
+
+	// FKs
+	public int point_id { get; set; }
+
+
+	// Navigation properties
+
+	//public virtual Point Point { get; set; }
+}

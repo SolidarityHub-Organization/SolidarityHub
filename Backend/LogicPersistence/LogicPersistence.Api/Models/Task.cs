@@ -8,6 +8,7 @@ public class Task {
 
     public DateTime created_at { get; set; } 
 
+	// should have time_id instead of start_date and end_date
 	public DateTime start_date { get; set; }
 	public DateTime? end_date { get; set; }
     
