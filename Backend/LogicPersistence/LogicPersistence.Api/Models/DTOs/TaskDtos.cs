@@ -100,3 +100,8 @@ public class TaskForDashboardDto
     public DateTime start_date { get; set; }
     public DateTime? end_date { get; set; }
 }
+
+public class UpdateTaskStateDto
+{
+    public string state { get; set; } = string.Empty;
+}

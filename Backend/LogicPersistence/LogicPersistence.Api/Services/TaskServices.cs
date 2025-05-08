@@ -210,6 +210,33 @@ namespace LogicPersistence.Api.Services {
 			}
 			return tasks;
 		}
+
+		public Task<IEnumerable<Models.Task>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
+			var tasks = _taskRepository.GetPendingTasksAssignedToVolunteerAsync(volunteerId);
+			if (tasks == null) {
+				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
+			}
+			return tasks;
+		}
+
+		public Task<IEnumerable<Models.Task>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
+			var tasks = _taskRepository.GetAssignedTasksAssignedToVolunteerAsync(volunteerId);
+			if (tasks == null) {
+				throw new InvalidOperationException($"Failed to retrieve tasks assigned to volunteer with id {volunteerId}.");
+			}
+			return tasks;
+		}
+
+		public Task<Models.Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, UpdateTaskStateDto updateTaskStateDto) {
+			if (updateTaskStateDto == null) {
+				throw new ArgumentNullException(nameof(updateTaskStateDto));
+			}
+			var task = _taskRepository.UpdateTaskStateForVolunteerAsync(volunteerId, taskId, updateTaskStateDto.state);
+			if (task == null) {
+				throw new InvalidOperationException($"Failed to update task state for volunteer with id {volunteerId} and task with id {taskId}.");
+			}
+			return task;
+		}
 		#endregion
 	}
 }

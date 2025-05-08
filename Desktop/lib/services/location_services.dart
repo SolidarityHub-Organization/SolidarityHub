@@ -39,6 +39,7 @@ class LocationServices {
               'latitude': location['latitude'],
               'longitude': location['longitude'],
               'type': location['type'],
+              'urgencyLevel': location['urgency_level'],
             };
           }).toList();
     }
@@ -61,6 +62,7 @@ class LocationServices {
               'latitude': location['latitude'],
               'longitude': location['longitude'],
               'type': location['type'],
+              'state': location['state']?.toString(),
             };
           }).toList();
     }

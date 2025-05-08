@@ -14,7 +14,7 @@ class VolunteerMarkerCreator implements MapMarkerCreator {
         onTap: () {
           onMarkerTap(mapMarker);
         },
-        child: const Icon(Icons.location_pin, color: Colors.green, size: 40),
+        child: const Icon(Icons.location_pin, color: Color.fromARGB(255, 255, 79, 135), size: 40),
       ),
     );
   }

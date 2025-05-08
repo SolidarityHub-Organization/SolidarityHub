@@ -28,3 +28,31 @@ String? validatePhone(String? value){
   }
   return null;
 }
+
+String? validatePhoneWithoutEmpty(String? value){
+  if(validateIsEmpty(value) != null) return null;
+  else{
+  final RegExp phoneRegex = RegExp(r'^[0-9]$');
+    if(!phoneRegex.hasMatch(value!)){
+      return 'Introduce un número válido de 9 dígitos';
+    }
+  }
+  return null;
+}
+String? validateEmailWithoutEmpty(String? value) {
+  if (value == null || value.isEmpty) return null;
+  if (!value.contains('@')) return 'Introduce un email válido';
+  return null;
+}
+
+String? validatePasswordWithoutEmpty(String? value) {
+  if (value == null || value.isEmpty) return null;
+  if(value.isNotEmpty && value.length < 6) return 'La contraseña debe tener un mínimo de 6 caracteres';
+  return null;
+}
+
+String? validateConfirmPasswordWithoutEmpty(String? value1, String? value2){
+  if(value1 != value2) return 'Las contraseñas no coinciden';
+  if(value1!.isNotEmpty && value1.length < 6) return 'La contraseña debe tener un mínimo de 6 caracteres';
+  return null;
+}

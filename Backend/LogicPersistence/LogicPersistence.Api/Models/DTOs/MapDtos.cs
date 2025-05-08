@@ -11,12 +11,27 @@ public class MapMarkerDTO
     public double longitude { get; set; }
 }
 
-public class VictimMapMarkerDTO : MapMarkerDTO {}
+public class VictimMapMarkerDTO : MapMarkerDTO 
+{
+    public string urgency_level { get; set; } = string.Empty;
+}
 
 public class VolunteerMapMarkerDTO : MapMarkerDTO {}
 
 public class TaskMapMarkerDTO : MapMarkerDTO
 {
-    public string urgency_level { get; set; } = string.Empty;
+    public string state { get; set; } = string.Empty;
     public ICollection<Volunteer> assigned_volunteers { get; set; } = new List<Volunteer>();
+}
+
+public class PickupPointMapMarkerDTO : MapMarkerDTO 
+{
+    public Time time { get; set; } 
+    public List<PhysicalDonation> physical_donation { get; set; } = new List<PhysicalDonation>();
+}
+
+public class MeetingPointMapMarkerDTO : MapMarkerDTO 
+{
+    public Time time { get; set; } 
+    public List<Volunteer> attending_volunteers { get; set; } = new List<Volunteer>();
 }

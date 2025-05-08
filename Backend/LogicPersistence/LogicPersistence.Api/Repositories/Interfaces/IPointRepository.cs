@@ -13,12 +13,14 @@ namespace LogicPersistence.Api.Repositories.Interfaces
         Task<PickupPoint> UpdatePickupPointAsync(PickupPoint pickupPoint);
         Task<PickupPoint?> GetPickupPointByIdAsync(int id);
         Task<IEnumerable<PickupPoint>> GetAllPickupPointsAsync();
+        Task<IEnumerable<PhysicalDonation>> GetPhysicalDonationsByPickupPointIdAsync(int id);
 #endregion
 #region MeetingPoint
         Task<MeetingPoint> CreateMeetingPointAsync(MeetingPoint meetingPoint);
         Task<MeetingPoint> UpdateMeetingPointAsync(MeetingPoint meetingPoint);
         Task<MeetingPoint?> GetMeetingPointByIdAsync(int id);
         Task<IEnumerable<MeetingPoint>> GetAllMeetingPointsAsync();
+        Task<IEnumerable<Volunteer>> GetVolunteersByMeetingPointIdAsync(int id);
 #endregion
     }
 }

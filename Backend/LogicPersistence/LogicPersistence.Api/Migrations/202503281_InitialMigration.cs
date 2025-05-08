@@ -125,9 +125,9 @@ public class InitialMigration : Migration {
 			.WithColumn("quantity").AsInt32().NotNullable()
 			.WithColumn("item_type").AsCustom("item_type").NotNullable()
 			.WithColumn("donation_date").AsDateTime().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Volunteer", "volunteer", "id")
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Volunteer", "volunteer", "id").OnDelete(Rule.SetNull)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Admin", "admin", "id")
-			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Victim", "victim", "id")
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_PhysicalDonation_Victim", "victim", "id").OnDelete(Rule.SetNull)
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Execute.Sql("ALTER TABLE physical_donation ADD CONSTRAINT CK_physical_donation_quantity CHECK (quantity > 0);");
 
@@ -139,9 +139,9 @@ public class InitialMigration : Migration {
 			.WithColumn("transaction_id").AsString(255).NotNullable()
 			.WithColumn("payment_service").AsCustom("payment_service").NotNullable()
 			.WithColumn("donation_date").AsDateTime().NotNullable()
-			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Volunteer", "volunteer", "id")
+			.WithColumn("volunteer_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Volunteer", "volunteer", "id").OnDelete(Rule.SetNull)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Admin", "admin", "id")
-			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Victim", "victim", "id")
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_MonetaryDonation_Victim", "victim", "id").OnDelete(Rule.SetNull)
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 		Execute.Sql("ALTER TABLE monetary_donation ADD CONSTRAINT CK_monetary_donation_amount CHECK (amount > 0);");
 
@@ -173,7 +173,7 @@ public class InitialMigration : Migration {
 			.WithColumn("name").AsString(255).NotNullable()
 			.WithColumn("description").AsString(1000).NotNullable()
 			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable()
-			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_Need_Victim", "victim", "id")
+			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_Need_Victim", "victim", "id").OnDelete(Rule.Cascade)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Need_Admin", "admin", "id")
 			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
 

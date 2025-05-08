@@ -26,6 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   bool _isHeatMapActive = false;
   bool _isRoutesActive = false;
   final Set<MapViewMode> _selectedModes = {};
+  //MapViewMode _currentMode = MapViewMode.victim;
 
   final MapController _mapController = MapController();
 
@@ -172,7 +173,7 @@ class _MapScreenState extends State<MapScreen> {
                             isSelected: _selectedModes.contains(MapViewMode.victim),
                             onPressed: () => _toggleViewMode(MapViewMode.victim),
                             icon: Icons.people,
-                            color: Color.fromARGB(255, 43, 210, 252),
+                            color: Colors.red,
                           ),
                           SizedBox(height: 8),
                           _buildFilterButton(
@@ -180,7 +181,7 @@ class _MapScreenState extends State<MapScreen> {
                             isSelected: _selectedModes.contains(MapViewMode.volunteer),
                             onPressed: () => _toggleViewMode(MapViewMode.volunteer),
                             icon: Icons.volunteer_activism,
-                            color: Colors.green,
+                            color: Color.fromARGB(255, 255, 79, 135),
                           ),
                           SizedBox(height: 8),
                           _buildFilterButton(
@@ -248,10 +249,93 @@ class _MapScreenState extends State<MapScreen> {
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
                               ),
                               SizedBox(height: 8),
-                              _buildLegendItem("Bajo", Color(0xFF008B8A)),
-                              _buildLegendItem("Medio", Color(0xFFFF9600)),
-                              _buildLegendItem("Alto", Color(0xFFE21C1C)),
-                              _buildLegendItem("Crítico", Color(0xFF460707)),
+                              _buildLegendHeat("Bajo", Color(0xFF008B8A)),
+                              _buildLegendHeat("Medio", Color(0xFFFF9600)),
+                              _buildLegendHeat("Alto", Color(0xFFE21C1C)),
+                              _buildLegendHeat("Crítico", Color(0xFF460707)),
+                            ],
+                          ),
+                        ),
+                      ),
+                       // Leyenda de colores para marcadores de afectados
+                      if (_selectedModes.contains(MapViewMode.victim) /*|| _currentMode == MapViewMode.all*/)
+                      Positioned(
+                        bottom: 16,
+                        right: 16, // Mantener en la derecha
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Text(
+                                  "Urgencia Afectados",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                              ),
+                              _buildLegendItem(Colors.grey, "Desconocido"),
+                              _buildLegendItem(Colors.green, "Bajo"),
+                              _buildLegendItem(Colors.orange, "Medio"),
+                              _buildLegendItem(Color.fromARGB(255, 255, 0, 0), "Alto"),
+                              _buildLegendItem(Color.fromARGB(255, 139, 0, 0), "Crítico"),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Leyenda de colores e iconos para tareas
+                    if (_selectedModes.contains(MapViewMode.task) /*|| _currentMode == MapViewMode.all*/)
+                      Positioned(
+                        //bottom: (_currentMode == MapViewMode.all) ? 250 : 16,
+                        right: 16, // Mantener en la derecha
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Text(
+                                  "Estado de Tareas",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                              ),
+                              _buildTaskLegendItem(
+                                icon: Icons.assignment_turned_in_rounded,
+                                color: Colors.green,
+                                label: "Completado",
+                              ),
+                              _buildTaskLegendItem(
+                                icon: Icons.assignment_outlined,
+                                color: Colors.orange,
+                                label: "Asignado",
+                              ),
+                              _buildTaskLegendItem(
+                                icon: Icons.assignment_return_rounded,
+                                color: Colors.blue,
+                                label: "Pendiente",
+                              ),
+                              _buildTaskLegendItem(
+                                icon: Icons.assignment_late_outlined,
+                                color: Colors.red,
+                                label: "Cancelado",
+                              ),
                             ],
                           ),
                         ),
@@ -364,9 +448,35 @@ class _MapScreenState extends State<MapScreen> {
       _selectedMarker = marker;
     });
   }
+
+  // Widget para construir un elemento de la leyenda
+  Widget _buildLegendItem(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_pin, color: color, size: 24),
+          SizedBox(width: 8),
+          Text(label, style: TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  // Widget para construir un elemento de la leyenda de tareas
+  Widget _buildTaskLegendItem({required IconData icon, required Color color, required String label}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [Icon(icon, color: color, size: 24), SizedBox(width: 8), Text(label, style: TextStyle(fontSize: 12))],
+      ),
+    );
+  }
 }
 
-Widget _buildLegendItem(String label, Color color) {
+Widget _buildLegendHeat(String label, Color color) {
   return Row(
     children: [
       Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
