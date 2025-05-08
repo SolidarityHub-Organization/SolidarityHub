@@ -27,13 +27,7 @@ class TaskServices {
       'location': {'latitude': latitude, 'longitude': longitude},
     };
 
-    final validationHandler = ValidationHandler();
-    final locationHandler = LocationHandler();
-    final persistenceHandler = PersistenceHandler();
-
-    validationHandler.setNext(locationHandler).setNext(persistenceHandler);
-
-    return await validationHandler.handle(taskData);
+    return await processTaskRequest(taskData);
   }
 
   static Future<void> updateTask(TaskWithDetails task) async {
