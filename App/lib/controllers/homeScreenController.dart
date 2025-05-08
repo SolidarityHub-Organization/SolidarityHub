@@ -20,4 +20,8 @@ class HomeScreenController {
       Navigator.pushNamed(context, '/login');
     };
   }
+
+  void onVerNotificacionesPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/notificationScreen');
+  }
 }
