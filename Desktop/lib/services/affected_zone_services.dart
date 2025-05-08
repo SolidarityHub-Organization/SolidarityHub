@@ -6,7 +6,7 @@ class AffectedZoneServices {
   AffectedZoneServices(this.baseUrl);
 
   static Future<List<Map<String, dynamic>>> fetchAffectedZones() async {
-    final response = await ApiServices.get('map/affected-zones-with-points');
+    final response = await ApiServices.get('heatmap/mostrar');
     List<Map<String, dynamic>> affectedZones = [];
 
     if (response.statusCode.ok) {

@@ -1,8 +1,11 @@
 using DotNetEnv;
 using FluentMigrator.Runner;
+using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services;
+
+
 
 public static class DatabaseConfiguration {
 	public static string GetConnectionString() {
@@ -116,6 +119,8 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IDashboardServices, DashboardServices>();
 		builder.Services.AddScoped<IPointServices, PointServices>();
 		builder.Services.AddScoped<IPointRepository, PointRepository>();
-	}
+		builder.Services.AddScoped<IMapStrategy<AffectedZoneWithPointsDTO>, HeatMapStrategy>();
+		builder.Services.AddScoped<StrategyContext<AffectedZoneWithPointsDTO>>();
 
+	}
 }

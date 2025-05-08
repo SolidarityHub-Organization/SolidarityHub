@@ -13,7 +13,6 @@ namespace LogicPersistence.Api.Services {
 		private readonly IVolunteerRepository _volunteerRepository;
         private readonly IAffectedZoneRepository _affectedZoneRepository;
         private readonly ITaskRepository _taskRepository;
-
         private readonly IPointRepository _pointRepository;
 
         public MapServices(ILocationRepository locationRepository, IVictimRepository victimRepository, IVolunteerRepository volunteerRepository, IAffectedZoneRepository affectedZoneRepository, ITaskRepository taskRepository, IPointRepository pointRepository) {
