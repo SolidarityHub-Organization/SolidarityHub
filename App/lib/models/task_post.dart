@@ -1,3 +1,5 @@
+import '../services/coordinates_services.dart';
+
 class Task {
   final int id;
   final String name;
@@ -7,6 +9,7 @@ class Task {
   final DateTime? endDate;
   final int adminId;
   final int locationId;
+  final String location;
 
   Task({
     required this.id,
@@ -17,6 +20,7 @@ class Task {
     this.endDate,
     required this.adminId,
     required this.locationId,
+    required this.location,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,7 @@ class Task {
       endDate: json['end_date'] != null ? DateTime.parse(json['end_date']) : null,
       adminId: json['admin_id'],
       locationId: json['location_id'],
+      location: CoordinatesServices.getAddressFromLatLon(json['latitude'], json['longitude']).toString(),
     );
   }
 }
