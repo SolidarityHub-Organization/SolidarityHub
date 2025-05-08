@@ -6,11 +6,8 @@ import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquar
 import 'package:solidarityhub/services/affected_zone_services.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/affectedZone.dart';
-import 'package:solidarityhub/services/location_services.dart';
 import 'factoryMethod_Markers/markerFactory.dart';
-import 'dart:math' as math;
 import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
-import 'package:flutter/gestures.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -19,18 +16,15 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-enum MapViewMode { victim, volunteer, task}
+enum MapViewMode { victim, volunteer, task, all }
 
 final String baseUrl = 'http://localhost:5170';
 
 class _MapScreenState extends State<MapScreen> {
-  final List<MapMarker> _mapMarkers = [];
+  List<MapMarker> _mapMarkers = [];
   List<Polygon> _polygons = [];
+  MapViewMode _currentMode = MapViewMode.all;
   MapMarker? _selectedMarker;
-  bool _isHeatMapActive = false;
-  bool _isRoutesActive = false;
-  final Set<MapViewMode> _selectedModes = {};
-  //MapViewMode _currentMode = MapViewMode.victim;
 
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
@@ -64,16 +58,6 @@ class _MapScreenState extends State<MapScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener ubicaciones: $e')));
       print(e);
     }
-  }
-
-  void _toggleViewMode(MapViewMode mode) {
-    setState(() {
-      if (_selectedModes.contains(mode)) {
-        _selectedModes.remove(mode); // Deselecciona
-      } else {
-        _selectedModes.add(mode); // Selecciona
-      }
-    });
   }
 
   Future<void> _fetchAffectedZones() async {
@@ -118,14 +102,18 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     // Filtramos los marcadores según el modo seleccionado
-    Padding(padding: const EdgeInsets.all(8.0));
     List<MapMarker> filteredMarkers =
         _mapMarkers.where((marker) {
-          // Filtro múltiple según los modos seleccionados
-          if (_selectedModes.contains(MapViewMode.victim) && marker.type == 'victim') return true;
-          if (_selectedModes.contains(MapViewMode.volunteer) && marker.type == 'volunteer') return true;
-          if (_selectedModes.contains(MapViewMode.task) && marker.type == 'task') return true;
-          return false;
+          switch (_currentMode) {
+            case MapViewMode.all:
+              return true; // Mostrar todos los marcadores
+            case MapViewMode.victim:
+              return marker.type == 'victim'; // Solo mostrar víctimas
+            case MapViewMode.volunteer:
+              return marker.type == 'volunteer'; // Solo mostrar voluntarios
+            case MapViewMode.task:
+              return marker.type == 'task'; // Solo mostrar tareas
+          }
         }).toList();
 
     // Usamos los marcadores filtrados para crear los Marker de flutter_map
@@ -421,6 +409,14 @@ class _MapScreenState extends State<MapScreen> {
         },
       ),
     );
+  }
+
+  void _setViewMode(MapViewMode mode) {
+    setState(() {
+      _currentMode = mode;
+      // Cuando cambiamos el modo, limpiamos el marcador seleccionado
+      _selectedMarker = null;
+    });
   }
 
   Widget _buildFilterButton({
