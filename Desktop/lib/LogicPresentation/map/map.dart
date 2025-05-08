@@ -48,6 +48,7 @@ class _MapScreenState extends State<MapScreen> {
   void dispose() {
     _searchController.dispose();
     _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
