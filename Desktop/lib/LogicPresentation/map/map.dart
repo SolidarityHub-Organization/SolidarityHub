@@ -15,15 +15,17 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-enum MapViewMode { victim, volunteer, task, all }
+enum MapViewMode { victim, volunteer, task}
 
 final String baseUrl = 'http://localhost:5170';
 
 class _MapScreenState extends State<MapScreen> {
-  List<MapMarker> _mapMarkers = [];
+  final List<MapMarker> _mapMarkers = [];
   List<Polygon> _polygons = [];
-  MapViewMode _currentMode = MapViewMode.all;
   MapMarker? _selectedMarker;
+  bool _isHeatMapActive = false;
+  bool _isRoutesActive = false;
+  final Set<MapViewMode> _selectedModes = {};
 
   final MapController _mapController = MapController();
 
@@ -46,6 +48,16 @@ class _MapScreenState extends State<MapScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener ubicaciones: $e')));
       print(e);
     }
+  }
+
+  void _toggleViewMode(MapViewMode mode) {
+    setState(() {
+      if (_selectedModes.contains(mode)) {
+        _selectedModes.remove(mode); // Deselecciona
+      } else {
+        _selectedModes.add(mode); // Selecciona
+      }
+    });
   }
 
   Future<void> _fetchAffectedZones() async {
@@ -90,18 +102,14 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     // Filtramos los marcadores según el modo seleccionado
+    Padding(padding: const EdgeInsets.all(8.0));
     List<MapMarker> filteredMarkers =
         _mapMarkers.where((marker) {
-          switch (_currentMode) {
-            case MapViewMode.all:
-              return true; // Mostrar todos los marcadores
-            case MapViewMode.victim:
-              return marker.type == 'victim'; // Solo mostrar víctimas
-            case MapViewMode.volunteer:
-              return marker.type == 'volunteer'; // Solo mostrar voluntarios
-            case MapViewMode.task:
-              return marker.type == 'task'; // Solo mostrar tareas
-          }
+          // Filtro múltiple según los modos seleccionados
+          if (_selectedModes.contains(MapViewMode.victim) && marker.type == 'victim') return true;
+          if (_selectedModes.contains(MapViewMode.volunteer) && marker.type == 'volunteer') return true;
+          if (_selectedModes.contains(MapViewMode.task) && marker.type == 'task') return true;
+          return false;
         }).toList();
 
     // Usamos los marcadores filtrados para crear los Marker de flutter_map
@@ -148,8 +156,8 @@ class _MapScreenState extends State<MapScreen> {
                           subdomains: ['a', 'b', 'c', 'd'],
                           retinaMode: RetinaMode.isHighDensity(context),
                         ),
-                        PolygonLayer(polygons: _polygons),
                         MarkerLayer(markers: flutterMapMarkers),
+                        PolygonLayer(polygons: _isHeatMapActive ? _polygons : []),
                       ],
                     ),
                     // Botones de filtrado en la esquina superior izquierda
@@ -158,39 +166,96 @@ class _MapScreenState extends State<MapScreen> {
                       left: 16, // Cambiado de right a left para ubicarlos a la izquierda
                       child: Column(
                         children: [
-                          _buildFilterButton(
-                            label: 'Todos',
-                            isSelected: _currentMode == MapViewMode.all,
-                            onPressed: () => _setViewMode(MapViewMode.all),
-                            icon: Icons.map,
-                          ),
                           SizedBox(height: 8),
                           _buildFilterButton(
                             label: 'Afectados',
-                            isSelected: _currentMode == MapViewMode.victim,
-                            onPressed: () => _setViewMode(MapViewMode.victim),
+                            isSelected: _selectedModes.contains(MapViewMode.victim),
+                            onPressed: () => _toggleViewMode(MapViewMode.victim),
                             icon: Icons.people,
                             color: Color.fromARGB(255, 43, 210, 252),
                           ),
                           SizedBox(height: 8),
                           _buildFilterButton(
                             label: 'Voluntarios',
-                            isSelected: _currentMode == MapViewMode.volunteer,
-                            onPressed: () => _setViewMode(MapViewMode.volunteer),
+                            isSelected: _selectedModes.contains(MapViewMode.volunteer),
+                            onPressed: () => _toggleViewMode(MapViewMode.volunteer),
                             icon: Icons.volunteer_activism,
                             color: Colors.green,
                           ),
                           SizedBox(height: 8),
                           _buildFilterButton(
                             label: 'Tareas',
-                            isSelected: _currentMode == MapViewMode.task,
-                            onPressed: () => _setViewMode(MapViewMode.task),
+                            isSelected: _selectedModes.contains(MapViewMode.task),
+                            onPressed: () => _toggleViewMode(MapViewMode.task),
                             icon: Icons.task,
                             color: Colors.orange,
                           ),
                         ],
                       ),
                     ),
+                    // Botón en la parte inferior izquierda
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      child: Row(
+                        children: [
+                          FloatingActionButton.extended(
+                            onPressed: () { 
+                              setState(() {
+                                _isHeatMapActive = !_isHeatMapActive;
+                                if (_isHeatMapActive) { _isRoutesActive = false;}
+                              });
+                            },
+                            backgroundColor: Colors.red,
+                            label: Text(
+                              _isHeatMapActive ? "Desactivar mapa de calor" : "Mapa de calor",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(height: 16, width: 16), // Espacio entre los botones
+                          FloatingActionButton.extended(
+                            onPressed: () {
+                              setState(() {
+                                _isRoutesActive = !_isRoutesActive;
+                                if (_isRoutesActive) {_isHeatMapActive = false; }
+                              });
+                            },
+                            backgroundColor: Colors.red,
+                            label: Text(
+                              _isRoutesActive ? "Desactivar mapa de rutas" : "Mapa de rutas",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (_isHeatMapActive)
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Leyenda mapa de calor",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                              ),
+                              SizedBox(height: 8),
+                              _buildLegendItem("Bajo", Color(0xFF008B8A)),
+                              _buildLegendItem("Medio", Color(0xFFFF9600)),
+                              _buildLegendItem("Alto", Color(0xFFE21C1C)),
+                              _buildLegendItem("Crítico", Color(0xFF460707)),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -255,14 +320,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _setViewMode(MapViewMode mode) {
-    setState(() {
-      _currentMode = mode;
-      // Cuando cambiamos el modo, limpiamos el marcador seleccionado
-      _selectedMarker = null;
-    });
-  }
-
   Widget _buildFilterButton({
     required String label,
     required bool isSelected,
@@ -307,4 +364,14 @@ class _MapScreenState extends State<MapScreen> {
       _selectedMarker = marker;
     });
   }
+}
+
+Widget _buildLegendItem(String label, Color color) {
+  return Row(
+    children: [
+      Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
+      SizedBox(width: 8),
+      Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
+    ],
+  );
 }
