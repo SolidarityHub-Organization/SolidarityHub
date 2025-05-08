@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/button_creator.dart';
 import '../controllers/homeScreenController.dart';
+import 'notificationScreen.dart';
 
 class HomeScreenAfectado extends StatelessWidget {
   final String userName;
@@ -33,6 +34,31 @@ class HomeScreenAfectado extends StatelessWidget {
 
 
             // Contenedor blanco centrado
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, right: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(id: id),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                    backgroundColor: Colors.red,
+                    elevation: 4,
+                    shadowColor: Colors.black26,
+                  ),
+                  child: const Icon(Icons.mail_outline, color: Colors.white, size: 24),
+                ),
+              ),
+            ),
+
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -93,30 +119,6 @@ class HomeScreenAfectado extends StatelessWidget {
                       ],
                     ),
 
-                    // Icono de mensaje
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 22,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(8),
-                          child: Icon(Icons.mail_outline, color: Colors.white),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:app/interface/ajustes.dart';
 import 'package:flutter/material.dart';
+import '../interface/availableTasks.dart';
 
 class HomeScreenController {
 
@@ -11,8 +12,12 @@ class HomeScreenController {
     };
   }
 
-  void onVerTareasPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/tareas');
+  VoidCallback onVerTareasPressed(BuildContext context, int id) {
+    return () {
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AvailableTasksScreen(id: id),),
+      );
+    };
   }
 
   VoidCallback onCerrarSesionPressed(BuildContext context) {

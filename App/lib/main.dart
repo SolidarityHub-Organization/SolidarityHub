@@ -1,4 +1,5 @@
 import 'package:app/interface/ajustes.dart';
+import 'package:app/interface/availableTasks.dart';
 import 'package:app/interface/dataModification.dart';
 import 'package:app/interface/homeScreenVoluntario.dart';
 import 'package:app/interface/logoScreen.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/dataModification': (context) => DataModification(id:id, role: role),
         '/taskListScreen': (context) => TaskListScreen(id: id),
         '/notificationScreen': (context) => NotificationScreen(id: id),
+        '/availableTasksScreen': (context) => AvailableTasksScreen(id: id),
       }
     );
   }
