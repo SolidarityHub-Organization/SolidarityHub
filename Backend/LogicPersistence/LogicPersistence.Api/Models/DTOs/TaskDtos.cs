@@ -114,7 +114,7 @@ public class TaskWithLocationInfoDto {
 	public int? admin_id { get; set; }
 	public int location_id { get; set; }
 
-	public int latitude;
+	public double latitude;
 
-	public int longitude;
+	public double longitude;
 }
