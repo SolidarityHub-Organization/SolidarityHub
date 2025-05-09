@@ -1,4 +1,6 @@
 import 'package:solidarityhub/models/victim.dart';
+import 'package:solidarityhub/models/volunteer.dart';
+import 'package:solidarityhub/models/skill.dart';
 
 enum PhysicalDonationType { Other, Food, Tools, Clothes, Medicine, Furniture }
 
@@ -7,22 +9,6 @@ enum Currency { Other, USD, EUR }
 enum PaymentStatus { Pending, Completed, Failed, Refunded }
 
 enum PaymentService { Other, PayPal, BankTransfer, CreditCard }
-
-class Volunteer {
-  final int id;
-  final String name;
-  final String surname;
-
-  Volunteer({required this.id, required this.name, required this.surname});
-
-  factory Volunteer.fromJson(Map<String, dynamic> json) {
-    return Volunteer(
-      id: json['id'] ?? 0,
-      name: json['volunteer_name'] ?? json['name'] ?? '',
-      surname: json['volunteer_surname'] ?? json['surname'] ?? '',
-    );
-  }
-}
 
 class MonetaryDonation {
   final int id;
@@ -57,25 +43,32 @@ class MonetaryDonation {
       transactionId: json['transaction_id']?.toString() ?? '',
       assignedVictim:
           json['victim_id'] != null
-              ? Victim.fromJson({
-                'id': json['victim_id'],
-                'name': json['victim_name'] ?? '',
-                'surname': json['victim_surname'] ?? '',
-                'email': json['victim_email'] ?? '',
-                'prefix': json['victim_prefix'] ?? 0,
-                'phone_number': json['victim_phone_number'] ?? '',
-                'address': json['victim_address'] ?? '',
-                'identification': json['victim_identification'] ?? '',
-                'location_id': json['victim_location_id'] ?? 0,
-              })
+              ? Victim(
+                id: json['victim_id'],
+                email: json['victim_email'] ?? '',
+                name: json['victim_name'] ?? '',
+                surname: json['victim_surname'] ?? '',
+                prefix: json['victim_prefix'] ?? 0,
+                phoneNumber: json['victim_phone_number'] ?? '',
+                address: json['victim_address'] ?? '',
+                identification: json['victim_identification'] ?? '',
+                locationId: json['victim_location_id'] ?? 0,
+              )
               : null,
       volunteer:
           (json['volunteer_id'] != null || json['volunteer_name'] != null)
-              ? Volunteer(
-                id: json['volunteer_id'] ?? 0,
-                name: json['volunteer_name'] ?? '',
-                surname: json['volunteer_surname'] ?? '',
-              )
+              ? Volunteer.fromJson({
+                'id': json['volunteer_id'] ?? 0,
+                'name': json['volunteer_name']?.toString() ?? '',
+                'surname': json['volunteer_surname']?.toString() ?? '',
+                'email': json['volunteer_email']?.toString() ?? '',
+                'prefix': json['volunteer_prefix'] ?? 0,
+                'phone_number': json['volunteer_phone_number']?.toString() ?? '',
+                'address': json['volunteer_address']?.toString() ?? '',
+                'identification': json['volunteer_identification']?.toString() ?? '',
+                'location_id': json['volunteer_location_id'] ?? 0,
+                'skills': json['volunteer_skills'] is List ? json['volunteer_skills'] : [],
+              })
               : null,
       donationDate: json['donation_date'] != null ? DateTime.parse(json['donation_date']) : DateTime.now(),
     );
@@ -193,25 +186,32 @@ class Donation {
       distributed: distributed,
       assignedVictim:
           victimId != null
-              ? Victim.fromJson({
-                'id': victimId,
-                'name': json['victim_name']?.toString() ?? '',
-                'surname': json['victim_surname']?.toString() ?? '',
-                'email': json['victim_email']?.toString() ?? '',
-                'prefix': json['victim_prefix']?.toInt() ?? 0,
-                'phone_number': json['victim_phone_number']?.toString() ?? '',
-                'address': json['victim_address']?.toString() ?? '',
-                'identification': json['victim_identification']?.toString() ?? '',
-                'location_id': json['victim_location_id']?.toInt() ?? 0,
-              })
+              ? Victim(
+                id: victimId,
+                email: json['victim_email']?.toString() ?? '',
+                name: json['victim_name']?.toString() ?? '',
+                surname: json['victim_surname']?.toString() ?? '',
+                prefix: json['victim_prefix'] ?? 0,
+                phoneNumber: json['victim_phone_number']?.toString() ?? '',
+                address: json['victim_address']?.toString() ?? '',
+                identification: json['victim_identification']?.toString() ?? '',
+                locationId: json['victim_location_id'] ?? 0,
+              )
               : null,
       volunteer:
           (volunteerId != null || json['volunteer_name'] != null)
-              ? Volunteer(
-                id: volunteerId ?? 0,
-                name: json['volunteer_name']?.toString() ?? '',
-                surname: json['volunteer_surname']?.toString() ?? '',
-              )
+              ? Volunteer.fromJson({
+                'id': volunteerId ?? 0,
+                'name': json['volunteer_name']?.toString() ?? '',
+                'surname': json['volunteer_surname']?.toString() ?? '',
+                'email': json['volunteer_email']?.toString() ?? '',
+                'prefix': json['volunteer_prefix'] ?? 0,
+                'phone_number': json['volunteer_phone_number']?.toString() ?? '',
+                'address': json['volunteer_address']?.toString() ?? '',
+                'identification': json['volunteer_identification']?.toString() ?? '',
+                'location_id': json['volunteer_location_id'] ?? 0,
+                'skills': json['volunteer_skills'] is List ? json['volunteer_skills'] : [],
+              })
               : null,
       donationDate: json['donation_date'] != null ? DateTime.parse(json['donation_date']) : DateTime.now(),
     );
@@ -233,5 +233,19 @@ class Donation {
     }
 
     return PhysicalDonationType.Other;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'item_name': itemName,
+      'description': description,
+      'item_type': category.name,
+      'quantity': donated,
+      'distributed': distributed,
+      'victim_id': assignedVictim?.id,
+      'volunteer_id': volunteer?.id,
+      'donation_date': donationDate.toIso8601String(),
+    };
   }
 }

@@ -22,9 +22,7 @@ class AffectedZone {
       description: json['description'],
       hazardLevel: json['hazard_level'],
       adminId: json['admin_id'],
-      points: (json['points'] as List)
-          .map((point) => Point.fromJson(point))
-          .toList(),
+      points: (json['points'] as List).map((point) => Point.fromJson(point)).toList(),
     );
   }
 }
@@ -36,9 +34,6 @@ class Point {
   Point({required this.latitude, required this.longitude});
 
   factory Point.fromJson(Map<String, dynamic> json) {
-    return Point(
-      latitude: json['latitude'].toDouble(),
-      longitude: json['longitude'].toDouble(),
-    );
+    return Point(latitude: json['latitude'].toDouble(), longitude: json['longitude'].toDouble());
   }
 }

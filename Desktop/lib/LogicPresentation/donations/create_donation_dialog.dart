@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/models/volunteer.dart';
 
 class CreateDonationDialog extends StatefulWidget {
   final List<Volunteer> volunteers;
