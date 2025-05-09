@@ -3,8 +3,9 @@ import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
 import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
 import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
 import 'package:solidarityhub/screens/tasks_screen.dart';
-import 'package:solidarityhub/utils/database.dart';
+import 'package:solidarityhub/services/database_services.dart';
 import 'package:solidarityhub/LogicPresentation/map/map.dart';
+import 'package:solidarityhub/utils/logger.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: Database.populateDatabase,
+                  onPressed: () => Logger.runAsync(DatabaseServices.populateDatabase),
                   icon: const Icon(Icons.add_box),
                   label: const Text('Populate Database'),
                   style: ElevatedButton.styleFrom(
@@ -73,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton.icon(
-                  onPressed: Database.clearDatabase,
+                  onPressed: () => Logger.runAsync(DatabaseServices.clearDatabase),
                   icon: const Icon(Icons.delete),
                   label: const Text('Clear Database'),
                   style: ElevatedButton.styleFrom(

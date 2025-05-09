@@ -3,7 +3,7 @@ import 'package:solidarityhub/controllers/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:intl/intl.dart';
 import 'package:solidarityhub/models/task.dart';
-import 'package:solidarityhub/widgets/ui/snack_bar.dart';
+import 'package:solidarityhub/widgets/common/snack_bar.dart';
 
 class TaskTableCell extends StatelessWidget {
   final String columnId;

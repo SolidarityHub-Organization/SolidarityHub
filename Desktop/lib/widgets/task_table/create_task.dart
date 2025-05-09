@@ -7,7 +7,7 @@ import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/victim.dart';
-import 'package:solidarityhub/widgets/ui/snack_bar.dart';
+import 'package:solidarityhub/widgets/common/snack_bar.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(

@@ -29,7 +29,7 @@ class ApiServices {
       return response;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error en GET $endpoint: $e');
+        print('❌ Error in GET $endpoint: $e');
       }
       rethrow;
     }
@@ -54,7 +54,7 @@ class ApiServices {
       return response;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error en POST $endpoint: $e');
+        print('❌ Error in POST $endpoint: $e');
       }
       rethrow;
     }
@@ -79,7 +79,7 @@ class ApiServices {
       return response;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error en PUT $endpoint: $e');
+        print('❌ Error in PUT $endpoint: $e');
       }
       rethrow;
     }
@@ -102,7 +102,7 @@ class ApiServices {
       return response;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error en DELETE $endpoint: $e');
+        print('❌ Error in DELETE $endpoint: $e');
       }
       rethrow;
     }
