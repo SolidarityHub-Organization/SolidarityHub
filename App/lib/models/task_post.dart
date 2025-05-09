@@ -7,6 +7,8 @@ class Task {
   final DateTime? endDate;
   final int adminId;
   final int locationId;
+  final double longitude;
+  final double latitude;
 
   Task({
     required this.id,
@@ -17,10 +19,14 @@ class Task {
     this.endDate,
     required this.adminId,
     required this.locationId,
+    required this.longitude,
+    required this.latitude,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
+      longitude: json['longitude'],
+      latitude: json['latitude'],
       id: json['id'],
       name: json['name'],
       description: json['description'],
