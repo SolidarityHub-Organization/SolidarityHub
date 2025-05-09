@@ -59,7 +59,7 @@ class HomeScreenVoluntario extends StatelessWidget {
                     elevation: 4,
                     shadowColor: Colors.black26,
                   ),
-                  child: const Icon(Icons.mail_outline, color: Colors.white),
+                  child: const Icon(Icons.mail_outline, color: Colors.white, size: 24),
                 ),
               ),
             ),
@@ -109,7 +109,16 @@ class HomeScreenVoluntario extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16),
-                    buildButton("Ver tareas disponibles"),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Ver tareas disponibles",
+                        homeScreenController.onVerTareasPressed(context, id),
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
                     SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,

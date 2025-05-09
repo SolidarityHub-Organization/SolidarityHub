@@ -25,6 +25,7 @@ class _MapScreenState extends State<MapScreen> {
   List<Polygon> _polygons = [];
   Set<MapViewMode> _selectedModes = {MapViewMode.victim, MapViewMode.volunteer, MapViewMode.task};
   MapMarker? _selectedMarker;
+  bool _isHeatMapActive = false;
 
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
@@ -164,7 +165,7 @@ class _MapScreenState extends State<MapScreen> {
                                   subdomains: ['a', 'b', 'c', 'd'],
                                   retinaMode: RetinaMode.isHighDensity(context),
                                 ),
-                                PolygonLayer(polygons: _polygons),
+                                PolygonLayer(polygons:  _isHeatMapActive ?  _polygons: []),
                                 MarkerLayer(markers: flutterMapMarkers),
                               ],
                             ),
@@ -242,7 +243,53 @@ class _MapScreenState extends State<MapScreen> {
                                 ],
                               ),
                             ),
-
+                            Positioned(
+                              top: 82,
+                              right: 16, // Mantener en la derecha
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildFilterButton(
+                                    label: 'Mapa de Calor',
+                                    isSelected: _isHeatMapActive,
+                                    onPressed: () {
+                                      setState(() {
+                                        _isHeatMapActive = !_isHeatMapActive;
+                                      });
+                                    },
+                                    icon: Icons.heat_pump,
+                                    color: Colors.red,
+                                  ),
+                                ],
+                              ),
+                            ),
+                             if (_isHeatMapActive)
+                      Positioned(
+                        top: 200,
+                        right: 16,
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Nivel de Peligro",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                              ),
+                              SizedBox(height: 8),
+                              _buildLegendHeat("Bajo", Color(0xFF008B8A)),
+                              _buildLegendHeat("Medio", Color(0xFFFF9600)),
+                              _buildLegendHeat("Alto", Color(0xFFE21C1C)),
+                              _buildLegendHeat("Crítico", Color(0xFF460707)),
+                            ],
+                          ),
+                        ),
+                      ),
                             // Leyenda de colores para marcadores de afectados
                             if (_selectedModes.contains(MapViewMode.victim))
                               Positioned(
@@ -506,4 +553,14 @@ class _MapScreenState extends State<MapScreen> {
         return MapViewMode.all;
     }
   }
+
+  Widget _buildLegendHeat(String label, Color color) {
+  return Row(
+    children: [
+      Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
+      SizedBox(width: 8),
+      Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
+    ],
+  );
+}
 }
