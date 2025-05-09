@@ -101,3 +101,20 @@ public class TaskForDashboardDto {
 public class UpdateTaskStateDto {
     public string state { get; set; } = string.Empty;
 }
+
+public class TaskWithLocationInfoDto {
+	public int id { get; set; }
+	public string name { get; set; } = string.Empty;
+
+	public string description { get; set; } = string.Empty;
+
+	public DateTime created_at { get; set; }
+	public DateTime start_date { get; set; }
+	public DateTime? end_date { get; set; }
+	public int? admin_id { get; set; }
+	public int location_id { get; set; }
+
+	public double latitude;
+
+	public double longitude;
+}
