@@ -37,7 +37,7 @@ class TaskTableCell extends StatelessWidget {
                         Text('Descripción: ${task.description}'),
                         const SizedBox(height: 8),
                         Text(
-                          'Dirección: ${controller.taskAddresses[task.id]?.startsWith('Error') == true ? 'Dirección desconocida' : controller.taskAddresses[task.id] ?? 'Cargando dirección...'}',
+                          'Dirección: ${controller.taskAddresses[task.id]?.startsWith('Error') == true || controller.taskAddresses[task.id] == 'Dirección no disponible' ? 'Dirección desconocida' : controller.taskAddresses[task.id] ?? 'Cargando dirección...'}',
                         ),
                       ],
                     ),
@@ -45,52 +45,98 @@ class TaskTableCell extends StatelessWidget {
                   ),
             );
           },
-          child: Text(task.name, overflow: TextOverflow.ellipsis),
+          child: Center(child: Text(task.name, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center)),
         );
 
       case 'description':
-        return Text(task.description, overflow: TextOverflow.ellipsis);
+        return Center(child: Text(task.description, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center));
 
       case 'address':
-        return Text(
-          controller.taskAddresses[task.id]?.startsWith('Error') == true
-              ? 'Dirección desconocida'
-              : controller.taskAddresses[task.id] ?? 'Cargando dirección...',
-          overflow: TextOverflow.ellipsis,
+        return ValueListenableBuilder<Map<int, String>>(
+          valueListenable: controller.addressesNotifier,
+          builder: (context, addresses, _) {
+            final address = addresses[task.id];
+
+            // Display status based on what we have
+            Widget displayText;
+            if (address == null || address == 'Cargando dirección...') {
+              displayText = Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('Cargando...'),
+                ],
+              );
+            } else if (address.startsWith('Error') || address == 'Dirección no disponible') {
+              displayText = Text('Dirección desconocida', overflow: TextOverflow.ellipsis, textAlign: TextAlign.center);
+            } else {
+              displayText = Text(address, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center);
+            }
+
+            return Center(child: displayText);
+          },
         );
 
       case 'start_date':
-        return _buildDateCell(task.startDate);
+        return Center(child: _buildDateCell(task.startDate));
 
       case 'end_date':
-        return _buildDateCell(task.endDate);
+        return Center(child: _buildDateCell(task.endDate));
 
       case 'status':
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: controller.getStatusColor(controller.getTaskStatus(task)),
-            borderRadius: BorderRadius.circular(12),
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            constraints: const BoxConstraints(minWidth: 90),
+            decoration: BoxDecoration(
+              color: controller.getStatusColor(controller.getTaskStatus(task)),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 3, offset: const Offset(0, 1))],
+            ),
+            child: Text(
+              controller.getTaskStatus(task),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
           ),
-          child: Text(controller.getTaskStatus(task), style: const TextStyle(color: Colors.white)),
         );
 
       case 'priority':
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: controller.getPriorityColor(controller.getTaskPriority(task)),
-            borderRadius: BorderRadius.circular(12),
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            constraints: const BoxConstraints(minWidth: 70),
+            decoration: BoxDecoration(
+              color: controller.getPriorityColor(controller.getTaskPriority(task)),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 3, offset: const Offset(0, 1))],
+            ),
+            child: Text(
+              controller.getTaskPriority(task),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
           ),
-          child: Text(controller.getTaskPriority(task), style: const TextStyle(color: Colors.white)),
         );
 
       case 'volunteers':
-        return Text(
-          task.assignedVolunteers.isNotEmpty
-              ? task.assignedVolunteers.map((volunteer) => '${volunteer.name} ${volunteer.surname}').join(', ')
-              : 'Sin asignar',
-          overflow: TextOverflow.ellipsis,
+        return Center(
+          child: Text(
+            task.assignedVolunteers.isNotEmpty
+                ? task.assignedVolunteers.map((volunteer) => '${volunteer.name} ${volunteer.surname}').join(', ')
+                : 'Sin asignar',
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
         );
 
       case 'actions':
@@ -128,7 +174,7 @@ class TaskTableCell extends StatelessWidget {
         );
 
       default:
-        return const Text('');
+        return const Center(child: Text(''));
     }
   }
 
@@ -136,12 +182,20 @@ class TaskTableCell extends StatelessWidget {
     if (date == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text('Por determinar', style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic)),
+        child: Text(
+          'Por determinar',
+          style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
+          textAlign: TextAlign.center,
+        ),
       );
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Text(DateFormat('dd/MM/yyyy').format(date), style: const TextStyle(color: Colors.black)),
+      child: Text(
+        DateFormat('dd/MM/yyyy').format(date),
+        style: const TextStyle(color: Colors.black),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 

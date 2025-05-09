@@ -161,46 +161,91 @@ class TaskTableController {
     if (filteredTasks.isEmpty) return;
 
     final tasksToFetch = specificTaskIds ?? filteredTasks.map((task) => task.id).toList();
-    final batch = <int>[];
+    Map<int, String> addresses = Map.from(addressesNotifier.value);
 
+    // First set all to loading state and update UI
     for (final taskId in tasksToFetch) {
-      if (taskAddresses.containsKey(taskId) || _pendingAddressFetches.containsKey(taskId)) {
+      if (!addresses.containsKey(taskId) ||
+          (addresses[taskId]?.startsWith('Error') == true) ||
+          addresses[taskId] == 'Dirección no disponible') {
+        addresses[taskId] = 'Cargando dirección...';
+      }
+    }
+
+    // Update UI with loading indicators
+    addressesNotifier.value = Map.from(addresses);
+
+    // Now fetch each address one by one
+    for (final taskId in tasksToFetch) {
+      // Skip if already fetching
+      if (_pendingAddressFetches.containsKey(taskId)) continue;
+
+      // Skip if we have a valid address
+      if (addresses.containsKey(taskId) &&
+          !addresses[taskId]!.startsWith('Error') &&
+          addresses[taskId] != 'Dirección no disponible' &&
+          addresses[taskId] != 'Cargando dirección...') {
         continue;
       }
 
+      // Check cache
       if (_addressCache.containsKey(taskId)) {
         final cached = _addressCache[taskId]!;
         if (DateTime.now().difference(cached.timestamp).inHours < 1) {
-          taskAddresses[taskId] = cached.address;
+          addresses[taskId] = cached.address;
+          addressesNotifier.value = Map.from(addresses); // Update UI immediately with cached value
           continue;
         }
       }
 
-      batch.add(taskId);
-    }
-
-    if (batch.isEmpty) return;
-
-    for (final taskId in batch) {
+      // Fetch the address
       _pendingAddressFetches[taskId] = _fetchSingleAddress(taskId);
 
+      // Handle the result
       _pendingAddressFetches[taskId]!.then((address) {
+        final updatedAddresses = Map<int, String>.from(addressesNotifier.value);
+
         if (address != null) {
-          taskAddresses[taskId] = address;
+          updatedAddresses[taskId] = address;
           _addressCache[taskId] = _CachedAddress(address);
+        } else {
+          updatedAddresses[taskId] = 'Dirección no disponible';
         }
+
         _pendingAddressFetches.remove(taskId);
-        addressesNotifier.value = Map.from(addressesNotifier.value);
+        addressesNotifier.value = updatedAddresses; // Update UI with the new address
       });
     }
   }
 
   Future<String?> _fetchSingleAddress(int taskId) async {
     try {
-      final task = filteredTasks.firstWhere((task) => task.id == taskId);
+      // Primero busca en las tareas filtradas
+      TaskWithDetails? task;
+      try {
+        task = filteredTasks.firstWhere((task) => task.id == taskId);
+      } catch (e) {
+        // Si no encuentra en filtradas, busca en todas las tareas
+        task = tasks.firstWhere((task) => task.id == taskId, orElse: () => throw Exception('Tarea no encontrada'));
+      }
 
       if (task.location == null) {
-        return null;
+        // Si la tarea no tiene ubicación, intentamos buscarla en el servicio
+        try {
+          final locationResponse = await LocationServices.fetchLocationById(task.locationId);
+
+          if (locationResponse.isNotEmpty) {
+            final double lat = locationResponse['latitude'];
+            final double lon = locationResponse['longitude'];
+
+            final address = await LocationExternalServices.getAddressFromLatLon(lat, lon);
+            return address;
+          } else {
+            return 'Dirección no disponible';
+          }
+        } catch (e) {
+          return 'Dirección no disponible';
+        }
       }
 
       final address = await LocationExternalServices.getAddressFromLatLon(
@@ -210,7 +255,7 @@ class TaskTableController {
 
       return address;
     } catch (e) {
-      return 'Error: $e';
+      return 'Dirección no disponible';
     }
   }
 
@@ -373,6 +418,13 @@ class TaskTableController {
     final TaskTableColumnData item = updatedColumns.removeAt(oldIndex);
     updatedColumns.insert(newIndex, item);
 
+    columnsNotifier.value = updatedColumns;
+  }
+
+  void updateColumnWidths(int columnIndex, double newWidth, int nextColumnIndex, double nextWidth) {
+    final List<TaskTableColumnData> updatedColumns = List.from(columnsNotifier.value);
+    updatedColumns[columnIndex].width = newWidth;
+    updatedColumns[nextColumnIndex].width = nextWidth;
     columnsNotifier.value = updatedColumns;
   }
 

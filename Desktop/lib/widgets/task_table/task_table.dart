@@ -38,6 +38,8 @@ class _TaskTableState extends State<TaskTable> {
 
   void _onFilteredTasksChanged() {
     setState(() {});
+    // Cargar direcciones para las tareas filtradas cuando cambian
+    widget.controller.fetchAddresses();
   }
 
   @override
@@ -57,7 +59,7 @@ class _TaskTableState extends State<TaskTable> {
   Widget _buildTableHeader() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
       ),
       child: SingleChildScrollView(
@@ -71,6 +73,14 @@ class _TaskTableState extends State<TaskTable> {
             return Container(
               width: width,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                border: Border(
+                  right:
+                      columnIndex < widget.controller.columns.length - 1
+                          ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
+                          : BorderSide.none,
+                ),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -126,16 +136,12 @@ class _TaskTableState extends State<TaskTable> {
 
                           final newWidth = widget.controller.columns[columnIndex].width + delta;
                           final nextWidth = widget.controller.columns[columnIndex + 1].width - delta;
-
                           if (newWidth >= minWidth &&
                               newWidth <= maxWidth &&
                               nextWidth >= minWidth &&
                               nextWidth <= maxWidth) {
-                            setState(() {
-                              widget.controller.columns[columnIndex].width = newWidth;
-                              widget.controller.columns[columnIndex + 1].width = nextWidth;
-                            });
-                            widget.onTaskChanged();
+                            widget.controller.updateColumnWidths(columnIndex, newWidth, columnIndex + 1, nextWidth);
+                            setState(() {});
                           }
                         },
                         child: Container(
@@ -190,12 +196,20 @@ class _TaskTableState extends State<TaskTable> {
                   final column = widget.controller.columns[columnIndex];
                   final width = (MediaQuery.of(context).size.width - 32) * column.width;
 
-                  return SizedBox(
+                  return Container(
                     width: width,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right:
+                            columnIndex < widget.controller.columns.length - 1
+                                ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
+                                : BorderSide.none,
+                        bottom: BorderSide(color: Colors.grey[200]!),
+                      ),
+                    ),
                     child: Container(
                       height: 60,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
                       child: TaskTableCell(
                         columnId: column.id,
                         task: task,
