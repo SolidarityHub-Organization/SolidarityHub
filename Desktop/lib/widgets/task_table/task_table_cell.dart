@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/controllers/task_table_controller.dart';
+import 'package:solidarityhub/controllers/tasks/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/create_task.dart';
 import 'package:intl/intl.dart';
 import 'package:solidarityhub/models/task.dart';
@@ -95,26 +95,34 @@ class TaskTableCell extends StatelessWidget {
 
       case 'actions':
         return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.orange, size: 20),
-              onPressed: () {
-                showCreateTaskModal(context, () {
-                  onTaskChanged();
-                }, task);
-              },
-              tooltip: 'Editar',
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-              onPressed: () => _showDeleteConfirmationDialog(context),
-              tooltip: 'Eliminar',
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+            Container(
+              constraints: const BoxConstraints(minWidth: 80),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.orange),
+                    onPressed: () {
+                      showCreateTaskModal(context, () {
+                        onTaskChanged();
+                      }, task);
+                    },
+                    tooltip: 'Editar',
+                    splashRadius: 20,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _showDeleteConfirmationDialog(context),
+                    tooltip: 'Eliminar',
+                    splashRadius: 20,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                  ),
+                ],
+              ),
             ),
           ],
         );

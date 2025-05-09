@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:solidarityhub/services/task_services.dart';
-import 'package:solidarityhub/models/volunteer.dart';
+import 'package:solidarityhub/controllers/tasks/create_task_controller.dart';
 import 'package:solidarityhub/models/task.dart';
-import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/widgets/common/snack_bar.dart';
 
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
@@ -26,249 +22,62 @@ class CreateTaskModal extends StatefulWidget {
   State<CreateTaskModal> createState() => _CreateTaskModalState();
 }
 
-Future<List<T>> fetchData<T>(String endpoint, T Function(Map<String, dynamic>) fromJson) async {
-  final url = Uri.parse('http://localhost:5170/api/v1/$endpoint');
-
-  try {
-    final response = await http.get(url);
-    if (response.statusCode >= 200 && response.statusCode <= 299) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => fromJson(item as Map<String, dynamic>)).toList();
-    } else {
-      throw Exception('Error fetching $endpoint: ${response.statusCode}');
-    }
-  } catch (error) {
-    throw Exception('Error: $error');
-  }
-}
-
 class _CreateTaskModalState extends State<CreateTaskModal> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController latitudeController = TextEditingController();
-  final TextEditingController longitudeController = TextEditingController();
-  final TextEditingController searchAddressController = TextEditingController();
-  final TextEditingController searchVolunteersController = TextEditingController();
-  final TextEditingController searchVictimController = TextEditingController();
-  DateTime? startDate;
-  DateTime? endDate;
-
-  final MapController _mapController = MapController();
-  List<Marker> _markers = [];
-  LatLng selectedLocation = const LatLng(39.4699, -0.3776); // Valencia por defecto
-  List<Volunteer> volunteers = [];
-  List<Victim> victim = [];
-  List<int> selectedVolunteers = [];
-  List<int> selectedVictim = [];
-  bool isLoading = true;
+  late final CreateTaskController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = CreateTaskController(onTaskCreated: widget.onTaskCreated, taskToEdit: widget.taskToEdit);
     _loadData();
-    startDate = DateTime.now();
-
-    if (widget.taskToEdit != null) {
-      nameController.text = widget.taskToEdit!.name;
-      descriptionController.text = widget.taskToEdit!.description;
-      startDate = widget.taskToEdit!.startDate;
-      endDate = widget.taskToEdit!.endDate;
-      _loadTaskLocation();
-      selectedVolunteers = widget.taskToEdit!.assignedVolunteers.map((volunteer) => volunteer.id).toList();
-      selectedVictim = widget.taskToEdit!.assignedVictim.map((victim) => victim.id).toList();
-    } else {
-      _updateLocationControllers(selectedLocation);
-      _updateMarker(selectedLocation);
-    }
   }
 
-  void _updateLocationControllers(LatLng location) {
-    latitudeController.text = location.latitude.toString();
-    longitudeController.text = location.longitude.toString();
-  }
-
-  void _updateMarker(LatLng location) {
-    setState(() {
-      _markers = [
-        Marker(
-          point: location,
-          width: 40,
-          height: 40,
-          child: const Icon(Icons.location_on, color: Colors.red, size: 40),
-        ),
-      ];
-    });
-  }
-
-  void _onMapTap(TapPosition tapPosition, LatLng location) {
-    setState(() {
-      selectedLocation = location;
-      _updateLocationControllers(location);
-      _updateMarker(location);
-    });
-  }
-
-  Future<void> _loadTaskLocation() async {
-    if (widget.taskToEdit != null) {
-      try {
-        final url = Uri.parse('http://localhost:5170/api/v1/locations/${widget.taskToEdit!.locationId}');
-        final response = await http.get(url);
-
-        if (response.statusCode >= 200 && response.statusCode <= 299) {
-          final location = json.decode(response.body);
-          final latLng = LatLng(
-            double.parse(location['latitude'].toString()),
-            double.parse(location['longitude'].toString()),
-          );
-          setState(() {
-            selectedLocation = latLng;
-            _updateLocationControllers(latLng);
-            _updateMarker(latLng);
-          });
-        }
-      } catch (error) {
-        AppSnackBar.show(context: context, message: 'Error loading location: $error', type: SnackBarType.error);
-      }
-    }
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
     try {
-      final results = await Future.wait([
-        fetchData('volunteers-with-details', Volunteer.fromJson),
-        fetchData('victims', Victim.fromJson),
-      ]);
-      setState(() {
-        volunteers = results[0] as List<Volunteer>;
-        victim = results[1] as List<Victim>;
-        isLoading = false;
-      });
+      await controller.loadData();
+      setState(() {});
     } catch (error) {
-      setState(() {
-        isLoading = false;
-      });
-      AppSnackBar.show(context: context, message: error.toString(), type: SnackBarType.error);
+      if (mounted) {
+        AppSnackBar.show(context: context, message: error.toString(), type: SnackBarType.error);
+      }
     }
+  }
+
+  void _onMapTap(TapPosition tapPosition, LatLng location) {
+    setState(() {
+      controller.onMapTap(tapPosition, location);
+    });
   }
 
   Future<void> _handleCreateTask() async {
-    final name = nameController.text.trim();
-    final description = descriptionController.text.trim();
-    final latitude = latitudeController.text.trim();
-    final longitude = longitudeController.text.trim();
-
-    if (startDate == null) {
-      AppSnackBar.show(
-        context: context,
-        message: 'Por favor, selecciona una fecha de inicio',
-        type: SnackBarType.error,
-      );
-      return;
-    }
-
     try {
-      final result = await TaskServices.createTask(
-        name: name,
-        description: description,
-        selectedVolunteers: selectedVolunteers,
-        latitude: latitude,
-        longitude: longitude,
-        startDate: startDate!,
-        endDate: endDate,
-        selectedVictim: selectedVictim,
-        taskId: widget.taskToEdit?.id,
-      );
+      final result = await controller.handleCreateTask();
 
-      if (result.startsWith('OK:')) {
-        widget.onTaskCreated();
+      if (result == 'success') {
         if (mounted) {
           Navigator.pop(context);
-        }
-        AppSnackBar.show(
-          context: context,
-          message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
-          type: SnackBarType.success,
-        );
-      } else {
-        AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
-      }
-    } catch (error) {
-      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
-    }
-  }
-
-  Future<void> _searchAddress() async {
-    final address = searchAddressController.text.trim();
-    if (address.isEmpty) {
-      AppSnackBar.show(
-        context: context,
-        message: 'Por favor, introduce una dirección para buscar',
-        type: SnackBarType.error,
-      );
-      return;
-    }
-
-    try {
-      final encodedAddress = Uri.encodeComponent(address);
-      final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
-
-      final response = await http.get(url, headers: {'User-Agent': 'SolidarityHub/1.0'});
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        if (data.isNotEmpty) {
-          final result = data[0];
-          final double lat = double.parse(result['lat']);
-          final double lon = double.parse(result['lon']);
-          final LatLng location = LatLng(lat, lon);
-
-          setState(() {
-            selectedLocation = location;
-            _updateLocationControllers(location);
-            _updateMarker(location);
-            _mapController.move(location, 15.0);
-          });
-        } else {
           AppSnackBar.show(
             context: context,
-            message: 'No se encontró ninguna ubicación con esa dirección',
-            type: SnackBarType.warning,
+            message: widget.taskToEdit != null ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente',
+            type: SnackBarType.success,
           );
         }
       } else {
-        AppSnackBar.show(
-          context: context,
-          message: 'Error al buscar la dirección: ${response.statusCode}',
-          type: SnackBarType.error,
-        );
+        if (mounted) {
+          AppSnackBar.show(context: context, message: result, type: SnackBarType.error);
+        }
       }
     } catch (error) {
-      AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
+      if (mounted) {
+        AppSnackBar.show(context: context, message: 'Error: $error', type: SnackBarType.error);
+      }
     }
-  }
-
-  List<Volunteer> _filteredVolunteers() {
-    if (searchVolunteersController.text.isEmpty) {
-      return volunteers;
-    }
-    final query = searchVolunteersController.text.toLowerCase();
-    return volunteers.where((volunteer) {
-      return volunteer.name.toLowerCase().contains(query) ||
-          volunteer.surname.toLowerCase().contains(query) ||
-          volunteer.email.toLowerCase().contains(query);
-    }).toList();
-  }
-
-  List<Victim> _filteredVictim() {
-    if (searchVictimController.text.isEmpty) {
-      return victim;
-    }
-    final query = searchVictimController.text.toLowerCase();
-    return victim.where((person) {
-      return person.name.toLowerCase().contains(query) ||
-          person.surname.toLowerCase().contains(query) ||
-          person.email.toLowerCase().contains(query);
-    }).toList();
   }
 
   @override
@@ -298,7 +107,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         children: [
           _buildHeader(widget.taskToEdit != null),
           const Divider(),
-          Expanded(child: isLoading ? const Center(child: CircularProgressIndicator()) : _buildForm()),
+          Expanded(child: controller.isLoading ? const Center(child: CircularProgressIndicator()) : _buildForm()),
         ],
       ),
     );
@@ -326,9 +135,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField(controller: nameController, label: 'Nombre', maxLines: 1),
+              _buildTextField(controller: controller.nameController, label: 'Nombre', maxLines: 1),
               const SizedBox(height: 8),
-              _buildTextField(controller: descriptionController, label: 'Descripción', maxLines: 2),
+              _buildTextField(controller: controller.descriptionController, label: 'Descripción', maxLines: 2),
               const SizedBox(height: 8),
               _buildDateFields(),
               const SizedBox(height: 8),
@@ -363,10 +172,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de inicio',
-                date: startDate,
+                date: controller.startDate,
                 onDateSelected: (date) {
                   setState(() {
-                    startDate = date;
+                    controller.setStartDate(date);
                   });
                 },
               ),
@@ -375,10 +184,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de fin (opcional)',
-                date: endDate,
+                date: controller.endDate,
                 onDateSelected: (date) {
                   setState(() {
-                    endDate = date;
+                    controller.setEndDate(date);
                   });
                 },
                 isOptional: true,
@@ -445,11 +254,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         Row(
           children: [
             Expanded(
-              child: _buildTextField(controller: searchAddressController, label: 'Buscar dirección', maxLines: 1),
+              child: _buildTextField(
+                controller: controller.searchAddressController,
+                label: 'Buscar dirección',
+                maxLines: 1,
+              ),
             ),
             const SizedBox(width: 8),
             ElevatedButton(
-              onPressed: _searchAddress,
+              onPressed: () => controller.searchAddress(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -468,15 +281,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(initialCenter: selectedLocation, initialZoom: 13, onTap: _onMapTap),
+                mapController: controller.mapController,
+                options: MapOptions(initialCenter: controller.selectedLocation, initialZoom: 13, onTap: _onMapTap),
                 children: [
                   TileLayer(
                     urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                     subdomains: const ['a', 'b', 'c', 'd'],
                     retinaMode: RetinaMode.isHighDensity(context),
                   ),
-                  MarkerLayer(markers: _markers),
+                  MarkerLayer(markers: controller.markers),
                 ],
               ),
             ),
@@ -493,17 +306,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const Text('Voluntarios disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
-          controller: searchVolunteersController,
+          controller: controller.searchVolunteersController,
           decoration: InputDecoration(
             labelText: 'Buscar voluntarios',
             prefixIcon: const Icon(Icons.search),
             suffixIcon:
-                searchVolunteersController.text.isNotEmpty
+                controller.searchVolunteersController.text.isNotEmpty
                     ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          searchVolunteersController.clear();
+                          controller.searchVolunteersController.clear();
                         });
                       },
                     )
@@ -520,10 +333,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: _filteredVolunteers().length,
+              itemCount: controller.filteredVolunteers().length,
               itemBuilder: (context, index) {
-                final volunteer = _filteredVolunteers()[index];
-                final isSelected = selectedVolunteers.contains(volunteer.id);
+                final volunteer = controller.filteredVolunteers()[index];
+                final isSelected = controller.selectedVolunteers.contains(volunteer.id);
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                   elevation: 0,
@@ -543,12 +356,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       children:
                           volunteer.skills.map<Widget>((skill) {
                             return Chip(
-                              label: Text(skill.name, style: TextStyle(fontSize: 10)),
+                              label: Text(skill.name, style: const TextStyle(fontSize: 10)),
                               backgroundColor: Colors.transparent,
                               shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.7)),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
                             );
                           }).toList(),
                     ),
@@ -557,11 +370,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       value: isSelected,
                       onChanged: (value) {
                         setState(() {
-                          if (value == true) {
-                            selectedVolunteers.add(volunteer.id);
-                          } else {
-                            selectedVolunteers.remove(volunteer.id);
-                          }
+                          controller.toggleVolunteerSelection(volunteer.id, value ?? false);
                         });
                       },
                     ),
@@ -582,17 +391,17 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const Text('Afectados disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextField(
-          controller: searchVictimController,
+          controller: controller.searchVictimController,
           decoration: InputDecoration(
             labelText: 'Buscar afectados',
             prefixIcon: const Icon(Icons.search),
             suffixIcon:
-                searchVictimController.text.isNotEmpty
+                controller.searchVictimController.text.isNotEmpty
                     ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          searchVictimController.clear();
+                          controller.searchVictimController.clear();
                         });
                       },
                     )
@@ -609,10 +418,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: _filteredVictim().length,
+              itemCount: controller.filteredVictim().length,
               itemBuilder: (context, index) {
-                final person = _filteredVictim()[index];
-                final isSelected = selectedVictim.contains(person.id);
+                final person = controller.filteredVictim()[index];
+                final isSelected = controller.selectedVictim.contains(person.id);
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                   elevation: 0,
@@ -632,11 +441,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       value: isSelected,
                       onChanged: (value) {
                         setState(() {
-                          if (value == true) {
-                            selectedVictim.add(person.id);
-                          } else {
-                            selectedVictim.remove(person.id);
-                          }
+                          controller.toggleVictimSelection(person.id, value ?? false);
                         });
                       },
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:solidarityhub/services/location_external_services.dart';
 import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Info/infoSquareFactory.dart';
 import 'package:solidarityhub/services/affected_zone_services.dart';
@@ -66,18 +67,19 @@ class _MapScreenState extends State<MapScreen> {
       final zones = await AffectedZoneServices.fetchAffectedZones();
 
       setState(() {
-        _polygons = zones.map((zoneData) {
-          final zone = AffectedZone.fromJson(zoneData);
+        _polygons =
+            zones.map((zoneData) {
+              final zone = AffectedZone.fromJson(zoneData);
 
-          return Polygon(
-            points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
-            color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.2),
-            borderColor: _getHazardLevelColor(zone.hazardLevel),
-            borderStrokeWidth: 3,
-            isFilled: true,
-            isDotted: false, // líneas sólidas para un look más moderno
-          );
-        }).toList();
+              return Polygon(
+                points: zone.points.map((point) => LatLng(point.latitude, point.longitude)).toList(),
+                color: _getHazardLevelColor(zone.hazardLevel).withOpacity(0.2),
+                borderColor: _getHazardLevelColor(zone.hazardLevel),
+                borderStrokeWidth: 3,
+                isFilled: true,
+                isDotted: false, // líneas sólidas para un look más moderno
+              );
+            }).toList();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al obtener las zonas afectadas: $e')));
@@ -102,19 +104,21 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     // Update filtering logic for multi-selection
-    List<MapMarker> filteredMarkers = _mapMarkers.where((marker) {
-      // If no modes are selected, show nothing
-      if (_selectedModes.isEmpty) return false;
-      // Show markers that match any of the selected modes
-      return _selectedModes.contains(_getMapViewMode(marker.type));
-    }).toList();
+    List<MapMarker> filteredMarkers =
+        _mapMarkers.where((marker) {
+          // If no modes are selected, show nothing
+          if (_selectedModes.isEmpty) return false;
+          // Show markers that match any of the selected modes
+          return _selectedModes.contains(_getMapViewMode(marker.type));
+        }).toList();
 
     // Usamos los marcadores filtrados para crear los Marker de flutter_map
     // Usando el factory method de los marcadores
-    List<Marker> flutterMapMarkers = filteredMarkers.map((mapMarker) {
-      final creator = getMarkerCreator(mapMarker.type);
-      return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
-    }).toList();
+    List<Marker> flutterMapMarkers =
+        filteredMarkers.map((mapMarker) {
+          final creator = getMarkerCreator(mapMarker.type);
+          return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
+        }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -132,12 +136,7 @@ class _MapScreenState extends State<MapScreen> {
 
           return TwoDimensionalScrollWidget(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: minWidth,
-                minHeight: minHeight,
-                maxWidth: width,
-                maxHeight: height,
-              ),
+              constraints: BoxConstraints(minWidth: minWidth, minHeight: minHeight, maxWidth: width, maxHeight: height),
               child: Row(
                 children: [
                   Expanded(
@@ -165,7 +164,7 @@ class _MapScreenState extends State<MapScreen> {
                                   subdomains: ['a', 'b', 'c', 'd'],
                                   retinaMode: RetinaMode.isHighDensity(context),
                                 ),
-                                PolygonLayer(polygons:  _isHeatMapActive ?  _polygons: []),
+                                PolygonLayer(polygons: _isHeatMapActive ? _polygons : []),
                                 MarkerLayer(markers: flutterMapMarkers),
                               ],
                             ),
@@ -178,13 +177,7 @@ class _MapScreenState extends State<MapScreen> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
+                                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))],
                                 ),
                                 child: TextField(
                                   controller: _searchController,
@@ -213,7 +206,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             Positioned(
                               top: 82,
-                              left: 16, 
+                              left: 16,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -263,33 +256,37 @@ class _MapScreenState extends State<MapScreen> {
                                 ],
                               ),
                             ),
-                             if (_isHeatMapActive)
-                      Positioned(
-                        top: 200,
-                        right: 16,
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Nivel de Peligro",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                            if (_isHeatMapActive)
+                              Positioned(
+                                top: 200,
+                                right: 16,
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Nivel de Peligro",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      _buildLegendHeat("Bajo", Color(0xFF008B8A)),
+                                      _buildLegendHeat("Medio", Color(0xFFFF9600)),
+                                      _buildLegendHeat("Alto", Color(0xFFE21C1C)),
+                                      _buildLegendHeat("Crítico", Color(0xFF460707)),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              SizedBox(height: 8),
-                              _buildLegendHeat("Bajo", Color(0xFF008B8A)),
-                              _buildLegendHeat("Medio", Color(0xFFFF9600)),
-                              _buildLegendHeat("Alto", Color(0xFFE21C1C)),
-                              _buildLegendHeat("Crítico", Color(0xFF460707)),
-                            ],
-                          ),
-                        ),
-                      ),
                             // Leyenda de colores para marcadores de afectados
                             if (_selectedModes.contains(MapViewMode.victim))
                               Positioned(
@@ -301,7 +298,11 @@ class _MapScreenState extends State<MapScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
-                                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, 2),
+                                      ),
                                     ],
                                   ),
                                   child: Column(
@@ -336,7 +337,11 @@ class _MapScreenState extends State<MapScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
-                                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: Offset(0, 2)),
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, 2),
+                                      ),
                                     ],
                                   ),
                                   child: Column(
@@ -381,7 +386,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   // Use ternary operator instead of if statement
                   _selectedMarker != null
-                    ? Expanded(
+                      ? Expanded(
                         flex: 1,
                         child: Container(
                           padding: EdgeInsets.all(16.0),
@@ -408,11 +413,7 @@ class _MapScreenState extends State<MapScreen> {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: Icon(
-                                          Icons.close,
-                                          color: Colors.red.shade700,
-                                          size: 28,
-                                        ),
+                                        icon: Icon(Icons.close, color: Colors.red.shade700, size: 28),
                                         onPressed: () {
                                           setState(() {
                                             _selectedMarker = null;
@@ -431,7 +432,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                       )
-                    : Container(), // Empty container when no marker is selected
+                      : Container(), // Empty container when no marker is selected
                 ],
               ),
             ),
@@ -448,7 +449,7 @@ class _MapScreenState extends State<MapScreen> {
       } else {
         _selectedModes.add(mode);
       }
-      
+
       // Clear the selected marker when changing filters
       _selectedMarker = null;
     });
@@ -527,16 +528,14 @@ class _MapScreenState extends State<MapScreen> {
 
   void _searchAddress(String value) {
     if (value.trim().isEmpty) return;
-    
-    LocationServices.searchAddress(value).then((result) {
+
+    LocationExternalServices.getLatLonFromAddress(value).then((result) {
       if (result != null) {
         final location = result['location'] as LatLng;
         final zoomLevel = result['zoomLevel'] as double;
         _mapController.move(location, zoomLevel);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Dirección no encontrada'))
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Dirección no encontrada')));
       }
     });
   }
@@ -555,12 +554,16 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildLegendHeat(String label, Color color) {
-  return Row(
-    children: [
-      Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
-      SizedBox(width: 8),
-      Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
-    ],
-  );
-}
+    return Row(
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+        ),
+        SizedBox(width: 8),
+        Text(label, style: TextStyle(fontSize: 14, color: Colors.black87)),
+      ],
+    );
+  }
 }

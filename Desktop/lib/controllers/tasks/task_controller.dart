@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/controllers/task_table_controller.dart';
+import 'package:solidarityhub/controllers/tasks/task_table_controller.dart';
 
 class TaskController {
   final TaskTableController tableController;

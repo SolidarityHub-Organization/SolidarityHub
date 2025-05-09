@@ -1,146 +1,214 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/controllers/task_table_controller.dart';
-import 'package:solidarityhub/models/task_table.dart';
+import 'package:solidarityhub/controllers/tasks/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/task_table_cell.dart';
 
-class TaskTable extends StatelessWidget {
+class TaskTable extends StatefulWidget {
   final TaskTableController controller;
   final VoidCallback onTaskChanged;
 
   const TaskTable({super.key, required this.controller, required this.onTaskChanged});
 
   @override
+  State<TaskTable> createState() => _TaskTableState();
+}
+
+class _TaskTableState extends State<TaskTable> {
+  final ScrollController _horizontalScrollController = ScrollController();
+  final ScrollController _verticalScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addressesNotifier.addListener(_onAddressesChanged);
+    widget.controller.filteredTasksNotifier.addListener(_onFilteredTasksChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.addressesNotifier.removeListener(_onAddressesChanged);
+    widget.controller.filteredTasksNotifier.removeListener(_onFilteredTasksChanged);
+    _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
+    super.dispose();
+  }
+
+  void _onAddressesChanged() {
+    setState(() {});
+  }
+
+  void _onFilteredTasksChanged() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width - 32,
-      child: ReorderableListView(
-        scrollDirection: Axis.horizontal,
-        onReorder: controller.reorderColumn,
-        header: SizedBox(
-          height: 500,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Row(
-              children: List.generate(controller.columns.length, (columnIndex) {
-                return ReorderableDragStartListener(index: columnIndex, child: _buildColumn(context, columnIndex));
-              }),
-            ),
-          ),
-        ),
-        children: <Widget>[],
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 32,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        child: Column(children: [_buildTableHeader(), Expanded(child: _buildTableContent())]),
       ),
     );
   }
 
-  Widget _buildColumn(BuildContext context, int columnIndex) {
-    final column = controller.columns[columnIndex];
-    final width = (MediaQuery.of(context).size.width - 32) * column.width;
-
-    return SizedBox(
-      key: ValueKey(column.id),
-      width: width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildColumnHeader(context, column, columnIndex), _buildColumnData(context, column)],
-      ),
-    );
-  }
-
-  Widget _buildColumnHeader(BuildContext context, TaskTableColumnData column, int columnIndex) {
+  Widget _buildTableHeader() {
     return Container(
-      color: Colors.grey[200],
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              column.label,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (column.sortable)
-            IconButton(
-              icon: Icon(
-                controller.sortField == column.id
-                    ? (controller.sortAscending ? Icons.arrow_upward : Icons.arrow_downward)
-                    : Icons.unfold_more,
-                size: 16,
-              ),
-              onPressed: () {
-                if (controller.sortField == column.id) {
-                  controller.sortAscending = !controller.sortAscending;
-                } else {
-                  controller.sortField = column.id;
-                  controller.sortAscending = true;
-                }
-                controller.applyFilters();
-                onTaskChanged();
-              },
-              tooltip: 'Ordenar por ${column.label}',
-              constraints: const BoxConstraints(maxWidth: 24, maxHeight: 24),
-              padding: EdgeInsets.zero,
-            ),
-          if (columnIndex < controller.columns.length - 1)
-            MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight,
-              child: GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  final totalWidth = MediaQuery.of(context).size.width - 32;
-                  final delta = details.delta.dx / totalWidth;
-                  final minWidth = 0.05;
-                  final maxWidth = 0.5;
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+      ),
+      child: SingleChildScrollView(
+        controller: _horizontalScrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(widget.controller.columns.length, (columnIndex) {
+            final column = widget.controller.columns[columnIndex];
+            final width = (MediaQuery.of(context).size.width - 32) * column.width;
 
-                  final newWidth = controller.columns[columnIndex].width + delta;
-                  final nextWidth = controller.columns[columnIndex + 1].width - delta;
-
-                  if (newWidth >= minWidth && newWidth <= maxWidth && nextWidth >= minWidth && nextWidth <= maxWidth) {
-                    controller.columns[columnIndex].width = newWidth;
-                    controller.columns[columnIndex + 1].width = nextWidth;
-                    onTaskChanged();
-                  }
-                },
-                child: Container(
-                  width: 8,
-                  height: 24,
-                  margin: const EdgeInsets.only(left: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border(right: BorderSide(color: Colors.grey[400]!, width: 2)),
+            return Container(
+              width: width,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      column.label,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
+                  if (column.sortable)
+                    Tooltip(
+                      message: 'Ordenar por ${column.label}',
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(
+                            widget.controller.sortField == column.id
+                                ? (widget.controller.sortAscending ? Icons.arrow_upward : Icons.arrow_downward)
+                                : Icons.unfold_more,
+                            size: 18,
+                            color:
+                                widget.controller.sortField == column.id
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        onTap: () {
+                          if (widget.controller.sortField == column.id) {
+                            widget.controller.sortAscending = !widget.controller.sortAscending;
+                          } else {
+                            widget.controller.sortField = column.id;
+                            widget.controller.sortAscending = true;
+                          }
+                          widget.controller.applyFilters();
+                          widget.onTaskChanged();
+                        },
+                      ),
+                    ),
+                  if (columnIndex < widget.controller.columns.length - 1)
+                    MouseRegion(
+                      cursor: SystemMouseCursors.resizeLeftRight,
+                      child: GestureDetector(
+                        onHorizontalDragUpdate: (details) {
+                          final totalWidth = MediaQuery.of(context).size.width - 32;
+                          final delta = details.delta.dx / totalWidth;
+                          final minWidth = 0.05;
+                          final maxWidth = 0.5;
+
+                          final newWidth = widget.controller.columns[columnIndex].width + delta;
+                          final nextWidth = widget.controller.columns[columnIndex + 1].width - delta;
+
+                          if (newWidth >= minWidth &&
+                              newWidth <= maxWidth &&
+                              nextWidth >= minWidth &&
+                              nextWidth <= maxWidth) {
+                            setState(() {
+                              widget.controller.columns[columnIndex].width = newWidth;
+                              widget.controller.columns[columnIndex + 1].width = nextWidth;
+                            });
+                            widget.onTaskChanged();
+                          }
+                        },
+                        child: Container(
+                          width: 8,
+                          height: 24,
+                          margin: const EdgeInsets.only(left: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border(right: BorderSide(color: Colors.grey[400]!, width: 2)),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ),
-        ],
+            );
+          }),
+        ),
       ),
     );
   }
 
-  Widget _buildColumnData(BuildContext context, TaskTableColumnData column) {
-    return SizedBox(
-      height: 450,
-      child: ListView.builder(
-        itemCount: controller.filteredTasks.isEmpty ? 1 : controller.filteredTasks.length,
-        itemBuilder: (context, rowIndex) {
-          if (controller.filteredTasks.isEmpty) {
-            return Container(
-              height: 52,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey[300]!))),
-              alignment: Alignment.centerLeft,
-              child: column.id == 'name' ? const Text('No se encontraron resultados') : const Text(''),
-            );
-          }
+  Widget _buildTableContent() {
+    if (widget.controller.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-          final task = controller.filteredTasks[rowIndex];
-          return Container(
-            height: 60,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey[300]!))),
-            child: TaskTableCell(columnId: column.id, task: task, controller: controller, onTaskChanged: onTaskChanged),
-          );
-        },
+    if (widget.controller.filteredTasks.isEmpty) {
+      return Center(
+        child: Text(
+          'No se encontraron resultados',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      controller: _verticalScrollController,
+      child: SingleChildScrollView(
+        controller: _horizontalScrollController,
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          children: List.generate(widget.controller.filteredTasks.length, (rowIndex) {
+            final task = widget.controller.filteredTasks[rowIndex];
+            return Container(
+              color:
+                  rowIndex % 2 == 0
+                      ? Theme.of(context).colorScheme.surface
+                      : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              child: Row(
+                children: List.generate(widget.controller.columns.length, (columnIndex) {
+                  final column = widget.controller.columns[columnIndex];
+                  final width = (MediaQuery.of(context).size.width - 32) * column.width;
+
+                  return SizedBox(
+                    width: width,
+                    child: Container(
+                      height: 60,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
+                      child: TaskTableCell(
+                        columnId: column.id,
+                        task: task,
+                        controller: widget.controller,
+                        onTaskChanged: widget.onTaskChanged,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

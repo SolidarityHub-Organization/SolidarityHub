@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:solidarityhub/handlers/task_handler.dart';
+import 'package:solidarityhub/controllers/tasks/task_handler.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/services/api_services.dart';
 
@@ -71,6 +71,18 @@ class TaskServices {
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
     );
+    List<Map<String, dynamic>> tasks = [];
+
+    if (response.statusCode.ok) {
+      final List<dynamic> data = json.decode(response.body);
+      tasks = data.map((task) => task as Map<String, dynamic>).toList();
+    }
+
+    return tasks;
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchAllTasksWithDetails() async {
+    final response = await ApiServices.get('tasks-with-details');
     List<Map<String, dynamic>> tasks = [];
 
     if (response.statusCode.ok) {
