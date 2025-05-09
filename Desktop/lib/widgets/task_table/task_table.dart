@@ -15,31 +15,22 @@ class TaskTable extends StatefulWidget {
 class _TaskTableState extends State<TaskTable> {
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
-    widget.controller.addressesNotifier.addListener(_onAddressesChanged);
     widget.controller.filteredTasksNotifier.addListener(_onFilteredTasksChanged);
   }
 
   @override
   void dispose() {
-    widget.controller.addressesNotifier.removeListener(_onAddressesChanged);
     widget.controller.filteredTasksNotifier.removeListener(_onFilteredTasksChanged);
     _horizontalScrollController.dispose();
     _verticalScrollController.dispose();
     super.dispose();
   }
 
-  void _onAddressesChanged() {
-    setState(() {});
-  }
-
   void _onFilteredTasksChanged() {
     setState(() {});
-    // Cargar direcciones para las tareas filtradas cuando cambian
-    widget.controller.fetchAddresses();
   }
 
   @override

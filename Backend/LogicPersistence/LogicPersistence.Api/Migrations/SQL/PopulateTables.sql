@@ -110,10 +110,10 @@ INSERT INTO "skill" ("name", "level", "admin_id") VALUES
 
 INSERT INTO "task" ("name", "description", "admin_id", "location_id", "start_date", "end_date") VALUES
   ('Distribuir Agua', 'Repartir agua embotellada a residentes afectados', 1, 11, '2025-04-15 08:00:00', null),
-  ('Evaluación Médica', 'Realizar chequeos básicos de salud a residentes del refugio', 2, 12, '2025-04-16 09:00:00', '2025-04-16 15:00:00'),
+  ('Evaluación Médica', 'Realizar chequeos básicos de salud a residentes del refugio', 2, 12, '2025-04-16 09:00:00', '2025-05-07 15:00:00'),
   ('Limpieza de Escombros', 'Limpiar árboles caídos y escombros de las carreteras', 3, 13, '2025-04-17 08:00:00', null),
-  ('Servicio de Comida', 'Preparar y servir comidas en el centro comunitario', 1, 14, '2025-04-18 11:00:00', '2025-04-18 15:00:00'),
-  ('Turno de Cuidado Infantil', 'Supervisar niños en el refugio', 2, 15, '2025-04-19 09:00:00', '2025-04-19 13:00:00');
+  ('Servicio de Comida', 'Preparar y servir comidas en el centro comunitario', 1, 14, '2025-04-18 11:00:00', '2025-04-23 15:00:00'),
+  ('Turno de Cuidado Infantil', 'Supervisar niños en el refugio', 2, 15, '2025-04-19 09:00:00', '2025-04-21 13:00:00');
 
 INSERT INTO "task_time" ("start_time", "end_time", "date", "task_id") VALUES
   ('08:00:00', '12:00:00', '2025-04-15', 1),

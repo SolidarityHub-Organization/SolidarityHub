@@ -28,8 +28,7 @@ class LocationExternalServices {
   }
 
   static Future<Map<String, dynamic>?> getLatLonFromAddress(String address) async {
-    final encodedAddress = Uri.encodeComponent(address);
-    final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$encodedAddress&format=json&limit=1');
+    final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$address&format=json&limit=1');
 
     final response = await http.get(url, headers: {'Accept': 'application/json', 'User-Agent': 'SolidarityHub App'});
 

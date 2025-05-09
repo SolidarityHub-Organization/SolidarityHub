@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/services/location_external_services.dart';
-import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/models/task_table.dart';
 import 'package:solidarityhub/models/task.dart';
@@ -9,10 +7,8 @@ class TaskTableController {
   final ValueNotifier<List<TaskWithDetails>> tasksNotifier = ValueNotifier<List<TaskWithDetails>>([]);
   final ValueNotifier<List<TaskWithDetails>> filteredTasksNotifier = ValueNotifier<List<TaskWithDetails>>([]);
   final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(true);
-  final ValueNotifier<Map<int, String>> addressesNotifier = ValueNotifier<Map<int, String>>({});
 
   final ValueNotifier<String> nameFilterNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> addressFilterNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> statusFilterNotifier = ValueNotifier<String>('Todos');
   final ValueNotifier<String> priorityFilterNotifier = ValueNotifier<String>('Todas');
 
@@ -21,16 +17,11 @@ class TaskTableController {
 
   final ValueNotifier<List<TaskTableColumnData>> columnsNotifier = ValueNotifier<List<TaskTableColumnData>>([]);
 
-  final Map<int, Future<String?>> _pendingAddressFetches = {};
-  final Map<int, _CachedAddress> _addressCache = {};
-
   List<TaskWithDetails> get tasks => tasksNotifier.value;
   List<TaskWithDetails> get filteredTasks => filteredTasksNotifier.value;
   bool get isLoading => isLoadingNotifier.value;
-  Map<int, String> get taskAddresses => addressesNotifier.value;
 
   String get nameFilter => nameFilterNotifier.value;
-  String get addressFilter => addressFilterNotifier.value;
   String get statusFilter => statusFilterNotifier.value;
   String get priorityFilter => priorityFilterNotifier.value;
 
@@ -41,11 +32,6 @@ class TaskTableController {
 
   set nameFilter(String value) {
     nameFilterNotifier.value = value;
-    applyFilters();
-  }
-
-  set addressFilter(String value) {
-    addressFilterNotifier.value = value;
     applyFilters();
   }
 
@@ -73,7 +59,6 @@ class TaskTableController {
     _initColumns();
 
     nameFilterNotifier.addListener(applyFilters);
-    addressFilterNotifier.addListener(applyFilters);
     statusFilterNotifier.addListener(applyFilters);
     priorityFilterNotifier.addListener(applyFilters);
 
@@ -83,7 +68,6 @@ class TaskTableController {
 
   void dispose() {
     nameFilterNotifier.dispose();
-    addressFilterNotifier.dispose();
     statusFilterNotifier.dispose();
     priorityFilterNotifier.dispose();
     sortFieldNotifier.dispose();
@@ -91,25 +75,17 @@ class TaskTableController {
     tasksNotifier.dispose();
     filteredTasksNotifier.dispose();
     isLoadingNotifier.dispose();
-    addressesNotifier.dispose();
     columnsNotifier.dispose();
   }
 
   void _initColumns() {
     columnsNotifier.value = [
-      TaskTableColumnData(id: 'name', label: 'Nombre', width: 0.1, tooltip: 'Nombre de la tarea', sortable: true),
+      TaskTableColumnData(id: 'name', label: 'Nombre', width: 0.15, tooltip: 'Nombre de la tarea', sortable: true),
       TaskTableColumnData(
         id: 'description',
         label: 'Descripción',
-        width: 0.15,
+        width: 0.30,
         tooltip: 'Descripción de la tarea',
-        sortable: true,
-      ),
-      TaskTableColumnData(
-        id: 'address',
-        label: 'Dirección',
-        width: 0.15,
-        tooltip: 'Dirección de la tarea',
         sortable: true,
       ),
       TaskTableColumnData(
@@ -129,178 +105,32 @@ class TaskTableController {
       TaskTableColumnData(
         id: 'status',
         label: 'Estado',
-        width: 0.1,
+        width: 0.07,
         tooltip: 'Estado actual de la tarea',
         sortable: true,
       ),
       TaskTableColumnData(
         id: 'priority',
         label: 'Prioridad',
-        width: 0.1,
+        width: 0.07,
         tooltip: 'Prioridad de la tarea',
         sortable: true,
       ),
       TaskTableColumnData(
         id: 'volunteers',
         label: 'Voluntarios',
-        width: 0.1,
+        width: 0.11,
         tooltip: 'Voluntarios asignados',
         sortable: false,
       ),
       TaskTableColumnData(
         id: 'actions',
         label: 'Acciones',
-        width: 0.1,
+        width: 0.10,
         tooltip: 'Acciones disponibles',
         sortable: false,
       ),
     ];
-  }
-
-  Future<void> fetchAddresses([List<int>? specificTaskIds]) async {
-    if (filteredTasks.isEmpty) return;
-
-    final tasksToFetch = specificTaskIds ?? filteredTasks.map((task) => task.id).toList();
-    Map<int, String> addresses = Map.from(addressesNotifier.value);
-
-    // First set all to loading state and update UI
-    for (final taskId in tasksToFetch) {
-      if (!addresses.containsKey(taskId) ||
-          (addresses[taskId]?.startsWith('Error') == true) ||
-          addresses[taskId] == 'Dirección no disponible') {
-        addresses[taskId] = 'Cargando dirección...';
-      }
-    }
-
-    // Update UI with loading indicators
-    addressesNotifier.value = Map.from(addresses);
-
-    // Now fetch each address one by one
-    for (final taskId in tasksToFetch) {
-      // Skip if already fetching
-      if (_pendingAddressFetches.containsKey(taskId)) continue;
-
-      // Skip if we have a valid address
-      if (addresses.containsKey(taskId) &&
-          !addresses[taskId]!.startsWith('Error') &&
-          addresses[taskId] != 'Dirección no disponible' &&
-          addresses[taskId] != 'Cargando dirección...') {
-        continue;
-      }
-
-      // Check cache
-      if (_addressCache.containsKey(taskId)) {
-        final cached = _addressCache[taskId]!;
-        if (DateTime.now().difference(cached.timestamp).inHours < 1) {
-          addresses[taskId] = cached.address;
-          addressesNotifier.value = Map.from(addresses); // Update UI immediately with cached value
-          continue;
-        }
-      }
-
-      // Fetch the address
-      _pendingAddressFetches[taskId] = _fetchSingleAddress(taskId);
-
-      // Handle the result
-      _pendingAddressFetches[taskId]!.then((address) {
-        final updatedAddresses = Map<int, String>.from(addressesNotifier.value);
-
-        if (address != null) {
-          updatedAddresses[taskId] = address;
-          _addressCache[taskId] = _CachedAddress(address);
-        } else {
-          updatedAddresses[taskId] = 'Dirección no disponible';
-        }
-
-        _pendingAddressFetches.remove(taskId);
-        addressesNotifier.value = updatedAddresses; // Update UI with the new address
-      });
-    }
-  }
-
-  Future<String?> _fetchSingleAddress(int taskId) async {
-    try {
-      // Primero busca en las tareas filtradas
-      TaskWithDetails? task;
-      try {
-        task = filteredTasks.firstWhere((task) => task.id == taskId);
-      } catch (e) {
-        // Si no encuentra en filtradas, busca en todas las tareas
-        task = tasks.firstWhere((task) => task.id == taskId, orElse: () => throw Exception('Tarea no encontrada'));
-      }
-
-      if (task.location == null) {
-        // Si la tarea no tiene ubicación, intentamos buscarla en el servicio
-        try {
-          final locationResponse = await LocationServices.fetchLocationById(task.locationId);
-
-          if (locationResponse.isNotEmpty) {
-            final double lat = locationResponse['latitude'];
-            final double lon = locationResponse['longitude'];
-
-            final address = await LocationExternalServices.getAddressFromLatLon(lat, lon);
-            return address;
-          } else {
-            return 'Dirección no disponible';
-          }
-        } catch (e) {
-          return 'Dirección no disponible';
-        }
-      }
-
-      final address = await LocationExternalServices.getAddressFromLatLon(
-        task.location!.latitude,
-        task.location!.longitude,
-      );
-
-      return address;
-    } catch (e) {
-      return 'Dirección no disponible';
-    }
-  }
-
-  Future<void> fetchAddressForTask(int taskId) async {
-    await fetchAddresses([taskId]);
-  }
-
-  Future<void> loadTaskAddresses([Function? onTaskChanged]) async {
-    Map<int, String> addresses = Map.from(addressesNotifier.value);
-
-    for (var task in tasks) {
-      try {
-        addresses[task.id] = 'Cargando dirección...';
-        addressesNotifier.value = Map.from(addresses);
-
-        if (onTaskChanged != null) {
-          onTaskChanged();
-        }
-
-        final locationResponse = await LocationServices.fetchLocationById(task.locationId);
-
-        if (locationResponse.isNotEmpty) {
-          final double lat = locationResponse['latitude'];
-          final double lon = locationResponse['longitude'];
-
-          final address = await LocationExternalServices.getAddressFromLatLon(lat, lon);
-          addresses[task.id] = address;
-
-          addressesNotifier.value = Map.from(addresses);
-
-          if (onTaskChanged != null) {
-            onTaskChanged();
-          }
-        }
-      } catch (e) {
-        addresses[task.id] = 'Dirección no disponible';
-        addressesNotifier.value = Map.from(addresses);
-
-        if (onTaskChanged != null) {
-          onTaskChanged();
-        }
-      }
-    }
-
-    applyFilters();
   }
 
   Future<void> fetchTasks([Function? onTaskChanged]) async {
@@ -311,15 +141,13 @@ class TaskTableController {
 
     tasksNotifier.value = loadedTasks;
 
-    Map<int, String> addresses = {};
-
-    addressesNotifier.value = addresses;
-
     applyFilters();
 
     isLoadingNotifier.value = false;
 
-    loadTaskAddresses(onTaskChanged);
+    if (onTaskChanged != null) {
+      onTaskChanged();
+    }
   }
 
   void _sortTasks() {
@@ -332,10 +160,8 @@ class TaskTableController {
         case 'name':
           comparison = a.name.compareTo(b.name);
           break;
-        case 'address':
-          final aAddress = taskAddresses[a.id] ?? '';
-          final bAddress = taskAddresses[b.id] ?? '';
-          comparison = aAddress.compareTo(bAddress);
+        case 'description':
+          comparison = a.description.compareTo(b.description);
           break;
         case 'start_date':
           comparison = a.startDate.compareTo(b.startDate);
@@ -372,14 +198,11 @@ class TaskTableController {
         tasks.where((task) {
           final nameMatches = nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase());
 
-          final address = taskAddresses[task.id] ?? '';
-          final addressMatches = addressFilter.isEmpty || address.toLowerCase().contains(addressFilter.toLowerCase());
-
           final statusMatches = statusFilter == 'Todos' || getTaskStatus(task) == statusFilter;
 
           final priorityMatches = priorityFilter == 'Todas' || getTaskPriority(task) == priorityFilter;
 
-          return nameMatches && addressMatches && statusMatches && priorityMatches;
+          return nameMatches && statusMatches && priorityMatches;
         }).toList();
 
     filteredTasksNotifier.value = filteredList;
@@ -455,11 +278,4 @@ class TaskTableController {
         return Colors.grey;
     }
   }
-}
-
-class _CachedAddress {
-  final String address;
-  final DateTime timestamp;
-
-  _CachedAddress(this.address) : timestamp = DateTime.now();
 }
