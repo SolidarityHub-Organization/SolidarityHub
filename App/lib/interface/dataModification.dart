@@ -148,7 +148,7 @@ class _DataModificationState extends State<DataModification> {
                               labelText: 'Número de teléfono',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                             ),
-                            //validator: validatePhoneWithoutEmpty,
+                            validator: validatePhone,
                           ),
                         ),
                         const SizedBox(height: 20),
