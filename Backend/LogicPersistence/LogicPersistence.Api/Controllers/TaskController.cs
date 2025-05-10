@@ -102,59 +102,53 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		// dictionary of state and task count e.g. { "Completed": 2, "Pending": 4 }
-		[HttpGet("tasks/states/count")]
-		public async Task<IActionResult> GetAllTaskCountByStateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
-		{
-			try
-			{
-				var stateCounts = await _taskServices.GetAllTaskCountByStateAsync(fromDate, toDate);
-				return Ok(stateCounts);
-			}
-			catch (InvalidOperationException ex)
-			{
+		[HttpGet("tasks/states/{id}")]
+		public async Task<IActionResult> GetTaskStateByIdAsync(int id) {
+			try {
+				var stateTasks = await _taskServices.GetTaskStateByIdAsync(id);
+				return Ok(stateTasks);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
-			catch (Exception ex)
-			{
+		}
+
+		// dictionary of state and task count e.g. { "Completed": 2, "Pending": 4 }
+		[HttpGet("tasks/states/count")]
+		public async Task<IActionResult> GetAllTaskCountByStateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+			try {
+				var stateCounts = await _taskServices.GetAllTaskCountByStateAsync(fromDate, toDate);
+				return Ok(stateCounts);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 		// returns the count of tasks depending on the state e.g. 2
 		[HttpGet("tasks/states/{state}/count")]
-		public async Task<IActionResult> GetTaskCountByStateAsync([FromRoute] string state, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
-		{
-			try
-			{
+		public async Task<IActionResult> GetTaskCountByStateAsync([FromRoute] string state, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+			try {
 				var count = await _taskServices.GetTaskCountByStateAsync(state, fromDate, toDate);
 				return Ok(count);
-			}
-			catch (ArgumentException ex)
-			{
+			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 		// returns a list of task ids depending on the state e.g. [1, 2, 3]
 		[HttpGet("tasks/states/{state}/ids")]
-		public async Task<IActionResult> GetTaskIdsByStateAsync([FromRoute] string state)
-		{
-			try
-			{
+		public async Task<IActionResult> GetTaskIdsByStateAsync([FromRoute] string state) {
+			try {
 				var taskIds = await _taskServices.GetTaskIdsByStateAsync(state);
 				return Ok(taskIds);
-			}
-			catch (InvalidOperationException ex)
-			{
+			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
@@ -184,7 +178,7 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
-		
+
 		// Returns a list of all the tasks which are assigned to a volunteer
 		[HttpGet("tasks/assigned-to-volunteer/{volunteerId}")]
 		public async Task<IActionResult> GetTasksAssignedToVolunteerAsync(int volunteerId) {

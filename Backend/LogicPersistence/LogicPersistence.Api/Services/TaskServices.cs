@@ -102,6 +102,11 @@ namespace LogicPersistence.Api.Services {
 			);
 		}
 
+		public async Task<State> GetTaskStateByIdAsync(int id) {
+			var state = await _taskRepository.GetTaskStateByIdAsync(id);
+			return state;
+		}
+
 		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString) {
 			if (!Enum.TryParse<State>(stateString, true, out State state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");
@@ -130,7 +135,7 @@ namespace LogicPersistence.Api.Services {
 			}
 			return tasks;
 		}
-		
+
 		public async Task<int> GetTaskCountByStateAsync(string stateString, DateTime fromDate, DateTime toDate) {
 			if (!Enum.TryParse<State>(stateString, true, out var state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");

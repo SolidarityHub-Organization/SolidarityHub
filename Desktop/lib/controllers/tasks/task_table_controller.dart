@@ -17,6 +17,9 @@ class TaskTableController {
 
   final ValueNotifier<List<TaskTableColumnData>> columnsNotifier = ValueNotifier<List<TaskTableColumnData>>([]);
 
+  final Map<int, int> _taskStatuses = {};
+  final Map<int, String> _taskPriorities = {};
+
   List<TaskWithDetails> get tasks => tasksNotifier.value;
   List<TaskWithDetails> get filteredTasks => filteredTasksNotifier.value;
   bool get isLoading => isLoadingNotifier.value;
@@ -133,7 +136,7 @@ class TaskTableController {
     ];
   }
 
-  Future<void> fetchTasks([Function? onTaskChanged]) async {
+  Future<void> fetchTasks([Function? onComplete]) async {
     isLoadingNotifier.value = true;
 
     final tasksData = await TaskServices.fetchAllTasksWithDetails();
@@ -141,12 +144,26 @@ class TaskTableController {
 
     tasksNotifier.value = loadedTasks;
 
+    await _loadTaskStatusesAndPriorities(loadedTasks);
+
     applyFilters();
 
     isLoadingNotifier.value = false;
 
-    if (onTaskChanged != null) {
-      onTaskChanged();
+    if (onComplete != null) {
+      onComplete();
+    }
+  }
+
+  Future<void> _loadTaskStatusesAndPriorities(List<TaskWithDetails> tasks) async {
+    _taskStatuses.clear();
+    _taskPriorities.clear();
+
+    for (var task in tasks) {
+      final status = await TaskServices.getTaskStateById(task.id);
+      _taskStatuses[task.id] = status;
+
+      _taskPriorities[task.id] = task.adminId != null ? 'Alta' : 'Media';
     }
   }
 
@@ -210,7 +227,22 @@ class TaskTableController {
   }
 
   String getTaskStatus(TaskWithDetails task) {
-    return 'Pendiente';
+    final status = _taskStatuses[task.id] ?? 'Desconocido';
+
+    switch (status) {
+      case -1:
+        return 'Desconocido';
+      case 0:
+        return 'Asignado';
+      case 1:
+        return 'Pendiente';
+      case 2:
+        return 'Completado';
+      case 3:
+        return 'Cancelado';
+      default:
+        return 'Desconocido';
+    }
   }
 
   String getTaskPriority(TaskWithDetails task) {
