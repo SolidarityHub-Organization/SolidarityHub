@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
-import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Markers/markerFactory.dart';
+import 'package:solidarityhub/widgets/map/factory_method_markers/marker_factory.dart';
 
 class VolunteerMarkerCreator implements MapMarkerCreator {
   @override

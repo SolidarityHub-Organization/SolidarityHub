@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 
 import 'package:solidarityhub/services/volunteer_services.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/custom_bar_chart.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/custom_pie_chart.dart';
+import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
+import 'package:solidarityhub/widgets/common/custom_bar_chart.dart';
+import 'package:solidarityhub/widgets/common/custom_pie_chart.dart';
 
 class VolunteerTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -65,24 +64,6 @@ class _VolunteerTabState extends State<VolunteerTab> {
     _verticalScrollController.dispose();
     _horizontalScrollController.dispose();
     super.dispose();
-  }
-
-  double _calculateMaxTitleWidth(List<Map<String, dynamic>> data) {
-    final textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-      text: TextSpan(style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-    );
-
-    double maxWidth = 0;
-    for (var item in data) {
-      textPainter.text = TextSpan(
-        text: item['item1'] as String,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      );
-      textPainter.layout();
-      maxWidth = math.max(maxWidth, textPainter.width);
-    }
-    return maxWidth * 1; // add a % of padding
   }
 
   @override
@@ -155,57 +136,3 @@ class _VolunteerTabState extends State<VolunteerTab> {
   }
 }
 
-Widget _buildLegendItem(MapEntry<String, int> entry, double percentage, bool isInOther, Map<String, int> groupedData) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 6.0),
-    child: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 100,
-              child: Text(
-                entry.key,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isInOther ? Colors.grey[700] : Colors.black,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 100,
-              height: 12,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: percentage / 100,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation(
-                    isInOther
-                        ? Colors.grey
-                        : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) % Colors.primaries.length],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 50,
-              child: Text(
-                '${percentage.toStringAsFixed(1)}%',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isInOther ? Colors.grey[700] : Colors.black,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}

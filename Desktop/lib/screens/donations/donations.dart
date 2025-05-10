@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
-import 'package:solidarityhub/LogicPresentation/donations/assign_donation_dialog.dart';
-import 'package:solidarityhub/LogicPresentation/donations/create_donation_dialog.dart';
+import 'package:solidarityhub/widgets/donations/assign_donation_dialog.dart';
+import 'package:solidarityhub/widgets/donations/create_donation_dialog.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/services/donation_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';

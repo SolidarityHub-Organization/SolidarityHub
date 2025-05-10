@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/tables/taskTable.dart';
-import 'tables/generalTable.dart';
-import 'tables/victimTable.dart';
-import 'tables/resourceTable.dart';
-import 'tables/volunteerTable.dart';
+import 'package:solidarityhub/screens/dashboard/tabs/task_tab.dart';
+import 'tabs/general_tab.dart';
+import 'tabs/victim_tab.dart';
+import 'tabs/resource_tab.dart';
+import 'tabs/volunteer_tab.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
-import 'package:solidarityhub/models/donation.dart';
+import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/services/dashboard_services.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/services/victim_services.dart';

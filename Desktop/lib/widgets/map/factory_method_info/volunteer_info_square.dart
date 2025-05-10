@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
-import 'infoSquareFactory.dart';
+import 'info_square_factory.dart';
 
-class VictimInfoSquare implements InfoSquare {
+class VolunteerInfoSquare implements InfoSquare {
   @override
   Widget buildInfoSquare(MapMarker mapMarker) {
     return Container(
@@ -15,7 +15,7 @@ class VictimInfoSquare implements InfoSquare {
         ),
         borderRadius: BorderRadius.circular(16.0), // Aumentado el radio
         boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
-        border: Border.all(color: Colors.red.shade300, width: 2.0),
+        border: Border.all(color: Color.fromARGB(255, 255, 79, 135), width: 2.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,15 +29,15 @@ class VictimInfoSquare implements InfoSquare {
                 decoration: BoxDecoration(
                   color: Colors.red.shade100,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red.shade300),
+                  border: Border.all(color: Color.fromARGB(255, 255, 79, 135)),
                 ),
-                child: Icon(Icons.person, color: Colors.red.shade700, size: 36),
+                child: Icon(Icons.volunteer_activism, color: Color.fromARGB(255, 255, 79, 135), size: 36),
               ),
               SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Detalles del afectado',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.red.shade800),
+                  'Detalles del voluntario',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 79, 135)),
                 ),
               ),
             ],
@@ -45,7 +45,7 @@ class VictimInfoSquare implements InfoSquare {
 
           SizedBox(height: 40), // Mayor espacio vertical
 
-          Divider(color: Colors.red.shade300, thickness: 2.0, height: 32),
+          Divider(color: Color.fromARGB(255, 255, 143, 180), thickness: 2.0, height: 32),
 
           SizedBox(height: 40), // Mayor espacio vertical
           // Información con diseño mejorado
@@ -60,49 +60,21 @@ class VictimInfoSquare implements InfoSquare {
                 '${mapMarker.position.latitude.toStringAsFixed(4)}, ${mapMarker.position.longitude.toStringAsFixed(4)}',
           ),
 
-          SizedBox(height: 30), // Mayor espacio entre elementos
-
-          _buildInfoRowEnhanced(
-            icon: Icons.priority_high,
-            label: 'Nivel de urgencia',
-            value: mapMarker.urgencyLevel ?? 'Desconocido',
-            valueColor: _getUrgencyColor(mapMarker.urgencyLevel),
-          ),
-
           SizedBox(height: 50), // Espacio al final
           // Decoración adicional en la parte inferior
-          Divider(color: Colors.red.shade200, thickness: 1.0),
+          Divider(color: Color.fromARGB(255, 255, 143, 180), thickness: 1.0),
 
           SizedBox(height: 20),
 
           Center(
             child: Text(
               'Información actualizada',
-              style: TextStyle(color: Colors.red.shade400, fontStyle: FontStyle.italic, fontSize: 14),
+              style: TextStyle(color: Color.fromARGB(255, 255, 79, 135), fontStyle: FontStyle.italic, fontSize: 14),
             ),
           ),
         ],
       ),
     );
-  }
-
-  // Método para obtener el color según el nivel de urgencia
-  Color _getUrgencyColor(String? urgencyLevel) {
-    if (urgencyLevel == null) return Colors.grey;
-
-    String level = urgencyLevel.toLowerCase().trim();
-
-    if (level.contains('low') || level.contains('bajo')) {
-      return Colors.green;
-    } else if (level.contains('medium') || level.contains('medio')) {
-      return Colors.orange;
-    } else if (level.contains('high') || level.contains('alto')) {
-      return Colors.red;
-    } else if (level.contains('critical') || level.contains('crítico')) {
-      return Colors.red.shade900;
-    } else {
-      return Colors.grey;
-    }
   }
 
   // Widget mejorado para las filas de información
@@ -117,16 +89,19 @@ class VictimInfoSquare implements InfoSquare {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.7),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.shade200),
+        border: Border.all(color: Color.fromARGB(255, 255, 143, 180)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 22, color: Colors.red.shade600),
+              Icon(icon, size: 22, color: Color.fromARGB(255, 255, 79, 135)),
               SizedBox(width: 10),
-              Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+              Text(
+                label,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 255, 79, 135)),
+              ),
             ],
           ),
           SizedBox(height: 8),

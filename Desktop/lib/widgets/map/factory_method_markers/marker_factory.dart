@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
-import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Markers/victimMarkerCreator.dart';
-import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Markers/volunteerMarkerCreator.dart';
-import 'package:solidarityhub/LogicPresentation/map/factoryMethod_Markers/taskMarkerCreator.dart';
+import 'package:solidarityhub/widgets/map/factory_method_markers/victim_marker_creator.dart';
+import 'package:solidarityhub/widgets/map/factory_method_markers/volunteer_marker_creator.dart';
+import 'package:solidarityhub/widgets/map/factory_method_markers/task_marker_creator.dart';
 
 abstract class MapMarkerCreator {
   Marker createMarker(MapMarker mapMarker, BuildContext context, Function(MapMarker) onMarkerTap);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
+import 'package:solidarityhub/screens/dashboard/dashboard.dart';
 import 'package:http/http.dart' as http;
 
 class Loginadmin extends StatefulWidget {

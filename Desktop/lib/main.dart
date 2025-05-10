@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:solidarityhub/LogicPresentation/admin/log_in_admin.dart';
-import 'package:solidarityhub/LogicPresentation/dashboard/dashboard.dart';
-import 'package:solidarityhub/LogicPresentation/donations/donations.dart';
+import 'package:solidarityhub/screens/login_admin.dart';
+import 'package:solidarityhub/screens/dashboard/dashboard.dart';
+import 'package:solidarityhub/screens/donations/donations.dart';
 import 'package:solidarityhub/screens/tasks_screen.dart';
 import 'package:solidarityhub/services/database_services.dart';
-import 'package:solidarityhub/LogicPresentation/map/map.dart';
+import 'package:solidarityhub/screens/map.dart';
 import 'package:solidarityhub/utils/logger.dart';
 
 void main() {

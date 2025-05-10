@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
-import 'infoSquareFactory.dart';
+import 'info_square_factory.dart';
 
 class TaskInfoSquare implements InfoSquare {
   @override

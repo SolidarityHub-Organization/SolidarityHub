@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
-import 'victimInfoSquare.dart';
-import 'volunteerInfoSquare.dart';
-import 'taskInfoSquare.dart';
+import 'victim_info_square.dart';
+import 'volunteer_info_square.dart';
+import 'task_info_square.dart';
 
 abstract class InfoSquare {
   Widget buildInfoSquare(MapMarker mapMarker);

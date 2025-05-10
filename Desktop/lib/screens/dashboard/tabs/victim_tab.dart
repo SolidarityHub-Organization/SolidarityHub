@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/services/victim_services.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/two_dimensional_scroll_widget.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/custom_line_chart.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/custom_bar_chart.dart';
-import 'package:solidarityhub/LogicPresentation/common_widgets/custom_pie_chart.dart';
+import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
+import 'package:solidarityhub/widgets/common/custom_line_chart.dart';
+import 'package:solidarityhub/widgets/common/custom_bar_chart.dart';
+import 'package:solidarityhub/widgets/common/custom_pie_chart.dart';
 
 class VictimsTab extends StatefulWidget {
   final DateTime? fechaInicio;
