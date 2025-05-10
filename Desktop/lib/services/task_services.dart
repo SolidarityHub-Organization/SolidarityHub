@@ -114,4 +114,15 @@ class TaskServices {
 
     return count;
   }
+
+  static Future<int> getTaskStateById(int id) async {
+    final response = await ApiServices.get('tasks/states/$id');
+    int state = -1;
+
+    if (response.statusCode.ok) {
+      state = json.decode(response.body);
+    }
+
+    return state;
+  }
 }
