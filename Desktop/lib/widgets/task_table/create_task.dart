@@ -212,14 +212,20 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const SizedBox(height: 2),
         InkWell(
           onTap: () async {
-            final selectedDate = await showDatePicker(
+            final DateTime now = DateTime.now();
+            final DateTime minDate = date != null && date.isBefore(now) ? date : now;
+
+            final DateTime initialDate = date ?? now;
+
+            final DateTime? picked = await showDatePicker(
               context: context,
-              initialDate: date ?? DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
+              initialDate: initialDate,
+              firstDate: minDate,
+              lastDate: DateTime(now.year + 5),
             );
-            if (selectedDate != null) {
-              onDateSelected(selectedDate);
+
+            if (picked != null) {
+              onDateSelected(picked);
             }
           },
           child: Container(

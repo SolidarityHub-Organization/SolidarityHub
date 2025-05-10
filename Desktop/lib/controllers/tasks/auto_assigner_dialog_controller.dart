@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/controllers/tasks/auto_assigner_controller.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
+import 'package:solidarityhub/widgets/common/snack_bar.dart';
 
 class AutoAssignerDialogController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -40,12 +41,31 @@ class AutoAssignerDialogController {
     if (formKey.currentState?.validate() ?? false) {
       volunteersPerTask = int.parse(numberController.text);
 
-      await AutoAssigner(
-        selectedStrategy,
-      ).assignTasks(tasks, await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
+      try {
+        int potentiallyAffectedTasks = tasks.where((task) => task.assignedVolunteers.length < volunteersPerTask).length;
 
-      onTasksUpdated();
-      return true;
+        await AutoAssigner(
+          selectedStrategy,
+        ).assignTasks(tasks, await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
+
+        onTasksUpdated();
+
+        AppSnackBar.show(
+          context: context,
+          message: 'Asignación completada. Se procesaron $potentiallyAffectedTasks tareas.',
+          type: SnackBarType.success,
+        );
+
+        return true;
+      } catch (e) {
+        AppSnackBar.show(
+          context: context,
+          message: 'Error al asignar voluntarios: ${e.toString()}',
+          type: SnackBarType.error,
+          duration: const Duration(seconds: 6),
+        );
+        return false;
+      }
     }
     return false;
   }

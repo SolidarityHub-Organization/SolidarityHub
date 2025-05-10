@@ -18,60 +18,18 @@ class TaskFilterPanel extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Nombre de la tarea',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                      ),
-                      onChanged: (value) {
-                        controller.nameFilter = value;
-                        controller.applyFilters();
-                        onFilterChanged();
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Dirección',
-                        prefixIcon: Icon(Icons.location_on),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                      ),
-                      onChanged: (value) {
-                        controller.addressFilter = value;
-                        controller.applyFilters();
-                        onFilterChanged();
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.nameFilter = '';
-                      controller.addressFilter = '';
-                      controller.statusFilter = 'Todos';
-                      controller.priorityFilter = 'Todas';
-                      controller.sortField = 'name';
-                      controller.sortAscending = true;
-                      controller.applyFilters();
-                      onFilterChanged();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                      minimumSize: const Size(0, 48),
-                    ),
-                    child: const Text('Limpiar'),
-                  ),
-                ],
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de la tarea',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                onChanged: (value) {
+                  controller.nameFilter = value;
+                  controller.applyFilters();
+                  onFilterChanged();
+                },
               ),
               const SizedBox(height: 12),
 
@@ -101,7 +59,6 @@ class TaskFilterPanel extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
@@ -122,6 +79,23 @@ class TaskFilterPanel extends StatelessWidget {
                         }
                       },
                     ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      controller.nameFilter = '';
+                      controller.statusFilter = 'Todos';
+                      controller.priorityFilter = 'Todas';
+                      controller.sortField = 'name';
+                      controller.sortAscending = true;
+                      controller.applyFilters();
+                      onFilterChanged();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                      minimumSize: const Size(100, 48),
+                    ),
+                    child: const Text('Limpiar Filtros'),
                   ),
                 ],
               ),

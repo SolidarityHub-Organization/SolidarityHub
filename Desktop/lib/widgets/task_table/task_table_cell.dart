@@ -33,13 +33,7 @@ class TaskTableCell extends StatelessWidget {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Descripción: ${task.description}'),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Dirección: ${controller.taskAddresses[task.id]?.startsWith('Error') == true || controller.taskAddresses[task.id] == 'Dirección no disponible' ? 'Dirección desconocida' : controller.taskAddresses[task.id] ?? 'Cargando dirección...'}',
-                        ),
-                      ],
+                      children: [Text('Descripción: ${task.description}')],
                     ),
                     actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cerrar'))],
                   ),
@@ -47,44 +41,8 @@ class TaskTableCell extends StatelessWidget {
           },
           child: Center(child: Text(task.name, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center)),
         );
-
       case 'description':
         return Center(child: Text(task.description, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center));
-
-      case 'address':
-        return ValueListenableBuilder<Map<int, String>>(
-          valueListenable: controller.addressesNotifier,
-          builder: (context, addresses, _) {
-            final address = addresses[task.id];
-
-            // Display status based on what we have
-            Widget displayText;
-            if (address == null || address == 'Cargando dirección...') {
-              displayText = Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text('Cargando...'),
-                ],
-              );
-            } else if (address.startsWith('Error') || address == 'Dirección no disponible') {
-              displayText = Text('Dirección desconocida', overflow: TextOverflow.ellipsis, textAlign: TextAlign.center);
-            } else {
-              displayText = Text(address, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center);
-            }
-
-            return Center(child: displayText);
-          },
-        );
 
       case 'start_date':
         return Center(child: _buildDateCell(task.startDate));
