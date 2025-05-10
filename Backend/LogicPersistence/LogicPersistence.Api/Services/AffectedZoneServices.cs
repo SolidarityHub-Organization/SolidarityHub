@@ -83,36 +83,29 @@ namespace LogicPersistence.Api.Services
             return affectedZones.Where(a => a.hazard_level == HazardLevel.None).ToList();
         }
 
-#region Internal methods
-
         public static bool IsPointInAffectedZone(double latitude, double longitude, AffectedZoneWithPointsDTO affectedZone)
         {
-            if (affectedZone == null || affectedZone.points == null || affectedZone.points.Count == 0) {
+            if (affectedZone?.points == null || affectedZone.points.Count == 0)
                 return false;
-            }
+
 
             bool isInside = false;
-            int j = affectedZone.points.Count - 1;
+            int pointCount = affectedZone.points.Count;
 
-            for (int i = 0; i < affectedZone.points.Count; i++)
+            for (int i = 0, j = pointCount - 1; i < pointCount; j = i++)
             {
-                var pointI = affectedZone.points[i];
-                var pointJ = affectedZone.points[j];
+                var pi = affectedZone.points[i];
+                var pj = affectedZone.points[j];
 
+                bool intersects = ((pi.latitude > latitude) != (pj.latitude > latitude)) &&
+                                  (longitude < (pj.longitude - pi.longitude) * (latitude - pi.latitude) /
+                                  (pj.latitude - pi.latitude) + pi.longitude);
 
-                if (((pointI.latitude > latitude) != (pointJ.latitude > latitude)) &&
-                    (longitude < (pointJ.longitude - pointI.longitude) * (latitude - pointI.latitude) / 
-                    (pointJ.latitude - pointI.latitude) + pointI.longitude))
-                {
+                if (intersects)
                     isInside = !isInside;
-                }
-
-                j = i;
             }
 
             return isInside;
         }
-#endregion
     }
-    
 }
