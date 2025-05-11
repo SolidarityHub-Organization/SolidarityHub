@@ -76,7 +76,7 @@ public class AssignDonationDto : DonationBaseDto {
 public class MonetaryDonationCreateDto : DonationBaseDto {
 	[Required]
 	[Range(0.01, double.MaxValue)]
-	public decimal amount { get; set; }
+	public double amount { get; set; }
 
 	[Required]
 	public Currency currency { get; set; }
@@ -98,7 +98,7 @@ public class MonetaryDonationUpdateDto : DonationBaseDto {
 
 	[Required]
 	[Range(0.01, double.MaxValue)]
-	public decimal amount { get; set; }
+	public double amount { get; set; }
 
 	[Required]
 	public Currency currency { get; set; }
@@ -115,7 +115,7 @@ public class MonetaryDonationUpdateDto : DonationBaseDto {
 
 public class MonetaryDonationDisplayDto : DonationBaseDto {
 	public int id { get; set; }
-	public decimal amount { get; set; }
+	public double amount { get; set; }
 	public Currency currency { get; set; }
 	public PaymentStatus payment_status { get; set; }
 	public PaymentService payment_service { get; set; }

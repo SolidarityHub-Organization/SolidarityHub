@@ -7,6 +7,7 @@ import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/services/donation_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
 import 'package:solidarityhub/utils/logger.dart';
+import 'package:solidarityhub/screens/donations/tabs/monetary_donations_tab.dart';
 
 class DonationsPage extends StatefulWidget {
   final String baseUrl;
@@ -450,6 +451,46 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
     return grouped;
   }
 
+  Future<void> _deleteAssignment(Donation donation) async {
+    final confirm =
+        await showDialog<bool>(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Confirmar eliminación'),
+                content: Text('¿Eliminar la asignación de "${donation.itemName}" a ${donation.assignedVictim!.name}?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                    child: const Text('Cancelar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                    child: const Text('Eliminar'),
+                  ),
+                ],
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              ),
+        ) ??
+        false;
+
+    if (!confirm) return;
+
+    try {
+      await DonationServices.unassignDonation(donation.id);
+      await _fetchDonations();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Asignación eliminada correctamente')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al eliminar la asignación: $e')));
+      }
+    }
+  }
+
   Widget _buildHistorySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,18 +620,29 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
                             ),
                           ],
                         ),
-                        trailing:
-                            donation.isFullyDistributed
-                                ? const Chip(
-                                  label: Text('Completado'),
-                                  backgroundColor: Colors.green,
-                                  labelStyle: TextStyle(color: Colors.white, fontSize: 12),
-                                )
-                                : const Chip(
-                                  label: Text('Parcial'),
-                                  backgroundColor: Colors.orange,
-                                  labelStyle: TextStyle(color: Colors.white, fontSize: 12),
-                                ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (donation.isFullyDistributed)
+                              const Chip(
+                                label: Text('Completado'),
+                                backgroundColor: Colors.green,
+                                labelStyle: TextStyle(color: Colors.white, fontSize: 12),
+                              )
+                            else
+                              const Chip(
+                                label: Text('Parcial'),
+                                backgroundColor: Colors.orange,
+                                labelStyle: TextStyle(color: Colors.white, fontSize: 12),
+                              ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteAssignment(donation),
+                              tooltip: 'Eliminar asignación',
+                            ),
+                          ],
+                        ),
                       ),
                       if (donationIndex < victimDonations.length - 1) const Divider(height: 1, indent: 72),
                     ],
@@ -812,105 +864,11 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('Donaciones Monetarias', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          if (_monetaryDonations.isEmpty)
-            const Center(
-              child: Text(
-                'No hay donaciones monetarias disponibles',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _monetaryDonations.length,
-              itemBuilder: (context, index) => _buildMonetaryDonationCard(_monetaryDonations[index]),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMonetaryDonationCard(MonetaryDonation donation) {
-    String getCurrencySymbol(Currency currency) {
-      switch (currency) {
-        case Currency.EUR:
-          return '€';
-        case Currency.USD:
-          return '\$';
-        default:
-          return '';
-      }
-    }
-
-    Color getStatusColor(PaymentStatus status) {
-      switch (status) {
-        case PaymentStatus.Completed:
-          return Colors.green;
-        case PaymentStatus.Pending:
-          return Colors.orange;
-        case PaymentStatus.Failed:
-          return Colors.red;
-        case PaymentStatus.Refunded:
-          return Colors.blue;
-      }
-    }
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${getCurrencySymbol(donation.currency)}${donation.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                Chip(
-                  label: Text(donation.paymentStatus.name, style: const TextStyle(color: Colors.white)),
-                  backgroundColor: getStatusColor(donation.paymentStatus),
-                ),
-              ],
-            ),
-            const Divider(),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.payment),
-              title: Text('Método de pago: ${donation.paymentService.name}'),
-              subtitle: Text('ID Transacción: ${donation.transactionId}'),
-            ),
-            if (donation.volunteer != null)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.person),
-                title: Text('Donante: ${donation.volunteer!.name} ${donation.volunteer!.surname}'),
-              ),
-            if (donation.assignedVictim != null)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.person_outline),
-                title: Text('Asignado a: ${donation.assignedVictim!.name} ${donation.assignedVictim!.surname}'),
-              ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.calendar_today),
-              title: Text('Fecha: ${donation.donationDate.toLocal().toString().split('.')[0]}'),
-            ),
-          ],
-        ),
-      ),
+    return MonetaryDonationsTab(
+      donations: _monetaryDonations,
+      isLoading: _isLoading,
+      errorMessage: _errorMessage,
+      onRefresh: _fetchMonetaryDonations,
     );
   }
 }

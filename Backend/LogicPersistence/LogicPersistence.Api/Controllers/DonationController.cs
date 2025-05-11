@@ -182,6 +182,34 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPost("physical-donations/{id}/unassign")]
+        public async Task<IActionResult> UnassignPhysicalDonationAsync(int id)
+        {
+            try
+            {
+                var donation = await _donationServices.GetPhysicalDonationByIdAsync(id);
+                if (donation == null)
+                {
+                    return NotFound("Donation not found");
+                }
+
+                var updatedDonation = await _donationServices.UnassignPhysicalDonationAsync(id);
+                return Ok(updatedDonation);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 #endregion
 #region MonetaryDonation
         [HttpPost("monetary-donations")]

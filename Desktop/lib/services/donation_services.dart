@@ -94,6 +94,18 @@ class DonationServices {
     }
   }
 
+  static Future<Donation> unassignDonation(int donationId) async {
+    final uri = Uri.parse('$baseUrl/api/v1/physical-donations/$donationId/unassign');
+    final response = await http.post(uri, headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      return Donation.fromJson(responseData);
+    } else {
+      throw Exception('Error al cancelar asignación: ${response.body}');
+    }
+  }
+
   static Future<int> fetchTotalQuantity() async {
     final response = await ApiServices.get('physical-donations/total-amount');
 
@@ -163,6 +175,14 @@ class DonationServices {
       }
     } else {
       throw Exception('Error al obtener el total de donaciones: ${response.statusCode}');
+    }
+  }
+
+  static Future<void> deleteMonetaryDonation(int id) async {
+    final response = await ApiServices.delete('monetary-donations/$id');
+
+    if (!response.statusCode.ok) {
+      throw Exception('Error al eliminar la donación monetaria: ${response.statusCode}');
     }
   }
 }

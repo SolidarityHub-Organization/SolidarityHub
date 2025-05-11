@@ -150,7 +150,20 @@ public class DonationRepository : IDonationRepository {
     public async Task<IEnumerable<MonetaryDonation>> GetAllMonetaryDonationsAsync() 
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM monetary_donation";
+        const string sql = @"
+            SELECT 
+                id,
+                amount,
+                currency::text as currency,
+                payment_status::text as payment_status,
+                transaction_id,
+                payment_service::text as payment_service,
+                donation_date,
+                volunteer_id,
+                admin_id,
+                victim_id,
+                created_at
+            FROM monetary_donation";
 
         return await connection.QueryAsync<MonetaryDonation>(sql);
     }

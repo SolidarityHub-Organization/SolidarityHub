@@ -12,6 +12,7 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id);
         Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync();
         Task<int> GetTotalAmountPhysicalDonationsAsync();
+        Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id);
         #endregion
 
         #region MonetaryDonation

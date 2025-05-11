@@ -109,7 +109,7 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
           result['quantity'],
           result['date'],
         );
-        widget.onDonationAssigned(updatedDonation);
+        widget.onDonationAssigned(updatedDonation as Donation);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));
         }
@@ -204,9 +204,52 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
                   ),
                 ),
                 if (isAssigned)
-                  const Chip(
-                    label: Text('Asignado', style: TextStyle(color: Colors.white)),
-                    backgroundColor: Colors.green,
+                  Row(
+                    children: [
+                      const Chip(
+                        label: Text('Asignado', style: TextStyle(color: Colors.white)),
+                        backgroundColor: Colors.green,
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.cancel, color: Colors.red),
+                        tooltip: 'Cancelar asignación',
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: const Text('Cancelar asignación'),
+                                  content: const Text(
+                                    '¿Estás seguro de que deseas cancelar la asignación de esta donación?',
+                                  ),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('No')),
+                                    TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Sí')),
+                                  ],
+                                ),
+                          );
+
+                          if (confirm == true && mounted) {
+                            try {
+                              final updatedDonation = await DonationServices.unassignDonation(donation.id);
+                              widget.onDonationAssigned(updatedDonation);
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(const SnackBar(content: Text('Asignación cancelada correctamente')));
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text('Error al cancelar asignación: $e')));
+                              }
+                            }
+                          }
+                        },
+                      ),
+                    ],
                   )
                 else
                   ElevatedButton(

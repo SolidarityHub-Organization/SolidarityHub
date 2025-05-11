@@ -82,7 +82,7 @@ public class PhysicalDonation : Donation {
 }
 
 public class MonetaryDonation : Donation {
-	public decimal amount { get; set; }
+	public double amount { get; set; }
 	public Currency currency { get; set; }
 	public PaymentStatus payment_status { get; set; }
 	public string transaction_id { get; set; } = string.Empty;

@@ -112,11 +112,33 @@ namespace LogicPersistence.Api.Services
 
         public async Task<int> GetTotalAmountPhysicalDonationsAsync()
         {
-            var totalAmount = await _donationRepository.GetTotalAmountPhysicalDonationsAsync();
-            if (totalAmount < 0) {
-                throw new InvalidOperationException("Failed to retrieve total amount of donations.");
+            return await _donationRepository.GetTotalAmountPhysicalDonationsAsync();
+        }
+
+        public async Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id)
+        {
+            var donation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
+            if (donation == null)
+            {
+                throw new KeyNotFoundException($"Physical donation with id {id} not found");
             }
-            return totalAmount;
+
+            // Update the donation with victim_id set to null
+            donation.victim_id = null;
+            var result = await _donationRepository.UpdatePhysicalDonationAsync(donation);
+            
+            if (result == null)
+            {
+                throw new InvalidOperationException("Failed to unassign physical donation");
+            }
+
+            Volunteer? volunteer = null;
+            if (result.volunteer_id.HasValue)
+            {
+                volunteer = await _volunteerRepository.GetVolunteerByIdAsync(result.volunteer_id.Value);
+            }
+
+            return result.ToPhysicalDonationDisplayDto(volunteer);
         }
 #endregion
 #region MonetaryDonation
