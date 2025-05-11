@@ -26,11 +26,11 @@ public class TaskMapMarkerDTO : MapMarkerDTO
 
 public class PickupPointMapMarkerDTO : MapMarkerDTO 
 {
-    public Time? time { get; set; } 
+    public PointTime? time { get; set; } 
     public List<PhysicalDonation> physical_donation { get; set; } = new List<PhysicalDonation>();
 }
 
 public class MeetingPointMapMarkerDTO : MapMarkerDTO 
 {
-    public Time? time { get; set; } 
+    public PointTime? time { get; set; } 
 }

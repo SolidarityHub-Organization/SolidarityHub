@@ -63,9 +63,15 @@ public class PointRepository : IPointRepository {
         return await connection.QueryAsync<PhysicalDonation>(sql, new { id });
     }
 
-    public async Task<PointTime> GetTimeByPickupPointIdAsync(int id) 
+    public async Task<PointTime> GetTimeByPickupPointIdAsync(int pickupPointId) 
     {
-        return null;
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            SELECT pt.*
+            FROM point_time pt
+            JOIN pickup_point pp ON pt.id = pp.time_id
+            where pp.time_id = @pickupPointId;";
+        return await connection.QuerySingleAsync<PointTime>(sql, new { pickupPointId });
     }
 #endregion
 
@@ -109,9 +115,15 @@ public class PointRepository : IPointRepository {
         return await connection.QueryAsync<MeetingPoint>("SELECT * FROM meeting_point");
     }
 
-    public async Task<PointTime> GetTimeByMeetingPointIdAsync(int id) 
+    public async Task<PointTime> GetTimeByMeetingPointIdAsync(int meetingPointId) 
     {
-        return null;
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            SELECT pt.*
+            FROM point_time pt
+            JOIN meeting_point mp ON pt.id = mp.time_id
+            where mp.time_id = @meetingPointId;";
+        return await connection.QuerySingleAsync<PointTime>(sql, new { meetingPointId });
     }
 #endregion
 
