@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:solidarityhub/models/donation.dart';
+import 'package:http/http.dart' as http;
 
 import 'api_services.dart';
 
 class DonationServices {
+  static String baseUrl = 'http://localhost:5170'; // Ajusta si es necesario
+
   static Future<List<Donation>> fetchAllDonations() async {
     final response = await ApiServices.get('physical-donations');
     List<Donation> donations = [];
@@ -17,23 +20,28 @@ class DonationServices {
   }
 
   static Future<Donation> createDonation(Donation donation) async {
-    final Map<String, dynamic> donationData = {
+    final uri = Uri.parse('$baseUrl/api/v1/physical-donations');
+    final donationData = {
       'item_name': donation.itemName,
       'description': donation.description,
-      'item_type': donation.category.name,
+      'item_type': donation.category.index,
       'quantity': donation.donated,
       'victim_id': donation.assignedVictim?.id,
-      'volunteer_id': donation.volunteer!.id,
+      'volunteer_id': donation.volunteer?.id,
       'admin_id': 1,
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    final response = await ApiServices.post('physical-donations', body: json.encode(donationData));
+    final response = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(donationData),
+    );
 
-    if (response.statusCode.ok) {
+    if (response.statusCode == 201) {
       return Donation.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to create donation: $response.body');
+      throw Exception('Error al crear donación: ${response.body}');
     }
   }
 
@@ -68,34 +76,18 @@ class DonationServices {
   }
 
   static Future<Donation> assignDonation(int donationId, int victimId, int quantity, DateTime donationDate) async {
-    final uri = 'physical-donations/$donationId/assign';
-
-    final Map<String, dynamic> data = {
-      'id': donationId,
+    final uri = Uri.parse('$baseUrl/api/v1/physical-donations/$donationId/assign');
+    final data = {
       'victim_id': victimId,
-      'quantity': quantity,
-      'distributed': quantity,
       'donation_date': donationDate.toIso8601String(),
       'volunteer_id': 0,
       'admin_id': 1,
     };
 
-    final response = await ApiServices.post(uri, body: json.encode(data));
+    final response = await http.post(uri, headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
-    if (response.statusCode.ok) {
+    if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-
-      if (responseData == null) {
-        throw Exception('La respuesta del servidor está vacía');
-      }
-
-      responseData['id'] = responseData['id'] ?? 0;
-      responseData['victim_id'] = responseData['victim_id'] ?? 0;
-      responseData['volunteer_id'] = responseData['volunteer_id'] ?? 0;
-      responseData['admin_id'] = responseData['admin_id'] ?? 1;
-      responseData['quantity'] = responseData['quantity'] ?? 0;
-      responseData['distributed'] = responseData['distributed'] ?? 0;
-
       return Donation.fromJson(responseData);
     } else {
       throw Exception('Error al asignar donación: ${response.body}');
