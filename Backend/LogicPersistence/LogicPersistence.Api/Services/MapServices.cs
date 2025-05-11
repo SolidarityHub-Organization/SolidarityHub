@@ -177,6 +177,7 @@ namespace LogicPersistence.Api.Services {
                     latitude = location.latitude,
                     longitude = location.longitude,
                     physical_donation = physicalDonations.ToList(),
+                    time = null,
                 });
             }
 
@@ -193,7 +194,6 @@ namespace LogicPersistence.Api.Services {
 
             foreach (var meetingPoint in meetingPoints) {
                 var location = await _locationRepository.GetLocationByIdAsync(meetingPoint.location_id);
-                var attendingVolunteers = await _pointRepository.GetVolunteersByMeetingPointIdAsync(meetingPoint.id);
 
                 result.Add(new MeetingPointMapMarkerDTO {
                     id = meetingPoint.id,
@@ -201,7 +201,7 @@ namespace LogicPersistence.Api.Services {
                     type = "meeting_point",
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    attending_volunteers = attendingVolunteers.ToList(),
+                    time = null,
                 });
             }
 

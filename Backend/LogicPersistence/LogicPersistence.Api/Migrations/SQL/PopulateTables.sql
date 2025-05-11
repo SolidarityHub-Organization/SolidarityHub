@@ -16,7 +16,20 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4650, -0.3773),
   (39.4860, -0.3557),  -- Plaza de Benimaclet
   (39.4845, -0.3571),  -- Calle Emilio Baró
-  (39.4853, -0.3543);  -- Estación de Benimaclet
+  (39.4853, -0.3543),  -- Estación de Benimaclet
+  (39.4697, -0.3774),  -- Plaza de la Virgen
+  (39.4560, -0.3419),  -- Ciudad de las Artes - Hemisfèric
+  (39.4589, -0.3337),  -- Puerto Valencia - Marina Real
+  (39.4751, -0.3815),  -- IVAM
+  (39.4788, -0.3669),  -- Jardines de Monforte
+  (39.5039, -0.4449),  -- Paterna
+  (39.4925, -0.3827),  -- Tavernes Blanques
+  (39.4943, -0.3370),  -- Alboraya - Patacona
+  (39.4503, -0.3257),  -- El Saler
+  (39.3717, -0.4215),  -- Picassent
+  (39.4738, -0.4329),  -- Mislata
+  (39.5084, -0.4147),  -- Burjassot
+  (39.4854, -0.3518);  -- Alboraya centro
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
@@ -223,3 +236,35 @@ INSERT INTO "notifications" ("name", "description", "volunteer_id", "victim_id",
   ('Emergency Food Request', 'Request for emergency food supplies for a family.', NULL, 1, CURRENT_TIMESTAMP),
   ('Medicine Refill Needed', 'Notification for urgent medicine refill for a victim.', NULL, 2, CURRENT_TIMESTAMP),
   ('Temporary Shelter Request', 'Request for temporary shelter for a displaced family.', NULL, 3, CURRENT_TIMESTAMP);
+
+INSERT INTO "point_time" ("start_time", "end_time", "start_date", "end_date") VALUES
+    ('09:00', '14:00', '2025-05-01', NULL),  
+    ('16:00', '20:00', '2025-05-01', NULL),  
+    ('10:00', '18:00', '2025-05-01', NULL),  
+    ('08:00', '21:00', '2025-05-01', '2025-08-31'),  
+    ('09:00', '19:00', '2025-05-01', NULL),  
+    ('07:00', '11:00', '2025-05-01', NULL),  
+    ('18:00', '22:00', '2025-05-01', NULL);  
+
+INSERT INTO "pickup_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
+  ('Centro Acopio Valencia', 'Centro principal de recogida de donaciones', 1, 19, 1),
+  ('Punto Recogida Paterna', 'Punto de recogida en el ayuntamiento', 2, 24, 2),
+  ('Alboraya Solidaria', 'Centro de recogida comunitario', 3, 26, 3),
+  ('El Saler Aid Point', 'Punto de recogida zona playa', 4, 27, 1),
+  ('Mislata Ayuda', 'Centro de donaciones municipal', 5, 29, 2);
+
+INSERT INTO "point_donation" ("point_id", "donation_id") VALUES
+  (1, 1), (1, 2),  
+  (2, 3), (2, 4),  
+  (3, 5),          
+  (4, 6),          
+  (5, 7), (5, 8);
+
+INSERT INTO "meeting_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
+  ('Plaza Ayuntamiento', 'Punto de encuentro principal', 1, 1, 1),
+  ('Jardines Viveros', 'Punto de encuentro zona norte', 2, 2, 2),
+  ('CAC Meeting Point', 'Punto de encuentro zona sur', 3, 3, 3),
+  ('IVAM Plaza', 'Punto de encuentro centro histórico', 4, 22, 1),
+  ('Marina Real', 'Punto de encuentro zona marítima', 5, 21, 2);
+
+
