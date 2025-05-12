@@ -63,7 +63,7 @@ namespace LogicPersistence.Api.Controllers
 			}
 		}
 
-        /*[HttpGet("map/affected-zones-with-points")]
+        [HttpGet("map/affected-zones-with-points")]
         public async Task<ActionResult> GetAllAffectedZonesWithPointsAsync()
         {
             try
@@ -79,7 +79,7 @@ namespace LogicPersistence.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }*/
+        }
 
 		[HttpGet("map/tasks-with-location")]
 		public async Task<IActionResult> GetAllTasksWithLocationAsync()

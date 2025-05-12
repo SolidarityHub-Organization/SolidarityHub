@@ -14,7 +14,7 @@ class MeetingPointMarkerCreator implements MapMarkerCreator {
         onTap: () {
           onMarkerTap(mapMarker);
         },
-        child: const Icon(Icons.location_pin, color: Colors.green, size: 40),
+        child: const Icon(Icons.people, color: Colors.green, size: 40),
       ),
     );
   }

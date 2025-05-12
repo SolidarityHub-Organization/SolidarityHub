@@ -14,7 +14,7 @@ class PickupPointMarkerCreator implements MapMarkerCreator {
         onTap: () {
           onMarkerTap(mapMarker);
         },
-        child: const Icon(Icons.location_pin, color: Colors.blue, size: 40),
+        child: const Icon(Icons.local_shipping, color: Colors.blue, size: 40),
       ),
     );
   }
