@@ -66,7 +66,7 @@ public class SkillRepository : ISkillRepository
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-            SELECT COALESCE(COUNT(v.id), 0)
+            SELECT CAST(COUNT(DISTINCT v.id) AS INTEGER)
             FROM skill s
             LEFT JOIN volunteer_skill vs ON s.id = vs.skill_id
             LEFT JOIN volunteer v ON vs.volunteer_id = v.id
