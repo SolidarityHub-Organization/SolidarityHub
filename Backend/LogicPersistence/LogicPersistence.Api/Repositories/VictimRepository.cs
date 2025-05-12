@@ -62,15 +62,15 @@ public class VictimRepository : IVictimRepository {
 	}
 
 	public async Task<UrgencyLevel> GetVictimMaxUrgencyLevelByIdAsync(int victimId)
-    {
-        using var connection = new NpgsqlConnection(connectionString);
-        const string sql = @"
-			SELECT MAX(n.urgency_level)
+	{
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			SELECT COALESCE(MAX(n.urgency_level::text), 'Unknown')
 			FROM victim v
-			JOIN need n ON v.id = n.victim_id
+			LEFT JOIN need n ON v.id = n.victim_id
 			WHERE v.id = @victimId";
 
-        var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { victimId });
-        return result != null ? Enum.Parse<UrgencyLevel>(result) : UrgencyLevel.Unknown;
+		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { victimId });
+		return Enum.Parse<UrgencyLevel>(result);
     }
 }
