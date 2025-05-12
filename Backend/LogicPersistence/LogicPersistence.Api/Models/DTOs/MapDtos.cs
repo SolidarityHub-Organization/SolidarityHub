@@ -14,23 +14,72 @@ public class MapMarkerDTO
 public class VictimMapMarkerDTO : MapMarkerDTO 
 {
     public string urgency_level { get; set; } = string.Empty;
+    
+    public VictimMapMarkerDTO()
+    {
+        type = "victim";
+    }
 }
 
-public class VolunteerMapMarkerDTO : MapMarkerDTO {}
+public class VolunteerMapMarkerDTO : MapMarkerDTO 
+{
+    public VolunteerMapMarkerDTO()
+    {
+        type = "volunteer";
+    }
+}
 
 public class TaskMapMarkerDTO : MapMarkerDTO
 {
     public string state { get; set; } = string.Empty;
-    public ICollection<Volunteer> assigned_volunteers { get; set; } = new List<Volunteer>();
+    public IEnumerable<Volunteer> assigned_volunteers { get; set; } = new List<Volunteer>();
+
+    public TaskMapMarkerDTO()
+    {
+        type = "task";
+    }
 }
 
-public class PickupPointMapMarkerDTO : MapMarkerDTO 
+public class BasePointMapMarkerDTO : MapMarkerDTO
 {
-    public PointTime? time { get; set; } 
-    public List<PhysicalDonation> physical_donation { get; set; } = new List<PhysicalDonation>();
+    public PointTime? time { get; set; }
 }
 
-public class MeetingPointMapMarkerDTO : MapMarkerDTO 
+public class PickupPointMapMarkerDTO : BasePointMapMarkerDTO 
+{     
+    public IEnumerable<PhysicalDonation> physical_donation { get; set; } = new List<PhysicalDonation>();
+
+    public PickupPointMapMarkerDTO()
+    {
+        type = "pickup_point";
+    }
+}
+
+public class MeetingPointMapMarkerDTO : BasePointMapMarkerDTO 
 {
-    public PointTime? time { get; set; } 
+    public MeetingPointMapMarkerDTO()
+    {
+        type = "meeting_point";
+    }
+}
+
+
+public static class MapMarkerFactory
+{
+        public static async Task<T> CreateBaseMapMarker<T>(dynamic entity, Location location) where T : MapMarkerDTO, new()
+        {
+        var dto = new T
+        {
+            id = entity.id,
+            name = entity.name
+        };
+            
+        if (location != null)
+        {
+            dto.latitude = location.latitude;
+            dto.longitude = location.longitude;
+        }
+            
+        return dto;
+    }
 }

@@ -9,7 +9,7 @@ namespace LogicPersistence.Api.Services
         Task<IEnumerable<MapMarkerDTO>> GetAllVolunteersWithLocationAsync();
         Task<IEnumerable<MapMarkerDTO>> GetAllUsersWithLocationAsync();
         Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllAffectedZonesWithPointsAsync();
-        Task<IEnumerable<MapMarkerDTO>> GetAllTasksWithLocationAsync();
+        Task<IEnumerable<TaskMapMarkerDTO>> GetAllTasksWithLocationAsync();
         Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllRiskZonesWithPointsAsync();
         Task<IEnumerable<PickupPointMapMarkerDTO>> GetAllPickupPointsWithLocationAsync();
         Task<IEnumerable<MeetingPointMapMarkerDTO>> GetAllMeetingPointsWithLocationAsync();

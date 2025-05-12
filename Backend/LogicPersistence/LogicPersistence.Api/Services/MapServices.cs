@@ -24,188 +24,148 @@ namespace LogicPersistence.Api.Services {
             _pointRepository = pointRepository;
         }
 
+#region Public Methods
         public async Task<IEnumerable<MapMarkerDTO>> GetAllVictimsWithLocationAsync() {
-			var victims = await _victimRepository.GetAllVictimsAsync();
-			if (victims == null) {
-				throw new InvalidOperationException("Failed to retrieve victims.");
-			}
-			var victimsWithLocation = victims.Where(v => v.location_id != null).ToList(); 
-			var result = new List<VictimMapMarkerDTO>();
-			foreach (var victim in victimsWithLocation) {
+			var victims = await _victimRepository.GetAllVictimsAsync() ?? throw new InvalidOperationException("Failed to retrieve .");
+            var result = new List<VictimMapMarkerDTO>();
+
+			foreach (var victim in victims.Where(v => v.location_id.HasValue)) {
 				var location = await _locationRepository.GetLocationByIdAsync(victim.location_id.Value);
                 var urgencyLevel = await _victimRepository.GetVictimMaxUrgencyLevelByIdAsync(victim.id);
 
-				result.Add(new VictimMapMarkerDTO {
-					id = victim.id,
-					name = victim.name,
-					type = "victim",
-					latitude = location.latitude,
-					longitude = location.longitude,
-                    urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel),
-				});
+                var victimDto = await MapMarkerFactory.CreateBaseMapMarker<VictimMapMarkerDTO>(victim, location);
+                victimDto.urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel);
+
+				result.Add(victimDto);
 			}
+            
 			return result;
 		}
 
         public async Task<IEnumerable<MapMarkerDTO>> GetAllVolunteersWithLocationAsync() {
-			var volunteers = await _volunteerRepository.GetAllVolunteersAsync();
-			if (volunteers == null) {
-				throw new InvalidOperationException("Failed to retrieve volunteers.");
-			}
-			var volunteersWithLocation = volunteers.Where(v => v.location_id != null).ToList();
+			var volunteers = await _volunteerRepository.GetAllVolunteersAsync() ?? throw new InvalidOperationException("Failed to retrieve volunteers.");;
 			var result = new List<VolunteerMapMarkerDTO>();
-			foreach (var volunteer in volunteersWithLocation) {
+
+			foreach (var volunteer in volunteers.Where(v => v.location_id.HasValue)) {
 				var location = await _locationRepository.GetLocationByIdAsync(volunteer.location_id.Value);
-				result.Add(new VolunteerMapMarkerDTO {
-					id = volunteer.id,
-					name = volunteer.name,
-					type = "volunteer",
-					latitude = location.latitude,
-					longitude = location.longitude,
-				});
+                result.Add(await MapMarkerFactory.CreateBaseMapMarker<VolunteerMapMarkerDTO>(volunteer, location));
 			}
+
 			return result;
 		}
 
         public async Task<IEnumerable<MapMarkerDTO>> GetAllUsersWithLocationAsync() {
-			var result = new List<MapMarkerDTO>();
-            result.AddRange(await GetAllVictimsWithLocationAsync());
-            result.AddRange(await GetAllVolunteersWithLocationAsync());
-            return result;
+			var victims = await GetAllVictimsWithLocationAsync();
+            var volunteers = await GetAllVolunteersWithLocationAsync();
+            
+            return victims.Concat(volunteers);
 		}
 
         public async Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllAffectedZonesWithPointsAsync() 
         {
-            var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
-            if (affectedZones == null) 
-            {
-                throw new InvalidOperationException("Failed to retrieve affected zones.");
-            }
-            var result = new List<AffectedZoneWithPointsDTO>();
-            foreach (var affectedZone in affectedZones.Where(a => a.hazard_level != HazardLevel.None)) 
-            {
-                var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(affectedZone.id);
-                if (points.ToList().Count >= 3) {
-                    result.Add(new AffectedZoneWithPointsDTO {
-                        id = affectedZone.id,
-                        name = affectedZone.name,
-                        description = affectedZone.description,
-                        hazard_level = affectedZone.hazard_level,
-                        admin_id = affectedZone.admin_id,
-                        points = points.Select(p => p.ToLocationDisplayDto()).ToList()
-                    });
-                }
-                
-            }
-            return result;
+            return await GetAllZonesWithPointsAsync(isAffectedZone: true);
         }
 
         public async Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllRiskZonesWithPointsAsync() 
         {
-            var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
-            if (affectedZones == null) 
-            {
-                throw new InvalidOperationException("Failed to retrieve risk zones.");
-            }
-            var result = new List<AffectedZoneWithPointsDTO>();
-            foreach (var riskZone in affectedZones.Where(a => a.hazard_level == HazardLevel.None)) 
-            {
-                var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(riskZone.id);
-                if (points.ToList().Count >= 3) {
-                    result.Add(new AffectedZoneWithPointsDTO {
-                        id = riskZone.id,
-                        name = riskZone.name,
-                        description = riskZone.description,
-                        hazard_level = riskZone.hazard_level,
-                        admin_id = riskZone.admin_id,
-                        points = points.Select(p => p.ToLocationDisplayDto()).ToList()
-                    });
-                }
-                
-            }
-            return result;
+            return await GetAllZonesWithPointsAsync(isAffectedZone: false);
         }
 
-        public async Task<IEnumerable<MapMarkerDTO>> GetAllTasksWithLocationAsync() {
-            var tasks = await _taskRepository.GetAllTasksWithDetailsAsync();
-            if (tasks == null) {
-                throw new InvalidOperationException("Failed to retrieve tasks.");
-            }
+        public async Task<IEnumerable<TaskMapMarkerDTO>> GetAllTasksWithLocationAsync() {
+            var tasks = await _taskRepository.GetAllTasksWithDetailsAsync() ?? throw new InvalidOperationException("Failed to retrieve tasks.");;
             var result = new List<TaskMapMarkerDTO>();
+
             foreach (var task in tasks) {
                 var location = await _locationRepository.GetLocationByIdAsync(task.location_id);
                 var taskState = await _taskRepository.GetTaskStateByIdAsync(task.id);
-                var assignedVolunteersIds = task.assigned_volunteers.Select(v => v.id).ToList();
-                var assignedVolunteers = new List<Volunteer>();
-
-                foreach (var id in assignedVolunteersIds) {
-                    var volunteer = await _volunteerRepository.GetVolunteerByIdAsync(id);
-                    if (volunteer != null) {
-                        assignedVolunteers.Add(volunteer);
-                    }   
-                }
+                var assignedVolunteers = await GetAssignedVolunteers(task.assigned_volunteers);
                 
-                result.Add(new TaskMapMarkerDTO {
-                    id = task.id,
-                    name = task.name,
-                    type = "task",
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    state = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(taskState),
-                    assigned_volunteers = assignedVolunteers.ToList(),
-                });
+                var taskDto = await MapMarkerFactory.CreateBaseMapMarker<TaskMapMarkerDTO>(task, location);
+                taskDto.state = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(taskState);
+                taskDto.assigned_volunteers = assignedVolunteers;
+                
+                result.Add(taskDto);
             }
+
             return result;
         }
 
         public async Task<IEnumerable<PickupPointMapMarkerDTO>> GetAllPickupPointsWithLocationAsync() {
-            var pickupPoints = await _pointRepository.GetAllPickupPointsAsync();
-            if (pickupPoints == null) {
-                throw new InvalidOperationException("Failed to retrieve pickup points.");
-            }
-
+            var pickupPoints = await _pointRepository.GetAllPickupPointsAsync() ?? throw new InvalidOperationException("Failed to retrieve pickup points.");
             var result = new List<PickupPointMapMarkerDTO>();
 
             foreach (var pickupPoint in pickupPoints) {
                 var location = await _locationRepository.GetLocationByIdAsync(pickupPoint.location_id);
                 var physicalDonations = await _pointRepository.GetPhysicalDonationsByPickupPointIdAsync(pickupPoint.id);
 
-                result.Add(new PickupPointMapMarkerDTO {
-                    id = pickupPoint.id,
-                    name = pickupPoint.name,
-                    type = "pickup_point",
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    physical_donation = physicalDonations.ToList(),
-                    time = null,
-                });
+                var pickupPointDto = await MapMarkerFactory.CreateBaseMapMarker<PickupPointMapMarkerDTO>(pickupPoint, location);
+                pickupPointDto.physical_donation = physicalDonations.ToList();
+
+                result.Add(pickupPointDto);
             }
 
             return result;       
         }
 
         public async Task<IEnumerable<MeetingPointMapMarkerDTO>> GetAllMeetingPointsWithLocationAsync() {
-            var meetingPoints = await _pointRepository.GetAllMeetingPointsAsync();
-            if (meetingPoints == null) {
-                throw new InvalidOperationException("Failed to retrieve meeting points.");
-            }
-
+            var meetingPoints = await _pointRepository.GetAllMeetingPointsAsync() ?? throw new InvalidOperationException("Failed to retrieve meeting points.");
             var result = new List<MeetingPointMapMarkerDTO>();
 
             foreach (var meetingPoint in meetingPoints) {
                 var location = await _locationRepository.GetLocationByIdAsync(meetingPoint.location_id);
-
-                result.Add(new MeetingPointMapMarkerDTO {
-                    id = meetingPoint.id,
-                    name = meetingPoint.name,
-                    type = "meeting_point",
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    time = null,
-                });
+                result.Add(await MapMarkerFactory.CreateBaseMapMarker<MeetingPointMapMarkerDTO>(meetingPoint, location));
             }
 
             return result;
-        }         
+        }   
+
+#endregion
+#region Internal Methods
+    internal async Task<IEnumerable<AffectedZoneWithPointsDTO>> GetAllZonesWithPointsAsync(bool isAffectedZone)
+    {
+        var allZones = await _affectedZoneRepository.GetAllAffectedZonesAsync() ?? throw new InvalidOperationException("Failed to retrieve zones.");
+        var filteredZones = isAffectedZone ? allZones.Where(z => z.hazard_level != HazardLevel.None) : allZones.Where(z => z.hazard_level == HazardLevel.None);
+        var result = new List<AffectedZoneWithPointsDTO>();
+
+        foreach (var zone in filteredZones)
+        {
+            var points = await _locationRepository.GetLocationsByAffectedZoneIdAsync(zone.id);
+
+            if (points.Count() >= 3)
+            {
+                result.Add(new AffectedZoneWithPointsDTO
+                {
+                    id = zone.id,
+                    name = zone.name,
+                    description = zone.description,
+                    hazard_level = zone.hazard_level,
+                    admin_id = zone.admin_id,
+                    points = points.Select(p => p.ToLocationDisplayDto()).ToList()
+                });
+            }
+        }
+        
+        return result;
+    }
+
+    internal async Task<IEnumerable<Volunteer>> GetAssignedVolunteers(IEnumerable<VolunteerDisplayDto> assignedVolunteers)
+    {
+        var result = new List<Volunteer>();
+
+        foreach (var volunteer in assignedVolunteers)
+        {
+            var retrievedVolunteer = await _volunteerRepository.GetVolunteerByIdAsync(volunteer.id);
+
+            if (retrievedVolunteer != null)
+            {
+                result.Add(retrievedVolunteer);
+            }
+        }
+
+        return result;
+    }
+
+#endregion   
+
     }
 }
