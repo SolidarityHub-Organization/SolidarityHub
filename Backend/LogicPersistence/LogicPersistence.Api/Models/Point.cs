@@ -29,4 +29,7 @@ public class PickupPoint : Point
     //public virtual ICollection<PhysicalDonation> PhysicalDonations { get; set; } = new List<PhysicalDonation>();  // in intermediate table
 }
 
-public class MeetingPoint : Point {}
+public class MeetingPoint : Point
+{
+    // TODO: add number of attendees or attendees themselves here
+}

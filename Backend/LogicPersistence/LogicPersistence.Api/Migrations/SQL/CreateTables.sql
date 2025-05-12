@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS "skill" (
 
     FOREIGN KEY ("admin_id") REFERENCES "admin"("id")
 );
-
+/*  // this isn't fully implemented yet, i'm not sure if it's because it's not in the migrations, but for now it's commented out as it produces errors with populating the database
 CREATE TABLE IF NOT EXISTS "notifications" (
     "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL,
@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS "notifications" (
         ("volunteer_id" IS NULL AND "victim_id" IS NOT NULL)
     )
 );
-
+*/
 
 /* intermediate tables */
 

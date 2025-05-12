@@ -7,6 +7,8 @@ class MapMarker {
   final String type;
   final String? urgencyLevel;
   final String? state;
+  final dynamic time; // dynamic can be null (thus no ?)
+  final dynamic physicalDonation;
 
   MapMarker({
     required this.id,
@@ -15,6 +17,8 @@ class MapMarker {
     required this.type,
     this.urgencyLevel,
     this.state,
+    this.time,
+    this.physicalDonation,
   });
 
   factory MapMarker.fromJson(Map<String, dynamic> json) {
@@ -26,11 +30,13 @@ class MapMarker {
       type: json['type']?.toString() ?? '',
       urgencyLevel: json['urgencyLevel']?.toString(),
       state: json['state']?.toString(),
+      time: json['time'],
+      physicalDonation: json['physical_donation'],
     );
   }
 
   @override
   String toString() {
-    return 'MapMarker(id: $id, name: $name, type: $type, urgencyLevel: $urgencyLevel, state: $state, position: $position)';
+    return 'MapMarker(id: $id, name: $name, type: $type, urgencyLevel: $urgencyLevel, state: $state, position: $position, time: $time, physicalDonation: $physicalDonation)';
   }
 }

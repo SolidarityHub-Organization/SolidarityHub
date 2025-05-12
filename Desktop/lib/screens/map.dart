@@ -17,7 +17,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-enum MapViewMode { victim, volunteer, task, all }
+enum MapViewMode { victim, volunteer, task, meeting_point, pickup_point, all }
 
 final String baseUrl = 'http://localhost:5170';
 
@@ -39,7 +39,8 @@ class _MapScreenState extends State<MapScreen> {
     _fetchLocations(LocationServices.fetchVictimLocations);
     _fetchLocations(LocationServices.fetchVolunteerLocations);
     _fetchLocations(LocationServices.fetchTaskLocations);
-
+    _fetchLocations(LocationServices.fetchMeetingPointLocations);
+    _fetchLocations(LocationServices.fetchPickupPointLocations);
     _fetchAffectedZones();
   }
 
@@ -103,12 +104,10 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Update filtering logic for multi-selection
+    // filtering logic for multi-selection
     List<MapMarker> filteredMarkers =
         _mapMarkers.where((marker) {
-          // If no modes are selected, show nothing
           if (_selectedModes.isEmpty) return false;
-          // Show markers that match any of the selected modes
           return _selectedModes.contains(_getMapViewMode(marker.type));
         }).toList();
 
@@ -233,12 +232,28 @@ class _MapScreenState extends State<MapScreen> {
                                     icon: Icons.task,
                                     color: Colors.orange,
                                   ),
+                                  SizedBox(height: 8),
+                                  _buildFilterButton(
+                                    label: 'Puntos de Encuentro',
+                                    isSelected: _selectedModes.contains(MapViewMode.meeting_point),
+                                    onPressed: () => _toggleViewMode(MapViewMode.meeting_point),
+                                    icon: Icons.group,          // add icon for this?
+                                    color: Colors.green,
+                                  ),
+                                  SizedBox(height: 8),
+                                  _buildFilterButton(
+                                    label: 'Puntos de Recogida',
+                                    isSelected: _selectedModes.contains(MapViewMode.pickup_point),
+                                    onPressed: () => _toggleViewMode(MapViewMode.pickup_point),
+                                    icon: Icons.local_shipping, // add icon for this?
+                                    color: Colors.blue,
+                                  ),
                                 ],
                               ),
                             ),
                             Positioned(
-                              top: 82,
-                              right: 16, // Mantener en la derecha
+                              bottom: 16,
+                              left: 16,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -255,11 +270,10 @@ class _MapScreenState extends State<MapScreen> {
                                   ),
                                 ],
                               ),
-                            ),
-                            if (_isHeatMapActive)
+                            ),                            if (_isHeatMapActive)
                               Positioned(
-                                top: 200,
-                                right: 16,
+                                bottom: 70,
+                                left: 16,
                                 child: Container(
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
@@ -384,7 +398,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     ),
                   ),
-                  // Use ternary operator instead of if statement
+                  // ternary operator instead of if statement
                   _selectedMarker != null
                       ? Expanded(
                         flex: 1,
@@ -432,7 +446,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                       )
-                      : Container(), // Empty container when no marker is selected
+                      : Container(), // empty when no marker is selected
                 ],
               ),
             ),
@@ -450,7 +464,7 @@ class _MapScreenState extends State<MapScreen> {
         _selectedModes.add(mode);
       }
 
-      // Clear the selected marker when changing filters
+      // clear marker when changing filters
       _selectedMarker = null;
     });
   }
@@ -548,6 +562,10 @@ class _MapScreenState extends State<MapScreen> {
         return MapViewMode.volunteer;
       case 'task':
         return MapViewMode.task;
+      case 'meeting_point':
+        return MapViewMode.meeting_point;
+      case 'pickup_point':
+        return MapViewMode.pickup_point;
       default:
         return MapViewMode.all;
     }

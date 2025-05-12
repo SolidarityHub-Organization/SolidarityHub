@@ -79,4 +79,51 @@ class LocationServices {
 
     return locations;
   }
+
+  static Future<List<Map<String, dynamic>>> fetchPickupPointLocations() async {
+    final response = await ApiServices.get('map/pickup-points-with-location');
+    List<Map<String, dynamic>> locations = [];
+
+    if (response.statusCode.ok) {
+      final List<dynamic> data = json.decode(response.body);
+
+      locations =
+          data.map((location) {
+            return {
+              'id': location['id'],
+              'name': location['name'],
+              'latitude': location['latitude'],
+              'longitude': location['longitude'],
+              'type': location['type'],
+              'time': location['time'],
+              'physical_donation': location['physical_donation'],
+            };
+          }).toList();
+    }
+
+    return locations;
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchMeetingPointLocations() async {
+    final response = await ApiServices.get('map/meeting-points-with-location');
+    List<Map<String, dynamic>> locations = [];
+
+    if (response.statusCode.ok) {
+      final List<dynamic> data = json.decode(response.body);
+
+      locations =
+          data.map((location) {
+            return {
+              'id': location['id'],
+              'name': location['name'],
+              'latitude': location['latitude'],
+              'longitude': location['longitude'],
+              'type': location['type'],
+              'time': location['time'],
+            };
+          }).toList();
+    }
+
+    return locations;
+  }
 }
