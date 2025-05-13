@@ -5,17 +5,17 @@ import 'package:solidarityhub/services/task_services.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 
-class TaskTable extends StatefulWidget {
+class TaskTab extends StatefulWidget {
   final DateTime? fechaInicio;
   final DateTime? fechaFin;
 
-  const TaskTable({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
+  const TaskTab({Key? key, required this.fechaFin, required this.fechaInicio}) : super(key: key);
 
   @override
-  _TaskTableState createState() => _TaskTableState();
+  _TaskTabState createState() => _TaskTabState();
 }
 
-class _TaskTableState extends State<TaskTable> {
+class _TaskTabState extends State<TaskTab> {
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
     // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
@@ -28,19 +28,40 @@ class _TaskTableState extends State<TaskTable> {
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
-  // Inicializar el Future correctamente
-  late final Future<Map<String, dynamic>> _taskTypeCount = TaskServices.fetchTaskTypeCount(
-    _adjustStartDate(widget.fechaInicio),
-    _adjustEndDate(widget.fechaFin),
-  );
-  late final Future<List<Map<String, dynamic>>> _allTasks = TaskServices.fetchAllTasks(
-    _adjustStartDate(widget.fechaInicio),
-    _adjustEndDate(widget.fechaFin),
-  );
+  late Future<Map<String, dynamic>> _taskTypeCount;
+  late Future<List<Map<String, dynamic>>> _allTasks;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    _taskTypeCount = TaskServices.fetchTaskTypeCount(
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+    );
+    
+    _allTasks = TaskServices.fetchAllTasks(
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+    );
+  }
 
   String? _selectedUrgency;
   String? _selectedState;
   String? _selectedZone;
+
+  @override
+  void didUpdateWidget(covariant TaskTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
+      setState(() {
+        _loadData();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,17 +267,54 @@ class _TaskTableState extends State<TaskTable> {
                           } else if (snapshot.hasError) {
                             return const Center(child: Text('Error al cargar las tareas'));
                           } else {
-                            final tasks =
-                                snapshot.data!
-                                    .where(
-                                      (task) =>
-                                          (_selectedUrgency == null || task['urgency_level'] == _selectedUrgency) &&
-                                          (_selectedState == null || task['state'] == _selectedState) &&
-                                          (_selectedZone == null ||
-                                              (_selectedZone == 'Sin zona' && task['affected_zone'] == null) ||
-                                              (task['affected_zone']?['name'] == _selectedZone)),
-                                    )
-                                    .toList();
+                            final tasks = snapshot.data!.map((task) {
+                              return {
+                                'name': task['name'] ?? 'Sin nombre',
+                                'urgency_level': task['urgency_level'] ?? 'Desconocido',
+                                'state': task['state'] ?? 'Desconocido',
+                                'affected_zone': task['affected_zone'],
+                              };
+                            }).where(
+                              (task) =>
+                                  (_selectedUrgency == null || task['urgency_level'] == _selectedUrgency) &&
+                                  (_selectedState == null || task['state'] == _selectedState) &&
+                                  (_selectedZone == null ||
+                                      (_selectedZone == 'Sin zona' && task['affected_zone'] == null) ||
+                                      (task['affected_zone']?['name'] == _selectedZone)),
+                            ).toList();
+                            
+                            if (tasks.isEmpty) {
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 16.0),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                                elevation: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.all(24.0),
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.info_outline, size: 48, color: Colors.grey[600]),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Sin datos que mostrar',
+                                        style: TextStyle(
+                                          fontSize: 18, 
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        'No hay tareas que coincidan con los filtros seleccionados',
+                                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            
                             return ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -320,9 +378,29 @@ class _TaskTableState extends State<TaskTable> {
   }
 
   List<PieChartSectionData> _generatePieSections(Map<String, dynamic> data) {
+    final Map<String, dynamic> sanitizedData = {};
+    data.forEach((key, value) {
+      sanitizedData[key] = value ?? 0;
+    });
+    
     // filter out unknown tasks
-    final filteredData = Map<String, dynamic>.from(data)
+    final filteredData = Map<String, dynamic>.from(sanitizedData)
       ..removeWhere((key, value) => key == 'Unknown' || key == 'Desconocido');
+    
+    // check for data to show
+    bool hasData = filteredData.values.any((value) => (value as num) > 0);
+    
+    if (!hasData) {
+      return [
+        PieChartSectionData(
+          value: 1,
+          title: 'Sin datos\nque\nmostrar',
+          color: Colors.grey,
+          radius: 80,
+          titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+        )
+      ];
+    }
 
     return filteredData.entries.map((entry) {
       final value = (entry.value as int).toDouble();
@@ -371,6 +449,7 @@ class _TaskTableState extends State<TaskTable> {
   }
 
   Widget _buildStyledInfoCard(String title, String value, Color color) {
+    final displayValue = value == 'null' ? '0' : value;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 8.0, right: 100.0, top: 0.0),
@@ -386,7 +465,7 @@ class _TaskTableState extends State<TaskTable> {
         children: [
           Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
           const SizedBox(height: 8.0),
-          Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+          Text(displayValue, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
         ],
       ),
     );

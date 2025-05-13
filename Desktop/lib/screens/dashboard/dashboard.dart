@@ -248,7 +248,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                 VictimsTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
                 const RecursosTab(),
                 VolunteerTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
-                TaskTable(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
+                TaskTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
               ],
             ),
           ),
