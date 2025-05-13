@@ -35,7 +35,7 @@ INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_nu
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
   ('Maria', 'Garcia', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 1, '5552345678', '456 Admin Ave, Los Angeles, CA 90001', 'ADM-002-2025', 'California'),
   ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, '5553456789', '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
-  ('Admin', 'Admin', 'admin@admin.admin','admin', 1, '5554567890', '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
+  ('Admin', 'Admin', 'admin@admin.com','admin', 1, '5554567890', '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
 
 INSERT INTO "victim" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
   ('Alice', 'Wilson', 'alice@example.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 1, '5551112222', '101 Victim St, New York, NY 10001', 'VCT-001-2025', 1),

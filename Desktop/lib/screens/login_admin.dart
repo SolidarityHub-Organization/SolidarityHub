@@ -39,7 +39,18 @@ class _LoginadminState extends State<Loginadmin> {
     });
   }
 
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
   Future<void> _attemptLogin() async {
+    if (!_isValidEmail(_emailController.text.trim())) {
+      setState(() {
+        _errorMessage = 'Introduzca un correo electrónico válido';
+      });
+      return;
+    }
+
     try {
       final response = await http.get(
         Uri.parse(
@@ -58,7 +69,7 @@ class _LoginadminState extends State<Loginadmin> {
         );
       } else if (response.statusCode == 401) {
         setState(() {
-          _errorMessage = 'Credenciales inválidas';
+          _errorMessage = 'El usuario o la contraseña son incorrectos';
         });
       } else {
         setState(() {
