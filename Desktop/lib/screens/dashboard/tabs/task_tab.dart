@@ -18,13 +18,11 @@ class TaskTab extends StatefulWidget {
 class _TaskTabState extends State<TaskTab> {
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
-    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
     return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
   }
 
   DateTime _adjustStartDate(DateTime? date) {
     if (date == null) return DateTime(2000, 1, 1);
-    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
@@ -296,7 +294,7 @@ class _TaskTabState extends State<TaskTab> {
                                       Icon(Icons.info_outline, size: 48, color: Colors.grey[600]),
                                       const SizedBox(height: 16),
                                       const Text(
-                                        'Sin datos que mostrar',
+                                        'Sin datos disponibles',
                                         style: TextStyle(
                                           fontSize: 18, 
                                           fontWeight: FontWeight.bold,
@@ -394,10 +392,10 @@ class _TaskTabState extends State<TaskTab> {
       return [
         PieChartSectionData(
           value: 1,
-          title: 'Sin datos\nque\nmostrar',
+          title: 'Sin datos\ndisponibles',
           color: Colors.grey,
           radius: 80,
-          titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
         )
       ];
     }

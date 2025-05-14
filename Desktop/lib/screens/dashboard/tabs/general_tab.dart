@@ -15,20 +15,18 @@ class GeneralTab extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _GeneralTabState(); // Implementación corregida
+    return _GeneralTabState();
   }
 }
 
 class _GeneralTabState extends State<GeneralTab> {
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
-    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
     return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
   }
 
   DateTime _adjustStartDate(DateTime? date) {
     if (date == null) return DateTime(2000, 1, 1);
-    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
@@ -175,9 +173,7 @@ class _GeneralTabState extends State<GeneralTab> {
                                   print("Error en FutureBuilder de donaciones: ${snapshot.error}");
                                   return _buildInfoCard('Donaciones Recibidas', 'Error al cargar');
                                 } else {
-                                  // Manejar el caso donde snapshot.data sea null de forma segura
                                   double value = snapshot.data ?? 0.0;
-                                  // Ya es double, no necesita conversión
                                   return _buildInfoCard('Donaciones Recibidas', '€${value.toStringAsFixed(2)}');
                                 }
                               },
@@ -194,7 +190,6 @@ class _GeneralTabState extends State<GeneralTab> {
                                   print("Error en FutureBuilder de tareas: ${snapshot.error}");
                                   return _buildInfoCard('Tareas Completadas', 'Error al cargar');
                                 } else {
-                                  // Manejar el caso donde snapshot.data sea null de forma segura
                                   int value = snapshot.data ?? 0;
                                   return _buildInfoCard('Tareas Completadas', value.toString());
                                 }
@@ -349,13 +344,13 @@ class _GeneralTabState extends State<GeneralTab> {
     switch (type?.toLowerCase()) {
       case 'victim':
       case 'víctima':
-        return const Color.fromARGB(255, 255, 164, 163); // Rojo más intenso para afectados
+        return const Color.fromARGB(255, 255, 164, 163);
       case 'volunteer':
       case 'voluntario':
-        return const Color(0xFFC62828); // Rojo más oscuro para voluntarios
+        return const Color(0xFFC62828);
       case 'donation':
       case 'donación':
-        return const Color(0xFF4CAF50); // Verde para donaciones
+        return const Color(0xFF4CAF50);
       default:
         return Colors.grey;
     }

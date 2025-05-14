@@ -26,13 +26,11 @@ class _VolunteerTabState extends State<VolunteerTab> {
 
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
-    // Ajustar la fecha fin para incluir todo el día (23:59:59.999)
     return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
   }
 
   DateTime _adjustStartDate(DateTime? date) {
     if (date == null) return DateTime(2000, 1, 1);
-    // Ajustar la fecha inicio para comenzar al principio del día (00:00:00.000)
     return DateTime(date.year, date.month, date.day, 0, 0, 0, 0);
   }
 
@@ -103,14 +101,12 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             ),
                           ),
                           const SizedBox(height: 50),
-                          // bar chart
                           CustomBarChart(
                             data: data,
                             barColor: const Color(0xFFF44336),
                             padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),  // you can override the default padding
                           ),
                           const SizedBox(height: 30),
-                          // pie chart
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),

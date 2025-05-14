@@ -53,7 +53,6 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
 
   Future<void> _selectFechaFin(BuildContext context) async {
     if (_fechaInicio == null) {
-      // Mostrar aviso de que debe seleccionar primero la fecha de inicio
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, seleccione primero una fecha de inicio'),
@@ -112,7 +111,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'), //should we remove the title and leave only the arrow at the height of the tabs?
+        title: const Text('Dashboard'), // should we remove the title and leave only the arrow at the height of the tabs?
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         elevation: 0,

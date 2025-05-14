@@ -9,7 +9,7 @@ class CustomLineChart extends StatelessWidget {
   final Color areaColor;
   final String title;
   final EdgeInsetsGeometry padding;
-  final double titleBottomMargin; // Nuevo parámetro
+  final double titleBottomMargin;
 
   final double rotation = 45.0; // in degrees
 
@@ -21,7 +21,7 @@ class CustomLineChart extends StatelessWidget {
     this.areaColor = const Color(0x4DFF0000),
     this.title = '',
     this.padding = const EdgeInsets.fromLTRB(60.0, 0.0, 60.0, 50.0),
-    this.titleBottomMargin = 8.0, // Valor predeterminado
+    this.titleBottomMargin = 8.0,
   });
 
   double _calculateMaxTitleWidth(BuildContext context, List<String> labels) {
@@ -40,10 +40,79 @@ class CustomLineChart extends StatelessWidget {
     return maxWidth * 1.4;  // simple version
     //final double rotationAngle = rotation * (math.pi / 180); // convert to radians
     //return maxWidth * math.cos(rotationAngle) + maxWidth * math.sin(rotationAngle);
-  }
-
+  } 
+  
   @override
   Widget build(BuildContext context) {
+    final hasValidData = spots.isNotEmpty && 
+        spots.any((spot) => spot.y > 0);
+    
+    if (!hasValidData) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (title.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.fromLTRB(60.0, 16.0, 60.0, titleBottomMargin),
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+            ),
+          SizedBox(
+            height: 400,
+            child: Padding(
+              padding: padding,
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4)),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.amber[700],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: const Icon(
+                          Icons.warning_rounded,
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                      ),
+                      Text(
+                        'Sin datos disponibles',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'No hay datos para mostrar en este periodo',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    
     final bottomReservedSize = _calculateMaxTitleWidth(context, xLabels);
 
     return Column(
@@ -51,7 +120,7 @@ class CustomLineChart extends StatelessWidget {
       children: [
         if (title.isNotEmpty)
           Padding(
-            padding: EdgeInsets.fromLTRB(60.0, 16.0, 60.0, titleBottomMargin), // Usar el nuevo parámetro
+            padding: EdgeInsets.fromLTRB(60.0, 16.0, 60.0, titleBottomMargin),
             child: Text(
               title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
