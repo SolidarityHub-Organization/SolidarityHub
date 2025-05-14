@@ -30,7 +30,6 @@ class _LoginScreenState extends State<loginUI> {
             Image.asset('assets/logo.png', height: 100), // Logo superior
             SizedBox(height: 20),
             Container(
-              padding: EdgeInsets.all(20),
               margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.white, // Tarjeta blanca central
@@ -54,7 +53,7 @@ class _LoginScreenState extends State<loginUI> {
                         child: buildCustomButton(
                           "Registro",
                               () => authController.onRegisterTabPressed(context),
-                          backgroundColor: Colors.grey,
+                          backgroundColor: Colors.red.shade200,
                           verticalPadding: 12,
                         ),
                       ),

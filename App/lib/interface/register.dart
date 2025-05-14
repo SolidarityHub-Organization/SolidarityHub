@@ -114,7 +114,7 @@ class _RegisterState extends State<Register> {
                         child: ElevatedButton(
                           onPressed: () => registerController.onLogInTabPressed(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Colors.red[200],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40),
                             ),
