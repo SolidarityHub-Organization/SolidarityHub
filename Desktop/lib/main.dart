@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:solidarityhub/screens/login_admin.dart';
 import 'package:solidarityhub/screens/dashboard/dashboard.dart';
 import 'package:solidarityhub/screens/donations/donations.dart';
@@ -20,6 +21,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.red), useMaterial3: true),
       home: const MyHomePage(title: 'Solidarity Hub'),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'ES'),
+        Locale('en', 'US'), // mantener inglés como fallback
+      ],
+      locale: const Locale('es', 'ES'),
     );
   }
 }

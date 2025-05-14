@@ -42,6 +42,10 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       initialDate: _fechaInicio ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      locale: const Locale('es', 'ES'),
+      cancelText: 'Cancelar',
+      confirmText: 'Aceptar',
+      helpText: 'Seleccionar fecha inicial',
     );
     if (picked != null) {
       setState(() {
@@ -68,9 +72,12 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       initialDate: _fechaFin ?? _fechaInicio ?? DateTime.now(),
       firstDate: _fechaInicio ?? DateTime(2000),
       lastDate: DateTime.now(),
+      locale: const Locale('es', 'ES'),
+      cancelText: 'Cancelar',
+      confirmText: 'Aceptar',
+      helpText: 'Seleccionar fecha final',
     );
 
-    // actualizar el estado si se seleccionó una fecha
     if (picked != null) {
       setState(() {
         _fechaFin = picked;
