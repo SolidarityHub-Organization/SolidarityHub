@@ -11,7 +11,16 @@ import '../widgets/map/factory_method_markers/marker_factory.dart';
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final double? lat;
+  final double? lng;
+  final double? initialZoom;
+
+  const MapScreen({
+    Key? key, 
+    this.lat,
+    this.lng,
+    this.initialZoom,
+  }) : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -28,7 +37,7 @@ class _MapScreenState extends State<MapScreen> {
   MapMarker? _selectedMarker;
   bool _isHeatMapActive = false;
 
-  final MapController _mapController = MapController();
+  late MapController _mapController;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
@@ -36,6 +45,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    _mapController = MapController();
     _fetchLocations(LocationServices.fetchVictimLocations);
     _fetchLocations(LocationServices.fetchVolunteerLocations);
     _fetchLocations(LocationServices.fetchTaskLocations);
@@ -153,9 +163,21 @@ class _MapScreenState extends State<MapScreen> {
                             FlutterMap(
                               mapController: _mapController,
                               options: MapOptions(
-                                initialCenter: LatLng(39.47391, -0.37966),
-                                initialZoom: 13,
+                                initialCenter: LatLng(
+                                  widget.lat ?? 39.4699, // Default to Valencia if no position provided
+                                  widget.lng ?? -0.3763,
+                                ),
+                                initialZoom: widget.initialZoom ?? 13.0,
                                 interactionOptions: InteractionOptions(flags: InteractiveFlag.all),
+                                onMapReady: () {
+                                  // Asegurarnos de que el mapa se centre en la ubicación correcta
+                                  if (widget.lat != null && widget.lng != null) {
+                                    _mapController.move(
+                                      LatLng(widget.lat!, widget.lng!),
+                                      widget.initialZoom ?? 15.0,
+                                    );
+                                  }
+                                },
                               ),
                               children: [
                                 TileLayer(

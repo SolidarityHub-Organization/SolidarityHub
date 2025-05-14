@@ -163,49 +163,21 @@ namespace LogicPersistence.Api.Services {
 			foreach (var task in tasks) {
 				var state = await _taskRepository.GetTaskStateByIdAsync(task.id);
 				var urgency_level = await _taskRepository.GetMaxUrgencyLevelForTaskAsync(task.id);
+				var location = await _taskRepository.GetTaskLocationAsync(task.id);
 
 				var taskForDashboard = new TaskForDashboardDto {
 					id = task.id,
 					name = task.name,
 					urgency_level = urgency_level.GetDisplayName(),
 					state = state.GetDisplayName(),
-					affected_zone = GetAffectedZoneForTasks(task).Result
+					affected_zone = GetAffectedZoneForTasks(task).Result,
+					latitude = location.latitude,
+					longitude = location.longitude,
 				};
 				result.Add(taskForDashboard);
 			}
 
 			return result;
-		}
-
-		#region Internal Methods
-		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
-		//chapuza de método
-		public async Task<AffectedZoneWithPointsDTO?> GetAffectedZoneForTasks(Models.Task task) {
-			var locationRepository = new LocationRepository();
-			var victimRepository = new VictimRepository();
-			var volunteerRepository = new VolunteerRepository();
-			var affectedZoneRepository = new AffectedZoneRepository();
-			var pointRepository = new PointRepository();
-			var taskRepository = _taskRepository;
-
-			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository);
-			var locationServices = new LocationServices(locationRepository);
-			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
-			if (affectedZones == null) {
-				throw new InvalidOperationException("Failed to retrieve affected zones.");
-			}
-
-			foreach (var affectedZone in affectedZones) {
-				var taskLocation = await locationServices.GetLocationByIdAsync(task.location_id);
-				if (taskLocation == null) {
-					throw new KeyNotFoundException($"Location with id {task.location_id} not found.");
-				}
-				if (AffectedZoneServices.IsPointInAffectedZone(taskLocation.latitude, taskLocation.longitude, affectedZone)) {
-					return affectedZone;
-				}
-			}
-
-			return null;
 		}
 
 		public Task<IEnumerable<Models.Task>> GetTasksAssignedToVolunteerAsync(int volunteerId) {
@@ -241,6 +213,37 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException($"Failed to update task state for volunteer with id {volunteerId} and task with id {taskId}.");
 			}
 			return task;
+		}
+
+		#region Internal Methods
+		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
+		//chapuza de método
+		public async Task<AffectedZoneWithPointsDTO?> GetAffectedZoneForTasks(Models.Task task) {
+			var locationRepository = new LocationRepository();
+			var victimRepository = new VictimRepository();
+			var volunteerRepository = new VolunteerRepository();
+			var affectedZoneRepository = new AffectedZoneRepository();
+			var pointRepository = new PointRepository();
+			var taskRepository = _taskRepository;
+
+			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository);
+			var locationServices = new LocationServices(locationRepository);
+			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
+			if (affectedZones == null) {
+				throw new InvalidOperationException("Failed to retrieve affected zones.");
+			}
+
+			foreach (var affectedZone in affectedZones) {
+				var taskLocation = await locationServices.GetLocationByIdAsync(task.location_id);
+				if (taskLocation == null) {
+					throw new KeyNotFoundException($"Location with id {task.location_id} not found.");
+				}
+				if (AffectedZoneServices.IsPointInAffectedZone(taskLocation.latitude, taskLocation.longitude, affectedZone)) {
+					return affectedZone;
+				}
+			}
+
+			return null;
 		}
 		#endregion
 	}

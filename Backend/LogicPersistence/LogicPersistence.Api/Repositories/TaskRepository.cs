@@ -411,4 +411,15 @@ public class TaskRepository : ITaskRepository {
         }
         return result;
     }
+
+    public async Task<Location> GetTaskLocationAsync(int taskId) {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            SELECT l.*
+            FROM task t
+            JOIN location l ON t.location_id = l.id
+            WHERE t.id = @taskId";
+
+        return await connection.QuerySingleAsync<Location>(sql, new { taskId });
+    }
 }

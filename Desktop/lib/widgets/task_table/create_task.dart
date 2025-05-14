@@ -165,35 +165,148 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Fechas de la tarea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('Fechas y horas de la tarea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Row(
           children: [
+            // Fecha de inicio
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de inicio',
                 date: controller.startDate,
                 onDateSelected: (date) {
                   setState(() {
-                    controller.setStartDate(date);
+                    // Preservar la hora actual al cambiar la fecha
+                    final currentTime =
+                        controller.startDate != null
+                            ? TimeOfDay(hour: controller.startDate!.hour, minute: controller.startDate!.minute)
+                            : TimeOfDay.now();
+                    controller.setStartDate(
+                      DateTime(date.year, date.month, date.day, currentTime.hour, currentTime.minute),
+                    );
                   });
                 },
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
+            // Hora de inicio
+            Expanded(
+              child: _buildTimeField(
+                label: 'Hora de inicio',
+                dateTime: controller.startDate,
+                onTimeSelected: (time) {
+                  setState(() {
+                    // Si ya hay una fecha, actualizar solo la hora
+                    final currentDate = controller.startDate ?? DateTime.now();
+                    controller.setStartDate(
+                      DateTime(currentDate.year, currentDate.month, currentDate.day, time.hour, time.minute),
+                    );
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            // Fecha de fin
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de fin (opcional)',
                 date: controller.endDate,
                 onDateSelected: (date) {
                   setState(() {
-                    controller.setEndDate(date);
+                    // Preservar la hora actual al cambiar la fecha
+                    final currentTime =
+                        controller.endDate != null
+                            ? TimeOfDay(hour: controller.endDate!.hour, minute: controller.endDate!.minute)
+                            : TimeOfDay.now();
+                    controller.setEndDate(
+                      DateTime(date.year, date.month, date.day, currentTime.hour, currentTime.minute),
+                    );
+                  });
+                },
+                isOptional: true,
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Hora de fin
+            Expanded(
+              child: _buildTimeField(
+                label: 'Hora de fin (opcional)',
+                dateTime: controller.endDate,
+                onTimeSelected: (time) {
+                  setState(() {
+                    // Si ya hay una fecha, actualizar solo la hora
+                    final currentDate = controller.endDate ?? DateTime.now();
+                    controller.setEndDate(
+                      DateTime(currentDate.year, currentDate.month, currentDate.day, time.hour, time.minute),
+                    );
                   });
                 },
                 isOptional: true,
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeField({
+    required String label,
+    required DateTime? dateTime,
+    required Function(TimeOfDay) onTimeSelected,
+    bool isOptional = false,
+  }) {
+    // Extraer TimeOfDay del DateTime si está disponible
+    TimeOfDay? time = dateTime != null ? TimeOfDay(hour: dateTime.hour, minute: dateTime.minute) : null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
+        InkWell(
+          onTap: () async {
+            final TimeOfDay initialTime = time ?? TimeOfDay.now();
+
+            final TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: initialTime,
+              builder: (BuildContext context, Widget? child) {
+                return Theme(
+                  data: Theme.of(
+                    context,
+                  ).copyWith(colorScheme: const ColorScheme.light(primary: Colors.red, onPrimary: Colors.white)),
+                  child: child!,
+                );
+              },
+            );
+
+            if (picked != null) {
+              onTimeSelected(picked);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  time != null
+                      ? '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}'
+                      : isOptional
+                      ? 'No especificada'
+                      : 'Selecciona una hora',
+                  style: TextStyle(color: time != null ? Colors.black : Colors.grey, fontSize: 12),
+                ),
+                const Icon(Icons.access_time, size: 16),
+              ],
+            ),
+          ),
         ),
       ],
     );
