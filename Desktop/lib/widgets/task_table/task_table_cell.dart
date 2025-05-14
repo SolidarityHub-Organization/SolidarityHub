@@ -149,10 +149,21 @@ class TaskTableCell extends StatelessWidget {
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Text(
-        DateFormat('dd/MM/yyyy').format(date),
-        style: const TextStyle(color: Colors.black),
-        textAlign: TextAlign.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            DateFormat('dd/MM/yyyy').format(date),
+            style: const TextStyle(color: Colors.black),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            DateFormat('HH:mm').format(date),
+            style: TextStyle(color: Colors.grey[700], fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

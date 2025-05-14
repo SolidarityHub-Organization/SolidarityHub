@@ -1,12 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/services/location_external_services.dart';
+import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/services/victim_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
@@ -91,22 +90,16 @@ class CreateTaskController {
 
   Future<void> loadTaskLocation() async {
     if (taskToEdit != null) {
-      try {
-        final url = Uri.parse('http://localhost:5170/api/v1/locations/${taskToEdit!.locationId}');
-        final response = await http.get(url);
+      final location = await LocationServices.fetchLocationById(taskToEdit!.locationId);
 
-        if (response.statusCode >= 200 && response.statusCode <= 299) {
-          final location = json.decode(response.body);
-          final latLng = LatLng(
-            double.parse(location['latitude'].toString()),
-            double.parse(location['longitude'].toString()),
-          );
-          selectedLocation = latLng;
-          _updateLocationControllers(latLng);
-          _updateMarker(latLng);
-        }
-      } catch (error) {
-        throw Exception('Error loading location: $error');
+      if (location.isNotEmpty) {
+        final latLng = LatLng(
+          double.parse(location['latitude'].toString()),
+          double.parse(location['longitude'].toString()),
+        );
+        selectedLocation = latLng;
+        _updateLocationControllers(latLng);
+        _updateMarker(latLng);
       }
     }
   }
