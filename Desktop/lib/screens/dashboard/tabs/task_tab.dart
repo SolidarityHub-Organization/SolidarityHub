@@ -347,18 +347,23 @@ class _TaskTabState extends State<TaskTab> {
                                         Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
                                       ],
                                     ),
-                                    trailing:
-                                        task['affected_zone'] != null
-                                            ? IconButton(
-                                              icon: const Icon(Icons.location_on, color: Colors.red),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => const MapScreen()),
-                                                );
-                                              },
-                                            )
-                                            : null,
+                                    trailing: task['affected_zone'] != null
+                                        ? IconButton(
+                                            icon: const Icon(Icons.location_on, color: Colors.red),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => MapScreen(
+                                                    lat: task['affected_zone']['latitude'],
+                                                    lng: task['affected_zone']['longitude'],
+                                                    initialZoom: 16.0, 
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : null,
                                   ),
                                 );
                               },

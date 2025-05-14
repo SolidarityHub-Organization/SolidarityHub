@@ -96,6 +96,8 @@ public class TaskForDashboardDto {
     public AffectedZoneWithPointsDTO? affected_zone { get; set; }
     public DateTime start_date { get; set; }
     public DateTime? end_date { get; set; }
+    public double latitude { get; set; }
+    public double longitude { get; set; }
 }
 
 public class UpdateTaskStateDto {
