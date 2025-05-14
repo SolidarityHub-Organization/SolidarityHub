@@ -33,8 +33,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Widget _currentContent = _EmptyContent(); // Cambiamos a un contenido vacío
-  int _selectedIndex = -1; // -1 indica la página de bienvenida
+  // Inicializamos con Dashboard en lugar de contenido vacío
+  Widget _currentContent = const Dashboard();
+  int _selectedIndex = 0; // 0 indica Dashboard (seleccionado por defecto)
   bool _isExpanded = true;
 
   void _onMenuItemSelected(int index, Widget content) {
@@ -305,16 +306,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// Widget para mostrar un contenido vacío (reemplaza _WelcomeContent)
-class _EmptyContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[50], // Fondo sutil
     );
   }
 }

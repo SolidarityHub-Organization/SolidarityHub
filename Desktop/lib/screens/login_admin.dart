@@ -33,9 +33,7 @@ class _LoginadminState extends State<Loginadmin> {
 
   void _validateForm() {
     setState(() {
-      _isFormValid =
-          _emailController.text.trim().isNotEmpty &&
-          _passwordController.text.isNotEmpty;
+      _isFormValid = _emailController.text.trim().isNotEmpty && _passwordController.text.isNotEmpty;
     });
   }
 
@@ -61,12 +59,7 @@ class _LoginadminState extends State<Loginadmin> {
       if (!mounted) return; // make sure widget is still in the tree
 
       if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Dashboard(),
-          ),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Dashboard()));
       } else if (response.statusCode == 401) {
         setState(() {
           _errorMessage = 'El usuario o la contraseña son incorrectos';
@@ -93,39 +86,25 @@ class _LoginadminState extends State<Loginadmin> {
             Center(
               child: SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height,
-                  ),
+                  constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
                   child: IntrinsicHeight(
                     child: Column(
                       children: [
                         //Spacer(),
-                        
-                        Image.asset(
-                          'assets/images/logo.png',
-                          height: 100,
-                          alignment: Alignment.center,
-                        ),
+                        Image.asset('assets/images/logo.png', height: 100, alignment: Alignment.center),
                         Text(
                           "Solidarity Hub",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        
+
                         //SizedBox(height: 100),
                         Spacer(),
 
                         Container(
                           height: 400,
                           width: 500,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
@@ -133,21 +112,13 @@ class _LoginadminState extends State<Loginadmin> {
                                 Text(
                                   "Log in Admin",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xFFF44336),
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyle(color: Color(0xFFF44336), fontSize: 30, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 20),
                                 Text(
                                   "Bienvenido a Solidarity Hub",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 20),
                                 _userTextField(),
@@ -172,24 +143,14 @@ class _LoginadminState extends State<Loginadmin> {
                         ),
 
                         Spacer(),
-
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-          
-            Positioned(
-              top: 8,
-              left: 8,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+
+            // Botón de volver atrás eliminado
           ],
         ),
       ),
@@ -213,7 +174,7 @@ class _LoginadminState extends State<Loginadmin> {
               labelText: 'Correo electronico',
             ),
             onChanged: (value) {},
-              onSubmitted: (_) {
+            onSubmitted: (_) {
               if (_isFormValid) {
                 _attemptLogin();
               }
@@ -236,11 +197,7 @@ class _LoginadminState extends State<Loginadmin> {
             controller: _passwordController,
             keyboardType: TextInputType.emailAddress,
             obscureText: true,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock),
-              hintText: 'Contraseña',
-              labelText: 'Contraseña',
-            ),
+            decoration: InputDecoration(icon: Icon(Icons.lock), hintText: 'Contraseña', labelText: 'Contraseña'),
             onChanged: (value) {},
             onSubmitted: (_) {
               if (_isFormValid) {
@@ -260,21 +217,13 @@ class _LoginadminState extends State<Loginadmin> {
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFFF44336),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
             disabledBackgroundColor: Colors.grey,
           ),
-          onPressed:
-              !_isFormValid
-                  ? null
-                  : _attemptLogin,
+          onPressed: !_isFormValid ? null : _attemptLogin,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-            child: Text(
-              'Iniciar Sesion',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: Text('Iniciar Sesion', style: TextStyle(color: Colors.white)),
           ),
         );
       },
