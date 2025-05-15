@@ -7,9 +7,14 @@ import 'package:solidarityhub/screens/tasks_screen.dart';
 import 'package:solidarityhub/services/database_services.dart';
 import 'package:solidarityhub/screens/map.dart';
 import 'package:solidarityhub/utils/logger.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  // Inicializar la localización para fechas en español
+  initializeDateFormatting('es_ES', null).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -27,10 +32,9 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es', 'ES'),
-        Locale('en', 'US'), // mantener inglés como fallback
+        Locale('es', 'ES'), // Español
       ],
-      locale: const Locale('es', 'ES'),
+      locale: const Locale('es', 'ES'), // Forzar español como idioma predeterminado
     );
   }
 }

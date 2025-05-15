@@ -42,10 +42,6 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       initialDate: _fechaInicio ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
-      locale: const Locale('es', 'ES'),
-      cancelText: 'Cancelar',
-      confirmText: 'Aceptar',
-      helpText: 'Seleccionar fecha inicial',
     );
     if (picked != null) {
       setState(() {
@@ -59,9 +55,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
     if (_fechaInicio == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Por favor, seleccione primero una fecha de inicio'),
+          content: const Text('Por favor, seleccione primero una fecha de inicio'),
           backgroundColor: Colors.red[700],
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
       return;
@@ -72,10 +68,6 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       initialDate: _fechaFin ?? _fechaInicio ?? DateTime.now(),
       firstDate: _fechaInicio ?? DateTime(2000),
       lastDate: DateTime.now(),
-      locale: const Locale('es', 'ES'),
-      cancelText: 'Cancelar',
-      confirmText: 'Aceptar',
-      helpText: 'Seleccionar fecha final',
     );
 
     if (picked != null) {
@@ -117,12 +109,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'), // should we remove the title and leave only the arrow at the height of the tabs?
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Dashboard'), foregroundColor: Colors.white, elevation: 0),
       body: Column(
         children: [
           Container(
@@ -137,8 +124,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                   LayoutBuilder(
                     builder: (context, constraints) {
                       // transition threshold
-                      final bool hasEnoughSpace =
-                          constraints.maxWidth > 775; // could change so it auto calculates the needed space
+                      final bool hasEnoughSpace = constraints.maxWidth > 775;
 
                       if (hasEnoughSpace) {
                         // wide layout
