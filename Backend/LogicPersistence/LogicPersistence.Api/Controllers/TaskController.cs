@@ -241,5 +241,19 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpGet("tasks/{taskId}/urgency_level")]
+		public async Task<IActionResult> GetMaxUrgencyLevelForTaskAsync(int taskId) {
+			try {
+				var urgencyLevel = await _taskServices.GetMaxUrgencyLevelForTaskAsync(taskId);
+				return Ok(urgencyLevel);
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

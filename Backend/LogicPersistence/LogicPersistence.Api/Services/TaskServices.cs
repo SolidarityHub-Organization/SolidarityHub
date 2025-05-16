@@ -162,13 +162,13 @@ namespace LogicPersistence.Api.Services {
 			var result = new List<TaskForDashboardDto>();
 			foreach (var task in tasks) {
 				var state = await _taskRepository.GetTaskStateByIdAsync(task.id);
-				var urgency_level = await _taskRepository.GetMaxUrgencyLevelForTaskAsync(task.id);
+				var urgencyLevel =  await GetMaxUrgencyLevelForTaskAsync(task.id);
 				var location = await _taskRepository.GetTaskLocationAsync(task.id);
 
 				var taskForDashboard = new TaskForDashboardDto {
 					id = task.id,
 					name = task.name,
-					urgency_level = urgency_level.GetDisplayName(),
+					urgency_level = urgencyLevel,
 					state = state.GetDisplayName(),
 					affected_zone = GetAffectedZoneForTasks(task).Result,
 					latitude = location.latitude,
@@ -213,6 +213,11 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException($"Failed to update task state for volunteer with id {volunteerId} and task with id {taskId}.");
 			}
 			return task;
+		}
+
+		public async Task<string> GetMaxUrgencyLevelForTaskAsync(int taskId) {
+			var urgencyLevel = await _taskRepository.GetMaxUrgencyLevelForTaskAsync(taskId);
+			return urgencyLevel.GetDisplayName();
 		}
 
 		#region Internal Methods
