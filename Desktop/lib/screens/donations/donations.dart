@@ -8,6 +8,7 @@ import 'package:solidarityhub/services/donation_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
 import 'package:solidarityhub/utils/logger.dart';
 import 'package:solidarityhub/screens/donations/tabs/monetary_donations_tab.dart';
+import 'package:solidarityhub/screens/donations/resume_sections.dart';
 
 class DonationsPage extends StatefulWidget {
   final String baseUrl;
@@ -200,6 +201,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al crear: $e')));
+          debugPrint('Error al crear donación: $e');
         }
       }
     }
@@ -779,6 +781,80 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
     );
   }
 
+  Widget _buildResumeSection() {
+    final types = [
+      PhysicalDonationType.Food,
+      PhysicalDonationType.Tools,
+      PhysicalDonationType.Clothes,
+      PhysicalDonationType.Medicine,
+      PhysicalDonationType.Furniture,
+    ];
+
+    return SizedBox(
+      height: 130,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const horizontalPadding = 30.0;
+          const itemSpacing = 26.0;
+          final totalPadding = horizontalPadding * 2;
+          final totalSpacing = itemSpacing * (types.length - 1);
+          // ancho máximo disponible para todas las tarjetas
+          final availableWidth = constraints.maxWidth - totalPadding - totalSpacing;
+          // ancho por tarjeta para que quepan exactamente 5 adaptándose al ancho de pantalla
+          final cardWidth = availableWidth / types.length;
+
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Row(
+              children: List.generate(types.length, (index) {
+                final type = types[index];
+                final list = _donations.where((d) => d.category == type);
+                final available = list.fold<int>(0, (sum, d) => sum + d.availableQuantity);
+                final assigned = list.fold<int>(0, (sum, d) => sum + d.distributed);
+
+                String title;
+                switch (type) {
+                  case PhysicalDonationType.Food:
+                    title = 'Comida';
+                    break;
+                  case PhysicalDonationType.Tools:
+                    title = 'Herramientas';
+                    break;
+                  case PhysicalDonationType.Clothes:
+                    title = 'Ropa';
+                    break;
+                  case PhysicalDonationType.Medicine:
+                    title = 'Medicinas';
+                    break;
+                  case PhysicalDonationType.Furniture:
+                    title = 'Mobiliario';
+                    break;
+                  default:
+                    title = type.name;
+                    break;
+                }
+
+                return Padding(
+                  padding: EdgeInsets.only(right: index < types.length - 1 ? itemSpacing : 0),
+                  child: SizedBox(
+                    width: cardWidth,
+                    child: DonationSummaryCard(
+                      title: title,
+                      available: available,
+                      assigned: assigned,
+                      icon: _iconForCategory(type),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -827,6 +903,8 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _buildResumeSection(),
+          const SizedBox(height: 16),
           _buildFilterBar(),
           const SizedBox(height: 16),
           if (filteredDonations.isEmpty)

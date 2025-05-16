@@ -55,9 +55,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
     if (_fechaInicio == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Por favor, seleccione primero una fecha de inicio'),
+          content: const Text('Por favor, seleccione primero una fecha de inicio'),
           backgroundColor: Colors.red[700],
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
       return;
@@ -70,7 +70,6 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       lastDate: DateTime.now(),
     );
 
-    // actualizar el estado si se seleccionó una fecha
     if (picked != null) {
       setState(() {
         _fechaFin = picked;
@@ -110,12 +109,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'), // should we remove the title and leave only the arrow at the height of the tabs?
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Dashboard'), foregroundColor: Colors.white, elevation: 0),
       body: Column(
         children: [
           Container(
@@ -130,8 +124,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                   LayoutBuilder(
                     builder: (context, constraints) {
                       // transition threshold
-                      final bool hasEnoughSpace =
-                          constraints.maxWidth > 775; // could change so it auto calculates the needed space
+                      final bool hasEnoughSpace = constraints.maxWidth > 775;
 
                       if (hasEnoughSpace) {
                         // wide layout

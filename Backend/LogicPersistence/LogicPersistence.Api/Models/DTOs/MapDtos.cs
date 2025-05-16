@@ -33,9 +33,9 @@ public class TaskMapMarkerDTO : MapMarkerDTO
 {
     public string state { get; set; } = string.Empty;
     public IEnumerable<Volunteer> assigned_volunteers { get; set; } = new List<Volunteer>();
+    public Dictionary<string, string> skills_with_level { get; set; } = new Dictionary<string, string>();
 
-    public TaskMapMarkerDTO()
-    {
+    public TaskMapMarkerDTO() {
         type = "task";
     }
 }
