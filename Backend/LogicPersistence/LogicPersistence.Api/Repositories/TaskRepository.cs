@@ -5,6 +5,7 @@ using LogicPersistence.Api.Models;
 using Npgsql;
 using LogicPersistence.Api.Models.DTOs;
 using Newtonsoft.Json;
+using LogicPersistence.Api.Services;
 
 public class TaskRepository : ITaskRepository {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
@@ -422,4 +423,18 @@ public class TaskRepository : ITaskRepository {
 
         return await connection.QuerySingleAsync<Location>(sql, new { taskId });
     }
+
+    public async Task<IEnumerable<Skill>> GetTaskSkillsAsync(int taskId) {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
+            SELECT s.*
+            FROM task_skill ts
+            JOIN skill s ON ts.skill_id = s.id
+            WHERE ts.task_id = @taskId";
+
+        return await connection.QueryAsync<Skill>(sql, new { taskId });
+    }
+    
+
+    
 }
