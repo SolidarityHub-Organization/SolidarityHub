@@ -153,7 +153,20 @@ class _VictimsTabState extends State<VictimsTab> {
                             titleBottomMargin: 25.0,
                             padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
                           ),
-                          CustomBarChart(data: transformedNeedsData, barColor: Colors.red),
+                          const Divider(
+                            height: 40,
+                            thickness: 2,
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.grey,
+                          ),
+                          CustomBarChart(
+                            data: transformedNeedsData,
+                            barColor: Colors.red,
+                            title: 'Número de afectados por necesidad',
+                            titleBottomMargin: 25.0,
+                            padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
+                          ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),

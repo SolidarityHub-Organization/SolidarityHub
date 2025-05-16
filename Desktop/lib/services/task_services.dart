@@ -93,6 +93,17 @@ class TaskServices {
     return tasks;
   }
 
+  static Future<String> fetchMaxUrgencyLevelForTaskAsync(int taskId) async {
+    final response = await ApiServices.get('tasks/$taskId/urgency_level');
+    String urgencyLevel = '';
+
+    if (response.statusCode.ok) {
+      urgencyLevel = json.decode(response.body);
+    }
+
+    return urgencyLevel;
+  }
+
   static Future<String> deleteTask(int id) async {
     final response = await ApiServices.delete('tasks/$id');
 

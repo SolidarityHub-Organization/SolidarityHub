@@ -1,6 +1,7 @@
 import 'package:app/interface/ajustes.dart';
 import 'package:flutter/material.dart';
 import '../interface/availableTasks.dart';
+import '../interface/solicitud_recursos.dart';
 
 class HomeScreenController {
 
@@ -28,5 +29,13 @@ class HomeScreenController {
 
   void onVerNotificacionesPressed(BuildContext context) {
     Navigator.pushNamed(context, '/notificationScreen');
+  }
+
+  VoidCallback onRecursosPressed(BuildContext context) { //int id, String role
+    return () {
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(),),
+      );
+    };
   }
 }
