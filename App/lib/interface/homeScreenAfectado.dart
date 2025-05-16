@@ -92,6 +92,17 @@ class HomeScreenAfectado extends StatelessWidget {
 
                         buildButton("Ver tareas disponibles"),
                         SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Solicitar recurso",
+                            homeScreenController.onRecursosPressed(context),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
+                        SizedBox(height: 16),
                         // Encapsulado en una caja para que sea visualmente igual a los otros botones
                         SizedBox(
                           width: double.infinity,
