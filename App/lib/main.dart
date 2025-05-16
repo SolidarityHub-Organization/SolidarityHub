@@ -10,6 +10,7 @@ import 'interface/loginUI.dart';
 import 'interface/notificationScreen.dart';
 import 'interface/register.dart';
 import 'interface/registerChoose.dart';
+import 'interface/solicitud_recursos.dart';
 
 void main() {
   runApp(MyApp());
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/taskListScreen': (context) => TaskListScreen(id: id),
         '/notificationScreen': (context) => NotificationScreen(id: id),
         '/availableTasksScreen': (context) => AvailableTasksScreen(id: id),
+        '/solicitud_recursos': (context) => SolicitarRecursoPage(),
       }
     );
   }
