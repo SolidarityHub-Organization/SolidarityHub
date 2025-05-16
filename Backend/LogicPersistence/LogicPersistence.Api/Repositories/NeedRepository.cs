@@ -4,14 +4,21 @@ using LogicPersistence.Api.Repositories.Interfaces;
 using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
+using System.Data;
 
 public class NeedRepository : INeedRepository
 {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
+    public NeedRepository() {
+        SqlMapper.AddTypeHandler(new Urgency_levelTypeHandler());
+    }
+
 #region Needs
     public async Task<Need> CreateNeedAsync(Need need)
     {
+        Console.WriteLine($"Creating need: {need}");
+        Console.WriteLine($"{need.urgencyLevel}");
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
@@ -132,5 +139,25 @@ public class NeedRepository : INeedRepository
             AND n.created_at BETWEEN @startDate AND @endDate";
         return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id, startDate, endDate });
     }
+#endregion
+
+#region UrgencyLevelTypeHandler
+
+// Este handler permite mapear el enum UrgencyLevel a la base de datos y viceversa.
+public class Urgency_levelTypeHandler : SqlMapper.TypeHandler<UrgencyLevel> {
+    public override UrgencyLevel Parse(object value) {
+        return value switch {
+            string str => Enum.Parse<UrgencyLevel>(str),
+            int i => (UrgencyLevel)i,
+            _ => UrgencyLevel.Unknown
+        };
+    }
+
+    public override void SetValue(IDbDataParameter parameter, UrgencyLevel value) {
+        Console.WriteLine($"UrgencyLevel value being set: {value}");
+        parameter.Value = (int) value;
+        Console.WriteLine($"Parameter value set: {parameter.Value}");
+    }
+}
 #endregion
 }
