@@ -173,15 +173,45 @@ namespace LogicPersistence.Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }
-
-        [HttpGet("volunteers/count")]
+        }        [HttpGet("volunteers/count")]
         public async Task<IActionResult> GetVolunteersCountAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
             try
             {
                 var count = await _volunteerServices.GetVolunteersCountAsync(fromDate, toDate);
                 return Ok(count);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("volunteers/paginated")]
+        public async Task<IActionResult> GetPaginatedVolunteersAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var (volunteers, totalCount) = await _volunteerServices.GetPaginatedVolunteersAsync(pageNumber, pageSize);
+                
+                var response = new
+                {
+                    Volunteers = volunteers,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+                };
+                
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (InvalidOperationException ex)
             {

@@ -12,4 +12,5 @@ public interface IVolunteerRepository
     Task<Volunteer?> GetVolunteerByIdAsync(int id);
     Task<IEnumerable<VolunteerWithDetailsDisplayDto>> GetAllVolunteersWithDetailsAsync();
     Task<Volunteer?> GetVolunteerByEmailAsync(string email);
+    Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize);
 }

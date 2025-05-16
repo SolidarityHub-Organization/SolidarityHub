@@ -139,12 +139,32 @@ public class VolunteerRepository : IVolunteerRepository
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { id });
     }
-
+    
     public async Task<Volunteer?> GetVolunteerByEmailAsync(string email)
     {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "SELECT * FROM volunteer WHERE email = @email";
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { email });
+    }
+
+    public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        
+        const string countSql = "SELECT COUNT(*) FROM volunteer";
+        int totalCount = await connection.QuerySingleAsync<int>(countSql);
+        
+        const string paginatedSql = @"
+            SELECT * 
+            FROM volunteer
+            ORDER BY created_at DESC, id DESC
+            OFFSET @Offset
+            LIMIT @PageSize";
+
+        int offset = (pageNumber - 1) * pageSize;
+        var volunteers = await connection.QueryAsync<Volunteer>(paginatedSql, new { Offset = offset, PageSize = pageSize });
+        
+        return (volunteers, totalCount);
     }
 }

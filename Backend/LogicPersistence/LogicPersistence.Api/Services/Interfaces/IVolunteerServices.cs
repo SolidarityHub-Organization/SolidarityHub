@@ -4,7 +4,6 @@ using LogicPersistence.Api.Models.DTOs;
 namespace LogicPersistence.Api.Services
 {
     public interface IVolunteerServices
-
     {
         // use System.Threading.Tasks.Task instead of Task for async methods to avoid ambiguity with the Task class and System.Threading.Tasks if some return is just "Task"
         Task<Volunteer> CreateVolunteerAsync(VolunteerCreateDto volunteerCreateDto);
@@ -16,5 +15,6 @@ namespace LogicPersistence.Api.Services
         Task<Volunteer?> GetVolunteerByEmailAsync(string email);
         Task<IEnumerable<VolunteerWithDetailsDisplayDto>> GetAllVolunteersWithDetailsAsync();
         Task<int> GetVolunteersCountAsync(DateTime fromDate, DateTime toDate);
+        Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize);
     }
 }

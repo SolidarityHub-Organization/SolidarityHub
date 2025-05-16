@@ -112,7 +112,7 @@ namespace LogicPersistence.Api.Services
             }
             return volunteer;
         }
-
+        
         public async Task<int> GetVolunteersCountAsync(DateTime fromDate, DateTime toDate)
         {
             if (fromDate > toDate)
@@ -126,6 +126,27 @@ namespace LogicPersistence.Api.Services
             }
             volunteers = volunteers.Where(v => v.created_at >= fromDate && v.created_at <= toDate).ToList();
             return volunteers.Count();
+        }
+
+        public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1)
+                throw new ArgumentException("Page number must be greater than or equal to 1.");
+
+            if (pageSize < 1)
+                throw new ArgumentException("Page size must be greater than or equal to 1.");
+
+            var result = await _volunteerRepository.GetPaginatedVolunteersAsync(pageNumber, pageSize);
+
+            if (result.Volunteers == null)
+                throw new InvalidOperationException("Failed to retrieve paginated volunteers.");
+
+            int totalPages = (int)Math.Ceiling(result.TotalCount / (double)pageSize);
+
+            if (totalPages > 0 && pageNumber > totalPages)
+                throw new ArgumentException($"Page number {pageNumber} exceeds total pages {totalPages}.");
+
+            return result;
         }
     }
 }
