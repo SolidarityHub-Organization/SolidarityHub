@@ -161,9 +161,10 @@ class TaskTableController {
 
     for (var task in tasks) {
       final status = await TaskServices.getTaskStateById(task.id);
-      _taskStatuses[task.id] = status;
+      final taskUrgencyLevel = await TaskServices.fetchMaxUrgencyLevelForTaskAsync(task.id);
 
-      _taskPriorities[task.id] = task.adminId != null ? 'Alta' : 'Media';
+      _taskStatuses[task.id] = status;
+      _taskPriorities[task.id] = taskUrgencyLevel;
     }
   }
 
@@ -246,7 +247,7 @@ class TaskTableController {
   }
 
   String getTaskPriority(TaskWithDetails task) {
-    return task.adminId != null ? 'Alta' : 'Media';
+    return _taskPriorities[task.id] ?? 'Desconocido';
   }
 
   Future<void> deleteTask(TaskWithDetails task, [Function? onComplete]) async {
@@ -300,11 +301,13 @@ class TaskTableController {
 
   Color getPriorityColor(String priority) {
     switch (priority) {
-      case 'Alta':
+      case 'Crítico':
+        return Colors.purple;
+      case 'Alto':
         return Colors.red;
-      case 'Media':
+      case 'Medio':
         return Colors.orange;
-      case 'Baja':
+      case 'Bajo':
         return Colors.green;
       default:
         return Colors.grey;

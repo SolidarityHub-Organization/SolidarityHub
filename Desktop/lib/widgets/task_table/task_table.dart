@@ -174,49 +174,47 @@ class _TaskTableState extends State<TaskTable> {
       );
     }
 
-    return Expanded(
-      child: SingleChildScrollView(
-        controller: _verticalScrollController,
-        child: Column(
-          children: List.generate(widget.controller.filteredTasks.length, (rowIndex) {
-            final task = widget.controller.filteredTasks[rowIndex];
-            return Container(
-              color:
-                  rowIndex % 2 == 0
-                      ? Theme.of(context).colorScheme.surface
-                      : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-              child: Row(
-                children: List.generate(widget.controller.columns.length, (columnIndex) {
-                  final column = widget.controller.columns[columnIndex];
-                  final width = (MediaQuery.of(context).size.width - 32) * column.width;
+    return SingleChildScrollView(
+      controller: _verticalScrollController,
+      child: Column(
+        children: List.generate(widget.controller.filteredTasks.length, (rowIndex) {
+          final task = widget.controller.filteredTasks[rowIndex];
+          return Container(
+            color:
+                rowIndex % 2 == 0
+                    ? Theme.of(context).colorScheme.surface
+                    : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            child: Row(
+              children: List.generate(widget.controller.columns.length, (columnIndex) {
+                final column = widget.controller.columns[columnIndex];
+                final width = (MediaQuery.of(context).size.width - 32) * column.width;
 
-                  return Container(
-                    width: width,
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right:
-                            columnIndex < widget.controller.columns.length - 1
-                                ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
-                                : BorderSide.none,
-                        bottom: BorderSide(color: Colors.grey[200]!),
-                      ),
+                return Container(
+                  width: width,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right:
+                          columnIndex < widget.controller.columns.length - 1
+                              ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
+                              : BorderSide.none,
+                      bottom: BorderSide(color: Colors.grey[200]!),
                     ),
-                    child: Container(
-                      height: 60,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      child: TaskTableCell(
-                        columnId: column.id,
-                        task: task,
-                        controller: widget.controller,
-                        onTaskChanged: widget.onTaskChanged,
-                      ),
+                  ),
+                  child: Container(
+                    height: 60,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: TaskTableCell(
+                      columnId: column.id,
+                      task: task,
+                      controller: widget.controller,
+                      onTaskChanged: widget.onTaskChanged,
                     ),
-                  );
-                }),
-              ),
-            );
-          }),
-        ),
+                  ),
+                );
+              }),
+            ),
+          );
+        }),
       ),
     );
   }
