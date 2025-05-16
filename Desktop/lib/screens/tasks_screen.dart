@@ -35,13 +35,8 @@ class _TasksScreenState extends State<TasksScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF44336),
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Gestión de Tareas',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
         centerTitle: true,
         elevation: 4,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
