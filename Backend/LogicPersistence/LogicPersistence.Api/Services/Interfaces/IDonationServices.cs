@@ -3,8 +3,7 @@ using LogicPersistence.Api.Models.DTOs;
 
 namespace LogicPersistence.Api.Services
 {
-    public interface IDonationServices
-    {
+    public interface IDonationServices {
         #region PhysicalDonation
         Task<PhysicalDonationDisplayDto> CreatePhysicalDonationAsync(PhysicalDonationCreateDto donationCreateDto);
         Task<PhysicalDonationDisplayDto> GetPhysicalDonationByIdAsync(int id);
@@ -22,6 +21,10 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id);
         Task<IEnumerable<MonetaryDonationDisplayDto>> GetAllMonetaryDonationsAsync();
         Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate);
+        #endregion
+        
+        #region Other methods
+        Task<int> GetTotalAmountDonatorsAsync();
         #endregion
     }
 }
