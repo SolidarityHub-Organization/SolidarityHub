@@ -85,10 +85,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         style: TextButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Mejor padding
         ),
         child: Text(
           _fechaInicio != null ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}' : 'Seleccionar inicio',
-          style: const TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold), // Texto más visible
         ),
       ),
       const SizedBox(width: 8),
@@ -97,10 +98,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         style: TextButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Mejor padding
         ),
         child: Text(
           _fechaFin != null ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}' : 'Seleccionar fin',
-          style: const TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold), // Texto más visible
         ),
       ),
     ];
@@ -109,21 +111,24 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard'), foregroundColor: Colors.white, elevation: 0),
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        backgroundColor: Colors.red, // Aseguramos que el AppBar sea rojo
+        foregroundColor: Colors.white, // Aseguramos que el texto sea blanco
+        elevation: 0, // Mantenemos sin elevación para una apariencia plana
+      ),
       body: Column(
         children: [
           Container(
-            color: Colors.red,
-            width: double.infinity, // red container full width
+            color: Colors.red, // Mantenemos el color rojo del contenedor
+            width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Añadido padding vertical
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 0),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      // transition threshold
                       final bool hasEnoughSpace = constraints.maxWidth > 775;
 
                       if (hasEnoughSpace) {
@@ -138,7 +143,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                     controller: _tabScrollController,
                                     thumbVisibility: true,
                                     thickness: 6.0,
-                                    radius: Radius.circular(10.0),
+                                    radius: const Radius.circular(10.0), // Agregado 'const'
                                     scrollbarOrientation: ScrollbarOrientation.bottom,
                                     child: SingleChildScrollView(
                                       controller: _tabScrollController,
@@ -170,7 +175,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               height: 1,
                               width: double.infinity,
                               color: Colors.white70,
-                              margin: const EdgeInsets.only(top: 0),
+                              margin: const EdgeInsets.only(top: 4.0), // Ajustado el margen
                             ),
                           ],
                         );
@@ -182,7 +187,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               controller: _tabScrollController,
                               thumbVisibility: true,
                               thickness: 6.0,
-                              radius: Radius.circular(10.0),
+                              radius: const Radius.circular(10.0), // Agregado 'const'
                               scrollbarOrientation: ScrollbarOrientation.bottom,
                               child: SingleChildScrollView(
                                 controller: _tabScrollController,
@@ -220,14 +225,14 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               height: 1,
                               width: double.infinity,
                               color: Colors.white,
-                              margin: const EdgeInsets.only(top: 0),
+                              margin: const EdgeInsets.only(top: 4.0), // Ajustado el margen
                             ),
                           ],
                         );
                       }
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8), // Reducido el espacio inferior
                 ],
               ),
             ),
