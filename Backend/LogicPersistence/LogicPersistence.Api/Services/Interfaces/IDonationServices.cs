@@ -12,6 +12,8 @@ namespace LogicPersistence.Api.Services
         Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync();
         Task<int> GetTotalAmountPhysicalDonationsAsync();
         Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id);
+        Task<Dictionary<string, int>> GetPhysicalDonationsTotalAmountByTypeAsync(DateTime fromDate, DateTime toDate);
+        Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate);
         #endregion
 
         #region MonetaryDonation

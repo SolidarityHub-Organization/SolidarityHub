@@ -122,6 +122,31 @@ namespace LogicPersistence.Api.Services
 
             return result.ToPhysicalDonationDisplayDto(volunteer);
         }
+
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsTotalAmountByTypeAsync(DateTime fromDate, DateTime toDate) {
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return Enum.GetValues(typeof(PhysicalDonationType))
+                .Cast<PhysicalDonationType>()
+                .ToDictionary(
+                    type => LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(type),
+                    type => filteredDonations.Where(d => d.item_type == type).Sum(d => d.quantity)
+                );
+        }
+
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) 
+        {
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return Enum.GetValues(typeof(PhysicalDonationType))
+                .Cast<PhysicalDonationType>()
+                .ToDictionary(
+                    type => LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(type),
+                    type => filteredDonations.Count(d => d.item_type == type)
+                );
+        }
         #endregion
         #region MonetaryDonation
 
@@ -229,22 +254,19 @@ namespace LogicPersistence.Api.Services
 
         #endregion
         #region Other methods
-        public async Task<int> GetTotalAmountDonatorsAsync() 
-        {
+        public async Task<int> GetTotalAmountDonatorsAsync() {
             var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
             var physicalDonations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
 
             var uniqueDonors = new HashSet<(string type, int id)>();
 
-            foreach (var donation in monetaryDonations)
-            {
+            foreach (var donation in monetaryDonations) {
                 if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
                 if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
                 if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }
             }
 
-            foreach (var donation in physicalDonations)
-            {
+            foreach (var donation in physicalDonations) {
                 if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
                 if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
                 if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }

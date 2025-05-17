@@ -147,6 +147,31 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("physical-donations/total-by-type")]
+        public async Task<IActionResult> GetPhysicalDonationsTotalAmountByTypeAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donationsCount = await _donationServices.GetPhysicalDonationsTotalAmountByTypeAsync(fromDate, toDate);
+                return Ok(donationsCount);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("physical-donations/count-by-type")]
+        public async Task<IActionResult> GetPhysicalDonationsCountByTypeAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donationsCount = await _donationServices.GetPhysicalDonationsCountByTypeAsync(fromDate, toDate);
+                return Ok(donationsCount);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         #endregion
         #region MonetaryDonation
         [HttpPost("monetary-donations")]
@@ -228,7 +253,7 @@ namespace LogicPersistence.Api.Controllers
         }
         #endregion
         #region Other methods
-        [HttpGet("donations/total-donators")]
+        [HttpGet("donations/total-donors")]
         public async Task<IActionResult> GetTotalDonatorsAsync() {
             try {
                 var totalDonators = await _donationServices.GetTotalAmountDonatorsAsync();
