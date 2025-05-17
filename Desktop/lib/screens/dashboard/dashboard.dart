@@ -41,9 +41,22 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
       context: context,
       initialDate: _fechaInicio ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: _fechaFin ?? DateTime.now(),
     );
+
     if (picked != null) {
+      // Verificar que la fecha seleccionada no sea posterior a la fecha fin
+      if (_fechaFin != null && picked.isAfter(_fechaFin!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('La fecha de inicio no puede ser posterior a la fecha de fin'),
+            backgroundColor: Colors.red[700],
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+
       setState(() {
         _fechaInicio = picked;
         _refreshCurrentTab();
@@ -66,11 +79,23 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _fechaFin ?? _fechaInicio ?? DateTime.now(),
-      firstDate: _fechaInicio ?? DateTime(2000),
+      firstDate: _fechaInicio ?? DateTime(2000), // La fecha inicial mínima debe ser la fecha de inicio
       lastDate: DateTime.now(),
     );
 
     if (picked != null) {
+      // Verificamos que la fecha de fin no sea anterior a la fecha de inicio
+      if (picked.isBefore(_fechaInicio!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('La fecha de fin no puede ser anterior a la fecha de inicio'),
+            backgroundColor: Colors.red[700],
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+
       setState(() {
         _fechaFin = picked;
         _refreshCurrentTab();
@@ -79,18 +104,35 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   }
 
   List<Widget> _buildDateFilters() {
+    // Formatear fechas para mostrar
+    String textoInicio = 'Seleccionar inicio';
+    String textoFin = 'Seleccionar fin';
+
+    if (_fechaInicio != null) {
+      textoInicio = 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}';
+    }
+
+    if (_fechaFin != null) {
+      textoFin = 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}';
+
+      // Si las fechas son iguales, indicarlo
+      if (_fechaInicio != null &&
+          _fechaInicio!.year == _fechaFin!.year &&
+          _fechaInicio!.month == _fechaFin!.month &&
+          _fechaInicio!.day == _fechaFin!.day) {
+        textoFin += ' (mismo día)';
+      }
+    }
+
     return [
       TextButton(
         onPressed: () => _selectFechaInicio(context),
         style: TextButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Mejor padding
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
-        child: Text(
-          _fechaInicio != null ? 'Inicio: ${DateFormat('dd-MM-yyyy').format(_fechaInicio!)}' : 'Seleccionar inicio',
-          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold), // Texto más visible
-        ),
+        child: Text(textoInicio, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
       ),
       const SizedBox(width: 8),
       TextButton(
@@ -98,12 +140,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         style: TextButton.styleFrom(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Mejor padding
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
-        child: Text(
-          _fechaFin != null ? 'Fin: ${DateFormat('dd-MM-yyyy').format(_fechaFin!)}' : 'Seleccionar fin',
-          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold), // Texto más visible
-        ),
+        child: Text(textoFin, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
       ),
     ];
   }
@@ -113,17 +152,17 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
-        backgroundColor: Colors.red, // Aseguramos que el AppBar sea rojo
-        foregroundColor: Colors.white, // Aseguramos que el texto sea blanco
-        elevation: 0, // Mantenemos sin elevación para una apariencia plana
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Column(
         children: [
           Container(
-            color: Colors.red, // Mantenemos el color rojo del contenedor
+            color: Colors.red,
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Añadido padding vertical
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -143,7 +182,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                     controller: _tabScrollController,
                                     thumbVisibility: true,
                                     thickness: 6.0,
-                                    radius: const Radius.circular(10.0), // Agregado 'const'
+                                    radius: const Radius.circular(10.0),
                                     scrollbarOrientation: ScrollbarOrientation.bottom,
                                     child: SingleChildScrollView(
                                       controller: _tabScrollController,
@@ -175,7 +214,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               height: 1,
                               width: double.infinity,
                               color: Colors.white70,
-                              margin: const EdgeInsets.only(top: 4.0), // Ajustado el margen
+                              margin: const EdgeInsets.only(top: 4.0),
                             ),
                           ],
                         );
@@ -187,7 +226,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               controller: _tabScrollController,
                               thumbVisibility: true,
                               thickness: 6.0,
-                              radius: const Radius.circular(10.0), // Agregado 'const'
+                              radius: const Radius.circular(10.0),
                               scrollbarOrientation: ScrollbarOrientation.bottom,
                               child: SingleChildScrollView(
                                 controller: _tabScrollController,
@@ -225,14 +264,14 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               height: 1,
                               width: double.infinity,
                               color: Colors.white,
-                              margin: const EdgeInsets.only(top: 4.0), // Ajustado el margen
+                              margin: const EdgeInsets.only(top: 4.0),
                             ),
                           ],
                         );
                       }
                     },
                   ),
-                  const SizedBox(height: 8), // Reducido el espacio inferior
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
