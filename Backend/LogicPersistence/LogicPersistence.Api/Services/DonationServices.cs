@@ -6,20 +6,17 @@ using LogicPersistence.Api.Repositories.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
-    public class DonationServices : IDonationServices
-    {
+    public class DonationServices : IDonationServices {
         private readonly IDonationRepository _donationRepository;
         private readonly IVolunteerRepository _volunteerRepository;
 
-        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository)
-        {
+        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository) {
             _donationRepository = donationRepository;
             _volunteerRepository = volunteerRepository;
         }
 
-#region PhysicalDonation
-        public async Task<PhysicalDonationDisplayDto> CreatePhysicalDonationAsync(PhysicalDonationCreateDto donationCreateDto)
-        {
+        #region PhysicalDonation
+        public async Task<PhysicalDonationDisplayDto> CreatePhysicalDonationAsync(PhysicalDonationCreateDto donationCreateDto) {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
             }
@@ -30,39 +27,33 @@ namespace LogicPersistence.Api.Services
             }
 
             Volunteer? volunteer = null;
-            if (donation.volunteer_id.HasValue)
-            {
+            if (donation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
             }
 
             return donation.ToPhysicalDonationDisplayDto(volunteer);
         }
 
-        public async Task<PhysicalDonationDisplayDto> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto)
-        {
-            if (id != donationUpdateDto.id)
-            {
+        public async Task<PhysicalDonationDisplayDto> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto) {
+            if (id != donationUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
             }
             var existingDonation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
-            if (existingDonation == null)
-            {
+            if (existingDonation == null) {
                 throw new KeyNotFoundException($"Physical donation with id {id} not found.");
             }
             var updatedDonation = donationUpdateDto.ToPhysicalDonation();
             await _donationRepository.UpdatePhysicalDonationAsync(updatedDonation);
 
             Volunteer? volunteer = null;
-            if (updatedDonation.volunteer_id.HasValue)
-            {
+            if (updatedDonation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(updatedDonation.volunteer_id.Value);
             }
 
             return updatedDonation.ToPhysicalDonationDisplayDto(volunteer);
         }
 
-        public async System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id)
-        {
+        public async System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id) {
             var existingDonation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
             if (existingDonation == null) {
                 throw new KeyNotFoundException($"Donation with id {id} not found.");
@@ -81,27 +72,23 @@ namespace LogicPersistence.Api.Services
             }
 
             Volunteer? volunteer = null;
-            if (donation.volunteer_id.HasValue)
-            {
+            if (donation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
             }
 
             return donation.ToPhysicalDonationDisplayDto(volunteer);
         }
 
-        public async Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync()
-        {
+        public async Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync() {
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync();
             if (donations == null) {
                 throw new InvalidOperationException("Failed to retrieve donations.");
             }
 
             var result = new List<PhysicalDonationDisplayDto>();
-            foreach (var donation in donations)
-            {
+            foreach (var donation in donations) {
                 Volunteer? volunteer = null;
-                if (donation.volunteer_id.HasValue)
-                {
+                if (donation.volunteer_id.HasValue) {
                     volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
                 }
                 result.Add(donation.ToPhysicalDonationDisplayDto(volunteer));
@@ -110,41 +97,60 @@ namespace LogicPersistence.Api.Services
             return result;
         }
 
-        public async Task<int> GetTotalAmountPhysicalDonationsAsync()
-        {
+        public async Task<int> GetTotalAmountPhysicalDonationsAsync() {
             return await _donationRepository.GetTotalAmountPhysicalDonationsAsync();
         }
 
-        public async Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id)
-        {
+        public async Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id) {
             var donation = await _donationRepository.GetPhysicalDonationByIdAsync(id);
-            if (donation == null)
-            {
+            if (donation == null) {
                 throw new KeyNotFoundException($"Physical donation with id {id} not found");
             }
 
             // Update the donation with victim_id set to null
             donation.victim_id = null;
             var result = await _donationRepository.UpdatePhysicalDonationAsync(donation);
-            
-            if (result == null)
-            {
+
+            if (result == null) {
                 throw new InvalidOperationException("Failed to unassign physical donation");
             }
 
             Volunteer? volunteer = null;
-            if (result.volunteer_id.HasValue)
-            {
+            if (result.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(result.volunteer_id.Value);
             }
 
             return result.ToPhysicalDonationDisplayDto(volunteer);
         }
-#endregion
-#region MonetaryDonation
 
-        public async Task<MonetaryDonationDisplayDto> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto)
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsTotalAmountByTypeAsync(DateTime fromDate, DateTime toDate) {
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return Enum.GetValues(typeof(PhysicalDonationType))
+                .Cast<PhysicalDonationType>()
+                .ToDictionary(
+                    type => LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(type),
+                    type => filteredDonations.Where(d => d.item_type == type).Sum(d => d.quantity)
+                );
+        }
+
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) 
         {
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return Enum.GetValues(typeof(PhysicalDonationType))
+                .Cast<PhysicalDonationType>()
+                .ToDictionary(
+                    type => LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(type),
+                    type => filteredDonations.Count(d => d.item_type == type)
+                );
+        }
+        #endregion
+        #region MonetaryDonation
+
+        public async Task<MonetaryDonationDisplayDto> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto) {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
             }
@@ -154,16 +160,14 @@ namespace LogicPersistence.Api.Services
             }
 
             Volunteer? volunteer = null;
-            if (donation.volunteer_id.HasValue)
-            {
+            if (donation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
             }
 
             return donation.ToMonetaryDonationDisplayDto(volunteer);
         }
 
-        public async Task<MonetaryDonationDisplayDto> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto)
-        {
+        public async Task<MonetaryDonationDisplayDto> UpdateMonetaryDonationAsync(int id, MonetaryDonationUpdateDto donationUpdateDto) {
             if (id != donationUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
             }
@@ -175,16 +179,14 @@ namespace LogicPersistence.Api.Services
             await _donationRepository.UpdateMonetaryDonationAsync(updatedDonation);
 
             Volunteer? volunteer = null;
-            if (updatedDonation.volunteer_id.HasValue)
-            {
+            if (updatedDonation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(updatedDonation.volunteer_id.Value);
             }
 
             return updatedDonation.ToMonetaryDonationDisplayDto(volunteer);
         }
 
-        public async System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id)
-        {
+        public async System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id) {
             var existingDonation = await _donationRepository.GetMonetaryDonationByIdAsync(id);
             if (existingDonation == null) {
                 throw new KeyNotFoundException($"Donation with id {id} not found.");
@@ -202,8 +204,7 @@ namespace LogicPersistence.Api.Services
             }
 
             Volunteer? volunteer = null;
-            if (donation.volunteer_id.HasValue)
-            {
+            if (donation.volunteer_id.HasValue) {
                 volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
             }
 
@@ -217,11 +218,9 @@ namespace LogicPersistence.Api.Services
             }
 
             var result = new List<MonetaryDonationDisplayDto>();
-            foreach (var donation in donations)
-            {
+            foreach (var donation in donations) {
                 Volunteer? volunteer = null;
-                if (donation.volunteer_id.HasValue)
-                {
+                if (donation.volunteer_id.HasValue) {
                     volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
                 }
                 result.Add(donation.ToMonetaryDonationDisplayDto(volunteer));
@@ -238,14 +237,13 @@ namespace LogicPersistence.Api.Services
                 throw new InvalidOperationException("Failed to retrieve total amount of donations.");
             }
 
-            switch (currency)
-            {
+            switch (currency) {
                 case Currency.EUR:
-                     totalDollar *= 0.88;
-                     break;
+                    totalDollar *= 0.88;
+                    break;
                 case Currency.USD:
-                     totalEuro *= 1.14;
-                     break;
+                    totalEuro *= 1.14;
+                    break;
                 default:
                     throw new ArgumentException("Invalid currency type.");
             }
@@ -253,6 +251,29 @@ namespace LogicPersistence.Api.Services
             return totalEuro + totalDollar;
         }
 
-#endregion
+
+        #endregion
+        #region Other methods
+        public async Task<int> GetTotalAmountDonatorsAsync() {
+            var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
+            var physicalDonations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+
+            var uniqueDonors = new HashSet<(string type, int id)>();
+
+            foreach (var donation in monetaryDonations) {
+                if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
+                if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
+                if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }
+            }
+
+            foreach (var donation in physicalDonations) {
+                if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
+                if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
+                if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }
+            }
+
+            return uniqueDonors.Count;
+        }
+        #endregion
     }
 }

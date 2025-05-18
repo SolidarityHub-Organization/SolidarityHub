@@ -15,8 +15,8 @@ public enum UrgencyLevel {
 	Critical = 3
 }
 
-public class Need {	// these specific needs that can be of a certain need type
-	// a victim can set a task for themselves might be able to create a task through a need?
+public class Need { // these specific needs that can be of a certain need type
+					// a victim can set a task for themselves might be able to create a task through a need?
 	public int id { get; set; }
 
 	public string name { get; set; } = string.Empty;
@@ -30,6 +30,7 @@ public class Need {	// these specific needs that can be of a certain need type
 	public int? victim_id { get; set; }
 	public int? admin_id { get; set; }
 	public DateTime created_at { get; set; }
+	public int? need_type_id { get; set; } // FK to NeedType
 
 	// Navigation properties
 

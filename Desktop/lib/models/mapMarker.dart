@@ -7,8 +7,11 @@ class MapMarker {
   final String type;
   final String? urgencyLevel;
   final String? state;
-  final dynamic time; // dynamic can be null (thus no ?)
+  final dynamic time;
   final dynamic physicalDonation;
+  final bool isCluster;
+  final int? clusterCount;
+  final List<MapMarker>? clusterItems;
 
   MapMarker({
     required this.id,
@@ -19,6 +22,9 @@ class MapMarker {
     this.state,
     this.time,
     this.physicalDonation,
+    this.isCluster = false,
+    this.clusterCount,
+    this.clusterItems,
   });
 
   factory MapMarker.fromJson(Map<String, dynamic> json) {
@@ -37,6 +43,6 @@ class MapMarker {
 
   @override
   String toString() {
-    return 'MapMarker(id: $id, name: $name, type: $type, urgencyLevel: $urgencyLevel, state: $state, position: $position, time: $time, physicalDonation: $physicalDonation)';
+    return 'MapMarker(id: $id, name: $name, type: $type, urgencyLevel: $urgencyLevel, state: $state, position: $position, time: $time, physicalDonation: $physicalDonation, isCluster: $isCluster, clusterCount: $clusterCount)';
   }
 }

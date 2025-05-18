@@ -9,18 +9,14 @@ import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/affectedZone.dart';
 import '../widgets/map/factory_method_markers/marker_factory.dart';
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
+import 'package:solidarityhub/controllers/map/cluster_controller.dart';
 
 class MapScreen extends StatefulWidget {
   final double? lat;
   final double? lng;
   final double? initialZoom;
 
-  const MapScreen({
-    Key? key, 
-    this.lat,
-    this.lng,
-    this.initialZoom,
-  }) : super(key: key);
+  const MapScreen({Key? key, this.lat, this.lng, this.initialZoom}) : super(key: key);
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -36,6 +32,8 @@ class _MapScreenState extends State<MapScreen> {
   Set<MapViewMode> _selectedModes = {MapViewMode.victim, MapViewMode.volunteer, MapViewMode.task};
   MapMarker? _selectedMarker;
   bool _isHeatMapActive = false;
+  double _currentZoom = 13.0;
+  bool _clusteringEnabled = true; // Opción para habilitar/deshabilitar clusters
 
   late MapController _mapController;
   final TextEditingController _searchController = TextEditingController();
@@ -46,6 +44,7 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     _mapController = MapController();
+    _currentZoom = widget.initialZoom ?? 13.0;
     _fetchLocations(LocationServices.fetchVictimLocations);
     _fetchLocations(LocationServices.fetchVolunteerLocations);
     _fetchLocations(LocationServices.fetchTaskLocations);
@@ -112,6 +111,24 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  // Color del cluster según el tipo predominante
+  Color _getClusterColor(String type) {
+    switch (type) {
+      case 'victim':
+        return Colors.red.shade700;
+      case 'volunteer':
+        return Color.fromARGB(255, 255, 79, 135);
+      case 'task':
+        return Colors.orange;
+      case 'meeting_point':
+        return Colors.green;
+      case 'pickup_point':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // filtering logic for multi-selection
@@ -121,12 +138,28 @@ class _MapScreenState extends State<MapScreen> {
           return _selectedModes.contains(_getMapViewMode(marker.type));
         }).toList();
 
-    // Usamos los marcadores filtrados para crear los Marker de flutter_map
-    // Usando el factory method de los marcadores
+    // Aplicar clustering a los marcadores filtrados - Ahora usando el controlador
+    List<MapMarker> processedMarkers = ClusterController.createClusters(
+      filteredMarkers,
+      _currentZoom,
+      _clusteringEnabled,
+    );
+
+    // Generar marcadores para el mapa
     List<Marker> flutterMapMarkers =
-        filteredMarkers.map((mapMarker) {
-          final creator = getMarkerCreator(mapMarker.type);
-          return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
+        processedMarkers.map((mapMarker) {
+          if (mapMarker.isCluster) {
+            return ClusterController.createClusterMarker(
+              mapMarker,
+              _onMarkerTapped, // Este parámetro ahora se ignorará en el controlador
+              _currentZoom,
+              (position, zoom) => _mapController.move(position, zoom),
+              _getClusterColor,
+            );
+          } else {
+            final creator = getMarkerCreator(mapMarker.type);
+            return creator.createMarker(mapMarker, context, (MapMarker marker) => _onMarkerTapped(marker));
+          }
         }).toList();
 
     return Scaffold(
@@ -172,10 +205,15 @@ class _MapScreenState extends State<MapScreen> {
                                 onMapReady: () {
                                   // Asegurarnos de que el mapa se centre en la ubicación correcta
                                   if (widget.lat != null && widget.lng != null) {
-                                    _mapController.move(
-                                      LatLng(widget.lat!, widget.lng!),
-                                      widget.initialZoom ?? 15.0,
-                                    );
+                                    _mapController.move(LatLng(widget.lat!, widget.lng!), widget.initialZoom ?? 15.0);
+                                  }
+                                },
+                                onPositionChanged: (position, hasGesture) {
+                                  // Actualizar el zoom current
+                                  if (_currentZoom != position.zoom) {
+                                    setState(() {
+                                      _currentZoom = position.zoom!;
+                                    });
                                   }
                                 },
                               ),
@@ -259,7 +297,7 @@ class _MapScreenState extends State<MapScreen> {
                                     label: 'Puntos de Encuentro',
                                     isSelected: _selectedModes.contains(MapViewMode.meeting_point),
                                     onPressed: () => _toggleViewMode(MapViewMode.meeting_point),
-                                    icon: Icons.group,          // add icon for this?
+                                    icon: Icons.group, // add icon for this?
                                     color: Colors.green,
                                   ),
                                   SizedBox(height: 8),
@@ -292,7 +330,8 @@ class _MapScreenState extends State<MapScreen> {
                                   ),
                                 ],
                               ),
-                            ),                            if (_isHeatMapActive)
+                            ),
+                            if (_isHeatMapActive)
                               Positioned(
                                 bottom: 70,
                                 left: 16,
