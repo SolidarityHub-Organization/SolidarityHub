@@ -148,6 +148,7 @@ public class VolunteerRepository : IVolunteerRepository
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { email });
     }
 
+    //TODO: make this method generic so it accepts any other item too, and make non paginated version too
     public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
     {
         using var connection = new NpgsqlConnection(connectionString);
