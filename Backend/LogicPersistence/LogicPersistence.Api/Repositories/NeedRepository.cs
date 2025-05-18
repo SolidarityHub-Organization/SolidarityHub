@@ -13,15 +13,40 @@ public class NeedRepository : INeedRepository
     public NeedRepository() {}
 
 #region Needs
-    public async Task<Need> CreateNeedAsync(Need need) //Se sube siempre con el urgencyLevel en Unknown
+    public async Task<Need> CreateNeedAsync(Need need)
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = @"
-            INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
-            VALUES (@name, @description, 'Unknown', @victim_id, @admin_id)
-            RETURNING *";
+        await connection.OpenAsync();
+        using var transaction = await connection.BeginTransactionAsync();
 
-        return await connection.QuerySingleAsync<Need>(sql, need);
+        try
+        {
+            const string insertNeedSql = @"
+                INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
+                VALUES (@name, @description, 'Unknown', @victim_id, @admin_id)
+                RETURNING *";
+
+            var createdNeed = await connection.QuerySingleAsync<Need>(
+                insertNeedSql, need, transaction);
+
+            const string insertRelationSql = @"
+                INSERT INTO need_need_type (need_id, need_type_id)
+                VALUES (@needId, @needTypeId)";
+
+            await connection.ExecuteAsync(
+                insertRelationSql,
+                new { needId = createdNeed.id, needTypeId = need.need_type_id },
+                transaction);
+            createdNeed.need_type_id = need.need_type_id;
+
+            await transaction.CommitAsync();
+            return createdNeed;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> DeleteNeedAsync(int id)
