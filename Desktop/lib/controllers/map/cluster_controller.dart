@@ -6,7 +6,7 @@ import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/mapMarkerCluster.dart';
 
 class ClusterController {
-  static const double _ZOOM_THRESHOLD = 15.0;
+  static const double _ZOOM_THRESHOLD = 11.0;
   static const double _EARTH_RADIUS = 6378137.0;
   static const double _PIXEL_REFERENCE_ZOOM20 = 0.15;
 

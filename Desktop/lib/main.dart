@@ -24,7 +24,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.red), useMaterial3: true),
-      home: const MyHomePage(title: 'Solidarity Hub'),
+      home: const MinSizeContainer(
+        child: MyHomePage(title: 'Solidarity Hub'),
+      ),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -35,6 +37,46 @@ class MyApp extends StatelessWidget {
         Locale('es', 'ES'), // Español
       ],
       locale: const Locale('es', 'ES'), // Forzar español como idioma predeterminado
+    );
+  }
+}
+
+// Simple wrapper to enforce minimum size
+class MinSizeContainer extends StatelessWidget {
+  final Widget child;
+  final double minWidth;
+  final double minHeight;
+
+  const MinSizeContainer({
+    Key? key,
+    required this.child,
+    this.minWidth = 281.0,
+    this.minHeight = 175.0,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minWidth: minWidth,
+                minHeight: minHeight,
+              ),
+              width: constraints.maxWidth > minWidth 
+                  ? constraints.maxWidth 
+                  : minWidth,
+              height: constraints.maxHeight > minHeight 
+                  ? constraints.maxHeight 
+                  : minHeight,
+              child: child,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -52,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _currentContent = const Dashboard();
   int _selectedIndex = 0; // 0 indica Dashboard (seleccionado por defecto)
   bool _isExpanded = true;
+  final ScrollController _sidebarScrollController = ScrollController();
 
   void _onMenuItemSelected(int index, Widget content) {
     setState(() {
@@ -64,6 +107,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isExpanded = !_isExpanded;
     });
+  }
+
+  @override
+  void dispose() {
+    _sidebarScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -150,7 +199,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: Scrollbar(
                       thumbVisibility: true, // Siempre mostrar la barra de desplazamiento
+                      controller: _sidebarScrollController, // <-- Add this
                       child: ListView(
+                        controller: _sidebarScrollController, // <-- And this
                         padding: EdgeInsets.symmetric(vertical: 8.0),
                         children: [
                           _buildMenuItem(

@@ -138,12 +138,25 @@ class _MapScreenState extends State<MapScreen> {
           return _selectedModes.contains(_getMapViewMode(marker.type));
         }).toList();
 
-    // Aplicar clustering a los marcadores filtrados - Ahora usando el controlador
-    List<MapMarker> processedMarkers = ClusterController.createClusters(
-      filteredMarkers,
-      _currentZoom,
-      _clusteringEnabled,
-    );
+    List<MapMarker> processedMarkers = [];
+        
+    Map<String, List<MapMarker>> markersByType = {};
+    for (var marker in filteredMarkers) {
+      if (!markersByType.containsKey(marker.type)) {
+        markersByType[marker.type] = [];
+      }
+      markersByType[marker.type]!.add(marker);
+    }
+
+    for (var type in markersByType.keys) {
+      processedMarkers.addAll(
+        ClusterController.createClusters(
+          markersByType[type]!,
+          _currentZoom,
+          _clusteringEnabled,
+        )
+      );
+    }
 
     // Generar marcadores para el mapa
     List<Marker> flutterMapMarkers =
