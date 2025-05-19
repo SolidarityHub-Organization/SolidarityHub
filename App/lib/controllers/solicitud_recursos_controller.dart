@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../services/services_recursos.dart';
+
 class SolicitarRecursoController {
+  final RecursosService _service = RecursosService();
+
+  final int victimId;
   final TextEditingController cantidadController = TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
 
   String? recursoSeleccionado;
 
-  void registrarSolicitud(BuildContext context) {
+  SolicitarRecursoController({required this.victimId});
+
+  Future<void> registrarSolicitud(BuildContext context) async {
+
     final recurso = recursoSeleccionado;
     final cantidad = cantidadController.text.trim();
     final descripcion = descripcionController.text.trim();
@@ -25,9 +33,23 @@ class SolicitarRecursoController {
     print('Recurso: $recurso');
     print('Cantidad: $cantidad');
     print('Descripción: $descripcion');
+    print('ID del afectado: $victimId');
     print('-----------------------------');
 
-    _mostrarMensaje(context, 'Solicitud registrada con éxito.');
+    final Map<String, dynamic> solicitud = {
+      'victima_id': victimId,
+      'recurso': recurso,
+      'cantidad': int.tryParse(cantidad) ?? 0,
+      'descripcion': descripcion,
+    };
+
+    final exito = await _service.enviarSolicitudRecurso(solicitud);
+
+    if (exito) {
+      _mostrarMensaje(context, 'Solicitud enviada con éxito.');
+    } else {
+      _mostrarMensaje(context, 'Error al enviar la solicitud.');
+    }
   }
 
   void dispose() {

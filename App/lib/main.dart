@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         '/taskListScreen': (context) => TaskListScreen(id: id),
         '/notificationScreen': (context) => NotificationScreen(id: id),
         '/availableTasksScreen': (context) => AvailableTasksScreen(id: id),
-        '/solicitud_recursos': (context) => SolicitarRecursoPage(),
+        '/solicitud_recursos': (context) => SolicitarRecursoPage(victimId: id),
       }
     );
   }

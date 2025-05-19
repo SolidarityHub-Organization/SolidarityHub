@@ -96,7 +96,7 @@ class HomeScreenAfectado extends StatelessWidget {
                           width: double.infinity,
                           child: buildCustomButton(
                             "Solicitar recurso",
-                            homeScreenController.onRecursosPressed(context),
+                            homeScreenController.onRecursosPressed(context, id),
                             verticalPadding: 14,
                             horizontalPadding: 0,
                             backgroundColor: Colors.red,

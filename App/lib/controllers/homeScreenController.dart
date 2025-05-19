@@ -31,10 +31,10 @@ class HomeScreenController {
     Navigator.pushNamed(context, '/notificationScreen');
   }
 
-  VoidCallback onRecursosPressed(BuildContext context) { //int id, String role
+  VoidCallback onRecursosPressed(BuildContext context, int id) { //int id, String role
     return () {
       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(),),
+        context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(victimId: id),),
       );
     };
   }

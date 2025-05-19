@@ -4,12 +4,16 @@ import '../controllers/solicitud_recursos_controller.dart';
 import '../services/services_recursos.dart';
 
 class SolicitarRecursoPage extends StatefulWidget {
+
+  final int victimId;
+  SolicitarRecursoPage({required this.victimId});
+
   @override
   _SolicitarRecursoPageState createState() => _SolicitarRecursoPageState();
 }
 
 class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
-  final SolicitarRecursoController _controller = SolicitarRecursoController();
+  late SolicitarRecursoController _controller;
   final RecursosService _recursosService = RecursosService();
 
   List<String> _recursos = [];
@@ -18,6 +22,7 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
   @override
   void initState() {
     super.initState();
+    _controller = SolicitarRecursoController(victimId: widget.victimId);
     _fetchRecursos();
   }
 
