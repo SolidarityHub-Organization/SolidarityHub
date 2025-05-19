@@ -5,13 +5,13 @@ import '../services/services_recursos.dart';
 class SolicitarRecursoController {
   final RecursosService _service = RecursosService();
 
-  final int victimId;
+  final int id;
   final TextEditingController cantidadController = TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
 
   String? recursoSeleccionado;
 
-  SolicitarRecursoController({required this.victimId});
+  SolicitarRecursoController({required this.id});
 
   Future<void> registrarSolicitud(BuildContext context) async {
 
@@ -33,11 +33,11 @@ class SolicitarRecursoController {
     print('Recurso: $recurso');
     print('Cantidad: $cantidad');
     print('Descripción: $descripcion');
-    print('ID del afectado: $victimId');
+    print('ID del afectado: $id');
     print('-----------------------------');
 
     final Map<String, dynamic> solicitud = {
-      'victima_id': victimId,
+      'victima_id': id,
       'recurso': recurso,
       'cantidad': int.tryParse(cantidad) ?? 0,
       'descripcion': descripcion,

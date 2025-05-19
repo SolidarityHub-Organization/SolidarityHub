@@ -5,8 +5,8 @@ import '../services/services_recursos.dart';
 
 class SolicitarRecursoPage extends StatefulWidget {
 
-  final int victimId;
-  SolicitarRecursoPage({required this.victimId});
+  final int id;
+  SolicitarRecursoPage({required this.id});
 
   @override
   _SolicitarRecursoPageState createState() => _SolicitarRecursoPageState();
@@ -22,7 +22,7 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
   @override
   void initState() {
     super.initState();
-    _controller = SolicitarRecursoController(victimId: widget.victimId);
+    _controller = SolicitarRecursoController(id: widget.id);
     _fetchRecursos();
   }
 

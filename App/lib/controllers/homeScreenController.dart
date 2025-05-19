@@ -34,7 +34,7 @@ class HomeScreenController {
   VoidCallback onRecursosPressed(BuildContext context, int id) { //int id, String role
     return () {
       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(victimId: id),),
+        context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(id: id),),
       );
     };
   }

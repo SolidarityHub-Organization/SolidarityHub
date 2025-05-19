@@ -17,7 +17,7 @@ class RecursosService {
   }
 
   Future<bool> enviarSolicitudRecurso(Map<String, dynamic> solicitud) async {
-    final url = Uri.parse('$_baseUrl/need-types'); //
+    final url = Uri.parse('$_baseUrl/need-types');
 
     final response = await http.post(
       url,
