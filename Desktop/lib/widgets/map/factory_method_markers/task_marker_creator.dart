@@ -49,13 +49,32 @@ class TaskMarkerCreator implements MapMarkerCreator {
   Marker createMarker(MapMarker mapMarker, BuildContext context, Function(MapMarker) onMarkerTap) {
     return Marker(
       point: mapMarker.position,
-      width: 50,
-      height: 50,
+      width: 30,
+      height: 30,
       child: GestureDetector(
         onTap: () {
           onMarkerTap(mapMarker);
         },
-        child: Icon(_getIconByState(mapMarker.state), color: _getColorByState(mapMarker.state), size: 40),
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: _getColorByState(mapMarker.state), width: 2),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(0),
+            )
+          ),
+          child: Center(child: Icon(
+            _getIconByState(mapMarker.state),
+            color: _getColorByState(mapMarker.state),
+            size: 20,
+          ),)
+            
+        ) 
       ),
     );
   }

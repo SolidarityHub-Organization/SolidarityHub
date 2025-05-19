@@ -73,6 +73,7 @@ class LocationServices {
               'longitude': location['longitude'],
               'type': location['type'],
               'state': location['state']?.toString(),
+              'skills_with_level': location['skills_with_level'],
             };
           }).toList();
     }

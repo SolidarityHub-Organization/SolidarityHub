@@ -1,5 +1,6 @@
 import 'package:latlong2/latlong.dart';
 
+
 class MapMarker {
   final String id;
   final String name;
@@ -12,6 +13,7 @@ class MapMarker {
   final bool isCluster;
   final int? clusterCount;
   final List<MapMarker>? clusterItems;
+  final Map<String, dynamic>? skillsWithLevel;
 
   MapMarker({
     required this.id,
@@ -25,10 +27,11 @@ class MapMarker {
     this.isCluster = false,
     this.clusterCount,
     this.clusterItems,
+    this.skillsWithLevel,
   });
 
   factory MapMarker.fromJson(Map<String, dynamic> json) {
-    // Asegurarse de que los valores se conviertan correctamente a String
+    print('JSON recibido en MapMarker.fromJson: $json');
     return MapMarker(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
@@ -38,6 +41,7 @@ class MapMarker {
       state: json['state']?.toString(),
       time: json['time'],
       physicalDonation: json['physical_donation'],
+      skillsWithLevel: json['skills_with_level'],
     );
   }
 

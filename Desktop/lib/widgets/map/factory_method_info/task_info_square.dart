@@ -82,12 +82,22 @@ class TaskInfoSquare implements InfoSquare {
                   valueColor: _getStateColor(mapMarker.state),
                 ),
 
-              SizedBox(height: 50),
+              SizedBox(height: 30),
+
+              _buildInfoRowEnhanced(
+                icon: Icons.star,
+                label: 'Habilidades',
+                value: 
+                  mapMarker.skillsWithLevel!.entries
+                  .map((e) => '${e.key}: ${e.value}')
+                  .join('\n'),
+              ),          
+            
+              SizedBox(height: 30),
 
               Divider(color: Colors.orange.shade200, thickness: 1.0),
 
               SizedBox(height: 20),
-
               Center(
                 child: Text(
                   'Información actualizada',
