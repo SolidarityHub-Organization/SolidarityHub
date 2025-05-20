@@ -18,8 +18,23 @@ class ClusterController {
       return markers;
     }
 
-    final double baseDistance = _getBaseDistanceForZoom(zoom);
-    return _groupMarkersIntoClusters(markers, zoom, baseDistance);
+    // Primero agrupamos por tipo
+    Map<String, List<MapMarker>> markersByType = {};
+    for (var marker in markers) {
+      if (!markersByType.containsKey(marker.type)) {
+        markersByType[marker.type] = [];
+      }
+      markersByType[marker.type]!.add(marker);
+    }
+
+    // Luego aplicamos clustering a cada grupo por separado
+    List<MapMarker> result = [];
+    markersByType.forEach((type, typeMarkers) {
+      final double baseDistance = _getBaseDistanceForZoom(zoom);
+      result.addAll(_groupMarkersIntoClusters(typeMarkers, zoom, baseDistance));
+    });
+
+    return result;
   }
 
   /// Crea un marcador visual para representar un cluster en el mapa
@@ -68,6 +83,7 @@ class ClusterController {
     for (var marker in markers) {
       if (processedMarkers.contains(marker)) continue;
 
+      // Buscamos solo marcadores del mismo tipo que el actual
       List<MapMarker> cluster = _findNearbyMarkers(marker, markers, processedMarkers, zoom, baseDistance);
 
       if (cluster.length > 1) {
@@ -92,7 +108,8 @@ class ClusterController {
     processedMarkers.add(baseMarker);
 
     for (var otherMarker in allMarkers) {
-      if (baseMarker != otherMarker && !processedMarkers.contains(otherMarker)) {
+      if (baseMarker != otherMarker && !processedMarkers.contains(otherMarker) && baseMarker.type == otherMarker.type) {
+        // Solo juntamos del mismo tipo
         double distance = calculateDistance(baseMarker.position, otherMarker.position, zoom);
 
         if (distance <= baseDistance) {
@@ -108,11 +125,14 @@ class ClusterController {
   /// Crea un marcador de cluster a partir de una lista de marcadores
   static MapMarker _createClusterMarker(List<MapMarker> cluster, int index) {
     LatLng clusterCenter = MapMarkerCluster.calculateClusterCenter(cluster);
+    // Aseguramos que el tipo del cluster sea el mismo que el de sus elementos
+    String clusterType = cluster[0].type;
     return MapMarkerCluster.createCluster(
       id: 'cluster_$index',
       position: clusterCenter,
       count: cluster.length,
       items: cluster,
+      type: clusterType, // Conservamos el tipo para identificación del cluster
     );
   }
 
