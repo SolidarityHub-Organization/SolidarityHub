@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controllers/solicitud_recursos_controller.dart';
+import '../models/recurso.dart';
 import '../services/services_recursos.dart';
 
 class SolicitarRecursoPage extends StatefulWidget {
@@ -16,7 +17,8 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
   late SolicitarRecursoController _controller;
   final RecursosService _recursosService = RecursosService();
 
-  List<String> _recursos = [];
+  List<Recurso> _recursos = [];
+  Recurso? recursoSeleccionado;
   bool _isLoading = true;
 
   @override
@@ -28,7 +30,7 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
 
   Future<void> _fetchRecursos() async {
     try {
-      final recursos = await _recursosService.obtenerNombresRecursos();
+      final recursos = await _recursosService.obtenerRecursos();
       setState(() {
         _recursos = recursos;
         _isLoading = false;
@@ -100,23 +102,24 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
                       SizedBox(height: 6),
                       _isLoading
                           ? Center(child: CircularProgressIndicator())
-                          : DropdownButtonFormField<String>(
+                          : DropdownButtonFormField<Recurso>(
+                        value: recursoSeleccionado,
+                        items: _recursos.map<DropdownMenuItem<Recurso>>((Recurso recurso) {
+                          return DropdownMenuItem<Recurso>(
+                            value: recurso,
+                            child: Text(recurso.name),
+                          );
+                        }).toList(),
+                        onChanged: (Recurso? nuevoValor) {
+                          setState(() {
+                            recursoSeleccionado = nuevoValor;
+                            _controller.recursoSeleccionado = nuevoValor;
+                          });
+                        },
                         decoration: InputDecoration(
                           hintText: 'Tipo de recurso',
                           border: UnderlineInputBorder(),
                         ),
-                        value: _controller.recursoSeleccionado,
-                        items: _recursos.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _controller.recursoSeleccionado = newValue;
-                          });
-                        },
                       ),
                       SizedBox(height: 20),
                       Text("Seleccione la cantidad:",
@@ -125,9 +128,7 @@ class _SolicitarRecursoPageState extends State<SolicitarRecursoPage> {
                       TextField(
                         controller: _controller.cantidadController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: InputDecoration(
                           hintText: "Cantidad",
                           border: UnderlineInputBorder(),

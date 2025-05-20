@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../models/recurso.dart';
 import '../services/services_recursos.dart';
 
 class SolicitarRecursoController {
@@ -9,7 +9,7 @@ class SolicitarRecursoController {
   final TextEditingController cantidadController = TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
 
-  String? recursoSeleccionado;
+  Recurso? recursoSeleccionado;
 
   SolicitarRecursoController({required this.id});
 
@@ -19,7 +19,7 @@ class SolicitarRecursoController {
     final cantidad = cantidadController.text.trim();
     final descripcion = descripcionController.text.trim();
 
-    if (recurso == null || recurso.isEmpty) {
+    if (recurso == null) {
       _mostrarMensaje(context, 'Debe seleccionar un recurso.');
       return;
     }
@@ -29,19 +29,22 @@ class SolicitarRecursoController {
       return;
     }
 
-    print('--- Datos de la solicitud ---');
-    print('Recurso: $recurso');
-    print('Cantidad: $cantidad');
-    print('Descripción: $descripcion');
-    print('ID del afectado: $id');
-    print('-----------------------------');
+    //print('--- Datos de la solicitud ---');
+    //print('victima_id: $id');
+    //print('recurso_nombre: ${recurso.name}');
+    //print('recurso_id: ${recurso.id}');
+    //print('cantidad: $cantidad');
+    //print('descripcion: $descripcion');
+    //print('-----------------------------');
 
     final Map<String, dynamic> solicitud = {
-      'victima_id': id,
-      'recurso': recurso,
-      'cantidad': int.tryParse(cantidad) ?? 0,
-      'descripcion': descripcion,
+      'name': recurso.name,
+      'description': descripcion,
+      'victim_id': id,
+      'need_type_id': recurso.id,
+      //'cantidad': int.tryParse(cantidad) ?? 0,
     };
+    print(solicitud);
 
     final exito = await _service.enviarSolicitudRecurso(solicitud);
 
