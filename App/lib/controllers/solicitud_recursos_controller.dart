@@ -29,13 +29,13 @@ class SolicitarRecursoController {
       return;
     }
 
-    //print('--- Datos de la solicitud ---');
-    //print('victima_id: $id');
-    //print('recurso_nombre: ${recurso.name}');
-    //print('recurso_id: ${recurso.id}');
-    //print('cantidad: $cantidad');
-    //print('descripcion: $descripcion');
-    //print('-----------------------------');
+    print('--- Datos de la solicitud ---');
+    print('victima_id: $id');
+    print('recurso_nombre: ${recurso.name}');
+    print('recurso_id: ${recurso.id}');
+    print('cantidad: $cantidad');
+    print('descripcion: $descripcion');
+    print('-----------------------------');
 
     final Map<String, dynamic> solicitud = {
       'name': recurso.name,

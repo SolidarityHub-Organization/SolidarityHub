@@ -30,7 +30,7 @@ class RecursosService {
   }
 
   Future<bool> enviarSolicitudRecurso(Map<String, dynamic> solicitud) async {
-    final url = Uri.parse('$_baseUrl/need-types');
+    final url = Uri.parse('$_baseUrl/needs');
 
     final response = await http.post(
       url,
@@ -41,6 +41,7 @@ class RecursosService {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
+      print (jsonEncode(solicitud));
       print('Error del servidor: ${response.statusCode}');
       return false;
     }
