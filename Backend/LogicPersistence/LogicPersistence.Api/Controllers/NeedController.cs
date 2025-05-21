@@ -16,7 +16,7 @@ namespace LogicPersistence.Api.Controllers
 		}	
 
 #region Needs
-		[HttpPost("needs")]
+		[HttpPost("needs")] //Warning: You cannot use this endpoint if you have populated the database with the endpoint in the same backend execution
         public async Task<IActionResult> CreateNeedAsync(NeedCreateDto needCreateDto)
         {
             try

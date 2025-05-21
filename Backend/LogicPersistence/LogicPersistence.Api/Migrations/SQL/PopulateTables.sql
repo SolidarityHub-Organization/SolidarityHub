@@ -155,13 +155,13 @@ INSERT INTO "need_type" ("name", "admin_id") VALUES
   ('Transporte', 1),
   ('Cuidado Infantil', 2);
 
-INSERT INTO "need" ("name", "description", "urgency_level", "victim_id", "admin_id") VALUES
-  ('Comida de Emergencia', 'Familia de 4 necesita suministros de comida', 'High', 1, NULL),
-  ('Reposición de Medicamentos', 'Necesita reposición de insulina en 48 horas', 'Critical', 2, NULL),
-  ('Vivienda Temporal', 'Casa dañada, necesita refugio por 2 semanas', 'Medium', 3, NULL),
-  ('Transporte de Evacuación', 'Pareja de ancianos necesita transporte desde zona inundada', 'High', 4, NULL),
-  ('Suministros para Bebé', 'Necesita fórmula y pañales para bebé', 'Medium', 5, NULL),
-  ('Cocina Comunitaria', 'Se necesita punto central de distribución de alimentos', 'Medium', NULL, 1);
+INSERT INTO "need" ("name", "description", "urgency_level", "victim_id", "admin_id", "status") VALUES
+  ('Comida de Emergencia', 'Familia de 4 necesita suministros de comida', 'High', 1, NULL, 'InProgress'),
+  ('Reposición de Medicamentos', 'Necesita reposición de insulina en 48 horas', 'Critical', 2, NULL, 'InProgress'),
+  ('Vivienda Temporal', 'Casa dañada, necesita refugio por 2 semanas', 'Medium', 3, NULL, 'InProgress'),
+  ('Transporte de Evacuación', 'Pareja de ancianos necesita transporte desde zona inundada', 'High', 4, NULL, 'InProgress'),
+  ('Suministros para Bebé', 'Necesita fórmula y pañales para bebé', 'Medium', 5, NULL, 'InProgress'),
+  ('Cocina Comunitaria', 'Se necesita punto central de distribución de alimentos', 'Medium', NULL, 1, 'InProgress');
 
 INSERT INTO "need_need_type" ("need_id", "need_type_id") VALUES
   (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 1);
