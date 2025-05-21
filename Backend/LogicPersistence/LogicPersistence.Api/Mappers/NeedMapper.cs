@@ -11,7 +11,8 @@ public static class NeedMapper {
             urgencyLevel = needCreateDto.urgencyLevel,
             victim_id = needCreateDto.victim_id,
             admin_id = needCreateDto.admin_id,
-            need_type_id = needCreateDto.need_type_id
+            need_type_id = needCreateDto.need_type_id,
+            status = needCreateDto.status
         };
     }
 
@@ -23,7 +24,8 @@ public static class NeedMapper {
             urgencyLevel = needUpdateDto.urgencyLevel,
             victim_id = needUpdateDto.victim_id,
             admin_id = needUpdateDto.admin_id,
-            need_type_id = needUpdateDto.need_type_id
+            need_type_id = needUpdateDto.need_type_id,
+            status = needUpdateDto.status
         };
     }
 
@@ -35,7 +37,8 @@ public static class NeedMapper {
             urgencyLevel = need.urgencyLevel,
             victim_id = need.victim_id,
             admin_id = need.admin_id,
-            need_type_id = need.need_type_id
+            need_type_id = need.need_type_id,
+            status = need.status,
         };
     }
 }

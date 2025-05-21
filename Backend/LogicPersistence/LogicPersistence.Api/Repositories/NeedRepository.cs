@@ -22,19 +22,18 @@ public class NeedRepository : INeedRepository
         try
         {
             const string insertNeedSql = @"
-                INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
-                VALUES (@name, @description, @urgency_level::urgency_level, @victim_id, @admin_id)
+                INSERT INTO need (name, description, urgency_level, victim_id, admin_id, status)
+                VALUES (@name, @description, @urgency_level::urgency_level, @victim_id, @admin_id, @status::need_state)
                 RETURNING *";
 
-            var parameters = new
-            {
+            var parameters = new {
                 name = need.name,
                 description = need.description,
                 urgency_level = need.urgencyLevel.ToString(),
                 victim_id = need.victim_id,
-                admin_id = need.admin_id
+                admin_id = need.admin_id,
+                status = need.status
             };
-            Console.WriteLine(parameters);
 
             var createdNeed = await connection.QuerySingleAsync<Need>(
                 insertNeedSql, parameters, transaction);
