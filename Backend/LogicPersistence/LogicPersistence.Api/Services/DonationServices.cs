@@ -254,19 +254,22 @@ namespace LogicPersistence.Api.Services
 
         #endregion
         #region Other methods
-        public async Task<int> GetTotalAmountDonatorsAsync() {
+        public async Task<int> GetTotalAmountDonorsAsync(DateTime fromDate, DateTime toDate) {
             var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
             var physicalDonations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
 
+            var filteredMonetaryDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+            var filteredPhysicalDonations = physicalDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
             var uniqueDonors = new HashSet<(string type, int id)>();
 
-            foreach (var donation in monetaryDonations) {
+            foreach (var donation in filteredMonetaryDonations) {
                 if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
                 if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
                 if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }
             }
 
-            foreach (var donation in physicalDonations) {
+            foreach (var donation in filteredPhysicalDonations) {
                 if (donation.volunteer_id.HasValue) { uniqueDonors.Add(("volunteer", donation.volunteer_id.Value)); }
                 if (donation.admin_id.HasValue) { uniqueDonors.Add(("admin", donation.admin_id.Value)); }
                 if (donation.victim_id.HasValue) { uniqueDonors.Add(("victim", donation.victim_id.Value)); }

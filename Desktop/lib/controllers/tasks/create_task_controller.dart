@@ -4,11 +4,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:solidarityhub/models/task.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/models/victim.dart';
+import 'package:solidarityhub/models/skill.dart';
 import 'package:solidarityhub/services/location_external_services.dart';
 import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/services/task_services.dart';
 import 'package:solidarityhub/services/victim_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
+import 'package:solidarityhub/services/need_services.dart';
 
 class CreateTaskController {
   final TextEditingController nameController = TextEditingController();
@@ -17,7 +19,9 @@ class CreateTaskController {
   final TextEditingController longitudeController = TextEditingController();
   final TextEditingController searchAddressController = TextEditingController();
   final TextEditingController searchVolunteersController = TextEditingController();
+  final TextEditingController searchSkillsController = TextEditingController();
   final TextEditingController searchVictimController = TextEditingController();
+  final TextEditingController searchNeedsController = TextEditingController();
 
   final MapController mapController = MapController();
   final TaskWithDetails? taskToEdit;
@@ -32,6 +36,24 @@ class CreateTaskController {
   List<int> selectedVolunteers = [];
   List<int> selectedVictim = [];
   bool isLoading = true;
+
+  Map<int, Map<String, dynamic>> victimNeeds = {};
+
+  List<Skill> get availableSkills {
+    final Set<int> skillIds = {};
+    final List<Skill> uniqueSkills = [];
+
+    for (var volunteer in volunteers) {
+      for (var skill in volunteer.skills) {
+        if (!skillIds.contains(skill.id)) {
+          skillIds.add(skill.id);
+          uniqueSkills.add(skill);
+        }
+      }
+    }
+
+    return uniqueSkills;
+  }
 
   CreateTaskController({required this.onTaskCreated, this.taskToEdit}) {
     _initialize();
@@ -60,7 +82,9 @@ class CreateTaskController {
     longitudeController.dispose();
     searchAddressController.dispose();
     searchVolunteersController.dispose();
+    searchSkillsController.dispose();
     searchVictimController.dispose();
+    searchNeedsController.dispose();
   }
 
   void updateLocationControllers(LatLng location) {
@@ -113,6 +137,11 @@ class CreateTaskController {
 
       volunteers = results[0] as List<Volunteer>;
       victims = results[1] as List<Victim>;
+
+      for (var victim in victims) {
+        await fetchVictimNeeds(victim.id);
+      }
+
       isLoading = false;
 
       if (taskToEdit != null) {
@@ -170,26 +199,76 @@ class CreateTaskController {
   }
 
   List<Volunteer> filteredVolunteers() {
-    if (searchVolunteersController.text.isEmpty) {
+    if (searchVolunteersController.text.isEmpty && searchSkillsController.text.isEmpty) {
       return volunteers;
     }
-    final query = searchVolunteersController.text.toLowerCase();
+
+    final nameQuery = searchVolunteersController.text.toLowerCase();
+    final skillsQuery = searchSkillsController.text.toLowerCase();
+
     return volunteers.where((volunteer) {
-      return volunteer.name.toLowerCase().contains(query) ||
-          volunteer.surname.toLowerCase().contains(query) ||
-          volunteer.email.toLowerCase().contains(query);
+      // Filtrado por datos personales
+      final matchesSearch =
+          searchVolunteersController.text.isEmpty ||
+          volunteer.name.toLowerCase().contains(nameQuery) ||
+          volunteer.surname.toLowerCase().contains(nameQuery) ||
+          volunteer.email.toLowerCase().contains(nameQuery);
+
+      // Filtrado por habilidades
+      bool matchesSkills = true;
+      if (skillsQuery.isNotEmpty) {
+        if (volunteer.skills.isEmpty) {
+          matchesSkills = false;
+        } else {
+          matchesSkills = volunteer.skills.any((skill) {
+            // Busca coincidencias en el nombre de la habilidad
+            return skill.name.toLowerCase().contains(skillsQuery);
+          });
+        }
+      }
+
+      return matchesSearch && matchesSkills;
     }).toList();
   }
 
   List<Victim> filteredVictim() {
-    if (searchVictimController.text.isEmpty) {
+    if (searchVictimController.text.isEmpty && searchNeedsController.text.isEmpty) {
       return victims;
     }
-    final query = searchVictimController.text.toLowerCase();
+
+    final personQuery = searchVictimController.text.toLowerCase();
+    final needsQuery = searchNeedsController.text.toLowerCase();
+
     return victims.where((person) {
-      return person.name.toLowerCase().contains(query) ||
-          person.surname.toLowerCase().contains(query) ||
-          person.email.toLowerCase().contains(query);
+      // Filtrado por datos personales
+      final matchesPerson =
+          searchVictimController.text.isEmpty ||
+          person.name.toLowerCase().contains(personQuery) ||
+          person.surname.toLowerCase().contains(personQuery) ||
+          person.email.toLowerCase().contains(personQuery);
+
+      // Filtrado por necesidades
+      bool matchesNeeds = true;
+      if (needsQuery.isNotEmpty && victimNeeds.containsKey(person.id)) {
+        final need = victimNeeds[person.id]!;
+        if (need.containsKey('name')) {
+          matchesNeeds = need['name'].toString().toLowerCase().contains(needsQuery);
+        } else if (need.containsKey('needs') && need['needs'] is List) {
+          final List<dynamic> needsList = need['needs'];
+          matchesNeeds = needsList.any(
+            (item) =>
+                item is Map<String, dynamic> &&
+                item.containsKey('name') &&
+                item['name'].toString().toLowerCase().contains(needsQuery),
+          );
+        } else {
+          matchesNeeds = false;
+        }
+      } else if (needsQuery.isNotEmpty) {
+        matchesNeeds = false;
+      }
+
+      return matchesPerson && matchesNeeds;
     }).toList();
   }
 
@@ -207,6 +286,57 @@ class CreateTaskController {
     } else {
       selectedVictim.remove(victimId);
     }
+  }
+
+  Future<Map<String, dynamic>> fetchVictimNeeds(int victimId) async {
+    if (victimNeeds.containsKey(victimId)) {
+      return victimNeeds[victimId]!;
+    }
+
+    final needs = await NeedServices.fetchNeedByVictimId(victimId);
+
+    if (needs.isNotEmpty) {
+      victimNeeds[victimId] = needs;
+      return needs;
+    }
+
+    return {};
+  }
+
+  String getFormattedNeedsForVictim(int victimId) {
+    if (!victimNeeds.containsKey(victimId) || victimNeeds[victimId]!.isEmpty) {
+      return 'Sin necesidades registradas';
+    }
+
+    final Map<String, dynamic> need = victimNeeds[victimId]!;
+
+    if (need.containsKey('name')) {
+      return need['name'].toString();
+    }
+
+    if (need.containsKey('needs') && need['needs'] is List) {
+      final List<dynamic> needsList = need['needs'];
+      if (needsList.isEmpty) {
+        return 'Sin necesidades registradas';
+      }
+
+      final List<String> needNames = [];
+      for (var item in needsList.take(2)) {
+        if (item is Map<String, dynamic> && item.containsKey('name')) {
+          needNames.add(item['name'].toString());
+        }
+      }
+
+      final String visibleNeeds = needNames.join(', ');
+
+      if (needsList.length > 2) {
+        return '$visibleNeeds...';
+      }
+      return visibleNeeds.isEmpty ? 'Sin necesidades registradas' : visibleNeeds;
+    }
+
+    // Fallback
+    return 'Sin necesidades registradas';
   }
 
   void setStartDate(DateTime date) {

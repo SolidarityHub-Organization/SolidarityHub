@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/availableTasksController.dart';
 import '../models/task_post.dart';
-import '../models/task_card_creator_pending.dart';
+import '../models/task_card_creator.dart';
 import '../models/button_creator.dart';
 import '../models/custom_form_builder.dart';
 

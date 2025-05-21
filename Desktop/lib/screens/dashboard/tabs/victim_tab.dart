@@ -162,26 +162,48 @@ class _VictimsTabState extends State<VictimsTab> {
                           ),                          CustomBarChart(
                             data: transformedNeedsData,
                             barColor: Colors.red,
-                            title: 'Número de afectados por necesidad',
+                            title: 'Número de afectados por tipos de necesidad',
                             titleBottomMargin: 25.0,
                             padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
                             threshold: 10.0,
                             legendScrollController: _legendScrollController,
                           ),
+                          const Divider(
+                            height: 40,
+                            thickness: 2,
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.grey,
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
+                              child: Text(
+                                'Proporción de afectados por tipos de necesidad',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
                             height: 400,
                             child: CustomPieChart(
-                              data:
-                                  needsData
-                                      .map(
-                                        (item) => {
-                                          'type': (item['type'] ?? 'Unknown').toString(),
-                                          'count': item['count'] ?? 0,
-                                        },
-                                      )
-                                      .toList(),
+                              data: needsData
+                                  .map(
+                                    (item) => {
+                                      'type': (item['type'] ?? 'Unknown').toString(),
+                                      'count': item['count'] ?? 0,
+                                    },
+                                  )
+                                  .toList(),
                               legendScrollController: _legendScrollController,
                               padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),

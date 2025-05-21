@@ -8,6 +8,7 @@ import 'package:solidarityhub/widgets/common/snack_bar.dart';
 Future<void> showCreateTaskModal(BuildContext context, VoidCallback onTaskCreated, TaskWithDetails? taskToEdit) {
   return showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) => CreateTaskModal(onTaskCreated: onTaskCreated, taskToEdit: taskToEdit),
   );
 }
@@ -82,82 +83,98 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: _contentBox(context),
+    final screenSize = MediaQuery.of(context).size;
+
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 1400,
+          minHeight: 1400,
+          maxWidth: screenSize.width * 0.9 > 1200 ? 1200 : screenSize.width * 0.9,
+          maxHeight: screenSize.height * 0.85,
+        ),
+        child: Container(
+          width: screenSize.width * 0.9,
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(widget.taskToEdit != null),
+              const Divider(height: 1),
+              Expanded(
+                child: controller.isLoading ? const Center(child: CircularProgressIndicator()) : _buildContent(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _contentBox(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.8,
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Column(
-        children: [
-          _buildHeader(widget.taskToEdit != null),
-          const Divider(),
-          Expanded(child: controller.isLoading ? const Center(child: CircularProgressIndicator()) : _buildForm()),
-        ],
+  Widget _buildContent() {
+    return Column(
+      children: [
+        Expanded(child: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _buildDesktopLayout())),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.grey, width: 0.5))),
+          child: _buildCreateButton(widget.taskToEdit != null),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Scrollbar(
+      thickness: 8,
+      radius: const Radius.circular(4),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(right: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [Expanded(child: _buildTextField(controller: controller.nameController, label: 'Nombre'))]),
+            const SizedBox(height: 12),
+            _buildTextField(controller: controller.descriptionController, label: 'Descripción', maxLines: 2),
+            const SizedBox(height: 12),
+            _buildDateFields(),
+            const SizedBox(height: 16),
+            SizedBox(height: 300, child: _buildLocationFields()),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildVolunteerSection()),
+                const SizedBox(width: 16),
+                Expanded(child: _buildVictimSection()),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(bool isEditing) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          isEditing ? 'Editar Tarea' : 'Crear Tarea',
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
-      ],
-    );
-  }
-
-  Widget _buildForm() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField(controller: controller.nameController, label: 'Nombre', maxLines: 1),
-              const SizedBox(height: 8),
-              _buildTextField(controller: controller.descriptionController, label: 'Descripción', maxLines: 2),
-              const SizedBox(height: 8),
-              _buildDateFields(),
-              const SizedBox(height: 8),
-              Expanded(child: _buildLocationFields()),
-              const SizedBox(height: 8),
-              _buildCreateButton(widget.taskToEdit != null),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            isEditing ? 'Editar Tarea' : 'Crear Tarea',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            children: [
-              Expanded(child: _buildVolunteerSection()),
-              const SizedBox(height: 16),
-              Expanded(child: _buildVictimSection()),
-            ],
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -165,18 +182,16 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Fechas y horas de la tarea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('Fechas y horas de la tarea', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Row(
           children: [
-            // Fecha de inicio
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de inicio',
                 date: controller.startDate,
                 onDateSelected: (date) {
                   setState(() {
-                    // Preservar la hora actual al cambiar la fecha
                     final currentTime =
                         controller.startDate != null
                             ? TimeOfDay(hour: controller.startDate!.hour, minute: controller.startDate!.minute)
@@ -189,14 +204,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               ),
             ),
             const SizedBox(width: 8),
-            // Hora de inicio
             Expanded(
               child: _buildTimeField(
                 label: 'Hora de inicio',
                 dateTime: controller.startDate,
                 onTimeSelected: (time) {
                   setState(() {
-                    // Si ya hay una fecha, actualizar solo la hora
                     final currentDate = controller.startDate ?? DateTime.now();
                     controller.setStartDate(
                       DateTime(currentDate.year, currentDate.month, currentDate.day, time.hour, time.minute),
@@ -210,14 +223,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         const SizedBox(height: 12),
         Row(
           children: [
-            // Fecha de fin
             Expanded(
               child: _buildDateField(
                 label: 'Fecha de fin (opcional)',
                 date: controller.endDate,
                 onDateSelected: (date) {
                   setState(() {
-                    // Preservar la hora actual al cambiar la fecha
                     final currentTime =
                         controller.endDate != null
                             ? TimeOfDay(hour: controller.endDate!.hour, minute: controller.endDate!.minute)
@@ -231,14 +242,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               ),
             ),
             const SizedBox(width: 8),
-            // Hora de fin
             Expanded(
               child: _buildTimeField(
                 label: 'Hora de fin (opcional)',
                 dateTime: controller.endDate,
                 onTimeSelected: (time) {
                   setState(() {
-                    // Si ya hay una fecha, actualizar solo la hora
                     final currentDate = controller.endDate ?? DateTime.now();
                     controller.setEndDate(
                       DateTime(currentDate.year, currentDate.month, currentDate.day, time.hour, time.minute),
@@ -260,14 +269,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     required Function(TimeOfDay) onTimeSelected,
     bool isOptional = false,
   }) {
-    // Extraer TimeOfDay del DateTime si está disponible
     TimeOfDay? time = dateTime != null ? TimeOfDay(hour: dateTime.hour, minute: dateTime.minute) : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         InkWell(
           onTap: () async {
             final TimeOfDay initialTime = time ?? TimeOfDay.now();
@@ -290,7 +298,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,7 +330,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         InkWell(
           onTap: () async {
             final DateTime now = DateTime.now();
@@ -342,7 +350,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -368,7 +376,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Ubicación', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('Ubicación', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -376,7 +384,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               child: _buildTextField(
                 controller: controller.searchAddressController,
                 label: 'Buscar dirección',
-                maxLines: 1,
+                prefixIcon: const Icon(Icons.search, size: 16),
+                onClear: () {
+                  setState(() {
+                    controller.searchAddressController.clear();
+                  });
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -385,16 +398,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               ),
-              child: const Icon(Icons.search),
+              child: const Icon(Icons.search, size: 18),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Expanded(
-          flex: 2,
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ClipRRect(
@@ -419,36 +431,43 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   }
 
   Widget _buildVolunteerSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Voluntarios disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller.searchVolunteersController,
-          decoration: InputDecoration(
-            labelText: 'Buscar voluntarios',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon:
-                controller.searchVolunteersController.text.isNotEmpty
-                    ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          controller.searchVolunteersController.clear();
-                        });
-                      },
-                    )
-                    : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Voluntarios disponibles', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          _buildTextField(
+            controller: controller.searchVolunteersController,
+            label: 'Buscar por nombre',
+            prefixIcon: const Icon(Icons.search, size: 16),
+            onChanged: (value) => setState(() {}),
+            onClear: () {
+              setState(() {
+                controller.searchVolunteersController.clear();
+              });
+            },
           ),
-          onChanged: (value) {
-            setState(() {});
-          },
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Container(
+          const SizedBox(height: 8),
+          _buildTextField(
+            controller: controller.searchSkillsController,
+            label: 'Filtrar por habilidades',
+            prefixIcon: const Icon(Icons.filter_list, size: 16),
+            onChanged: (value) => setState(() {}),
+            onClear: () {
+              setState(() {
+                controller.searchSkillsController.clear();
+              });
+            },
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 200,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
@@ -457,7 +476,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final volunteer = controller.filteredVolunteers()[index];
                 final isSelected = controller.selectedVolunteers.contains(volunteer.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
@@ -465,22 +484,24 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                     title: Text(
                       '${volunteer.name} ${volunteer.surname}',
-                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontSize: 13),
                     ),
                     subtitle: Wrap(
-                      spacing: 4.0,
-                      runSpacing: 4.0,
+                      spacing: 3.0,
+                      runSpacing: 3.0,
                       children:
                           volunteer.skills.map<Widget>((skill) {
                             return Chip(
-                              label: Text(skill.name, style: const TextStyle(fontSize: 10)),
+                              label: Text(skill.name, style: const TextStyle(fontSize: 9)),
                               backgroundColor: Colors.transparent,
-                              shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.7)),
+                              shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.5)),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 0),
                             );
                           }).toList(),
                     ),
@@ -498,42 +519,49 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               },
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildVictimSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Afectados disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller.searchVictimController,
-          decoration: InputDecoration(
-            labelText: 'Buscar afectados',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon:
-                controller.searchVictimController.text.isNotEmpty
-                    ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          controller.searchVictimController.clear();
-                        });
-                      },
-                    )
-                    : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Afectados disponibles', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          _buildTextField(
+            controller: controller.searchVictimController,
+            label: 'Buscar por nombre',
+            prefixIcon: const Icon(Icons.search, size: 16),
+            onChanged: (value) => setState(() {}),
+            onClear: () {
+              setState(() {
+                controller.searchVictimController.clear();
+              });
+            },
           ),
-          onChanged: (value) {
-            setState(() {});
-          },
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Container(
+          const SizedBox(height: 8),
+          _buildTextField(
+            controller: controller.searchNeedsController,
+            label: 'Filtrar por necesidades',
+            prefixIcon: const Icon(Icons.filter_list, size: 16),
+            onChanged: (value) => setState(() {}),
+            onClear: () {
+              setState(() {
+                controller.searchNeedsController.clear();
+              });
+            },
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 200,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
             child: ListView.builder(
               shrinkWrap: true,
@@ -542,7 +570,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final person = controller.filteredVictim()[index];
                 final isSelected = controller.selectedVictim.contains(person.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
@@ -550,11 +578,30 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                     title: Text(
                       '${person.name} ${person.surname}',
-                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontSize: 13),
                     ),
-                    subtitle: Text(person.email),
+                    subtitle: FutureBuilder<Map<String, dynamic>>(
+                      future: controller.fetchVictimNeeds(person.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Text(
+                            'Cargando necesidades...',
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                          );
+                        } else {
+                          return Text(
+                            controller.getFormattedNeedsForVictim(person.id),
+                            style: const TextStyle(fontSize: 11),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        }
+                      },
+                    ),
                     trailing: Checkbox(
                       activeColor: Colors.red,
                       value: isSelected,
@@ -569,36 +616,50 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
               },
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
+    String? hint,
     int maxLines = 1,
-    TextInputType? keyboardType,
-    bool readOnly = false,
-    EdgeInsets? contentPadding,
-    Function(String)? onChanged,
+    TextInputType keyboardType = TextInputType.text,
+    Widget? prefixIcon,
+    bool showClear = true,
+    VoidCallback? onClear,
+    ValueChanged<String>? onChanged,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(color: Colors.red, width: 2.0),
-        ),
-        isDense: true,
-      ),
       maxLines: maxLines,
       keyboardType: keyboardType,
-      readOnly: readOnly,
       onChanged: onChanged,
+      style: const TextStyle(fontSize: 13),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+        prefixIcon: prefixIcon != null ? SizedBox(width: 40, height: 40, child: Center(child: prefixIcon)) : null,
+        prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        suffixIcon:
+            showClear && controller.text.isNotEmpty
+                ? IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 16,
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    controller.clear();
+                    if (onClear != null) onClear();
+                    if (onChanged != null) onChanged('');
+                  },
+                )
+                : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
+      ),
     );
   }
 
@@ -609,12 +670,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         ),
         onPressed: _handleCreateTask,
-        icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white),
-        label: Text(isEditing ? 'Actualizar Tarea' : 'Crear Tarea', style: const TextStyle(fontSize: 16)),
+        icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white, size: 18),
+        label: Text(isEditing ? 'Actualizar Tarea' : 'Crear Tarea', style: const TextStyle(fontSize: 14)),
       ),
     );
   }

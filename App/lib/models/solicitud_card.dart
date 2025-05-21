@@ -39,7 +39,7 @@ class SolicitudCard extends StatelessWidget {
         SizedBox(height: 12),
         Text("Cantidad: ${solicitud.cantidad}"),
         Text("Estado: ${solicitud.estado}"),
-        Text("Teléfono: ${solicitud.telefono}"),
+        //Text("Teléfono: ${solicitud.telefono}"),
         Text("Descripción:"),
         Text(
           solicitud.descripcion,
