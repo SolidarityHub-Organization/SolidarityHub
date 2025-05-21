@@ -13,7 +13,7 @@ public class NeedCreateDto {
     public string description { get; set; } = string.Empty;
 
     [Required]
-    public UrgencyLevel urgencyLevel { get; set; }
+    public UrgencyLevel urgencyLevel { get; set; } = UrgencyLevel.Unknown;
 
     public int? victim_id { get; set; }
 
