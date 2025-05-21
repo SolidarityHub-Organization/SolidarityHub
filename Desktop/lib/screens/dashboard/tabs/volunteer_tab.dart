@@ -104,9 +104,34 @@ class _VolunteerTabState extends State<VolunteerTab> {
                           CustomBarChart(
                             data: data,
                             barColor: const Color(0xFFF44336),
-                            padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),  // you can override the default padding
+                            padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),
+                            title: 'Número de voluntarios por habilidad',
+                            titleBottomMargin: 25.0,
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 15),
+                          const Divider(
+                            height: 40,
+                            thickness: 2,
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.grey,
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
+                              child: Text(
+                                'Proporción de voluntarios por habilidad',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
@@ -114,7 +139,6 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             child: CustomPieChart(
                               data: data.map((item) => {'type': item['item1'], 'count': item['item2']}).toList(),
                               legendScrollController: _legendScrollController,
-                              //padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),
                           ),
                           const SizedBox(height: 10),
