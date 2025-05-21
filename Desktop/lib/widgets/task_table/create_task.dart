@@ -95,9 +95,10 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   Widget _contentBox(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: MediaQuery.of(context).size.height * 0.8,
+      padding: const EdgeInsets.all(16),
+      width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height,
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.white,
@@ -132,27 +133,31 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
       children: [
         Expanded(
           flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField(controller: controller.nameController, label: 'Nombre', maxLines: 1),
-              const SizedBox(height: 8),
-              _buildTextField(controller: controller.descriptionController, label: 'Descripción', maxLines: 2),
-              const SizedBox(height: 8),
-              _buildDateFields(),
-              const SizedBox(height: 8),
-              Expanded(child: _buildLocationFields()),
-              const SizedBox(height: 8),
-              _buildCreateButton(widget.taskToEdit != null),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [Expanded(child: _buildTextField(controller: controller.nameController, label: 'Nombre'))],
+                ),
+                const SizedBox(height: 8),
+                _buildTextField(controller: controller.descriptionController, label: 'Descripción', maxLines: 2),
+                const SizedBox(height: 4),
+                _buildDateFields(),
+                const SizedBox(height: 4),
+                SizedBox(height: 300, child: _buildLocationFields()),
+                const SizedBox(height: 6),
+                _buildCreateButton(widget.taskToEdit != null),
+              ],
+            ),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             children: [
               Expanded(child: _buildVolunteerSection()),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Expanded(child: _buildVictimSection()),
             ],
           ),
@@ -165,8 +170,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Fechas y horas de la tarea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        const Text('Fechas y horas de la tarea', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
         Row(
           children: [
             // Fecha de inicio
@@ -207,7 +212,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Row(
           children: [
             // Fecha de fin
@@ -266,8 +271,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 10)),
+        const SizedBox(height: 1),
         InkWell(
           onTap: () async {
             final TimeOfDay initialTime = time ?? TimeOfDay.now();
@@ -290,7 +295,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -301,9 +306,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       : isOptional
                       ? 'No especificada'
                       : 'Selecciona una hora',
-                  style: TextStyle(color: time != null ? Colors.black : Colors.grey, fontSize: 12),
+                  style: TextStyle(color: time != null ? Colors.black : Colors.grey, fontSize: 10),
                 ),
-                const Icon(Icons.access_time, size: 16),
+                const Icon(Icons.access_time, size: 14),
               ],
             ),
           ),
@@ -321,8 +326,8 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 10)),
+        const SizedBox(height: 1),
         InkWell(
           onTap: () async {
             final DateTime now = DateTime.now();
@@ -342,7 +347,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(6.0)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -353,9 +358,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       : isOptional
                       ? 'No especificada'
                       : 'Selecciona una fecha',
-                  style: TextStyle(color: date != null ? Colors.black : Colors.grey, fontSize: 12),
+                  style: TextStyle(color: date != null ? Colors.black : Colors.grey, fontSize: 10),
                 ),
-                const Icon(Icons.calendar_today, size: 16),
+                const Icon(Icons.calendar_today, size: 14),
               ],
             ),
           ),
@@ -368,15 +373,20 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Ubicación', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        const Text('Ubicación', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
         Row(
           children: [
             Expanded(
               child: _buildTextField(
                 controller: controller.searchAddressController,
                 label: 'Buscar dirección',
-                maxLines: 1,
+                prefixIcon: const Icon(Icons.search, size: 16),
+                onClear: () {
+                  setState(() {
+                    controller.searchAddressController.clear();
+                  });
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -392,7 +402,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Expanded(
           flex: 2,
           child: Container(
@@ -422,31 +432,36 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Voluntarios disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller.searchVolunteersController,
-          decoration: InputDecoration(
-            labelText: 'Buscar voluntarios',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon:
-                controller.searchVolunteersController.text.isNotEmpty
-                    ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          controller.searchVolunteersController.clear();
-                        });
-                      },
-                    )
-                    : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-          ),
-          onChanged: (value) {
-            setState(() {});
-          },
+        const Text('Voluntarios disponibles', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTextField(
+                controller: controller.searchVolunteersController,
+                label: 'Buscar por nombre',
+                prefixIcon: const Icon(Icons.search, size: 16),
+                onClear: () {
+                  setState(() {
+                    controller.searchVolunteersController.clear();
+                  });
+                },
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
+        _buildTextField(
+          controller: controller.searchSkillsController,
+          label: 'Filtrar por habilidades',
+          prefixIcon: const Icon(Icons.filter_list, size: 16),
+          onClear: () {
+            setState(() {
+              controller.searchSkillsController.clear();
+            });
+          },
+        ),
+        const SizedBox(height: 4),
         Expanded(
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
@@ -457,7 +472,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final volunteer = controller.filteredVolunteers()[index];
                 final isSelected = controller.selectedVolunteers.contains(volunteer.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
@@ -465,22 +480,24 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                     title: Text(
                       '${volunteer.name} ${volunteer.surname}',
-                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontSize: 13),
                     ),
                     subtitle: Wrap(
-                      spacing: 4.0,
-                      runSpacing: 4.0,
+                      spacing: 3.0,
+                      runSpacing: 3.0,
                       children:
                           volunteer.skills.map<Widget>((skill) {
                             return Chip(
-                              label: Text(skill.name, style: const TextStyle(fontSize: 10)),
+                              label: Text(skill.name, style: const TextStyle(fontSize: 9)),
                               backgroundColor: Colors.transparent,
-                              shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.7)),
+                              shape: StadiumBorder(side: BorderSide(color: Colors.grey, width: 0.5)),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 0),
                             );
                           }).toList(),
                     ),
@@ -507,31 +524,36 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Afectados disponibles', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller.searchVictimController,
-          decoration: InputDecoration(
-            labelText: 'Buscar afectados',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon:
-                controller.searchVictimController.text.isNotEmpty
-                    ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          controller.searchVictimController.clear();
-                        });
-                      },
-                    )
-                    : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-          ),
-          onChanged: (value) {
-            setState(() {});
-          },
+        const Text('Afectados disponibles', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTextField(
+                controller: controller.searchVictimController,
+                label: 'Buscar por nombre',
+                prefixIcon: const Icon(Icons.search, size: 16),
+                onClear: () {
+                  setState(() {
+                    controller.searchVictimController.clear();
+                  });
+                },
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
+        _buildTextField(
+          controller: controller.searchNeedsController,
+          label: 'Filtrar por necesidades',
+          prefixIcon: const Icon(Icons.filter_list, size: 16),
+          onClear: () {
+            setState(() {
+              controller.searchNeedsController.clear();
+            });
+          },
+        ),
+        const SizedBox(height: 4),
         Expanded(
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: Colors.grey)),
@@ -542,7 +564,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                 final person = controller.filteredVictim()[index];
                 final isSelected = controller.selectedVictim.contains(person.id);
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  margin: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
                   elevation: 0,
                   color: isSelected ? Colors.red.withAlpha(26) : null,
                   shape: RoundedRectangleBorder(
@@ -550,11 +572,30 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     side: BorderSide(color: isSelected ? Colors.red : Colors.transparent, width: 1),
                   ),
                   child: ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                     title: Text(
                       '${person.name} ${person.surname}',
-                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                      style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontSize: 13),
                     ),
-                    subtitle: Text(person.email),
+                    subtitle: FutureBuilder<Map<String, dynamic>>(
+                      future: controller.fetchVictimNeeds(person.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Text(
+                            'Cargando necesidades...',
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                          );
+                        } else {
+                          return Text(
+                            controller.getFormattedNeedsForVictim(person.id),
+                            style: const TextStyle(fontSize: 11),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        }
+                      },
+                    ),
                     trailing: Checkbox(
                       activeColor: Colors.red,
                       value: isSelected,
@@ -577,28 +618,38 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
+    String? hint,
     int maxLines = 1,
-    TextInputType? keyboardType,
-    bool readOnly = false,
-    EdgeInsets? contentPadding,
-    Function(String)? onChanged,
+    TextInputType keyboardType = TextInputType.text,
+    Widget? prefixIcon,
+    bool showClear = true,
+    VoidCallback? onClear,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: const BorderSide(color: Colors.red, width: 2.0),
-        ),
-        isDense: true,
-      ),
       maxLines: maxLines,
       keyboardType: keyboardType,
-      readOnly: readOnly,
-      onChanged: onChanged,
+      style: const TextStyle(fontSize: 12),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+        prefixIcon: prefixIcon != null ? SizedBox(width: 16, height: 16, child: Center(child: prefixIcon)) : null,
+        suffixIcon:
+            showClear && controller.text.isNotEmpty
+                ? IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 14,
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    controller.clear();
+                    if (onClear != null) onClear();
+                  },
+                )
+                : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      ),
     );
   }
 
@@ -609,12 +660,12 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 12.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         ),
         onPressed: _handleCreateTask,
-        icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white),
-        label: Text(isEditing ? 'Actualizar Tarea' : 'Crear Tarea', style: const TextStyle(fontSize: 16)),
+        icon: Icon(isEditing ? Icons.edit : Icons.add, color: Colors.white, size: 18),
+        label: Text(isEditing ? 'Actualizar Tarea' : 'Crear Tarea', style: const TextStyle(fontSize: 14)),
       ),
     );
   }
