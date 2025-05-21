@@ -1,6 +1,7 @@
 import 'package:app/interface/ajustes.dart';
 import 'package:flutter/material.dart';
 import '../interface/availableTasks.dart';
+import '../interface/estado_solicitudes_page.dart';
 import '../interface/solicitud_recursos.dart';
 
 class HomeScreenController {
@@ -35,6 +36,15 @@ class HomeScreenController {
     return () {
       Navigator.push(
         context, MaterialPageRoute(builder: (context) => SolicitarRecursoPage(id: id),),
+      );
+    };
+  }
+
+  VoidCallback onSolicitudesPressed(BuildContext context, int id) {
+    return () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SolicitudesPage(id: id),),
       );
     };
   }

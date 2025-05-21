@@ -309,7 +309,6 @@ class CreateTaskController {
     }
 
     final Map<String, dynamic> need = victimNeeds[victimId]!;
-    print('Formatting needs for victim $victimId: $need');
 
     if (need.containsKey('name')) {
       return need['name'].toString();

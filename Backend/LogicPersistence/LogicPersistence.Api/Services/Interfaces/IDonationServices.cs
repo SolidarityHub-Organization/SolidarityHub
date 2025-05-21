@@ -26,7 +26,7 @@ namespace LogicPersistence.Api.Services
         #endregion
         
         #region Other methods
-        Task<int> GetTotalAmountDonatorsAsync();
+        Task<int> GetTotalAmountDonorsAsync(DateTime fromDate, DateTime toDate);
         #endregion
     }
 }

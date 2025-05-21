@@ -53,6 +53,10 @@ public class InitialMigration : Migration {
 				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'state') THEN
 					CREATE TYPE state AS ENUM ('Assigned', 'Pending', 'Completed', 'Cancelled');
 				END IF;
+
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'need_state') THEN
+					CREATE TYPE need_state AS ENUM ('InProgress', 'Completed', 'Cancelled');
+				END IF;
 			END
 			$$;
 		");
@@ -175,7 +179,8 @@ public class InitialMigration : Migration {
 			.WithColumn("urgency_level").AsCustom("urgency_level").NotNullable()
 			.WithColumn("victim_id").AsInt32().Nullable().ForeignKey("FK_Need_Victim", "victim", "id").OnDelete(Rule.Cascade)
 			.WithColumn("admin_id").AsInt32().Nullable().ForeignKey("FK_Need_Admin", "admin", "id")
-			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime);
+			.WithColumn("created_at").AsDateTime().WithDefaultValue(SystemMethods.CurrentDateTime)
+			.WithColumn("status").AsCustom("need_state").Nullable();
 
 		Create.Table("need_type")
 			.WithColumn("id").AsInt32().PrimaryKey().Identity()
@@ -394,6 +399,7 @@ public class InitialMigration : Migration {
 		Delete.Table("notifications");
 
 		// Delete types (enums) created (in inverse order with respect to creation)
+		Execute.Sql("DROP TYPE IF EXISTS need_state CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS state CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS day_of_week CASCADE;");
 		Execute.Sql("DROP TYPE IF EXISTS skill_level CASCADE;");
