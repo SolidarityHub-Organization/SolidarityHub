@@ -90,7 +90,16 @@ class HomeScreenAfectado extends StatelessWidget {
                         ),
                         SizedBox(height: 30),
 
-                        buildButton("Ver tareas disponibles"),
+                        SizedBox(
+                          width: double.infinity,
+                          child: buildCustomButton(
+                            "Ver solicitudes",
+                            homeScreenController.onSolicitudesPressed(context, id),
+                            verticalPadding: 14,
+                            horizontalPadding: 0,
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
                         SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
