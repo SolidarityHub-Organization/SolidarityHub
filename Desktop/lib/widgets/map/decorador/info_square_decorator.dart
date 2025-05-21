@@ -159,24 +159,28 @@ class BaseLayoutDecorator extends InfoSquareDecorator {
   Widget buildInfoSquare(MapMarker mapMarker) {
     return Container(
       padding: const EdgeInsets.all(32.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(),
-          SizedBox(height: 40),
-          Divider(color: dividerColor, thickness: 2.0, height: 32),
-          SizedBox(height: 40),
-          super.buildInfoSquare(mapMarker),
-          SizedBox(height: 50),
-          _buildFooter(),
-        ],
+      // Envolvemos todo en un SingleChildScrollView para permitir scroll cuando sea necesario
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(),
+            SizedBox(height: 40),
+            Divider(color: dividerColor, thickness: 2.0, height: 32),
+            SizedBox(height: 40),
+            super.buildInfoSquare(mapMarker),
+            SizedBox(height: 50),
+            _buildFooter(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (icon != null) ...[
           Container(
@@ -190,7 +194,16 @@ class BaseLayoutDecorator extends InfoSquareDecorator {
           ),
           SizedBox(width: 16),
         ],
-        Expanded(child: Text(title, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: titleColor))),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: titleColor),
+            // Agregamos ajuste de texto para evitar desbordamientos
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ),
       ],
     );
   }
@@ -251,14 +264,23 @@ class InfoRowDecorator extends InfoSquareDecorator {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
       ),
+      // Aseguramos que todo el contenedor se ajuste
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Corregimos el uso del widget Flexible
           Row(
             children: [
               Icon(data.icon, size: 22, color: iconColor),
               SizedBox(width: 10),
-              Text(data.label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: labelColor)),
+              Expanded(
+                child: Text(
+                  data.label,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: labelColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 8),
@@ -271,6 +293,10 @@ class InfoRowDecorator extends InfoSquareDecorator {
                 color: data.valueColor ?? Colors.black87,
                 fontWeight: data.valueColor != null ? FontWeight.bold : FontWeight.normal,
               ),
+              // Ajustamos el texto para evitar overflows
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
             ),
           ),
         ],
@@ -325,6 +351,8 @@ class CompleteStyleDecorator extends InfoSquareDecorator {
         borderRadius: 16.0,
         backgroundColor: secondaryColor.withOpacity(0.1),
         boxShadow: [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 8.0, offset: Offset(0, 3))],
+        // Aseguramos que el margen no sea excesivo en pantallas pequeñas
+        margin: const EdgeInsets.all(4),
       ),
       primaryColor: primaryColor,
       secondaryColor: secondaryColor,

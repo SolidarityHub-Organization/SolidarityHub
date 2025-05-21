@@ -35,7 +35,7 @@ class VictimInfoSquare implements InfoSquare {
         final Color primaryColor = Colors.red.shade700;
         final Color secondaryColor = Colors.red.shade300;
 
-        // Crear las filas de información
+        // Crear las filas de información con textos que se puedan ajustar
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.person_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
@@ -47,18 +47,29 @@ class VictimInfoSquare implements InfoSquare {
           ),
         ];
 
-        // Usar el decorador completo
+        // Obtenemos el tamaño de la pantalla para adaptar el diseño
+        final screenWidth = MediaQuery.of(context).size.width;
+
+        // Ajustar el diseño si la pantalla es muy pequeña
         InfoSquare emptySquare = EmptyInfoSquare();
         InfoSquare decoratedSquare = CompleteStyleDecorator.create(
           emptySquare,
-          title: 'Detalles del afectado',
+          title: screenWidth < 400 ? 'Afectado' : 'Detalles del afectado',
           primaryColor: primaryColor,
           secondaryColor: secondaryColor,
           mainIcon: Icons.person,
           rows: rows,
         );
 
-        return decoratedSquare.buildInfoSquare(mapMarker);
+        return Container(
+          // Limitamos el ancho máximo para evitar expansión excesiva
+          constraints: BoxConstraints(
+            maxWidth: 500,
+            // Altura flexible con mínimo para evitar que se haga demasiado pequeño
+            minHeight: 300,
+          ),
+          child: decoratedSquare.buildInfoSquare(mapMarker),
+        );
       },
     );
   }
