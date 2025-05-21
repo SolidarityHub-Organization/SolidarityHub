@@ -254,10 +254,10 @@ namespace LogicPersistence.Api.Controllers
         #endregion
         #region Other methods
         [HttpGet("donations/total-donors")]
-        public async Task<IActionResult> GetTotalDonatorsAsync() {
+        public async Task<IActionResult> GetTotalDonorsAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
             try {
-                var totalDonators = await _donationServices.GetTotalAmountDonatorsAsync();
-                return Ok(totalDonators);
+                var totalDonors = await _donationServices.GetTotalAmountDonorsAsync(fromDate, toDate);
+                return Ok(totalDonors);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             } catch (Exception ex) {
