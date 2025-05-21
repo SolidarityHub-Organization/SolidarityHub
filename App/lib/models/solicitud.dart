@@ -4,7 +4,7 @@ class Solicitud {
   final String localizacion;
   final int cantidad;
   final String estado;
-  final String telefono;
+  //final String telefono;
   final String descripcion;
 
   Solicitud({
@@ -13,7 +13,7 @@ class Solicitud {
     required this.localizacion,
     required this.cantidad,
     required this.estado,
-    required this.telefono,
+    //required this.telefono,
     required this.descripcion,
   });
 
@@ -24,7 +24,7 @@ class Solicitud {
       localizacion: json['localizacion'],
       cantidad: json['cantidad'],
       estado: json['estado'],
-      telefono: json['telefono'],
+      //telefono: json['telefono'],
       descripcion: json['descripcion'],
     );
   }
