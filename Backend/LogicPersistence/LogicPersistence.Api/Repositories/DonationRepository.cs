@@ -90,12 +90,15 @@ public class DonationRepository : IDonationRepository {
         return await connection.QueryAsync<PhysicalDonation>(sql);
     }
 
-    public async Task<int> GetTotalAmountPhysicalDonationsAsync() 
+    public async Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate) 
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT SUM(quantity) FROM physical_donation;";
+        const string sql = @"
+            SELECT COALESCE(SUM(quantity), 0) 
+            FROM physical_donation 
+            WHERE donation_date BETWEEN @fromDate AND @toDate";
 
-        return await connection.QuerySingleOrDefaultAsync<int>(sql);
+        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { fromDate, toDate });
     }
 #endregion
 #region MonetaryDonation

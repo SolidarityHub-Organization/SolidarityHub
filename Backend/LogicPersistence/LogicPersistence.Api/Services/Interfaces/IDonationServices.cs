@@ -10,7 +10,7 @@ namespace LogicPersistence.Api.Services
         Task<PhysicalDonationDisplayDto> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto);
         System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id);
         Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync();
-        Task<int> GetTotalAmountPhysicalDonationsAsync();
+        Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate);
         Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id);
         Task<Dictionary<string, int>> GetPhysicalDonationsTotalAmountByTypeAsync(DateTime fromDate, DateTime toDate);
         Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate);

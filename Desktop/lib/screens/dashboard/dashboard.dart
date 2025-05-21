@@ -282,7 +282,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
               children: [
                 GeneralTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
                 VictimsTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
-                const RecursosTab(),
+                RecursosTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
                 VolunteerTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
                 TaskTab(fechaInicio: _fechaInicio, fechaFin: _fechaFin),
               ],

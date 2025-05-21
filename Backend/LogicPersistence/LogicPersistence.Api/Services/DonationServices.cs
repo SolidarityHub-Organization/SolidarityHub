@@ -97,8 +97,11 @@ namespace LogicPersistence.Api.Services
             return result;
         }
 
-        public async Task<int> GetTotalAmountPhysicalDonationsAsync() {
-            return await _donationRepository.GetTotalAmountPhysicalDonationsAsync();
+        public async Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
+            return await _donationRepository.GetTotalAmountPhysicalDonationsAsync(fromDate, toDate);
         }
 
         public async Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id) {

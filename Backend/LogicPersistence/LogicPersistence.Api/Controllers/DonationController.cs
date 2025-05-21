@@ -90,9 +90,9 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("physical-donations/total-amount")]
-        public async Task<IActionResult> GetTotalAmountPhysicalDonationsAsync() {
+        public async Task<IActionResult> GetTotalAmountPhysicalDonationsAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
             try {
-                var totalAmount = await _donationServices.GetTotalAmountPhysicalDonationsAsync();
+                var totalAmount = await _donationServices.GetTotalAmountPhysicalDonationsAsync(fromDate, toDate);
                 return Ok(totalAmount);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
