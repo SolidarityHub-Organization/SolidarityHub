@@ -5,6 +5,7 @@ using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
 using System.Data;
+using System.Runtime.InteropServices;
 
 public class NeedRepository : INeedRepository
 {
@@ -18,16 +19,25 @@ public class NeedRepository : INeedRepository
         using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
         using var transaction = await connection.BeginTransactionAsync();
-
         try
         {
             const string insertNeedSql = @"
                 INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
-                VALUES (@name, @description, 'Unknown', @victim_id, @admin_id)
+                VALUES (@name, @description, @urgency_level::urgency_level, @victim_id, @admin_id)
                 RETURNING *";
 
+            var parameters = new
+            {
+                name = need.name,
+                description = need.description,
+                urgency_level = need.urgencyLevel.ToString(),
+                victim_id = need.victim_id,
+                admin_id = need.admin_id
+            };
+            Console.WriteLine(parameters);
+
             var createdNeed = await connection.QuerySingleAsync<Need>(
-                insertNeedSql, need, transaction);
+                insertNeedSql, parameters, transaction);
 
             const string insertRelationSql = @"
                 INSERT INTO need_need_type (need_id, need_type_id)
