@@ -139,7 +139,13 @@ class VictimInfoSquare implements InfoSquare {
             children: [
               Icon(icon, size: 22, color: Colors.red.shade600),
               SizedBox(width: 10),
-              Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+              Expanded(
+                child: Text(
+                  label, 
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red.shade800),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           SizedBox(height: 8),
@@ -148,10 +154,11 @@ class VictimInfoSquare implements InfoSquare {
             child: Text(
               value,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 color: valueColor ?? Colors.black87,
-                fontWeight: valueColor != null ? FontWeight.bold : FontWeight.normal,
               ),
+              softWrap: true,
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
