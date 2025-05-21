@@ -189,25 +189,4 @@ class _DataModificationState extends State<DataModification> {
     );
   }
 
-  Widget _buildField(
-      IconData icon,
-      String label,
-      TextEditingController controller,
-      FormFieldValidator<String>? validator, {
-        bool obscure = false,
-      }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscure,
-        validator: validator,
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.black),
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    );
-  }
 }
