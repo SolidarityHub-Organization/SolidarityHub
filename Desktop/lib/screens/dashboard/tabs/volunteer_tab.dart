@@ -105,6 +105,10 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             data: data,
                             barColor: const Color(0xFFF44336),
                             padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),  // you can override the default padding
+                            title: 'Número de voluntarios por habilidad',
+                            titleBottomMargin: 25.0,
+                            threshold: 10.0,
+                            legendScrollController: _legendScrollController,
                           ),
                           const SizedBox(height: 30),
                           Container(
