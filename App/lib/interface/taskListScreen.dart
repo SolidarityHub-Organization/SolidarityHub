@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/task_post.dart';
 import '../services/fetch_tasks.dart';
-import '../models/task_card_creator_pending.dart';
+import '../models/task_card_creator.dart';
 import '../services/fetch_tasks.dart';
 
 class TaskListScreen extends StatelessWidget {
