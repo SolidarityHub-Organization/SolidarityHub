@@ -5,6 +5,7 @@ using Dapper;
 using LogicPersistence.Api.Models;
 using Npgsql;
 using System.Data;
+using LogicPersistence.Api.Models.DTOs;
 using System.Runtime.InteropServices;
 
 public class NeedRepository : INeedRepository {
@@ -73,15 +74,47 @@ public class NeedRepository : INeedRepository {
 		return await connection.QuerySingleAsync<Need>(sql, need);
 	}
 
-	public async Task<IEnumerable<Need>> GetAllNeedsAsync() {
-		using var connection = new NpgsqlConnection(connectionString);
-		return await connection.QueryAsync<Need>("SELECT * FROM need");
-	}
-	#endregion
-	#region NeedType
-	public async Task<NeedType> CreateNeedTypeAsync(NeedType needType) {
+    public async Task<IEnumerable<Need>> GetAllNeedsAsync()
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        return await connection.QueryAsync<Need>("SELECT * FROM need");
+    }
+
+	public async Task<IEnumerable<NeedWithVictimDetailsDto>> GetNeedWithVictimDetailsAsync(int id) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
+        SELECT n.id,
+        n.name,
+        n.description,
+        v.address,
+        n.status
+        from need n
+        join victim v on n.victim_id = v.id
+        where n.victim_id = @id";
+		return await connection.QueryAsync<NeedWithVictimDetailsDto>(sql, new { id } );
+	}
+
+	public async Task<Need> UpdateNeedStatusAsync(int id, string status) {
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+            UPDATE need
+            SET status = @status::need_state
+            WHERE id = @id
+            RETURNING *";
+
+		var result = await connection.QuerySingleOrDefaultAsync<Need>(sql, new { id, status });
+		if (result == null) {
+			throw new InvalidOperationException("Task not found or update failed.");
+		}
+		return result;
+	}
+
+	#endregion
+	#region NeedType
+	public async Task<NeedType> CreateNeedTypeAsync(NeedType needType)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        const string sql = @"
             INSERT INTO need_type (name, admin_id)
             VALUES (@name, @admin_id)
             RETURNING *";
@@ -148,7 +181,7 @@ public class NeedRepository : INeedRepository {
             WHERE nt.id = @id
             AND n.victim_id IS NOT NULL
             AND n.created_at BETWEEN @startDate AND @endDate";
-		return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id, startDate, endDate });
-	}
-	#endregion
+        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { id, startDate, endDate });
+    }
+#endregion
 }

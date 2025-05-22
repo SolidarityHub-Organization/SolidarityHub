@@ -58,3 +58,15 @@ public class NeedDisplayDto {
     public DateTime created_at { get; set; }
     public int? need_type_id { get; set; }
 }
+
+public class NeedWithVictimDetailsDto {
+	public int id { get; set; }
+	public string name { get; set; } = string.Empty;
+	public string description { get; set; } = string.Empty;
+	public string address { get; set; } = string.Empty;
+	public string status { get; set; } = string.Empty;
+}
+
+public class UpdateNeedStatusDto {
+	public string status { get; set; } = string.Empty;
+}
