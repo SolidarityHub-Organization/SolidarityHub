@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/services/donation_services.dart';
+import 'package:solidarityhub/widgets/common/custom_pie_chart.dart';
 
 class RecursosTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -17,6 +18,8 @@ class _RecursosTabState extends State<RecursosTab> {
   late Future<double> _totalMoneyFuture;
   late Future<int> _totalResourcesFuture;
   late Future<int> _totalDonorsFuture;
+  late Future<Map<String, int>> _donationsByTypeFuture;
+  final ScrollController _pieChartScrollController = ScrollController();
 
   DateTime _adjustEndDate(DateTime? date) {
     if (date == null) return DateTime.now();
@@ -53,6 +56,11 @@ class _RecursosTabState extends State<RecursosTab> {
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
+
+    _donationsByTypeFuture = DonationServices.fetchPhysicalDonationsTotalAmountByType(
+      _adjustStartDate(widget.fechaInicio),
+      _adjustEndDate(widget.fechaFin),
+    );
   }
 
   @override
@@ -61,6 +69,12 @@ class _RecursosTabState extends State<RecursosTab> {
     if (oldWidget.fechaInicio != widget.fechaInicio || oldWidget.fechaFin != widget.fechaFin) {
       _loadData();
     }
+  }
+
+  @override
+  void dispose() {
+    _pieChartScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -142,6 +156,59 @@ class _RecursosTabState extends State<RecursosTab> {
                       ),
                     ),
                     const SizedBox(height: 40),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
+                        child: Text(
+                          'Distribución de recursos por tipo',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
+                      height: 400,
+                      child: FutureBuilder<Map<String, int>>(
+                        future: _donationsByTypeFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                'Error al cargar los datos: ${snapshot.error}',
+                                style: TextStyle(color: Colors.red[700]),
+                              ),
+                            );
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Center(
+                              child: Text('No hay datos disponibles para este periodo'),
+                            );
+                          }
+
+                          final data = snapshot.data!.entries
+                              .map((entry) => {
+                                    'type': entry.key,
+                                    'count': entry.value,
+                                  })
+                              .toList();
+
+                          return CustomPieChart(
+                            data: data,
+                            legendScrollController: _pieChartScrollController,
+                            threshold: 5.0,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

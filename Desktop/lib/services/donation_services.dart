@@ -203,4 +203,30 @@ class DonationServices {
       throw Exception('Error al obtener el total de donantes: ${response.statusCode}');
     }
   }
+
+  static Future<Map<String, int>> fetchPhysicalDonationsTotalAmountByType(DateTime fromDate, DateTime toDate) async {
+    final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
+    final uri = 'physical-donations/total-by-type?$params';
+    
+    final response = await ApiServices.get(uri);
+
+    if (response.statusCode.ok) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      
+      // Convertir el mapa dinámico a Map<String, int>
+      Map<String, int> result = {};
+      data.forEach((key, value) {
+        // Asegurar que los valores son enteros
+        if (value is int) {
+          result[key] = value;
+        } else {
+          result[key] = 0;
+        }
+      });
+      
+      return result;
+    } else {
+      throw Exception('Error al obtener el total de donaciones por tipo: ${response.statusCode}');
+    }
+  }
 }
