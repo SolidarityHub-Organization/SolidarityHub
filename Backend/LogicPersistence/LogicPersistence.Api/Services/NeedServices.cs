@@ -66,19 +66,44 @@ namespace LogicPersistence.Api.Services {
 			}
 		}
 
-		public async Task<IEnumerable<Need>> GetAllNeedsAsync() {
-			var needs = await _needRepository.GetAllNeedsAsync();
+        public async Task<IEnumerable<Need>> GetAllNeedsAsync()
+        {
+            var needs = await _needRepository.GetAllNeedsAsync();
+            if (needs == null)
+            {
+                throw new InvalidOperationException("Failed to retrieve needs.");
+            }
+            return needs;
+        }
+
+		public async Task<IEnumerable<NeedWithVictimDetailsDto>> GetNeedWithVictimDetailsAsync(int id) {
+
+			var needs = await _needRepository.GetNeedWithVictimDetailsAsync(id);
 			if (needs == null) {
 				throw new InvalidOperationException("Failed to retrieve needs.");
 			}
 			return needs;
+
 		}
+
+		public async Task<Need> UpdateNeedStatusAsync(int id,UpdateNeedStatusDto updateNeedStatusDto) {
+			var existingNeed = await _needRepository.GetNeedByIdAsync(id);
+            if (existingNeed == null)
+            {
+                throw new KeyNotFoundException($"Need with id {id} not found.");
+            }
+
+            return await _needRepository.UpdateNeedStatusAsync(id, updateNeedStatusDto.status);
+        }
+
 		#endregion
 		#region NeedTypes
-		public async Task<NeedType> CreateNeedTypeAsync(NeedTypeCreateDto needTypeCreateDto) {
-			if (needTypeCreateDto == null) {
-				throw new ArgumentNullException(nameof(needTypeCreateDto));
-			}
+		public async Task<NeedType> CreateNeedTypeAsync(NeedTypeCreateDto needTypeCreateDto)
+        {
+            if (needTypeCreateDto == null)
+            {
+                throw new ArgumentNullException(nameof(needTypeCreateDto));
+            }
 
 			var needType = await _needRepository.CreateNeedTypeAsync(needTypeCreateDto.ToNeedType());
 			if (needType == null) {
