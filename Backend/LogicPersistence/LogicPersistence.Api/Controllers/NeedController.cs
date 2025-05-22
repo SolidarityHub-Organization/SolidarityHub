@@ -79,10 +79,28 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-		[HttpGet("needs")]
-		public async Task<IActionResult> GetAllNeedsAsync() {
+        [HttpGet("needs")]
+        public async Task<IActionResult> GetAllNeedsAsync()
+        {
+            try
+            {
+                var needs = await _needServices.GetAllNeedsAsync();
+                return Ok(needs);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+		[HttpGet("needs/victim-details/{id}")]
+		public async Task<IActionResult> GetNeedWithVictimDetailsAsync(int id) {
 			try {
-				var needs = await _needServices.GetAllNeedsAsync();
+				var needs = await _needServices.GetNeedWithVictimDetailsAsync(id);
 				return Ok(needs);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -90,6 +108,19 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpPut("needs/status/{id}")]
+		public async Task<IActionResult> UpdateNeedStatusAsync(int id, UpdateNeedStatusDto updateNeedStatusDto) {
+			try {
+				var result = await _needServices.UpdateNeedStatusAsync(id, updateNeedStatusDto);
+				return Ok(result);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 		#endregion
 		#region NeedTypes
 		[HttpPost("need-types")]

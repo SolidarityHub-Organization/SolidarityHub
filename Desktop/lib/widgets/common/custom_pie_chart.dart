@@ -12,7 +12,7 @@ class CustomPieChart extends StatelessWidget {
     this.data,
     this.threshold = 10.0,
     required this.legendScrollController,
-    this.padding = const EdgeInsets.fromLTRB(20, 0, 20, 50),
+    this.padding = const EdgeInsets.fromLTRB(20, 50, 20, 50),
   });
 
   @override

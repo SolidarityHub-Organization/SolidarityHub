@@ -14,7 +14,7 @@ namespace LogicPersistence.Api.Repositories.Interfaces
         Task<bool> DeletePhysicalDonationAsync(int id);
         Task<PhysicalDonation?> GetPhysicalDonationByIdAsync(int id);
         Task<IEnumerable<PhysicalDonation>> GetAllPhysicalDonationsAsync();
-        Task<int> GetTotalAmountPhysicalDonationsAsync();
+        Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate);
 #endregion
 #region MonetaryDonation
         Task<MonetaryDonation> CreateMonetaryDonationAsync(MonetaryDonation donation);

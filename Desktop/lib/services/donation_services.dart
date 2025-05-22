@@ -106,13 +106,17 @@ class DonationServices {
     }
   }
 
-  static Future<int> fetchTotalQuantity() async {
-    final response = await ApiServices.get('physical-donations/total-amount');
+  static Future<int> fetchTotalPhysicalDonationsQuantity(DateTime fromDate, DateTime toDate) async {
+    final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
+    final uri = 'physical-donations/total-amount?$params';
+    
+    final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
-      return json.decode(response.body) as int;
+      final value = json.decode(response.body);
+      return value;
     } else {
-      throw Exception('Error al obtener el total de donaciones: ${response.statusCode}');
+      throw Exception('Error al obtener el total de recursos donados: ${response.statusCode}');
     }
   }
 
@@ -183,6 +187,46 @@ class DonationServices {
 
     if (!response.statusCode.ok) {
       throw Exception('Error al eliminar la donación monetaria: ${response.statusCode}');
+    }
+  }
+
+  static Future<int> fetchTotalDonors(DateTime fromDate, DateTime toDate) async {
+    final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
+    final uri = 'donations/total-donors?$params';
+    
+    final response = await ApiServices.get(uri);
+
+    if (response.statusCode.ok) {
+      final value = json.decode(response.body);
+      return value;
+    } else {
+      throw Exception('Error al obtener el total de donantes: ${response.statusCode}');
+    }
+  }
+
+  static Future<Map<String, int>> fetchPhysicalDonationsTotalAmountByType(DateTime fromDate, DateTime toDate) async {
+    final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
+    final uri = 'physical-donations/total-by-type?$params';
+    
+    final response = await ApiServices.get(uri);
+
+    if (response.statusCode.ok) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      
+      // Convertir el mapa dinámico a Map<String, int>
+      Map<String, int> result = {};
+      data.forEach((key, value) {
+        // Asegurar que los valores son enteros
+        if (value is int) {
+          result[key] = value;
+        } else {
+          result[key] = 0;
+        }
+      });
+      
+      return result;
+    } else {
+      throw Exception('Error al obtener el total de donaciones por tipo: ${response.statusCode}');
     }
   }
 }

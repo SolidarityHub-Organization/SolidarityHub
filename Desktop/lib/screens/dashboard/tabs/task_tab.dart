@@ -271,6 +271,8 @@ class _TaskTabState extends State<TaskTab> {
                                 'urgency_level': task['urgency_level'] ?? 'Desconocido',
                                 'state': task['state'] ?? 'Desconocido',
                                 'affected_zone': task['affected_zone'],
+                                'latitude': task['latitude'] ?? 0.0,
+                                'longitude': task['longitude'] ?? 0.0,
                               };
                             }).where(
                               (task) =>
@@ -346,22 +348,22 @@ class _TaskTabState extends State<TaskTab> {
                                       ],
                                     ),
                                     trailing: task['affected_zone'] != null
-                                        ? IconButton(
-                                            icon: const Icon(Icons.location_on, color: Colors.red),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => MapScreen(
-                                                    lat: task['affected_zone']['latitude'],
-                                                    lng: task['affected_zone']['longitude'],
-                                                    initialZoom: 16.0, 
-                                                  ),
+                                      ? IconButton(
+                                          icon: const Icon(Icons.location_on, color: Colors.red),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => MapScreen(
+                                                  lat: task['latitude'],
+                                                  lng: task['longitude'],
+                                                  initialZoom: 16.0,
                                                 ),
-                                              );
-                                            },
-                                          )
-                                        : null,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : null,
                                   ),
                                 );
                               },

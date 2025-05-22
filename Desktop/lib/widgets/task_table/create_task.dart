@@ -88,26 +88,16 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: 1400,
-          minHeight: 1400,
-          maxWidth: screenSize.width * 0.9 > 1200 ? 1200 : screenSize.width * 0.9,
-          maxHeight: screenSize.height * 0.85,
-        ),
-        child: Container(
-          width: screenSize.width * 0.9,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHeader(widget.taskToEdit != null),
-              const Divider(height: 1),
-              Expanded(
-                child: controller.isLoading ? const Center(child: CircularProgressIndicator()) : _buildContent(),
-              ),
-            ],
-          ),
+      child: Container(
+        width: screenSize.width * 0.9,
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(widget.taskToEdit != null),
+            const Divider(height: 1),
+            Expanded(child: controller.isLoading ? const Center(child: CircularProgressIndicator()) : _buildContent()),
+          ],
         ),
       ),
     );

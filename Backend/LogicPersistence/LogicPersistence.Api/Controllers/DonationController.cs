@@ -90,9 +90,9 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("physical-donations/total-amount")]
-        public async Task<IActionResult> GetTotalAmountPhysicalDonationsAsync() {
+        public async Task<IActionResult> GetTotalAmountPhysicalDonationsAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
             try {
-                var totalAmount = await _donationServices.GetTotalAmountPhysicalDonationsAsync();
+                var totalAmount = await _donationServices.GetTotalAmountPhysicalDonationsAsync(fromDate, toDate);
                 return Ok(totalAmount);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
@@ -165,6 +165,18 @@ namespace LogicPersistence.Api.Controllers
             try {
                 var donationsCount = await _donationServices.GetPhysicalDonationsCountByTypeAsync(fromDate, toDate);
                 return Ok(donationsCount);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("physical-donations/by-date")]
+        public async Task<IActionResult> GetPhysicalDonationsByDateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donations = await _donationServices.GetPhysicalDonationsByDateAsync(fromDate, toDate);
+                return Ok(donations);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             } catch (Exception ex) {
@@ -245,6 +257,18 @@ namespace LogicPersistence.Api.Controllers
             try {
                 var totalAmount = await _donationServices.GetTotalMonetaryAmountByCurrencyAsync(currency, fromDate, toDate);
                 return Ok(totalAmount);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("monetary-donations/by-date")]
+        public async Task<IActionResult> GetMonetaryDonationsByDateAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donations = await _donationServices.GetMonetaryDonationsByDateAsync(fromDate, toDate);
+                return Ok(donations);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             } catch (Exception ex) {
