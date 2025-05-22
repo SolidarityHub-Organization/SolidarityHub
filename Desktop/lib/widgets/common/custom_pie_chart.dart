@@ -123,9 +123,81 @@ class CustomPieChart extends StatelessWidget {
       final percentage = (entry.value / totalValue * 100);
       final isOther = entry.key == 'Other';
       
+      // dynamic title handling based on percentage
       String displayTitle = isOther ? 'Otros' : entry.key;
-      if (displayTitle.length > 10) {
-        displayTitle = '${displayTitle.substring(0, 10)}...';
+      
+      // get the position in the pie chart (determines angle)
+      final position = groupedData.keys.toList().indexOf(entry.key);
+      final totalPositions = groupedData.length;
+      
+      // approximating the middle angle of the slice
+      final previousSlicesPercentage = groupedData.entries
+          .take(position)
+          .fold(0.0, (sum, e) => sum + (e.value / totalValue * 100));
+      final middleAngle = (previousSlicesPercentage + percentage / 2) * 3.6; // Convert to degrees (360° / 100%)
+      
+
+      final horizontalness = (((middleAngle % 180) - 90).abs()) / 90;
+      
+      // determine max length based on percentage and position
+      int maxLength;
+      if (percentage < 3) {
+        // very small slices - no text at all
+        displayTitle = '';
+      } else if (percentage < 5) {
+        // small slices - very short text
+        maxLength = horizontalness > 0.7 ? 6 : 3;
+        if (displayTitle.length > maxLength) {
+          displayTitle = '${displayTitle.substring(0, maxLength)}..';
+        }
+      } else if (percentage < 8) {
+        // medium-small slices
+        maxLength = horizontalness > 0.7 ? 8 : 4;
+        if (displayTitle.length > maxLength) {
+          displayTitle = '${displayTitle.substring(0, maxLength)}..';
+        }
+      } else if (percentage < 15) {
+        // medium slices - enough for most common words
+        maxLength = horizontalness > 0.7 ? 12 : 6;
+        if (displayTitle.length > maxLength) {
+          displayTitle = '${displayTitle.substring(0, maxLength)}..';
+        }
+      } else if (percentage < 25) {
+        // larger slices - allow longer text
+        maxLength = horizontalness > 0.7 ? 16 : 12;
+        if (displayTitle.length > maxLength) {
+          displayTitle = '${displayTitle.substring(0, maxLength)}..';
+        }
+      } else {
+        // very large slices - allow full words
+        maxLength = horizontalness > 0.7 ? 20 : 16;
+        if (displayTitle.length > maxLength) {
+          displayTitle = '${displayTitle.substring(0, maxLength)}..';
+        }
+      }
+      
+      // if most slices are similar in size (within 5% of each other)
+      if (groupedData.length >= 3 && groupedData.length <= 6) {
+        bool isEvenlyDistributed = true;
+        final firstPercentage = groupedData.values.first / totalValue * 100;
+        
+        for (var value in groupedData.values) {
+          final thisPercentage = value / totalValue * 100;
+          if ((thisPercentage - firstPercentage).abs() > 5.0) {
+            isEvenlyDistributed = false;
+            break;
+          }
+        }
+        
+        // allow more text to be displayed
+        if (isEvenlyDistributed && percentage >= 15) {
+          // for slices >= 15%, allow longer text
+          final evenMaxLength = horizontalness > 0.7 ? 14 : 10;
+          if (displayTitle.length <= evenMaxLength) {
+            // keep original title if it's not too long
+            displayTitle = entry.key == 'Other' ? 'Otros' : entry.key;
+          }
+        }
       }
       
       return PieChartSectionData(
@@ -133,11 +205,11 @@ class CustomPieChart extends StatelessWidget {
         title: displayTitle,
         color: isOther
             ? Colors.grey
-            : Colors.primaries[groupedData.keys.toList().indexOf(entry.key) %
-                Colors.primaries.length],
+            : Colors.primaries[position % Colors.primaries.length],
         radius: 120,
-        titleStyle: const TextStyle(
-          fontSize: 14,
+        titleStyle: TextStyle(
+          // dynamic font size based on slice size
+          fontSize: percentage < 5 ? 9 : (percentage < 10 ? 11 : 13),
           fontWeight: FontWeight.bold,
           color: Colors.white,
           overflow: TextOverflow.ellipsis,

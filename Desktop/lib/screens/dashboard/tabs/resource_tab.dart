@@ -25,13 +25,11 @@ class _RecursosTabState extends State<RecursosTab> {
   List<MonetaryDonation> _monetaryDonations = [];
   bool _isLoading = true;
   String? _errorMessage;
-  
-  // Expansion states for each section
+
   bool _unassignedExpanded = true;
   bool _assignedExpanded = true;
   bool _monetaryExpanded = true;
   
-  // Dashboard metrics
   late Future<double> _totalMoneyFuture;
   late Future<int> _totalResourcesFuture;
   late Future<int> _totalDonorsFuture;
