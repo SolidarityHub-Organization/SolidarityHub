@@ -159,13 +159,14 @@ class _VictimsTabState extends State<VictimsTab> {
                             indent: 40,
                             endIndent: 40,
                             color: Colors.grey,
-                          ),
-                          CustomBarChart(
+                          ),                          CustomBarChart(
                             data: transformedNeedsData,
                             barColor: Colors.red,
                             title: 'Número de afectados por tipos de necesidad',
                             titleBottomMargin: 25.0,
                             padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
+                            threshold: 10.0,
+                            legendScrollController: _legendScrollController,
                           ),
                           const Divider(
                             height: 40,

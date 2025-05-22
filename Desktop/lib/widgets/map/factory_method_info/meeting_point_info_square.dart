@@ -2,145 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'info_square_factory.dart';
 import '../../../services/location_external_services.dart';
+import '../decorador/info_square_decorator.dart';
 
 class MeetingPointInfoSquare implements InfoSquare {
-
   @override
   Widget buildInfoSquare(MapMarker mapMarker) {
     return FutureBuilder<String>(
-      future: LocationExternalServices.getAddressFromLatLon(
-        mapMarker.position.latitude,
-        mapMarker.position.longitude,
-      ),
+      future: LocationExternalServices.getAddressFromLatLon(mapMarker.position.latitude, mapMarker.position.longitude),
       builder: (context, snapshot) {
-        String address = snapshot.hasData 
-            ? snapshot.data!
-            : 'Cargando dirección...';
+        String address = snapshot.hasData ? snapshot.data! : 'Cargando dirección...';
 
-        return Container(
-          padding: const EdgeInsets.all(32.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.green.shade50, Colors.green.shade100],
-            ),
-            borderRadius: BorderRadius.circular(16.0),
-            boxShadow: [BoxShadow(color: Colors.green.withOpacity(0.3), blurRadius: 10.0, offset: Offset(0, 5))],
-            border: Border.all(color: Color.fromARGB(255, 56, 142, 60), width: 2.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color.fromARGB(255, 56, 142, 60)),
-                    ),
-                    child: Icon(Icons.group, color: Color.fromARGB(255, 56, 142, 60), size: 36),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      'Detalles del punto de encuentro',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 56, 142, 60)),
-                    ),
-                  ),
-                ],
-              ),
+        // Definir colores temáticos para puntos de encuentro
+        final Color primaryColor = Color.fromARGB(255, 56, 142, 60);
+        final Color secondaryColor = Color.fromARGB(255, 129, 199, 132);
 
-              SizedBox(height: 40),
+        // Crear las filas de información
+        List<InfoRowData> rows = [
+          InfoRowData(icon: Icons.location_pin, label: 'Nombre', value: mapMarker.name),
+          InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+        ];
 
-              Divider(color: Color.fromARGB(255, 129, 199, 132), thickness: 2.0, height: 32),
+        // Agregar horario si existe
+        if (mapMarker.time != null) {
+          rows.add(InfoRowData(icon: Icons.access_time, label: 'Horario', value: mapMarker.time.toString()));
+        }
 
-              SizedBox(height: 40),
-
-              _buildInfoRowEnhanced(
-                icon: Icons.location_pin,
-                label: 'Nombre',
-                value: mapMarker.name,
-              ),
-
-              SizedBox(height: 30),
-
-              _buildInfoRowEnhanced(
-                icon: Icons.location_on,
-                label: 'Ubicación',
-                value: address,
-              ),
-
-              if (mapMarker.time != null) ...[
-                SizedBox(height: 30),
-                _buildInfoRowEnhanced(
-                  icon: Icons.access_time,
-                  label: 'Horario',
-                  value: mapMarker.time.toString(),
-                ),
-              ],
-
-              SizedBox(height: 50),
-              Divider(color: Color.fromARGB(255, 129, 199, 132), thickness: 1.0),
-
-              SizedBox(height: 20),
-
-              Center(
-                child: Text(
-                  'Información actualizada',
-                  style: TextStyle(color: Color.fromARGB(255, 56, 142, 60), fontStyle: FontStyle.italic, fontSize: 14),
-                ),
-              ),
-            ],
-          ),
+        // Usar el decorador completo
+        InfoSquare emptySquare = EmptyInfoSquare();
+        InfoSquare decoratedSquare = CompleteStyleDecorator.create(
+          emptySquare,
+          title: 'Detalles del punto de encuentro',
+          primaryColor: primaryColor,
+          secondaryColor: secondaryColor,
+          mainIcon: Icons.group,
+          rows: rows,
         );
-      },
-    );
-  }
 
-  Widget _buildInfoRowEnhanced({
-    required IconData icon,
-    required String label,
-    required String value,
-    Color? valueColor,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color.fromARGB(255, 129, 199, 132)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 22, color: Color.fromARGB(255, 56, 142, 60)),
-              SizedBox(width: 10),
-              Text(
-                label,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 56, 142, 60)),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 32.0),
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                color: valueColor ?? Colors.black87,
-                fontWeight: valueColor != null ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ),
-        ],
-      ),
+        return decoratedSquare.buildInfoSquare(mapMarker);
+      },
     );
   }
 }

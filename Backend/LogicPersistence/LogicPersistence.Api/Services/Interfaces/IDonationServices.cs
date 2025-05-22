@@ -10,10 +10,11 @@ namespace LogicPersistence.Api.Services
         Task<PhysicalDonationDisplayDto> UpdatePhysicalDonationAsync(int id, PhysicalDonationUpdateDto donationUpdateDto);
         System.Threading.Tasks.Task DeletePhysicalDonationAsync(int id);
         Task<IEnumerable<PhysicalDonationDisplayDto>> GetAllPhysicalDonationsAsync();
-        Task<int> GetTotalAmountPhysicalDonationsAsync();
+        Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate);
         Task<PhysicalDonationDisplayDto> UnassignPhysicalDonationAsync(int id);
         Task<Dictionary<string, int>> GetPhysicalDonationsTotalAmountByTypeAsync(DateTime fromDate, DateTime toDate);
         Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate);
+        Task<IEnumerable<PhysicalDonationDisplayDto>> GetPhysicalDonationsByDateAsync(DateTime fromDate, DateTime toDate);
         #endregion
 
         #region MonetaryDonation
@@ -23,8 +24,9 @@ namespace LogicPersistence.Api.Services
         System.Threading.Tasks.Task DeleteMonetaryDonationAsync(int id);
         Task<IEnumerable<MonetaryDonationDisplayDto>> GetAllMonetaryDonationsAsync();
         Task<double> GetTotalMonetaryAmountByCurrencyAsync(Currency currency, DateTime fromDate, DateTime toDate);
+        Task<IEnumerable<MonetaryDonationDisplayDto>> GetMonetaryDonationsByDateAsync(DateTime fromDate, DateTime toDate);
         #endregion
-        
+
         #region Other methods
         Task<int> GetTotalAmountDonorsAsync(DateTime fromDate, DateTime toDate);
         #endregion

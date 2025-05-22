@@ -29,7 +29,9 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.3717, -0.4215),  -- Picassent
   (39.4738, -0.4329),  -- Mislata
   (39.5084, -0.4147),  -- Burjassot
-  (39.4854, -0.3518);  -- Alboraya centro
+  (39.4854, -0.3518),  -- Alboraya centro
+  (39.4679, -0.3683),  -- tarea dentro de zona afectada
+  (39.4738, -0.3733);  -- tarea dentro de zona afectada
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
@@ -126,7 +128,11 @@ INSERT INTO "task" ("name", "description", "admin_id", "location_id", "start_dat
   ('Evaluación Médica', 'Realizar chequeos básicos de salud a residentes del refugio', 2, 12, '2025-04-16 09:00:00', '2025-05-07 15:00:00'),
   ('Limpieza de Escombros', 'Limpiar árboles caídos y escombros de las carreteras', 3, 13, '2025-04-17 08:00:00', null),
   ('Servicio de Comida', 'Preparar y servir comidas en el centro comunitario', 1, 14, '2025-04-18 11:00:00', '2025-04-23 15:00:00'),
-  ('Turno de Cuidado Infantil', 'Supervisar niños en el refugio', 2, 15, '2025-04-19 09:00:00', '2025-04-21 13:00:00');
+  ('Turno de Cuidado Infantil', 'Supervisar niños en el refugio', 2, 15, '2025-04-19 09:00:00', '2025-04-21 13:00:00'),
+  ('Distribuir Medicamentos', 'Repartir medicamentos a residentes afectados', 1, 32, '2025-04-15 08:00:00', null),
+  ('Recolectar Donaciones', 'Recoger donaciones de alimentos y medicinas en el punto de recogida', 1, 33, '2025-04-15 08:00:00', null);
+  
+  
 
 INSERT INTO "task_time" ("start_time", "end_time", "date", "task_id") VALUES
   ('08:00:00', '12:00:00', '2025-04-15', 1),

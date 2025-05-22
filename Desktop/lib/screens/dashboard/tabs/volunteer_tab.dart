@@ -20,7 +20,8 @@ class _VolunteerTabState extends State<VolunteerTab> {
   late Future<List<Map<String, dynamic>>> _volunteerNeedsFuture;
 
   final ScrollController _mainScrollController = ScrollController();
-  final ScrollController _legendScrollController = ScrollController();
+  final ScrollController _barChartLegendController = ScrollController();
+  final ScrollController _pieChartLegendController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
   final ScrollController _horizontalScrollController = ScrollController();
 
@@ -58,7 +59,8 @@ class _VolunteerTabState extends State<VolunteerTab> {
   @override
   void dispose() {
     _mainScrollController.dispose();
-    _legendScrollController.dispose();
+    _barChartLegendController.dispose();
+    _pieChartLegendController.dispose();
     _verticalScrollController.dispose();
     _horizontalScrollController.dispose();
     super.dispose();
@@ -103,10 +105,12 @@ class _VolunteerTabState extends State<VolunteerTab> {
                           const SizedBox(height: 50),
                           CustomBarChart(
                             data: data,
-                            barColor: const Color(0xFFF44336),
+                            barColor: Colors.red,
                             padding: const EdgeInsets.fromLTRB(40, 0, 50, 0),
                             title: 'Número de voluntarios por habilidad',
                             titleBottomMargin: 25.0,
+                            threshold: 10.0,
+                            legendScrollController: _barChartLegendController,
                           ),
                           const SizedBox(height: 15),
                           const Divider(
@@ -138,7 +142,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             height: 400,
                             child: CustomPieChart(
                               data: data.map((item) => {'type': item['item1'], 'count': item['item2']}).toList(),
-                              legendScrollController: _legendScrollController,
+                              legendScrollController: _pieChartLegendController,
                             ),
                           ),
                           const SizedBox(height: 10),
