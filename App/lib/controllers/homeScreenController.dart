@@ -1,5 +1,6 @@
 import 'package:app/interface/ajustes.dart';
 import 'package:flutter/material.dart';
+import '../interface/TipoSolicitudesPage.dart';
 import '../interface/availableTasks.dart';
 import '../interface/estado_solicitudes_page.dart';
 import '../interface/solicitud_recursos.dart';
@@ -44,7 +45,7 @@ class HomeScreenController {
     return () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SolicitudesPage(id: id),),
+        MaterialPageRoute(builder: (context) => TiposSolicitudesPage(id: id),),
       );
     };
   }

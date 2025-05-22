@@ -5,6 +5,7 @@ import 'package:app/interface/homeScreenVoluntario.dart';
 import 'package:app/interface/logoScreen.dart';
 import 'package:app/interface/taskListScreen.dart';
 import 'package:flutter/material.dart';
+import 'interface/TipoSolicitudesPage.dart';
 import 'interface/homeScreenAfectado.dart';
 import 'interface/loginUI.dart';
 import 'interface/notificationScreen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/notificationScreen': (context) => NotificationScreen(id: id),
         '/availableTasksScreen': (context) => AvailableTasksScreen(id: id),
         '/solicitud_recursos': (context) => SolicitarRecursoPage(id: id),
+        '/solicitud_estado_afectado': (context) => TiposSolicitudesPage(id: id),
         '/solicitud_estado': (context) => SolicitudesPage(id: id),
       }
     );
