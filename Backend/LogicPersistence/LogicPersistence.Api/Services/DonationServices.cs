@@ -150,6 +150,23 @@ namespace LogicPersistence.Api.Services
                     type => filteredDonations.Count(d => d.item_type == type)
                 );
         }
+
+        //por ahora solo coge donantes voluntarios, pero tmb pueden haber de otros tipos, cambiar en un futuro
+        public async Task<IEnumerable<PhysicalDonationDisplayDto>> GetPhysicalDonationsByDateAsync(DateTime fromDate, DateTime toDate) {
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            var result = new List<PhysicalDonationDisplayDto>();
+            foreach (var donation in filteredDonations) {
+                Volunteer? volunteer = null;
+                if (donation.volunteer_id.HasValue) {
+                    volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+                }
+                result.Add(donation.ToPhysicalDonationDisplayDto(volunteer));
+            }
+
+            return result;
+        }
         #endregion
         #region MonetaryDonation
 
@@ -222,6 +239,23 @@ namespace LogicPersistence.Api.Services
 
             var result = new List<MonetaryDonationDisplayDto>();
             foreach (var donation in donations) {
+                Volunteer? volunteer = null;
+                if (donation.volunteer_id.HasValue) {
+                    volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
+                }
+                result.Add(donation.ToMonetaryDonationDisplayDto(volunteer));
+            }
+
+            return result;
+        }
+
+        //por ahora solo coge donantes voluntarios, pero tmb pueden haber de otros tipos, cambiar en un futuro
+        public async Task<IEnumerable<MonetaryDonationDisplayDto>> GetMonetaryDonationsByDateAsync(DateTime fromDate, DateTime toDate) {
+            var donations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            var result = new List<MonetaryDonationDisplayDto>();
+            foreach (var donation in filteredDonations) {
                 Volunteer? volunteer = null;
                 if (donation.volunteer_id.HasValue) {
                     volunteer = await _volunteerRepository.GetVolunteerByIdAsync(donation.volunteer_id.Value);
