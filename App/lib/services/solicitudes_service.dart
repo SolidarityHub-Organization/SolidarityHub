@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/solicitud.dart';
 
 class SolicitudesService {
-  final String _baseUrl = 'http://tu-servidor/api/v1'; // Cambia esta URL
+  final String _baseUrl = 'http://localhost:5170/api/v1';
 
   Future<List<Solicitud>> obtenerSolicitudesPorUsuario(int usuarioId) async {
     final url = Uri.parse('$_baseUrl/solicitudes/$usuarioId');
@@ -19,15 +19,14 @@ class SolicitudesService {
   }
 
   Future<bool> cancelarSolicitud(int id) async {
-    final url = Uri.parse('$_baseUrl/solicitudes/$id/cancelar');
+    final url = Uri.parse('$_baseUrl/needs/status/$id');
     final response = await http.post(url);
     return response.statusCode == 200;
   }
 
   Future<bool> completarSolicitud(int id) async {
-    final url = Uri.parse('$_baseUrl/solicitudes/$id/completar');
+    final url = Uri.parse('$_baseUrl/needs/$id/completar');
     final response = await http.post(url);
     return response.statusCode == 200;
   }
-
 }
