@@ -23,10 +23,10 @@ public class Need { // these specific needs that can be of a certain need type
 
 	public string description { get; set; } = string.Empty;
 
-	public UrgencyLevel urgencyLevel { get; set; }
+	public UrgencyLevel urgencyLevel { get; set; } = UrgencyLevel.Unknown;
 
-	public string status { get; set; } = string.Empty ;
-
+	public string status { get; set; } = "InProgress";
+	
 	// FKs
 	// a need can be set by an admin or a victim (one is null)
 	public int? victim_id { get; set; }
