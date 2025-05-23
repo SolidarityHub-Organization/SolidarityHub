@@ -234,14 +234,18 @@ SET created_at = CASE
 END;
 
 INSERT INTO "notifications" ("name", "description", "volunteer_id", "victim_id", "created_at") VALUES
-  ('Water Distribution Reminder', 'Reminder to distribute water bottles at the community center.', 1, NULL, CURRENT_TIMESTAMP),
-  ('Medical Checkup Alert', 'Alert for scheduled medical checkups at the shelter.', 2, NULL, CURRENT_TIMESTAMP),
-  ('Debris Cleanup Notification', 'Notification for debris cleanup in the affected area.', 3, NULL, CURRENT_TIMESTAMP),
-  ('Food Service Update', 'Update about food service schedules at the community center.', 4, NULL, CURRENT_TIMESTAMP),
-  ('Childcare Duty Reminder', 'Reminder for childcare duties at the shelter.', 5, NULL, CURRENT_TIMESTAMP),
-  ('Emergency Food Request', 'Request for emergency food supplies for a family.', NULL, 1, CURRENT_TIMESTAMP),
-  ('Medicine Refill Needed', 'Notification for urgent medicine refill for a victim.', NULL, 2, CURRENT_TIMESTAMP),
-  ('Temporary Shelter Request', 'Request for temporary shelter for a displaced family.', NULL, 3, CURRENT_TIMESTAMP);
+  ('Nueva tarea: Distribuir Agua', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 1, NULL, CURRENT_TIMESTAMP),
+  ('Nueva tarea: Distribuir Agua', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 5, NULL, CURRENT_TIMESTAMP),
+
+  ('Nueva tarea: Evaluación Médica', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 2, NULL, CURRENT_TIMESTAMP),
+  ('Nueva tarea: Evaluación Médica', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 5, NULL, CURRENT_TIMESTAMP),
+
+  ('Nueva tarea: Limpieza de Escombros', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 3, NULL, CURRENT_TIMESTAMP),
+  ('Nueva tarea: Limpieza de Escombros', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 5, NULL, CURRENT_TIMESTAMP),
+
+  ('Nueva tarea: Servicio de Comida', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 4, NULL, CURRENT_TIMESTAMP),
+
+  ('Nueva tarea: Turno de Cuidado Infantil', 'Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.', 5, NULL, CURRENT_TIMESTAMP);
 
 INSERT INTO "point_time" ("start_time", "end_time", "start_date", "end_date") VALUES
     ('09:00', '14:00', '2025-05-01', NULL),  

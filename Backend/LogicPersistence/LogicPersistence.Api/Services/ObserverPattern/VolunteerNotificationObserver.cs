@@ -13,8 +13,8 @@ public class VolunteerNotificationObserver : ITaskAssignmentObserver {
     public void OnTaskAssigned(int volunteerId, int taskId, string taskName) {
         // Create a notification for the volunteer
         var notification = new Notification {
-            name = $"New Task Assigned: {taskName}",
-            description = $"You have been assigned a new task (ID: {taskId}).",
+            name = $"Nueva tarea: {taskName}",
+            description = "Se ha creado una nueva tarea. Ya puedes ver los detalles en la aplicación y aceptarla o rechazarla.",
             volunteer_id = volunteerId,
             created_at = DateTime.UtcNow
         };
