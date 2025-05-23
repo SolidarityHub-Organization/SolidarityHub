@@ -68,7 +68,7 @@ class TaskFilterPanel extends StatelessWidget {
                       ),
                       value: controller.priorityFilter,
                       items:
-                          ['Todas', 'Alta', 'Media', 'Baja'].map<DropdownMenuItem<String>>((String value) {
+                          ['Todas', 'Crítico', 'Alto', 'Medio', 'Bajo'].map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(value: value, child: Text(value));
                           }).toList(),
                       onChanged: (String? newValue) {
