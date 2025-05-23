@@ -104,7 +104,16 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 		builder.Services.AddScoped<IAdminServices, AdminServices>();
 		builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-		builder.Services.AddScoped<ITaskServices, TaskServices>();
+
+		// Register the TaskServices with the observer
+		builder.Services.AddScoped<ITaskServices>(provider => {
+			var repo = provider.GetRequiredService<ITaskRepository>();
+			var taskServices = new TaskServices(repo);
+			var observer = provider.GetRequiredService<VolunteerNotificationObserver>();
+			taskServices.RegisterObserver(observer);
+			return taskServices;
+		});
+
 		builder.Services.AddScoped<INeedRepository, NeedRepository>();
 		builder.Services.AddScoped<INeedServices, NeedServices>();
 		builder.Services.AddScoped<ILocationRepository, LocationRepository>();
