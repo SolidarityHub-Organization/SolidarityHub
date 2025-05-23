@@ -4,10 +4,24 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Services;
+using LogicPersistence.Api.Services.ObserverPattern;
 
 namespace LogicPersistence.Api.Services {
 	public class TaskServices : ITaskServices {
 		private readonly ITaskRepository _taskRepository;
+        private readonly List<ITaskAssignmentObserver> _observers = new();
+
+        public void RegisterObserver(ITaskAssignmentObserver observer) {
+            _observers.Add(observer);
+        }
+        public void UnregisterObserver(ITaskAssignmentObserver observer) {
+            _observers.Remove(observer);
+        }
+        private void NotifyTaskAssigned(int volunteerId, int taskId, string taskName) {
+            foreach (var observer in _observers) {
+                observer.OnTaskAssigned(volunteerId, taskId, taskName);
+            }
+        }
 
 		public TaskServices(ITaskRepository taskRepository) {
 			_taskRepository = taskRepository;
@@ -23,7 +37,10 @@ namespace LogicPersistence.Api.Services {
 			if (task == null) {
 				throw new InvalidOperationException("Failed to create task.");
 			}
-
+            // Notify observers for each volunteer assigned
+            foreach (var volunteerId in taskCreateDto.volunteer_ids) {
+                NotifyTaskAssigned(volunteerId, task.id, task.name);
+            }
 			return task;
 		}
 

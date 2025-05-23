@@ -4,6 +4,8 @@ using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services;
+using LogicPersistence.Api.Services.Interfaces;
+using LogicPersistence.Api.Services.ObserverPattern;
 
 
 
@@ -121,6 +123,8 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IPointRepository, PointRepository>();
 		builder.Services.AddScoped<IMapStrategy<AffectedZoneWithPointsDTO>, HeatMapStrategy>();
 		builder.Services.AddScoped<StrategyContext<AffectedZoneWithPointsDTO>>();
+		builder.Services.AddScoped<INotificationService, NotificationService>();
+		builder.Services.AddScoped<VolunteerNotificationObserver>();
 
 	}
 }

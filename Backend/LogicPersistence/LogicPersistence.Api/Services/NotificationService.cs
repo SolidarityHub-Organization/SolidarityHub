@@ -31,4 +31,12 @@ public class NotificationService : INotificationService {
 
         return await connection.QueryAsync<Notification>(sql, new { victimId });
     }
+
+    public async System.Threading.Tasks.Task CreateNotificationForVolunteerAsync(Notification notification) {
+        using var connection = new NpgsqlConnection(_connectionString);
+        const string sql = @"
+            INSERT INTO notifications (name, description, volunteer_id, created_at)
+            VALUES (@name, @description, @volunteer_id, @created_at)";
+        await connection.ExecuteAsync(sql, notification);
+    }
 }
