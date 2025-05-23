@@ -104,8 +104,24 @@ public class NeedRepository : INeedRepository {
 
 		var result = await connection.QuerySingleOrDefaultAsync<Need>(sql, new { id, status });
 		if (result == null) {
-			throw new InvalidOperationException("Task not found or update failed.");
+			throw new InvalidOperationException("Need not found or update failed.");
 		}
+		return result;
+	}
+
+	public async Task<IEnumerable<NeedsForVolunteersDto>> GetNeedsInProgressForVolunteersAsync() {
+		using var connection = new NpgsqlConnection(connectionString);
+		const string sql = @"
+			select n.id,
+			n.name,
+			n.description,
+			v.phone_number as victim_phone_number,
+			v.address,
+			v.name as victim_name
+			from need n
+			join victim v on n.victim_id = v.id
+			where n.status = 'InProgress'";
+		var result = await connection.QueryAsync<NeedsForVolunteersDto>(sql);
 		return result;
 	}
 

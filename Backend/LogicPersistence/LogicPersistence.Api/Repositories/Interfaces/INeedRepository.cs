@@ -13,6 +13,7 @@ namespace LogicPersistence.Api.Repositories.Interfaces
         Task<IEnumerable<Need>> GetAllNeedsAsync();
 		Task<IEnumerable<NeedWithVictimDetailsDto>> GetNeedWithVictimDetailsAsync(int id);
 		Task<Need> UpdateNeedStatusAsync(int id, string status);
+		Task<IEnumerable<NeedsForVolunteersDto>> GetNeedsInProgressForVolunteersAsync();
 
 		#endregion
 		#region NeedType

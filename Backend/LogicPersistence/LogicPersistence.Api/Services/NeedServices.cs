@@ -96,6 +96,14 @@ namespace LogicPersistence.Api.Services {
             return await _needRepository.UpdateNeedStatusAsync(id, updateNeedStatusDto.status);
         }
 
+		public async Task<IEnumerable<NeedsForVolunteersDto>> GetNeedsInProgressForVolunteersAsync() {
+			var NeedsInProgress = await _needRepository.GetNeedsInProgressForVolunteersAsync();
+			if(NeedsInProgress == null) {
+				throw new InvalidOperationException("Failed to retrieve needs in progress");
+			}
+			return NeedsInProgress;
+		}
+
 		#endregion
 		#region NeedTypes
 		public async Task<NeedType> CreateNeedTypeAsync(NeedTypeCreateDto needTypeCreateDto)
