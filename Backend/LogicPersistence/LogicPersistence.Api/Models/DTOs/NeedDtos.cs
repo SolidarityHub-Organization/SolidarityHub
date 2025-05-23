@@ -67,6 +67,15 @@ public class NeedWithVictimDetailsDto {
 	public string status { get; set; } = string.Empty;
 }
 
+public class NeedsForVolunteersDto {
+	public int id { get; set; }
+	public string name { get; set; } = string.Empty;
+	public string description { get; set; } = string.Empty;
+	public string address { get; set; } = string.Empty;
+	public string victim_name { get; set; } = string.Empty;
+	public string victim_phone_number { get; set; } = string.Empty;
+}
+
 public class UpdateNeedStatusDto {
 	public string status { get; set; } = string.Empty;
 }

@@ -121,6 +121,18 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
+		[HttpGet("needs/for-volunteer")]
+		public async Task <IActionResult> GetNeedsInProgressForVolunteers() {
+			try {
+				var result = await _needServices.GetNeedsInProgressForVolunteersAsync();
+				return Ok(result);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 		#endregion
 		#region NeedTypes
 		[HttpPost("need-types")]
