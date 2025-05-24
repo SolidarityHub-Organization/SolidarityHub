@@ -22,7 +22,16 @@ namespace LogicPersistence.Tests
         }
 
         [Fact]
-        public async Task SignupAsync_ValidUser_ReturnsOkAndPersistsUser()
+        public async Task SignupAsync_ValidVolunteer_ReturnsOkAndPersistsUser()
+        {
+            await SignupAsync_ValidUser_ReturnsOkAndPersistsUser("Volunteer");
+        }
+        [Fact]
+        public async Task SignupAsync_ValidVictim_ReturnsOkAndPersistsUser()
+        {
+            await SignupAsync_ValidUser_ReturnsOkAndPersistsUser("Victim");
+        }
+        private async Task SignupAsync_ValidUser_ReturnsOkAndPersistsUser(string requestRole)
         {
             // Arrange
             var uniqueEmail = $"testingEmail_{System.DateTime.UtcNow.Ticks}@example.com";
@@ -36,7 +45,7 @@ namespace LogicPersistence.Tests
                 surname = "Testing Surname",
                 password = "TestingPassword123!",
                 identification = "123456789",
-                role = "Volunteer"
+                role = requestRole
             };
 
             // Act
@@ -77,14 +86,91 @@ namespace LogicPersistence.Tests
             using (var conn = new Npgsql.NpgsqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                 $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}"))
             {
+                // Validar el nombre de la tabla para evitar inyección SQL
+                string table = requestRole.ToLower() == "volunteer" ? "volunteer" :
+                                requestRole.ToLower() == "victim" ? "victim" :
+                                throw new ArgumentException("Rol no soportado");
                 await conn.OpenAsync();
-                var count = await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM volunteer WHERE email = @email", new { email = uniqueEmail });
+                var count = await conn.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {table} WHERE email = @email", new { email = uniqueEmail });
                 Assert.True(count > 0, "El usuario no se ha creado en la base de datos");
                 System.Console.WriteLine("Usuario comprobado en base de datos correctamente");
                 // Eliminar el usuario de la base de datos tras la prueba
-                await conn.ExecuteAsync("DELETE FROM volunteer WHERE email = @email", new { email = uniqueEmail });
+                await conn.ExecuteAsync($"DELETE FROM {table} WHERE email = @email", new { email = uniqueEmail });
                 System.Console.WriteLine("Usuario eliminado de la base de datos tras la prueba");
             }
+        }
+
+        [Fact]
+        public async Task SignupAsync_InvalidUser_ReturnsBadRequest()
+        {
+            // Arrange
+            var invalidSignupJson = new
+            {
+                name = "Invalid User",
+                email = "invalidEmail", // Invalid email format
+                phone_number = "12345", // Invalid phone number format
+                prefix = 34,
+                address = "123 Invalid St",
+                surname = "Invalid Surname",
+                password = "short", // Too short password
+                identification = "123456789",
+                role = "Volunteer"
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/v1/signup", invalidSignupJson);
+
+            // Assert
+            Assert.False(response.IsSuccessStatusCode, "Expected BadRequest but got success status code");
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        [Fact]
+        public async Task SignupAsync_EmptyUser_ReturnsBadRequest()
+        {
+            // Arrange
+            var emptySignupJson = new
+            {
+                name = "",
+                email = "",
+                phone_number = "",
+                prefix = 0,
+                address = "",
+                surname = "",
+                password = "",
+                identification = "",
+                role = ""
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/v1/signup", emptySignupJson);
+
+            // Assert
+            Assert.False(response.IsSuccessStatusCode, "Expected BadRequest but got success status code");
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        [Fact]
+        public async Task SignupAsync_MissingFields_ReturnsBadRequest()
+        {
+            // Arrange
+            var missingFieldsSignupJson = new
+            {
+                name = "Missing Fields User",
+                // email is missing
+                phone_number = "1234567890",
+                prefix = 34,
+                address = "123 Missing St",
+                surname = "Missing Surname",
+                password = "ValidPassword123!",
+                identification = "987654321",
+                role = "Volunteer"
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/v1/signup", missingFieldsSignupJson);
+
+            // Assert
+            Assert.False(response.IsSuccessStatusCode, "Expected BadRequest but got success status code");
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
