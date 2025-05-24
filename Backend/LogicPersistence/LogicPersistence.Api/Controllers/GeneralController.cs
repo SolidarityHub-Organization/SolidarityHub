@@ -32,5 +32,17 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpPost("database/superpopulate")]
+		public async Task<IActionResult> SuperPopulateDatabaseAsync() {
+			try {
+				await _generalServices.SuperPopulateDatabaseAsync();
+				return Ok("Database super populated successfully");
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

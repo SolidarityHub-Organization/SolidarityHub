@@ -22,5 +22,12 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to clear database.");
 			}
 		}
+
+		public async Task SuperPopulateDatabaseAsync() {
+			var general = await _generalRepository.SuperPopulateDatabaseAsync();
+			if (!general) {
+				throw new InvalidOperationException("Failed to super populate database.");
+			}
+		}
 	}
 }

@@ -253,6 +253,20 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                           ),
                           _buildMenuItem(
+                            index: -4,
+                            icon: Icons.add_box,
+                            title: 'Superpoblar Base de Datos',
+                            onTap: () {
+                              Logger.runAsync(DatabaseServices.superPopulateDatabase);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Superpoblando base de datos...'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                          ),
+                          _buildMenuItem(
                             index: -3,
                             icon: Icons.delete,
                             title: 'Limpiar Base de Datos',
