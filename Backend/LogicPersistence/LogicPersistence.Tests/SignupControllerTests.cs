@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LogicPersistence.Api.Models.DTOs;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
+using DotNetEnv;
 
 namespace LogicPersistence.Tests
 {
@@ -13,6 +14,8 @@ namespace LogicPersistence.Tests
 
         public SignupControllerTests(WebApplicationFactory<App> factory)
         {
+            // Load environment variables from .env.development in the test project root
+            Env.Load(".env.development");
             _client = factory.CreateClient();
         }
 
@@ -20,20 +23,29 @@ namespace LogicPersistence.Tests
         public async Task SignupAsync_ValidUser_ReturnsOkAndPersistsUser()
         {
             // Arrange
-            var signupDto = new SignupDto
+            var uniqueEmail = $"testingEmail_{System.DateTime.UtcNow.Ticks}@example.com";
+            var signupJson = new
             {
-                email = "testuser@example.com",
-                password = "TestPassword123!",
-                name = "Test",
-                surname = "User",
-                prefix = 1,
-                phone_number = "1234567890"
+                name = "Testing Name",
+                email = uniqueEmail,
+                phone_number = "1234567890",
+                prefix = "34",
+                address = "123 Testing St",
+                surname = "Testing Surname",
+                password = "TestingPassword123!",
+                identification = 123456789,
+                role = "Volunteer"
             };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/api/v1/signup", signupDto);
+            var response = await _client.PostAsJsonAsync("/api/v1/signup", signupJson);
 
             // Assert
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new System.Exception($"Signup failed: {response.StatusCode} - {errorContent}");
+            }
             response.EnsureSuccessStatusCode();
             // Optionally, check the response content and/or verify user in DB
         }
