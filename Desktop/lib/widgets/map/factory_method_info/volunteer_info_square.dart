@@ -14,12 +14,16 @@ class VolunteerInfoSquare implements InfoSquare {
 
         // Definir colores temáticos para voluntarios
         final Color primaryColor = Color.fromARGB(255, 255, 79, 135);
-        final Color secondaryColor = Color.fromARGB(255, 255, 143, 180);
-
-        // Crear las filas de información
+        final Color secondaryColor = Color.fromARGB(255, 255, 143, 180); // Crear las filas de información
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.person_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
         ];
 
         // Usar el decorador completo

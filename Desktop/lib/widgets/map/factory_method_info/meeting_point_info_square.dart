@@ -14,12 +14,16 @@ class MeetingPointInfoSquare implements InfoSquare {
 
         // Definir colores temáticos para puntos de encuentro
         final Color primaryColor = Color.fromARGB(255, 56, 142, 60);
-        final Color secondaryColor = Color.fromARGB(255, 129, 199, 132);
-
-        // Crear las filas de información
+        final Color secondaryColor = Color.fromARGB(255, 129, 199, 132); // Crear las filas de información
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.location_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
         ];
 
         // Agregar horario si existe
