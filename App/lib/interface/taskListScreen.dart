@@ -2,16 +2,28 @@ import 'package:flutter/material.dart';
 import '../models/task_post.dart';
 import '../services/fetch_tasks.dart';
 import '../models/task_card_creator.dart';
+import '../controllers/availableTasksController.dart';
 
-class TaskListScreen extends StatelessWidget {
+class TaskListScreen extends StatefulWidget {
   final int id;
 
   const TaskListScreen({super.key, required this.id});
 
-  void _desinscribirse(BuildContext context, int taskId) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Desinscrito de la tarea $taskId')),
-    );
+  @override
+  State<TaskListScreen> createState() => _TaskListScreenState();
+}
+
+class _TaskListScreenState extends State<TaskListScreen> {
+  late Future<List<Task>> _tasksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  void _loadTasks() {
+    _tasksFuture = TaskService.fetchAssignedTasks(widget.id);
   }
 
   @override
@@ -25,7 +37,7 @@ class TaskListScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: FutureBuilder<List<Task>>(
-        future: TaskService.fetchAssignedTasks(id),
+        future: _tasksFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: Colors.white));
@@ -59,7 +71,18 @@ class TaskListScreen extends StatelessWidget {
                           TaskCard(task: task),
                           const SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: () => _desinscribirse(context, task.id),
+                            onPressed: () {
+                              AvailableTasksController.unsubscribe(
+                                context: context,
+                                taskId: task.id,
+                                volunteerId: widget.id,
+                                onSuccess: () {
+                                  setState(() {
+                                    _loadTasks(); // actualiza la lista
+                                  });
+                                },
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 40),
