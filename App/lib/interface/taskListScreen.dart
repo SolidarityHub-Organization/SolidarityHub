@@ -75,6 +75,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                               AvailableTasksController.unsubscribe(
                                 context: context,
                                 taskId: task.id,
+                                taskName: task.name,
                                 volunteerId: widget.id,
                                 onSuccess: () {
                                   setState(() {

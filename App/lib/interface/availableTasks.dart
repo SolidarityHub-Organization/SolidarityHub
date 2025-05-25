@@ -12,7 +12,17 @@ class AvailableTasksScreen extends StatefulWidget {
 }
 
 class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
-  Set<int> _disabledTasks = {};
+  late Future<List<Task>> _tasksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  void _loadTasks() {
+    _tasksFuture = AvailableTasksController.fetchPendingTasks(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +42,7 @@ class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
         elevation: 0,
       ),
       body: FutureBuilder<List<Task>>(
-        future: AvailableTasksController.fetchPendingTasks(widget.id),
+        future: _tasksFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -58,7 +68,6 @@ class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               final task = tasks[index];
-              final isDisabled = _disabledTasks.contains(task.id);
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -76,15 +85,17 @@ class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
                         children: [
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: isDisabled
-                                  ? null
-                                  : () async {
-                                await AvailableTasksController.declineTask(widget.id, task.id);
-                                setState(() {
-                                  _disabledTasks.add(task.id);
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Tarea rechazada')),
+                              onPressed: () {
+                                AvailableTasksController.declineTask(
+                                  context: context,
+                                  taskId: task.id,
+                                  taskName: task.name,
+                                  volunteerId: widget.id,
+                                  onSuccess: () {
+                                    setState(() {
+                                      _loadTasks();
+                                    });
+                                  },
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -103,15 +114,17 @@ class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: isDisabled
-                                  ? null
-                                  : () async {
-                                await AvailableTasksController.acceptTask(widget.id, task.id);
-                                setState(() {
-                                  _disabledTasks.add(task.id);
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Tarea aceptada')),
+                              onPressed: () {
+                                AvailableTasksController.acceptTask(
+                                  context: context,
+                                  taskId: task.id,
+                                  taskName: task.name,
+                                  volunteerId: widget.id,
+                                  onSuccess: () {
+                                    setState(() {
+                                      _loadTasks();
+                                    });
+                                  },
                                 );
                               },
                               style: ElevatedButton.styleFrom(

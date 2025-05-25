@@ -21,37 +21,65 @@ class AvailableTasksController {
     }
   }
 
-  static Future<void> acceptTask(int volunteerId, int taskId) async {
+  static Future<void> acceptTask({
+    required BuildContext context,
+    required int taskId,
+    required String taskName,
+    required int volunteerId,
+    required VoidCallback onSuccess,
+  }) async {
     final url = Uri.parse('http://localhost:5170/api/v1/tasks/assigned-to-volunteer/$volunteerId/$taskId');
-
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'state':'Assigned'}),
+      body: jsonEncode({'state': 'Assigned'}),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Error al aceptar la tarea: ${response.body}');
+    if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 500) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tarea aceptada')),
+      );
+      onSuccess();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al aceptar la tarea: ${response.body}')),
+      );
+      throw Exception('Error al aceptar tarea');
     }
   }
 
-  static Future<void> declineTask(int volunteerId, int taskId) async {
+  static Future<void> declineTask({
+    required BuildContext context,
+    required int taskId,
+    required String taskName,
+    required int volunteerId,
+    required VoidCallback onSuccess,
+  }) async {
     final url = Uri.parse('http://localhost:5170/api/v1/tasks/assigned-to-volunteer/$volunteerId/$taskId');
-
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'state':'Cancelled'}),
+      body: jsonEncode({'state': 'Cancelled'}),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Error al rechazar la tarea: ${response.body}');
+    if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 500) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tarea rechazada')),
+      );
+      onSuccess();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al rechazar la tarea: ${response.body}')),
+      );
+      throw Exception('Error al rechazar tarea');
     }
   }
+
 
   static Future<void> unsubscribe({
     required BuildContext context,
     required int taskId,
+    required String taskName,
     required int volunteerId,
     required VoidCallback onSuccess,
   }) async {
@@ -64,7 +92,7 @@ class AvailableTasksController {
 
     if (response.statusCode == 200 || response.statusCode == 500) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Te has desinscrito de la tarea $taskId')),
+        SnackBar(content: Text('Te has desinscrito de la tarea: $taskName')),
       );
       onSuccess();
     } else {
