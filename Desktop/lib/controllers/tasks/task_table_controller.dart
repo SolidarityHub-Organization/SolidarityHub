@@ -19,6 +19,7 @@ class TaskTableController {
 
   final Map<int, int> _taskStatuses = {};
   final Map<int, String> _taskPriorities = {};
+  TaskWithDetails? _lastDeletedTask;
 
   List<TaskWithDetails> get tasks => tasksNotifier.value;
   List<TaskWithDetails> get filteredTasks => filteredTasksNotifier.value;
@@ -252,6 +253,7 @@ class TaskTableController {
 
   Future<void> deleteTask(TaskWithDetails task, [Function? onComplete]) async {
     isLoadingNotifier.value = true;
+    _lastDeletedTask = task;
 
     try {
       await TaskServices.deleteTask(task.id);
@@ -261,6 +263,28 @@ class TaskTableController {
       }
     } catch (e) {
       isLoadingNotifier.value = false;
+      _lastDeletedTask = null;
+      rethrow;
+    }
+  }
+
+  Future<void> restoreLastDeletedTask() async {
+    if (_lastDeletedTask == null) return;
+
+    try {
+      await TaskServices.createTask(
+        name: _lastDeletedTask!.name,
+        description: _lastDeletedTask!.description,
+        selectedVolunteers: _lastDeletedTask!.assignedVolunteers.map((v) => v.id).toList(),
+        latitude: _lastDeletedTask!.location?.latitude.toString() ?? "0",
+        longitude: _lastDeletedTask!.location?.longitude.toString() ?? "0",
+        startDate: _lastDeletedTask!.startDate,
+        endDate: _lastDeletedTask!.endDate,
+        selectedVictim: _lastDeletedTask!.assignedVictim.map((v) => v.id).toList(),
+      );
+      await fetchTasks();
+      _lastDeletedTask = null;
+    } catch (e) {
       rethrow;
     }
   }

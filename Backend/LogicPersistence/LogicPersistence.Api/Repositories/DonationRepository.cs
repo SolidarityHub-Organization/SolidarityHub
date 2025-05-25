@@ -77,7 +77,20 @@ public class DonationRepository : IDonationRepository {
     public async Task<PhysicalDonation?> GetPhysicalDonationByIdAsync(int id) 
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM physical_donation WHERE id = @id";
+        const string sql = @"
+            SELECT 
+                id,
+                item_name,
+                description,
+                quantity,
+                item_type::text as item_type,
+                donation_date,
+                volunteer_id,
+                admin_id,
+                victim_id,
+                created_at
+            FROM physical_donation 
+            WHERE id = @id";
 
         return await connection.QuerySingleOrDefaultAsync<PhysicalDonation>(sql, new { id });
     }
@@ -85,9 +98,22 @@ public class DonationRepository : IDonationRepository {
     public async Task<IEnumerable<PhysicalDonation>> GetAllPhysicalDonationsAsync() 
     {
         using var connection = new NpgsqlConnection(connectionString);
-        const string sql = "SELECT * FROM physical_donation";
+        const string sql = @"
+            SELECT 
+                id,
+                item_name,
+                description,
+                quantity,
+                item_type::text as item_type,
+                donation_date,
+                volunteer_id,
+                admin_id,
+                victim_id,
+                created_at
+            FROM physical_donation";
 
-        return await connection.QueryAsync<PhysicalDonation>(sql);
+        var donations = await connection.QueryAsync<PhysicalDonation>(sql);
+        return donations;
     }
 
     public async Task<int> GetTotalAmountPhysicalDonationsAsync(DateTime fromDate, DateTime toDate) 
