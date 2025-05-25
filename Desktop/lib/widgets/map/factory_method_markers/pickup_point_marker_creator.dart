@@ -8,29 +8,16 @@ class PickupPointMarkerCreator implements MapMarkerCreator {
   Marker createMarker(MapMarker mapMarker, BuildContext context, Function(MapMarker) onMarkerTap) {
     return Marker(
       point: mapMarker.position,
-      width: 30,
-      height: 30,
+      width: 40,
+      height: 40,
       child: GestureDetector(
         onTap: () {
           onMarkerTap(mapMarker);
         },
         child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.blue, width: 2),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(0),
-            )
-          ),
-          child: const Center(
-             child: Icon(Icons.local_shipping, color: Colors.blue, size: 20),
-          ),
-        )
+          decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+          child: Icon(Icons.local_shipping, color: Colors.white, size: 20),
+        ),
       ),
     );
   }

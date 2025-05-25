@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
-import 'package:solidarityhub/widgets/map/factory_method_markers/victim_marker_creator.dart';
-import 'package:solidarityhub/widgets/map/factory_method_markers/volunteer_marker_creator.dart';
-import 'package:solidarityhub/widgets/map/factory_method_markers/task_marker_creator.dart';
-import 'package:solidarityhub/widgets/map/factory_method_markers/meeting_point_marker_creator.dart';
-import 'package:solidarityhub/widgets/map/factory_method_markers/pickup_point_marker_creator.dart';
+import 'victim_marker_creator.dart';
+import 'task_marker_creator.dart';
+import 'volunteer_marker_creator.dart';
+import 'meeting_point_marker_creator.dart';
+import 'pickup_point_marker_creator.dart';
 
+// Interfaz base para todos los creadores de marcadores
 abstract class MapMarkerCreator {
   Marker createMarker(MapMarker mapMarker, BuildContext context, Function(MapMarker) onMarkerTap);
 }
 
-MapMarkerCreator getMarkerCreator(String role) {
-  switch (role) {
+// Función Factory Method para obtener el creador adecuado según el tipo
+MapMarkerCreator getMarkerCreator(String type) {
+  switch (type.toLowerCase()) {
     case 'victim':
       return VictimMarkerCreator();
     case 'volunteer':
@@ -24,6 +26,7 @@ MapMarkerCreator getMarkerCreator(String role) {
     case 'pickup_point':
       return PickupPointMarkerCreator();
     default:
-      throw Exception('Tipo de usuario desconocido: $role');
+      // Si el tipo no es reconocido, usamos el marcador de víctima como predeterminado
+      return VictimMarkerCreator();
   }
 }

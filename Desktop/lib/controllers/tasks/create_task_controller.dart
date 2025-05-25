@@ -189,13 +189,21 @@ class CreateTaskController {
 
   Future<void> searchAddress() async {
     final address = searchAddressController.text.trim();
-    final locationCoords = await LocationExternalServices.getLatLonFromAddress(address);
-    selectedLocation = locationCoords?['location'] as LatLng;
-    mapController.move(selectedLocation, locationCoords?['zoomLevel'] ?? 15.0);
+    try {
+      final result = await LocationExternalServices.getLatLngFromAddress(address);
 
-    _updateLocationControllers(selectedLocation);
-    _updateMarker(selectedLocation);
-    mapController.move(selectedLocation, 15.0);
+      if (result != null) {
+        // Usamos directamente el resultado como LatLng
+        selectedLocation = result;
+        mapController.move(selectedLocation, 15.0);
+
+        _updateLocationControllers(selectedLocation);
+        _updateMarker(selectedLocation);
+      }
+    } catch (e) {
+      print('Error al buscar dirección: $e');
+      // Manejo de errores si es necesario
+    }
   }
 
   List<Volunteer> filteredVolunteers() {

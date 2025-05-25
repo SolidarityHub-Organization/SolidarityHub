@@ -24,9 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.red), useMaterial3: true),
-      home: const MinSizeContainer(
-        child: MyHomePage(title: 'Solidarity Hub'),
-      ),
+      home: const MinSizeContainer(child: MyHomePage(title: 'Solidarity Hub')),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -47,12 +45,8 @@ class MinSizeContainer extends StatelessWidget {
   final double minWidth;
   final double minHeight;
 
-  const MinSizeContainer({
-    Key? key,
-    required this.child,
-    this.minWidth = 281.0,
-    this.minHeight = 175.0,
-  }) : super(key: key);
+  const MinSizeContainer({Key? key, required this.child, this.minWidth = 281.0, this.minHeight = 175.0})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +56,9 @@ class MinSizeContainer extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: SingleChildScrollView(
             child: Container(
-              constraints: BoxConstraints(
-                minWidth: minWidth,
-                minHeight: minHeight,
-              ),
-              width: constraints.maxWidth > minWidth 
-                  ? constraints.maxWidth 
-                  : minWidth,
-              height: constraints.maxHeight > minHeight 
-                  ? constraints.maxHeight 
-                  : minHeight,
+              constraints: BoxConstraints(minWidth: minWidth, minHeight: minHeight),
+              width: constraints.maxWidth > minWidth ? constraints.maxWidth : minWidth,
+              height: constraints.maxHeight > minHeight ? constraints.maxHeight : minHeight,
               child: child,
             ),
           ),

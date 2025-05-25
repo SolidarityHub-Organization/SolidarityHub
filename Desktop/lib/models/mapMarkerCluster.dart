@@ -27,9 +27,12 @@ class MapMarkerCluster {
     required List<MapMarker> items,
     required String type, // Añadimos el tipo como parámetro obligatorio
   }) {
+    // Si es el cluster principal, le damos un nombre especial
+    String name = id == 'main-cluster' ? 'Grupo de marcadores' : 'Cluster de $count elemento${count > 1 ? 's' : ''}';
+
     return MapMarker(
       id: id,
-      name: 'Cluster de $count elemento${count > 1 ? 's' : ''}',
+      name: name,
       position: position,
       type: type, // Usamos el tipo proporcionado
       isCluster: true,

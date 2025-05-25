@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
 import 'info_square_factory.dart';
 import '../../../services/location_external_services.dart';
-import '../decorador/info_square_decorator.dart';
+import '../decorator/info_square_decorator.dart';
 
 class TaskInfoSquare implements InfoSquare {
   // Método para obtener el icono según el estado
