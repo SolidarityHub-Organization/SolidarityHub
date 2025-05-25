@@ -82,7 +82,7 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4480, -0.3300),  -- El Perellonet (zona afectada: Costera Sur)
   (39.5039, -0.4449),  -- Paterna Centro (zona afectada: Metropolitana Sur)
   (39.5020, -0.4430),  -- Paterna Este (zona afectada: Metropolitana Sur)
-  (39.5050, -0.4470);  -- Paterna Oeste (zona afectada: Metropolitana Sur)
+  (39.5050, -0.4470),  -- Paterna Oeste (zona afectada: Metropolitana Sur)
 --Fin volunteer
 -- Inicio task
   (39.4782, -0.3768),  -- Valencia - Plaza del Ayuntamiento
@@ -140,35 +140,41 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.2750, -0.3450),  -- Sollana Centro
   (39.2850, -0.4180),  -- Almussafes Centro
   (38.9650, -0.1780),  -- Gandia Playa
-  (38.9690, -0.1820);  -- Gandia Norte
+  (38.9690, -0.1820),  -- Gandia Norte
 --Fin task
 --Inicio pickup points
-  (39.1200, -0.4500),  -- Carcaixent Centro
-  (39.1950, -0.4350),  -- Algemesí Centro;
-  (39.2050, -0.3100),  -- Sueca Centro
-  (39.2070, -0.3080),  -- Sueca Norte
-  (39.2750, -0.3450),  -- Sollana Centro
-  (39.2850, -0.4180),  -- Almussafes Centro;
-  (38.9670, -0.1800),  -- Gandia Centro
-  (38.9650, -0.1780),  -- Gandia Playa
-  (38.9690, -0.1820),  -- Gandia Norte
-  (38.9200, -0.1200),  -- Oliva Centro
---Fin pickup points
+  (39.4699, -0.3763),  -- Valencia - Plaza del Ayuntamiento (Zona Centro Valencia)
+  (39.4667, -0.3770),  -- Valencia - Ruzafa (Zona Russafa-Eixample)
+  (39.4860, -0.3557),  -- Valencia - Benimaclet (Zona Benimaclet Norte)
+  (39.4852, -0.3504),  -- Valencia - Playa de la Malvarrosa (Zona Marítima Malvarrosa)
+  (39.4845, -0.4000),  -- Valencia - Campanar (Zona Industrial Campanar)
+  (39.4370, -0.4670),  -- Torrent Centro (Zona Metropolitana Sur)
+  (39.5084, -0.4147),  -- Burjassot Centro (Zona Metropolitana Sur)
+  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
+  (39.1520, -0.4350),  -- Alzira Centro (Zona Interior Ribera)
+  (38.9670, -0.1800),  -- Gandia Centro (Zona Costera Sur)
   (38.9180, -0.1180),  -- Oliva Playa
-  (39.0750, -0.2450),  -- Tavernes Centro;
-  (38.9750, -0.6050),  -- Canals Centro
-  (39.1000, -0.5050),  -- L'Alcúdia Centro;
-  (38.8200, -0.6050),  -- Ontinyent Centro
-  (38.8220, -0.6030),  -- Ontinyent Norte
-  (38.8450, -0.5200),  -- Albaida Centro;
-  (38.7450, -0.4350),  -- Cocentaina Centro
-  (38.7650, -0.4650),  -- Muro Centro;
-  (38.7050, -0.4750),  -- Alcoy Centro
-  (38.7070, -0.4730),  -- Alcoy Norte
-  (38.7030, -0.4770),  -- Alcoy Sur;
-  (39.8500, -0.4900),  -- Segorbe Centro
-  (39.8520, -0.4880),  -- Segorbe Norte
-  (39.8750, -0.4100),  -- Altura Centro
+--Fin pickup points
+-- Inicio meeting points
+  (39.4699, -0.3763),  -- Valencia - Plaza del Ayuntamiento (Zona Centro Valencia)
+  (39.4795, -0.3720),  -- Valencia - Jardines de Viveros (Zona Centro Norte)
+  (39.4736, -0.3583),  -- Valencia - Ciudad de las Artes y Ciencias (Zona Sur)
+  (39.4751, -0.3815),  -- Valencia - IVAM (Zona Centro Histórico)
+  (39.4589, -0.3337),  -- Valencia - Marina Real (Zona Marítima)
+  (39.4860, -0.3557),  -- Valencia - Plaza de Benimaclet (Zona Benimaclet Norte)
+  (39.4852, -0.3504),  -- Valencia - Malvarrosa Beach (Zona Marítima Malvarrosa)
+  (39.4845, -0.4000),  -- Valencia - Campanar Park (Zona Industrial Campanar)
+  (39.5039, -0.4449),  -- Paterna Centro (Zona Metropolitana Sur)
+  (39.5024, -0.3480),  -- Alboraya Centro (Zona Norte)
+  (39.4503, -0.3257),  -- El Saler (Zona Costera Sur)
+  (39.4700, -0.4250),  -- Mislata Centro (Zona Metropolitana Oeste)
+  (39.5084, -0.4147),  -- Burjassot Centro (Zona Metropolitana Sur)
+  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
+-- Fin meeting points
+
+-- A partir de aqui hay locations adicionales. Para que este mas o menos organizado, si necesitais añadir mas elementos de cualquier tipo,
+--  porfavor hacedlo ordenado como esta hecho hasta este punto, es decir, por tandas y poniendo comentarios con inicio y fin, para que asi sea más facil de editar
+
   (39.9100, -0.5650),  -- Jérica Centro;
   (39.4741, -0.7104),  -- Chiva Centro
   (39.4200, -0.7900),  -- Buñol Centro
@@ -180,26 +186,6 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4820, -0.3590),  -- Zona portuaria adicional
   (39.4710, -0.3820),  -- Centro histórico adicional
   (39.4600, -0.3500),  -- Zona sur adicional (id 162)
-  -- Zona Afectada 1: Alboraya (3 puntos)
-  (39.5024, -0.3480), (39.4929, -0.3487), (39.4980, -0.3581),
-  -- Zona Afectada 2: Zona Malvarrosa (3 puntos)
-  (39.4634, -0.3238), (39.4642, -0.3370), (39.4943, -0.3270),
-  -- Zona Afectada 3: Burjassot (3 puntos)
-  (39.5056, -0.4056), (39.5082, -0.4236), (39.5138, -0.4153),
-  -- Zona Afectada 4: Ciutat Vella (3 puntos)
-  (39.4713, -0.3723), (39.4729, -0.3801), (39.4789, -0.3774),
-  -- Zona Afectada 5: Quart de Poblet (3 puntos)
-  (39.4712, -0.4258), (39.4859, -0.4364), (39.4819, -0.4558),
-  -- Zona Afectada 6: Chiva (3 puntos)
-  (39.4811, -0.7282), (39.4700, -0.7042), (39.4509, -0.7380),
-  -- Zona Afectada 7: Aldaya, Torrent y Picanya (3 puntos)
-  (39.4709, -0.4624), (39.4263, -0.4983), (39.4258, -0.4044),
-  -- Zona Afectada 8: Xàtiva (3 puntos)
-  (38.9935, -0.5202), (38.9860, -0.5252), (38.9890, -0.5147),
-  -- Zona Afectada 9: Gandia-Oliva (3 puntos)
-  (38.9672, -0.1802), (38.9202, -0.1202), (39.0752, -0.2452),
-  -- Zona Afectada 10: Alcoy-Ontinyent (3 puntos)
-  (38.7052, -0.4752), (38.8202, -0.6052), (38.7452, -0.4352),
   -- Valencia City - Barrios adicionales
   (39.4567, -0.3892), (39.4723, -0.3621), (39.4834, -0.3734), (39.4912, -0.3612), (39.4645, -0.3567),
   (39.4756, -0.3823), (39.4589, -0.3712), (39.4678, -0.3634), (39.4801, -0.3598), (39.4523, -0.3445),
@@ -235,7 +221,29 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4819, -0.3570), (39.4888, -0.3949), (39.4865, -0.3645), (39.4842, -0.3621), (39.4906, -0.3967),
   (39.4831, -0.3558), (39.4900, -0.3961), (39.4877, -0.3629), (39.4854, -0.3605), (39.4917, -0.3979),
   (39.4839, -0.3546), (39.4912, -0.3973), (39.4889, -0.3629), (39.4866, -0.3605), (39.4930, -0.3989),
-  (39.4853, -0.3534), (39.4927, -0.3983), (39.4904, -0.3629), (39.4881, -0.3605), (39.4943, -0.3999);
+  (39.4853, -0.3534), (39.4927, -0.3983), (39.4904, -0.3629), (39.4881, -0.3605), (39.4943, -0.3999),
+  
+  -- ESTAS LOCATIONS PORFAVOR SIEMPRE AL FINAL, NO AÑADIR NINGUNO ABAJO
+  -- Zona Afectada 1: Alboraya (3 puntos)
+  (39.5024, -0.3480), (39.4929, -0.3487), (39.4980, -0.3581),
+  -- Zona Afectada 2: Zona Malvarrosa (3 puntos)
+  (39.4634, -0.3238), (39.4642, -0.3370), (39.4943, -0.3270),
+  -- Zona Afectada 3: Burjassot (3 puntos)
+  (39.5056, -0.4056), (39.5082, -0.4236), (39.5138, -0.4153),
+  -- Zona Afectada 4: Ciutat Vella (3 puntos)
+  (39.4713, -0.3723), (39.4729, -0.3801), (39.4789, -0.3774),
+  -- Zona Afectada 5: Quart de Poblet (3 puntos)
+  (39.4712, -0.4258), (39.4859, -0.4364), (39.4819, -0.4558),
+  -- Zona Afectada 6: Chiva (3 puntos)
+  (39.4811, -0.7282), (39.4700, -0.7042), (39.4509, -0.7380),
+  -- Zona Afectada 7: Aldaya, Torrent y Picanya (3 puntos)
+  (39.4709, -0.4624), (39.4263, -0.4983), (39.4258, -0.4044),
+  -- Zona Afectada 8: Xàtiva (3 puntos)
+  (38.9935, -0.5202), (38.9860, -0.5252), (38.9890, -0.5147),
+  -- Zona Afectada 9: Gandia-Oliva (3 puntos)
+  (38.9672, -0.1802), (38.9202, -0.1202), (39.0752, -0.2452),
+  -- Zona Afectada 10: Alcoy-Ontinyent (3 puntos)
+  (38.7052, -0.4752), (38.8202, -0.6052), (38.7452, -0.4352);
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
@@ -430,112 +438,112 @@ INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") 
 -- ASSIGN LOCATIONS TO AFFECTED ZONES (3 locations per zone)
 INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
   -- Zona Centro Valencia (locations 139-141)
-  (1, 163), (1, 164), (1, 165),
+  (1, 318), (1, 319), (1, 320),
   -- Zona Russafa-Eixample (locations 142-144)
-  (2, 166), (2, 167), (2, 168),
+  (2, 321), (2, 322), (2, 323),
   -- Zona Benimaclet Norte (locations 145-147)
-  (3, 169), (3, 170), (3, 171),
+  (3, 324), (3, 325), (3, 326),
   -- Zona Marítima Malvarrosa (locations 148-150)
-  (4, 172), (4, 173), (4, 174),
+  (4, 327), (4, 328), (4, 329),
   -- Zona Industrial Campanar (locations 151-153)
-  (5, 175), (5, 176), (5, 177),
+  (5, 330), (5, 331), (5, 332),
   -- Zona Metropolitana Sur (locations 154-156)
-  (6, 178), (6, 179), (6, 180),
+  (6, 333), (6, 334), (6, 335),
   -- Zona Norte Sagunto (locations 157-159)
-  (7, 181), (7, 182), (7, 183),
+  (7, 336), (7, 337), (7, 338),
   -- Zona Interior Ribera (locations 160-162)
-  (8, 184), (8, 185), (8, 186),
+  (8, 339), (8, 340), (8, 341),
   -- Zona Costera Sur (locations 163-165)
-  (9, 187), (9, 188), (9, 189),
+  (9, 342), (9, 343), (9, 344),
   -- Zona Montañosa Interior (locations 166-168)
-  (10, 190), (10, 191), (10, 192);
+  (10, 345), (10, 346), (10, 347);
 
 
 
 
 INSERT INTO "physical_donation" ("item_name", "description", "quantity", "item_type", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
-  ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-05-24 10:00:00', 1, NULL, NULL),
-  ('Botiquines', 'Suministros médicos básicos', 20, 'Medicine', '2025-05-24 11:30:00', 2, NULL, NULL),
-  ('Mantas', 'Mantas de lana calientes', 30, 'Clothes', '2025-05-24 09:15:00', 3, NULL, NULL),
-  ('Comida Enlatada', 'Alimentos no perecederos surtidos', 100, 'Food', '2025-05-24 14:45:00', 4, NULL, NULL),
-  ('Herramientas Eléctricas', 'Conjunto de herramientas para reconstrucción', 5, 'Tools', '2025-05-24 16:20:00', 5, NULL, NULL),
-  ('Fórmula para Bebés', 'Suministros de nutrición infantil', 25, 'Food', '2025-05-24 08:30:00', NULL, 1, NULL),
-  ('Tiendas de Campaña', 'Refugio temporal', 15, 'Other', '2025-05-24 13:10:00', NULL, 2, NULL),
+  ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-05-20 10:00:00', 1, NULL, NULL),
+  ('Botiquines', 'Suministros médicos básicos', 20, 'Medicine', '2025-05-21 11:30:00', 2, NULL, NULL),
+  ('Mantas', 'Mantas de lana calientes', 30, 'Clothes', '2025-05-19 09:15:00', 3, NULL, NULL),
+  ('Comida Enlatada', 'Alimentos no perecederos surtidos', 100, 'Food', '2025-05-22 14:45:00', 4, NULL, NULL),
+  ('Herramientas Eléctricas', 'Conjunto de herramientas para reconstrucción', 5, 'Tools', '2025-05-18 16:20:00', 5, NULL, NULL),
+  ('Fórmula para Bebés', 'Suministros de nutrición infantil', 25, 'Food', '2025-05-23 08:30:00', NULL, 1, NULL),
+  ('Tiendas de Campaña', 'Refugio temporal', 15, 'Other', '2025-05-17 13:10:00', NULL, 2, NULL),
   ('Medicamentos', 'Medicamentos variados sin receta', 40, 'Medicine', '2025-05-24 10:45:00', NULL, 3, NULL),
-  ('Ropa de Invierno', 'Abrigos, guantes y bufandas', 60, 'Clothes', '2025-05-24 12:00:00', 6, NULL, NULL),
-  ('Linternas', 'Linternas de mano con baterías', 35, 'Tools', '2025-05-24 15:30:00', 7, NULL, NULL),
-  ('Productos de Higiene', 'Jabón, champú, pasta de dientes', 80, 'Other', '2025-05-24 11:00:00', 8, NULL, NULL),
-  ('Sacos de Dormir', 'Sacos de dormir para clima frío', 20, 'Clothes', '2025-05-24 14:30:00', 9, NULL, NULL),
-  ('Kits de Cocina', 'Utensilios básicos de cocina', 10, 'Tools', '2025-05-24 17:00:00', 10, NULL, NULL),
-  ('Alimentos para Mascotas', 'Comida para perros y gatos', 45, 'Food', '2025-05-24 09:00:00', 11, NULL, NULL),
-  ('Juguetes', 'Juguetes para niños', 55, 'Other', '2025-05-24 12:30:00', 12, NULL, NULL),
-  ('Libros', 'Libros para todas las edades', 70, 'Other', '2025-05-24 16:00:00', 13, NULL, NULL),
-  ('Baterías', 'Baterías AA y AAA', 90, 'Tools', '2025-05-24 10:00:00', 14, NULL, NULL),
-  ('Velas', 'Velas para iluminación', 105, 'Other', '2025-05-24 13:30:00', 15, NULL, NULL),
-  ('Cargadores de Teléfono', 'Cargadores portátiles para teléfonos', 120, 'Tools', '2025-05-24 17:30:00', 16, NULL, NULL),
-  ('Pañales', 'Pañales para bebés', 135, 'Other', '2025-05-24 11:30:00', 17, NULL, NULL),
-  ('Toallas', 'Toallas de baño', 150, 'Clothes', '2025-05-24 15:00:00', 18, NULL, NULL),
-  ('Cepillos de Dientes', 'Cepillos de dientes individuales', 165, 'Other', '2025-05-24 09:30:00', 19, NULL, NULL),
-  ('Papel Higiénico', 'Rollos de papel higiénico', 180, 'Other', '2025-05-24 13:00:00', 20, NULL, NULL),
-  ('Jabón de Manos', 'Botellas de jabón de manos', 195, 'Other', '2025-05-24 16:30:00', 21, NULL, NULL),
-  ('Desinfectante de Manos', 'Botellas de desinfectante de manos', 210, 'Medicine', '2025-05-24 10:30:00', 22, NULL, NULL),
-  ('Mascarillas', 'Mascarillas faciales', 225, 'Medicine', '2025-05-24 14:00:00', 23, NULL, NULL),
-  ('Guantes', 'Guantes de látex', 240, 'Medicine', '2025-05-24 17:00:00', 24, NULL, NULL),
-  ('Termómetros', 'Termómetros digitales', 255, 'Medicine', '2025-05-24 11:00:00', 25, NULL, NULL),
-  ('Kits de Costura', 'Kits básicos de costura', 270, 'Tools', '2025-05-24 14:30:00', 26, NULL, NULL),
-  ('Paraguas', 'Paraguas plegables', 285, 'Other', '2025-05-24 18:00:00', 27, NULL, NULL),
-  ('Impermeables', 'Impermeables para adultos', 300, 'Clothes', '2025-05-24 12:00:00', 28, NULL, NULL),
-  ('Sombreros', 'Sombreros para el sol', 315, 'Clothes', '2025-05-24 15:30:00', 29, NULL, NULL),
-  ('Gafas de Sol', 'Gafas de sol', 330, 'Other', '2025-05-24 09:00:00', 30, NULL, NULL),
-  ('Crema Solar', 'Crema solar de amplio espectro', 345, 'Medicine', '2025-05-24 12:30:00', 31, NULL, NULL),
-  ('Repelente de Insectos', 'Repelente de insectos', 360, 'Medicine', '2025-05-24 16:00:00', 32, NULL, NULL),
-  ('Agua Oxigenada', 'Botellas de agua oxigenada', 375, 'Medicine', '2025-05-24 10:00:00', NULL, NULL, 1);
+  ('Ropa de Invierno', 'Abrigos, guantes y bufandas', 60, 'Clothes', '2025-05-16 12:00:00', 6, NULL, NULL),
+  ('Linternas', 'Linternas de mano con baterías', 35, 'Tools', '2025-05-25 15:30:00', 7, NULL, NULL),
+  ('Productos de Higiene', 'Jabón, champú, pasta de dientes', 80, 'Other', '2025-05-15 11:00:00', 8, NULL, NULL),
+  ('Sacos de Dormir', 'Sacos de dormir para clima frío', 20, 'Clothes', '2025-05-26 14:30:00', 9, NULL, NULL),
+  ('Kits de Cocina', 'Utensilios básicos de cocina', 10, 'Tools', '2025-05-14 17:00:00', 10, NULL, NULL),
+  ('Alimentos para Mascotas', 'Comida para perros y gatos', 45, 'Food', '2025-05-27 09:00:00', 11, NULL, NULL),
+  ('Juguetes', 'Juguetes para niños', 55, 'Other', '2025-05-13 12:30:00', 12, NULL, NULL),
+  ('Libros', 'Libros para todas las edades', 70, 'Other', '2025-05-28 16:00:00', 13, NULL, NULL),
+  ('Baterías', 'Baterías AA y AAA', 90, 'Tools', '2025-05-12 10:00:00', 14, NULL, NULL),
+  ('Velas', 'Velas para iluminación', 105, 'Other', '2025-05-29 13:30:00', 15, NULL, NULL),
+  ('Cargadores de Teléfono', 'Cargadores portátiles para teléfonos', 120, 'Tools', '2025-05-11 17:30:00', 16, NULL, NULL),
+  ('Pañales', 'Pañales para bebés', 135, 'Other', '2025-05-30 11:30:00', 17, NULL, NULL),
+  ('Toallas', 'Toallas de baño', 150, 'Clothes', '2025-05-10 15:00:00', 18, NULL, NULL),
+  ('Cepillos de Dientes', 'Cepillos de dientes individuales', 165, 'Other', '2025-05-31 09:30:00', 19, NULL, NULL),
+  ('Papel Higiénico', 'Rollos de papel higiénico', 180, 'Other', '2025-05-09 13:00:00', 20, NULL, NULL),
+  ('Jabón de Manos', 'Botellas de jabón de manos', 195, 'Other', '2025-06-01 16:30:00', 21, NULL, NULL),
+  ('Desinfectante de Manos', 'Botellas de desinfectante de manos', 210, 'Medicine', '2025-05-08 10:30:00', 22, NULL, NULL),
+  ('Mascarillas', 'Mascarillas faciales', 225, 'Medicine', '2025-06-02 14:00:00', 23, NULL, NULL),
+  ('Guantes', 'Guantes de látex', 240, 'Medicine', '2025-05-07 17:00:00', 24, NULL, NULL),
+  ('Termómetros', 'Termómetros digitales', 255, 'Medicine', '2025-06-03 11:00:00', 25, NULL, NULL),
+  ('Kits de Costura', 'Kits básicos de costura', 270, 'Tools', '2025-05-06 14:30:00', 26, NULL, NULL),
+  ('Paraguas', 'Paraguas plegables', 285, 'Other', '2025-06-04 18:00:00', 27, NULL, NULL),
+  ('Impermeables', 'Impermeables para adultos', 300, 'Clothes', '2025-05-05 12:00:00', 28, NULL, NULL),
+  ('Sombreros', 'Sombreros para el sol', 315, 'Clothes', '2025-06-05 15:30:00', 29, NULL, NULL),
+  ('Gafas de Sol', 'Gafas de sol', 330, 'Other', '2025-05-04 09:00:00', 30, NULL, NULL),
+  ('Crema Solar', 'Crema solar de amplio espectro', 345, 'Medicine', '2025-06-06 12:30:00', 31, NULL, NULL),
+  ('Repelente de Insectos', 'Repelente de insectos', 360, 'Medicine', '2025-05-03 16:00:00', 32, NULL, NULL),
+  ('Agua Oxigenada', 'Botellas de agua oxigenada', 375, 'Medicine', '2025-06-07 10:00:00', NULL, NULL, 1);
 
 
 
 INSERT INTO "monetary_donation" ("amount", "currency", "payment_status", "transaction_id", "payment_service", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
-  (50.00, 'EUR', 'Completed', 'MD-001', 'PayPal', '2025-05-24 12:00:00', 1, NULL, NULL),
-  (100.00, 'USD', 'Completed', 'MD-002', 'CreditCard', '2025-05-24 13:00:00', NULL, 1, NULL),
-  (75.00, 'EUR', 'Completed', 'MD-003', 'BankTransfer', '2025-05-24 14:00:00', 3, NULL, NULL),
-  (25.00, 'USD', 'Completed', 'PayPal', 'CreditCard', '2025-05-24 15:00:00', NULL, NULL, 4),
-  (200.00, 'USD', 'Completed', 'MD-005', 'CreditCard', '2025-05-24 16:00:00', 5, NULL, NULL),
-  (500.00, 'EUR', 'Completed', 'MD-006', 'BankTransfer', '2025-05-24 17:00:00', NULL, 2, NULL),
-  (350.00, 'USD', 'Completed', 'MD-007', 'PayPal', '2025-05-24 18:00:00', 7, NULL, NULL),
-  (120.00, 'EUR', 'Completed', 'MD-008', 'CreditCard', '2025-05-24 19:00:00', NULL, NULL, 8),
-  (90.00, 'USD', 'Completed', 'MD-009', 'BankTransfer', '2025-05-24 20:00:00', 9, NULL, NULL),
-  (60.00, 'EUR', 'Completed', 'MD-010', 'PayPal', '2025-05-24 21:00:00', NULL, 3, NULL),
-  (150.00, 'USD', 'Completed', 'MD-011', 'CreditCard', '2025-05-24 22:00:00', 11, NULL, NULL),
-  (220.00, 'EUR', 'Completed', 'MD-012', 'BankTransfer', '2025-05-24 23:00:00', NULL, NULL, 12),
-  (80.00, 'USD', 'Completed', 'MD-013', 'PayPal', '2025-05-25 00:00:00', 13, NULL, NULL),
-  (300.00, 'EUR', 'Completed', 'MD-014', 'CreditCard', '2025-05-25 01:00:00', NULL, 1, NULL),
-  (450.00, 'USD', 'Completed', 'MD-015', 'BankTransfer', '2025-05-25 02:00:00', 15, NULL, NULL),
-  (110.00, 'EUR', 'Completed', 'MD-016', 'PayPal', '2025-05-25 03:00:00', NULL, NULL, 16),
-  (70.00, 'USD', 'Completed', 'MD-017', 'CreditCard', '2025-05-25 04:00:00', 17, NULL, NULL),
-  (180.00, 'EUR', 'Completed', 'MD-018', 'BankTransfer', '2025-05-25 05:00:00', NULL, 2, NULL),
-  (270.00, 'USD', 'Completed', 'MD-019', 'PayPal', '2025-05-25 06:00:00', 19, NULL, NULL),
-  (95.00, 'EUR', 'Completed', 'MD-020', 'CreditCard', '2025-05-25 07:00:00', NULL, NULL, 20),
-  (130.00, 'USD', 'Completed', 'MD-021', 'BankTransfer', '2025-05-25 08:00:00', 21, NULL, NULL),
-  (380.00, 'EUR', 'Completed', 'MD-022', 'PayPal', '2025-05-25 09:00:00', NULL, 3, NULL),
-  (410.00, 'USD', 'Completed', 'MD-023', 'CreditCard', '2025-05-25 10:00:00', 23, NULL, NULL),
-  (160.00, 'EUR', 'Completed', 'MD-024', 'BankTransfer', '2025-05-25 11:00:00', NULL, NULL, 24),
-  (290.00, 'USD', 'Completed', 'MD-025', 'PayPal', '2025-05-25 12:00:00', 25, NULL, NULL),
-  (330.00, 'EUR', 'Completed', 'MD-026', 'CreditCard', '2025-05-25 13:00:00', NULL, 1, NULL),
-  (190.00, 'USD', 'Completed', 'MD-027', 'BankTransfer', '2025-05-25 14:00:00', 27, NULL, NULL),
-  (240.00, 'EUR', 'Completed', 'MD-028', 'PayPal', '2025-05-25 15:00:00', NULL, NULL, 28),
-  (360.00, 'USD', 'Completed', 'MD-029', 'CreditCard', '2025-05-25 16:00:00', 29, NULL, NULL),
-  (40.00, 'EUR', 'Completed', 'MD-030', 'BankTransfer', '2025-05-25 17:00:00', NULL, 2, NULL),
-  (170.00, 'USD', 'Completed', 'MD-031', 'PayPal', '2025-05-25 18:00:00', 31, NULL, NULL),
-  (210.00, 'EUR', 'Completed', 'MD-032', 'CreditCard', '2025-05-25 19:00:00', NULL, NULL, 32),
-  (310.00, 'USD', 'Completed', 'MD-033', 'BankTransfer', '2025-05-25 20:00:00', 33, NULL, NULL),
-  (480.00, 'EUR', 'Completed', 'MD-034', 'PayPal', '2025-05-25 21:00:00', NULL, 3, NULL),
-  (140.00, 'USD', 'Completed', 'MD-035', 'CreditCard', '2025-05-25 22:00:00', 35, NULL, NULL),
-  (260.00, 'EUR', 'Completed', 'MD-036', 'BankTransfer', '2025-05-25 23:00:00', NULL, 1, NULL),
-  (390.00, 'USD', 'Completed', 'MD-037', 'PayPal', '2025-05-26 00:00:00', 37, NULL, NULL),
-  (55.00, 'EUR', 'Completed', 'MD-038', 'CreditCard', '2025-05-26 01:00:00', NULL, NULL, 38),
-  (105.00, 'USD', 'Completed', 'MD-039', 'BankTransfer', '2025-05-26 02:00:00', 39, NULL, NULL),
-  (78.00, 'EUR', 'Completed', 'MD-040', 'PayPal', '2025-05-26 03:00:00', NULL, 2, NULL),
-  (155.00, 'USD', 'Completed', 'MD-041', 'CreditCard', '2025-05-26 04:00:00', 1, NULL, NULL),
-  (225.00, 'EUR', 'Completed', 'MD-042', 'BankTransfer', '2025-05-26 05:00:00', NULL, NULL, 2);
+  (50.00, 'EUR', 'Completed', 'MD-001', 'PayPal', '2025-05-01 10:00:00', 1, NULL, NULL),
+  (100.00, 'USD', 'Completed', 'MD-002', 'CreditCard', '2025-05-02 11:30:00', NULL, 1, NULL),
+  (75.00, 'EUR', 'Completed', 'MD-003', 'BankTransfer', '2025-05-03 14:45:00', 3, NULL, NULL),
+  (25.00, 'USD', 'Completed', 'MD-004', 'PayPal', '2025-05-04 16:00:00', NULL, NULL, 4),
+  (200.00, 'USD', 'Completed', 'MD-005', 'CreditCard', '2025-05-05 09:15:00', 5, NULL, NULL),
+  (500.00, 'EUR', 'Completed', 'MD-006', 'BankTransfer', '2025-05-06 08:30:00', NULL, 2, NULL),
+  (350.00, 'USD', 'Completed', 'MD-007', 'PayPal', '2025-05-07 13:10:00', 7, NULL, NULL),
+  (120.00, 'EUR', 'Completed', 'MD-008', 'CreditCard', '2025-05-08 10:45:00', NULL, NULL, 8),
+  (90.00, 'USD', 'Completed', 'MD-009', 'BankTransfer', '2025-05-09 15:30:00', 9, NULL, NULL),
+  (60.00, 'EUR', 'Completed', 'MD-010', 'PayPal', '2025-05-10 11:00:00', NULL, 3, NULL),
+  (150.00, 'USD', 'Completed', 'MD-011', 'CreditCard', '2025-05-11 12:30:00', 11, NULL, NULL),
+  (220.00, 'EUR', 'Completed', 'MD-012', 'BankTransfer', '2025-05-12 14:30:00', NULL, NULL, 12),
+  (80.00, 'USD', 'Completed', 'MD-013', 'PayPal', '2025-05-13 17:00:00', 13, NULL, NULL),
+  (300.00, 'EUR', 'Completed', 'MD-014', 'CreditCard', '2025-05-14 09:00:00', NULL, 1, NULL),
+  (450.00, 'USD', 'Completed', 'MD-015', 'BankTransfer', '2025-05-15 10:30:00', 15, NULL, NULL),
+  (110.00, 'EUR', 'Completed', 'MD-016', 'PayPal', '2025-05-16 13:00:00', NULL, NULL, 16),
+  (70.00, 'USD', 'Completed', 'MD-017', 'CreditCard', '2025-05-17 15:00:00', 17, NULL, NULL),
+  (180.00, 'EUR', 'Completed', 'MD-018', 'BankTransfer', '2025-05-18 16:30:00', NULL, 2, NULL),
+  (270.00, 'USD', 'Completed', 'MD-019', 'PayPal', '2025-05-19 18:00:00', 19, NULL, NULL),
+  (95.00, 'EUR', 'Completed', 'MD-020', 'CreditCard', '2025-05-20 09:30:00', NULL, NULL, 20),
+  (130.00, 'USD', 'Completed', 'MD-021', 'BankTransfer', '2025-05-21 11:00:00', 21, NULL, NULL),
+  (380.00, 'EUR', 'Completed', 'MD-022', 'PayPal', '2025-05-22 12:30:00', NULL, 3, NULL),
+  (410.00, 'USD', 'Completed', 'MD-023', 'CreditCard', '2025-05-23 14:00:00', 23, NULL, NULL),
+  (160.00, 'EUR', 'Completed', 'MD-024', 'BankTransfer', '2025-05-24 15:30:00', NULL, NULL, 24),
+  (290.00, 'USD', 'Completed', 'MD-025', 'PayPal', '2025-05-25 17:00:00', 25, NULL, NULL),
+  (330.00, 'EUR', 'Completed', 'MD-026', 'CreditCard', '2025-05-26 18:30:00', NULL, 1, NULL),
+  (190.00, 'USD', 'Completed', 'MD-027', 'BankTransfer', '2025-05-27 09:00:00', 27, NULL, NULL),
+  (240.00, 'EUR', 'Completed', 'MD-028', 'PayPal', '2025-05-28 10:30:00', NULL, NULL, 28),
+  (360.00, 'USD', 'Completed', 'MD-029', 'CreditCard', '2025-05-29 12:00:00', 29, NULL, NULL),
+  (40.00, 'EUR', 'Completed', 'MD-030', 'BankTransfer', '2025-05-30 13:30:00', NULL, 2, NULL),
+  (170.00, 'USD', 'Completed', 'MD-031', 'PayPal', '2025-05-31 15:00:00', 31, NULL, NULL),
+  (210.00, 'EUR', 'Completed', 'MD-032', 'CreditCard', '2025-05-15 19:00:00', NULL, NULL, 32),
+  (310.00, 'USD', 'Completed', 'MD-033', 'BankTransfer', '2025-05-16 20:00:00', 33, NULL, NULL),
+  (480.00, 'EUR', 'Completed', 'MD-034', 'PayPal', '2025-05-17 21:00:00', NULL, 3, NULL),
+  (140.00, 'USD', 'Completed', 'MD-035', 'CreditCard', '2025-05-18 22:00:00', 35, NULL, NULL),
+  (260.00, 'EUR', 'Completed', 'MD-036', 'BankTransfer', '2025-05-19 23:00:00', NULL, 1, NULL),
+  (390.00, 'USD', 'Completed', 'MD-037', 'PayPal', '2025-05-20 08:00:00', 37, NULL, NULL),
+  (55.00, 'EUR', 'Completed', 'MD-038', 'CreditCard', '2025-05-21 09:00:00', NULL, NULL, 38),
+  (105.00, 'USD', 'Completed', 'MD-039', 'BankTransfer', '2025-05-22 10:00:00', 39, NULL, NULL),
+  (78.00, 'EUR', 'Completed', 'MD-040', 'PayPal', '2025-05-23 11:00:00', NULL, 2, NULL),
+  (155.00, 'USD', 'Completed', 'MD-041', 'CreditCard', '2025-05-24 12:00:00', 1, NULL, NULL),
+  (225.00, 'EUR', 'Completed', 'MD-042', 'BankTransfer', '2025-05-25 13:00:00', NULL, NULL, 2);
 
 
 INSERT INTO "place" ("name", "admin_id") VALUES
@@ -1019,23 +1027,23 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (13, 13, 'Pending'),
   (14, 14, 'Assigned'),
   (15, 15, 'Pending'),
-  (16, 16, 'Assigned'),
-  (17, 17, 'Pending'),
-  (18, 18, 'Assigned'),
+  (16, 16, 'Completed'),
+  (17, 17, 'Completed'),
+  (18, 18, 'Completed'),
   (19, 19, 'Pending'),
   (20, 20, 'Assigned'),
   (21, 21, 'Pending'),
-  (22, 22, 'Assigned'),
+  (22, 22, 'Completed'),
   (23, 23, 'Pending'),
   (24, 24, 'Assigned'),
-  (25, 25, 'Pending'),
+  (25, 25, 'Completed'),
   (26, 26, 'Assigned'),
   (27, 27, 'Pending'),
   (28, 28, 'Assigned'),
   (29, 29, 'Pending'),
   (30, 30, 'Assigned'),
   (31, 31, 'Pending'),
-  (32, 32, 'Assigned'),
+  (32, 32, 'Completed'),
   (33, 33, 'Pending'),
   (34, 34, 'Assigned'),
   (35, 35, 'Pending'),
@@ -1050,7 +1058,7 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (4, 44, 'Assigned'),
   (5, 45, 'Pending'),
   (6, 46, 'Assigned'),
-  (7, 47, 'Pending'),
+  (7, 47, 'Completed'),
   (8, 48, 'Assigned'),
   (9, 49, 'Pending'),
   (10, 50, 'Assigned'),
@@ -1058,7 +1066,7 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (12, 52, 'Assigned'),
   (13, 53, 'Pending'),
   (14, 54, 'Assigned'),
-  (15, 55, 'Pending');
+  (15, 55, 'Completed');
 
 INSERT INTO "volunteer_place" ("volunteer_id", "place_id") VALUES
   (1, 1), (1, 3),
@@ -1134,17 +1142,17 @@ INSERT INTO "point_time" ("start_time", "end_time", "start_date", "end_date") VA
 
 
 INSERT INTO "pickup_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
-  ('Centro Acopio Valencia', 'Centro principal de recogida de donaciones', 1, 169, 1),
-  ('Punto Recogida Paterna', 'Punto de recogida en el ayuntamiento', 2, 170, 2),
-  ('Alboraya Solidaria', 'Centro de recogida comunitario', 3, 171, 3),
-  ('El Saler Aid Point', 'Punto de recogida zona playa', 4, 172, 1),
-  ('Mislata Ayuda', 'Centro de donaciones municipal', 5, 173, 2),
-  ('Burjassot Recoge', 'Centro de donaciones municipal', 6, 174, 3),
-  ('Benimaclet Apoya', 'Centro de donaciones municipal', 7, 175, 1),
-  ('Malvarrosa Dona', 'Centro de donaciones municipal', 8, 176, 2),
-  ('Campanar Entrega', 'Centro de donaciones municipal', 9, 177, 3),
-  ('Torrent Dona', 'Centro de donaciones municipal', 10, 178, 1),
-  ('Sagunto Recoge', 'Centro de donaciones municipal', 11, 179, 2);
+  ('Centro Acopio Plaza Ayuntamiento', 'Centro principal de recogida en el corazón de Valencia', 1, 137, 1),
+  ('Punto Recogida Ruzafa', 'Punto de recogida en el barrio de Ruzafa', 2, 138, 2),
+  ('Benimaclet Solidario', 'Centro de recogida comunitario en el barrio universitario', 3, 139, 3),
+  ('Malvarrosa Aid Point', 'Punto de recogida en la zona de playa', 4, 140, 1),
+  ('Campanar Ayuda', 'Centro de donaciones en la zona industrial de Campanar', 5, 141, 2),
+  ('Torrent Solidario', 'Centro de recogida para la zona metropolitana sur', 6, 142, 3),
+  ('Burjassot Recoge', 'Punto de donaciones en el centro de Burjassot', 7, 143, 1),
+  ('Sagunto Solidario', 'Centro de donaciones para la zona norte', 8, 144, 2),
+  ('Alzira Entrega', 'Punto de recogida en la Ribera Alta', 9, 145, 3),
+  ('Gandia Dona', 'Centro de donaciones para la costa sur', 10, 146, 1),
+  ('Oliva Recoge', 'Punto de recogida en la playa de Oliva', 11, 147, 2);
 
 
 
@@ -1169,20 +1177,20 @@ INSERT INTO "point_donation" ("point_id", "donation_id") VALUES
 
 
 INSERT INTO "meeting_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
-  ('Plaza Ayuntamiento', 'Punto de encuentro principal', 1, 180, 1),
-  ('Jardines Viveros', 'Punto de encuentro zona norte', 2, 181, 2),
-  ('CAC Meeting Point', 'Punto de encuentro zona sur', 3, 182, 3),
-  ('IVAM Plaza', 'Punto de encuentro centro histórico', 4, 183, 1),
-  ('Marina Real', 'Punto de encuentro zona marítima', 5, 184, 2),
-  ('Benimaclet Square', 'Punto de encuentro para residentes de Benimaclet', 6, 185, 3),
-  ('Malvarrosa Beach Access', 'Punto de encuentro cerca de la playa de la Malvarrosa', 7, 186, 1),
-  ('Campanar Park Entrance', 'Punto de encuentro en la entrada del parque de Campanar', 8, 187, 2),
-  ('Paterna City Hall', 'Punto de encuentro en el centro de Paterna', 9, 188, 3),
-  ('Alboraya Metro Station', 'Punto de encuentro cerca del metro de Alboraya', 10, 189, 1),
-  ('El Saler Bus Stop', 'Punto de encuentro en la zona de El Saler', 11, 190, 2),
-  ('Mislata Central Park', 'Punto de encuentro en el parque central de Mislata', 12, 191, 3),
-  ('Burjassot Cultural Center', 'Punto de encuentro cerca del centro cultural de Burjassot', 13, 192, 1),
-  ('Sagunto Roman Theatre', 'Punto de encuentro cerca del Teatro Romano de Sagunto', 14, 193, 2);
+  ('Plaza Ayuntamiento', 'Punto de encuentro principal', 1, 148, 1),
+  ('Jardines Viveros', 'Punto de encuentro zona norte', 2, 149, 2),
+  ('CAC Meeting Point', 'Punto de encuentro zona sur', 3, 150, 3),
+  ('IVAM Plaza', 'Punto de encuentro centro histórico', 4, 151, 1),
+  ('Marina Real', 'Punto de encuentro zona marítima', 5, 152, 2),
+  ('Benimaclet Square', 'Punto de encuentro para residentes de Benimaclet', 6, 153, 3),
+  ('Malvarrosa Beach Access', 'Punto de encuentro cerca de la playa de la Malvarrosa', 7, 154, 1),
+  ('Campanar Park Entrance', 'Punto de encuentro en la entrada del parque de Campanar', 8, 155, 2),
+  ('Paterna City Hall', 'Punto de encuentro en el centro de Paterna', 9, 156, 3),
+  ('Alboraya Metro Station', 'Punto de encuentro cerca del metro de Alboraya', 10, 157, 1),
+  ('El Saler Bus Stop', 'Punto de encuentro en la zona de El Saler', 11, 158, 2),
+  ('Mislata Central Park', 'Punto de encuentro en el parque central de Mislata', 12, 159, 3),
+  ('Burjassot Cultural Center', 'Punto de encuentro cerca del centro cultural de Burjassot', 13, 160, 1),
+  ('Sagunto Roman Theatre', 'Punto de encuentro cerca del Teatro Romano de Sagunto', 14, 161, 2);
 
 
 UPDATE "victim"
