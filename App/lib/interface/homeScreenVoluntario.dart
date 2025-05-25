@@ -123,8 +123,8 @@ class HomeScreenVoluntario extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
-                        "Ajustes",
-                        homeScreenController.onSettingsPressed(context, id, role),
+                        "Ver necesidades",
+                        homeScreenController.onNecesidadesPressed(context),
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
@@ -134,8 +134,8 @@ class HomeScreenVoluntario extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
-                        "Ver necesidades",
-                        homeScreenController.onNecesidadesPressed(context),
+                        "Ajustes",
+                        homeScreenController.onSettingsPressed(context, id, role),
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
