@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import '../models/solicitud.dart';
-import '../services/solicitudes_service.dart';
+/*import 'package:flutter/material.dart';
+import '../models/necesidad.dart';
+import '../services/necesidades_service.dart';
 
 class SolicitudesController {
   final SolicitudesService _service = SolicitudesService();
@@ -53,3 +53,4 @@ class SolicitudesController {
     }
   }
 }
+*/

@@ -130,6 +130,17 @@ class HomeScreenVoluntario extends StatelessWidget {
                         backgroundColor: Colors.red,
                       ),
                     ),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: buildCustomButton(
+                        "Ver necesidades",
+                        homeScreenController.onNecesidadesPressed(context),
+                        verticalPadding: 14,
+                        horizontalPadding: 0,
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
                     SizedBox(height: 40),
                     SizedBox(
                       width: double.infinity,
