@@ -154,8 +154,8 @@ class MapScreenController extends ChangeNotifier {
           borderColor = Colors.yellowAccent;
           break;
         default:
-          color = Colors.blue.withOpacity(0.35); // Opacidad para zonas sin nivel definido
-          borderColor = Colors.blue;
+          color = Colors.grey.withOpacity(0.35); // Opacidad para zonas sin nivel definido
+          borderColor = Colors.grey;
       } // Añadir el polígono si tiene al menos 3 puntos (mínimo para formar un polígono)
       if (points.length >= 3) {
         polygons.add(
@@ -174,9 +174,7 @@ class MapScreenController extends ChangeNotifier {
 
   // Crear polígonos de ejemplo para el mapa de calor (fallback)
   List<MapPolygon> _createSampleHeatMap() {
-    final polygons = <MapPolygon>[];
-
-    // Áreas de alta densidad
+    final polygons = <MapPolygon>[]; // Áreas de alta densidad
     polygons.add(
       MapPolygon(
         points: [LatLng(39.47, -0.377), LatLng(39.47, -0.374), LatLng(39.468, -0.374), LatLng(39.468, -0.377)],
@@ -202,6 +200,16 @@ class MapScreenController extends ChangeNotifier {
         points: [LatLng(39.475, -0.37), LatLng(39.475, -0.365), LatLng(39.47, -0.365), LatLng(39.47, -0.37)],
         color: Colors.yellow.withOpacity(0.3), // Opacidad baja pero visible
         borderColor: Colors.yellowAccent,
+        borderStrokeWidth: 1.5,
+      ),
+    );
+
+    // Áreas sin nivel definido
+    polygons.add(
+      MapPolygon(
+        points: [LatLng(39.48, -0.38), LatLng(39.48, -0.375), LatLng(39.478, -0.375), LatLng(39.478, -0.38)],
+        color: Colors.grey.withOpacity(0.35), // Opacidad para zonas sin nivel definido
+        borderColor: Colors.grey,
         borderStrokeWidth: 1.5,
       ),
     );
