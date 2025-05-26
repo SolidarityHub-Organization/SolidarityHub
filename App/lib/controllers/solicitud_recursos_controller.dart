@@ -50,6 +50,7 @@ class SolicitarRecursoController {
 
     if (exito) {
       _mostrarMensaje(context, 'Solicitud enviada con éxito.');
+      limpiarCampos();
     } else {
       _mostrarMensaje(context, 'Error al enviar la solicitud.');
     }
@@ -64,5 +65,10 @@ class SolicitarRecursoController {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(mensaje)),
     );
+  }
+
+  void limpiarCampos(){
+    cantidadController.clear();
+    descripcionController.clear();
   }
 }
