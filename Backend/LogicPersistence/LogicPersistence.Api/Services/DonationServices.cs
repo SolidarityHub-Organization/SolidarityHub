@@ -186,7 +186,7 @@ namespace LogicPersistence.Api.Services
                 .GroupBy(GetWeekStartDate)
                 .OrderBy(kvp => kvp.Key)
                 .ToDictionary(
-                    group => $"Semana {group.Key:dd-MM-yyyy}",
+                    group => $"{group.Key:yyyy-MM-dd}",
                     group => group.Sum(d => d.quantity)
                 );
 
@@ -329,7 +329,7 @@ namespace LogicPersistence.Api.Services
                 .GroupBy(GetWeekStartDate)
                 .OrderBy(kvp => kvp.Key)
                 .ToDictionary(
-                    group => $"Semana {group.Key:dd-MM-yyyy}",
+                    group => $"{group.Key:yyyy-MM-dd}",
                     group => group.Sum(d => d.amount)
                 );
         }
