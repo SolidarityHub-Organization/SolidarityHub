@@ -37,7 +37,7 @@ class AvailableTasksController {
 
     if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 500) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tarea aceptada')),
+        SnackBar(content: Text('Has aceptado la tarea: $taskName')),
       );
       onSuccess();
     } else {
@@ -64,7 +64,7 @@ class AvailableTasksController {
 
     if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 500) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tarea rechazada')),
+        SnackBar(content: Text('Has rechazado la tarea: $taskName')),
       );
       onSuccess();
     } else {
@@ -90,7 +90,7 @@ class AvailableTasksController {
       body: jsonEncode({'state': 'Cancelled'}),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 500) {
+    if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 500) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Te has desinscrito de la tarea: $taskName')),
       );

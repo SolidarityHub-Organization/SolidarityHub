@@ -28,9 +28,20 @@ class _TiposSolicitudesPageState extends State<TiposSolicitudesPage> {
   Future<void> _cargarTipos() async {
     try {
       final data = await _service.obtenerTiposSolicitud(widget.id);
+
+      data.sort((a, b) {
+        final estadoA = a.status.trim().isEmpty ? 'pending' : a.status.toLowerCase();
+        final estadoB = b.status.trim().isEmpty ? 'pending' : b.status.toLowerCase();
+
+        if (estadoA == 'pending' && estadoB != 'pending') return -1;
+        if (estadoA != 'pending' && estadoB == 'pending') return 1;
+        return 0;
+      });
+
       setState(() {
         _tipos = data;
       });
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar los tipos de solicitud')),
