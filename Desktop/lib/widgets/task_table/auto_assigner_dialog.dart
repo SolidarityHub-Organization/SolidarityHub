@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:solidarityhub/controllers/tasks/auto_assigner_dialog_controller.dart';
 import 'package:solidarityhub/controllers/tasks/auto_assigner_controller.dart';
 import 'package:solidarityhub/models/task.dart';
@@ -202,6 +203,7 @@ class _AutoAssignerDialogState extends State<AutoAssignerDialog> {
         TextFormField(
           controller: controller.numberController,
           keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           style: const TextStyle(fontSize: 13),
           decoration: InputDecoration(
             isDense: true,

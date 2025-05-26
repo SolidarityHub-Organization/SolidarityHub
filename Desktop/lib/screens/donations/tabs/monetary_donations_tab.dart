@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/services/donation_services.dart';
+import 'package:solidarityhub/widgets/donations/create_monetary_donation_dialog.dart';
+import 'package:solidarityhub/models/volunteer.dart';
 
 class MonetaryDonationsTab extends StatefulWidget {
   final List<MonetaryDonation> donations;
   final bool isLoading;
   final String? errorMessage;
   final Function() onRefresh;
+  final List<Volunteer> volunteers;
 
   const MonetaryDonationsTab({
     Key? key,
@@ -14,6 +17,7 @@ class MonetaryDonationsTab extends StatefulWidget {
     required this.isLoading,
     required this.errorMessage,
     required this.onRefresh,
+    required this.volunteers,
   }) : super(key: key);
 
   @override
@@ -42,6 +46,31 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
         return Colors.red;
       case PaymentStatus.Refunded:
         return Colors.blue;
+    }
+  }
+
+  Future<void> _showCreateMonetaryDonationDialog() async {
+    final result = await showDialog<MonetaryDonation>(
+      context: context,
+      builder: (context) => CreateMonetaryDonationDialog(volunteers: widget.volunteers),
+    );
+
+    if (result != null) {
+      try {
+        final createdDonation = await DonationServices.createMonetaryDonation(result);
+        widget.onRefresh();
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Donación monetaria creada exitosamente')));
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al crear la donación monetaria: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
   }
 
@@ -166,7 +195,22 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Donaciones Monetarias', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Donaciones Monetarias', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: _showCreateMonetaryDonationDialog,
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: const Text('Nueva Donación', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           if (widget.donations.isEmpty)
             const Center(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/volunteer.dart';
+import 'package:flutter/services.dart';
 
 class CreateDonationDialog extends StatefulWidget {
   final List<Volunteer> volunteers;
@@ -64,12 +65,17 @@ class _CreateDonationDialogState extends State<CreateDonationDialog> {
                 controller: _quantityController,
                 decoration: const InputDecoration(labelText: 'Cantidad'),
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese una cantidad';
                   }
                   if (int.tryParse(value) == null) {
                     return 'Por favor ingrese un número válido';
+                  }
+                  final quantity = int.parse(value);
+                  if (quantity <= 0) {
+                    return 'La cantidad debe ser mayor que 0';
                   }
                   return null;
                 },
