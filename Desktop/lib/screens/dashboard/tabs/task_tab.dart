@@ -47,66 +47,67 @@ class _TaskTabState extends State<TaskTab> {
       _totalPages = 1;
     });
 
-    getPaginatedTasks(_pageNumber, _pageSize);
+    _paginatedTasks = getPaginatedTasks(_pageNumber, _pageSize).then((result) {
+      setState(() {
+        _accumulatedTasks.addAll(result['tasks']);
+        _pageNumber++;
+        _totalPages = result['totalPages'];
+      });
+      return _accumulatedTasks;
+    });
   }
 
   int _pageNumber = 1;
   final int _pageSize = 10; // number tasks retrieved per request
-  int _totalPages = 1;
+  int _totalPages = 0;
   List<Map<String, dynamic>> _accumulatedTasks = [];
 
-  void getPaginatedTasks(int pageNumber, int pageSize) {
-      _paginatedTasks = TaskServices.fetchDateFilteredPaginatedTasks(
+  Future<Map<String, dynamic>> getPaginatedTasks(int pageNumber, int pageSize) async {
+    final response = await TaskServices.fetchDateFilteredPaginatedTasks(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
       pageNumber,
       pageSize,
-    ).then((response) {
+    );
+    
+    var itemsKey = response.containsKey('Items') ? 'Items' : 'items';
+    var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
+    
+    List<Map<String, dynamic>> tasks = [];
+    if (response.containsKey(itemsKey) && response[itemsKey] is List) {
+      tasks = (response[itemsKey] as List)
+          .map((task) => task as Map<String, dynamic>)
+          .toList();
+
       /*
-      print("Full response structure: $tasksResponse");
-      print("Available keys: ${tasksResponse.keys.toList()}");
-      */
+      print("Tasks list: $tasks");
       
-      var itemsKey = response.containsKey('Items') ? 'Items' : 'items';
-
-      if (response.containsKey(itemsKey) && response[itemsKey] is List) {
-        List<Map<String, dynamic>> tasks = (response[itemsKey] as List)
-            .map((task) => task as Map<String, dynamic>)
-            .toList();
-
-
-        /*
-        print("Tasks list: $tasks");
-        
-        for (var task in tasks) {
-          print("Task: $task");
-        }
-        */
-
-        var totalCountKey = response.containsKey('TotalCount') ? 'TotalCount' : 'totalCount';
-        var pageNumberKey = response.containsKey('PageNumber') ? 'PageNumber' : 'pageNumber';
-        var pageSizeKey = response.containsKey('PageSize') ? 'PageSize' : 'pageSize';
-        var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
-
-        print("Total Count: ${response[totalCountKey]}");
-        print("Current Page: ${response[pageNumberKey]}");
-        print("Page Size: ${response[pageSizeKey]}");
-        print("Total Pages: ${response[totalPagesKey]}");
-        
-        
-        setState(() {
-          _accumulatedTasks.addAll(tasks);
-          this._pageNumber++;
-          this._totalPages = response[totalPagesKey] ?? 1;
-        });
-
-        return _accumulatedTasks;
+      for (var task in tasks) {
+        print("Task: $task");
       }
+      */
+
+      var totalCountKey = response.containsKey('TotalCount') ? 'TotalCount' : 'totalCount';
+      var pageNumberKey = response.containsKey('PageNumber') ? 'PageNumber' : 'pageNumber';
+      var pageSizeKey = response.containsKey('PageSize') ? 'PageSize' : 'pageSize';
+      var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
+
+      print("Total Count: ${response[totalCountKey]}");
+      print("Current Page: ${response[pageNumberKey]}");
+      print("Page Size: ${response[pageSizeKey]}");
+      print("Total Pages: ${response[totalPagesKey]}");
+
+
+      // setState() not inside this method to avoid the UI flickering after clicking the "Cargar más" button because it loses its scroll position
       
-      //else
+    } else {
       print("No items found in response: ${response.keys}");
-      return <Map<String, dynamic>>[];
-    });
+    }
+    
+    return {
+      'tasks': tasks,
+      'totalPages': response[totalPagesKey] ?? 1,
+    };
   }
 
   String? _selectedUrgency;
@@ -123,11 +124,14 @@ class _TaskTabState extends State<TaskTab> {
     }
   }
 
+  ScrollController? _mainVerticalController;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return TwoDimensionalScrollWidget(
+          onVerticalControllerReady: (ctrl) => _mainVerticalController = ctrl,
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minWidth: math.max(800.0, constraints.maxWidth),
@@ -435,10 +439,23 @@ class _TaskTabState extends State<TaskTab> {
                                 const SizedBox(height: 16),
                                 ElevatedButton.icon(
                                   onPressed: (_pageNumber > _totalPages)
-                                      ? null // disables the button
-                                      : () {
+                                      ? null
+                                      : () async {
+                                          final oldOffset = _mainVerticalController?.offset ?? 0.0;
+                                          
+                                          final result = await getPaginatedTasks(_pageNumber, _pageSize);
+                                          
                                           setState(() {
-                                            getPaginatedTasks(this._pageNumber, this._pageSize);
+                                            _accumulatedTasks.addAll(result['tasks']);
+                                            _pageNumber++;
+                                            _totalPages = result['totalPages'];
+                                          });
+                                          
+                                          // wait for frame render, then jump to old offset
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            if (_mainVerticalController?.hasClients ?? false) {
+                                              _mainVerticalController!.jumpTo(oldOffset);
+                                            }
                                           });
                                         },
                                   icon: const Icon(Icons.refresh),
