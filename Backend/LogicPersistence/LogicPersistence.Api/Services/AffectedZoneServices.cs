@@ -3,21 +3,21 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
 
-    public class AffectedZoneServices : IAffectedZoneServices
-    {
+    public class AffectedZoneServices : IAffectedZoneServices {
         private readonly IAffectedZoneRepository _affectedZoneRepository;
+        private readonly IPaginationService _paginationService;
 
-        public AffectedZoneServices(IAffectedZoneRepository affectedZoneRepository)
-        {
+        public AffectedZoneServices(IAffectedZoneRepository affectedZoneRepository, IPaginationService paginationService) {
             _affectedZoneRepository = affectedZoneRepository;
+            _paginationService = paginationService;
         }
 
-        public async Task<AffectedZone> CreateAffectedZoneAsync(AffectedZoneCreateDto affectedZoneCreateDto)
-        {
+        public async Task<AffectedZone> CreateAffectedZoneAsync(AffectedZoneCreateDto affectedZoneCreateDto) {
             if (affectedZoneCreateDto == null) {
                 throw new ArgumentNullException(nameof(affectedZoneCreateDto));
             }
@@ -30,8 +30,7 @@ namespace LogicPersistence.Api.Services
             return affectedZone;
         }
 
-        public async Task<AffectedZone> UpdateAffectedZoneAsync(int id,AffectedZoneUpdateDto affectedZoneUpdateDto) 
-        {
+        public async Task<AffectedZone> UpdateAffectedZoneAsync(int id, AffectedZoneUpdateDto affectedZoneUpdateDto) {
             if (id != affectedZoneUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
             }
@@ -44,8 +43,7 @@ namespace LogicPersistence.Api.Services
             return updatedAffectedZone;
         }
 
-        public async System.Threading.Tasks.Task DeleteAffectedZoneAsync(int id) 
-        {
+        public async System.Threading.Tasks.Task DeleteAffectedZoneAsync(int id) {
             var existingAffectedZone = await _affectedZoneRepository.GetAffectedZoneByIdAsync(id);
             if (existingAffectedZone == null) {
                 throw new KeyNotFoundException($"Affected zone with id {id} not found.");
@@ -57,16 +55,14 @@ namespace LogicPersistence.Api.Services
             }
         }
 
-        public async Task<AffectedZone> GetAffectedZoneByIdAsync(int id) 
-        {
+        public async Task<AffectedZone> GetAffectedZoneByIdAsync(int id) {
             var affectedZone = await _affectedZoneRepository.GetAffectedZoneByIdAsync(id);
             if (affectedZone == null) {
                 throw new KeyNotFoundException($"Affected zone with id {id} not found.");
             }
             return affectedZone;
         }
-        public async Task<IEnumerable<AffectedZone>> GetAllAffectedZonesAsync() 
-        {
+        public async Task<IEnumerable<AffectedZone>> GetAllAffectedZonesAsync() {
             var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
             if (affectedZones == null) {
                 throw new InvalidOperationException("Failed to retrieve affected zones.");
@@ -74,8 +70,7 @@ namespace LogicPersistence.Api.Services
             return affectedZones.Where(a => a.hazard_level != HazardLevel.None).ToList();
         }
 
-        public async Task<IEnumerable<AffectedZone>> GetAllRiskZonesAsync() 
-        {
+        public async Task<IEnumerable<AffectedZone>> GetAllRiskZonesAsync() {
             var affectedZones = await _affectedZoneRepository.GetAllAffectedZonesAsync();
             if (affectedZones == null) {
                 throw new InvalidOperationException("Failed to retrieve risk zones.");
@@ -83,8 +78,7 @@ namespace LogicPersistence.Api.Services
             return affectedZones.Where(a => a.hazard_level == HazardLevel.None).ToList();
         }
 
-        public static bool IsPointInAffectedZone(double latitude, double longitude, AffectedZoneWithPointsDTO affectedZone)
-        {
+        public static bool IsPointInAffectedZone(double latitude, double longitude, AffectedZoneWithPointsDTO affectedZone) {
             if (affectedZone?.points == null || affectedZone.points.Count == 0)
                 return false;
 
@@ -92,8 +86,7 @@ namespace LogicPersistence.Api.Services
             bool isInside = false;
             int pointCount = affectedZone.points.Count;
 
-            for (int i = 0, j = pointCount - 1; i < pointCount; j = i++)
-            {
+            for (int i = 0, j = pointCount - 1; i < pointCount; j = i++) {
                 var pi = affectedZone.points[i];
                 var pj = affectedZone.points[j];
 
@@ -106,6 +99,10 @@ namespace LogicPersistence.Api.Services
             }
 
             return isInside;
+        }
+        
+        public async Task<(IEnumerable<AffectedZone> AffectedZones, int TotalCount)> GetPaginatedAffectedZonesAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<AffectedZone>(pageNumber, pageSize, "affected_zone", "created_at DESC, id DESC");
         }
     }
 }

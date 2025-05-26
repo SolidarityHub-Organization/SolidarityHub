@@ -3,16 +3,19 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
     public class DonationServices : IDonationServices {
         private readonly IDonationRepository _donationRepository;
         private readonly IVolunteerRepository _volunteerRepository;
+        private readonly IPaginationService _paginationService;
 
-        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository) {
+        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository, IPaginationService paginationService) {
             _donationRepository = donationRepository;
             _volunteerRepository = volunteerRepository;
+            _paginationService = paginationService;
         }
 
         #region PhysicalDonation
@@ -167,6 +170,11 @@ namespace LogicPersistence.Api.Services
 
             return result;
         }
+
+        public async Task<(IEnumerable<PhysicalDonation> PhysicalDonations, int TotalCount)> GetPaginatedPhysicalDonationsAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<PhysicalDonation>(pageNumber, pageSize, "physical_donation", "created_at DESC, id DESC");
+		}
+
         #endregion
         #region MonetaryDonation
 
@@ -288,6 +296,9 @@ namespace LogicPersistence.Api.Services
             return totalEuro + totalDollar;
         }
 
+        public async Task<(IEnumerable<MonetaryDonation> MonetaryDonations, int TotalCount)> GetPaginatedMonetaryDonationsAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<MonetaryDonation>(pageNumber, pageSize, "monetary_donation", "created_at DESC, id DESC");
+        }
 
         #endregion
         #region Other methods

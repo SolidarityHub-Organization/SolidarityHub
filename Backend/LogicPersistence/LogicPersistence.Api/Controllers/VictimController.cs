@@ -64,8 +64,8 @@ namespace LogicPersistence.Api.Controllers {
 			} catch (KeyNotFoundException ex) {
 				return NotFound(ex.Message);
 			} catch (InvalidOperationException ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
@@ -102,6 +102,36 @@ namespace LogicPersistence.Api.Controllers {
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+		[HttpGet("victims/paginated")]
+		public async Task<IActionResult> GetPaginatedVictimsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (victims, totalCount) = await _victimServices.GetPaginatedVictimsAsync(page, size);
+
+				return Ok(new
+				{
+					Items = victims,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}

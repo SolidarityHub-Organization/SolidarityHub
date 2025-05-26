@@ -2,15 +2,16 @@ namespace LogicPersistence.Api.Repositories;
 using Dapper;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Repositories;
 using Newtonsoft.Json;
 using Npgsql;
 
 public class VolunteerRepository : IVolunteerRepository
 {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    
 
-    public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer)
-    {
+    public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO volunteer (email, password, name, surname, prefix, phone_number, address, identification, location_id)
@@ -148,24 +149,4 @@ public class VolunteerRepository : IVolunteerRepository
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { email });
     }
 
-    //TODO: make this method generic so it accepts any other item too, and make non paginated version too
-    public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
-    {
-        using var connection = new NpgsqlConnection(connectionString);
-        
-        const string countSql = "SELECT COUNT(*) FROM volunteer";
-        int totalCount = await connection.QuerySingleAsync<int>(countSql);
-        
-        const string paginatedSql = @"
-            SELECT * 
-            FROM volunteer
-            ORDER BY created_at DESC, id DESC
-            OFFSET @Offset
-            LIMIT @PageSize";
-
-        int offset = (pageNumber - 1) * pageSize;
-        var volunteers = await connection.QueryAsync<Volunteer>(paginatedSql, new { Offset = offset, PageSize = pageSize });
-        
-        return (volunteers, totalCount);
-    }
 }

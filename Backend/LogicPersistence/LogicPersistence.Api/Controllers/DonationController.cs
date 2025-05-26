@@ -184,6 +184,27 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
+        [HttpGet("physical-donations/paginated")]
+        public async Task<IActionResult> GetPaginatedPhysicalDonationsAsync([FromQuery] int page = 1, [FromQuery] int size = 10) {
+            try {
+                var (physicalDonations, totalCount) = await _donationServices.GetPaginatedPhysicalDonationsAsync(page, size);
+
+                return Ok(new {
+                    Items = physicalDonations,
+                    TotalCount = totalCount,
+                    PageNumber = page,
+                    PageSize = size,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+                });
+            } catch (ArgumentException ex) {
+                return BadRequest(ex.Message);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         #endregion
         #region MonetaryDonation
         [HttpPost("monetary-donations")]
@@ -288,6 +309,28 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("monetary-donations/paginated")]
+        public async Task<IActionResult> GetPaginatedMonetaryDonationsAsync([FromQuery] int page = 1, [FromQuery] int size = 10) {
+            try {
+                var (monetaryDonations, totalCount) = await _donationServices.GetPaginatedMonetaryDonationsAsync(page, size);
+
+                return Ok(new {
+                    Items = monetaryDonations,
+                    TotalCount = totalCount,
+                    PageNumber = page,
+                    PageSize = size,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+                });
+            } catch (ArgumentException ex) {
+                return BadRequest(ex.Message);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        
         #endregion
     }
 }
