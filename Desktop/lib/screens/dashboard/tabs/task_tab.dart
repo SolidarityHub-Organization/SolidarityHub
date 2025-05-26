@@ -27,7 +27,7 @@ class _TaskTabState extends State<TaskTab> {
   }
 
   late Future<Map<String, dynamic>> _taskTypeCount;
-  late Future<List<Map<String, dynamic>>> _allTasks;
+  late Future<List<Map<String, dynamic>>> _paginatedTasks;
 
   @override
   void initState() {
@@ -40,11 +40,73 @@ class _TaskTabState extends State<TaskTab> {
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    
-    _allTasks = TaskServices.fetchAllTasks(
+
+    setState(() {
+      _accumulatedTasks.clear();
+      _pageNumber = 1;
+      _totalPages = 1;
+    });
+
+    getPaginatedTasks(_pageNumber, _pageSize);
+  }
+
+  int _pageNumber = 1;
+  final int _pageSize = 10; // number tasks retrieved per request
+  int _totalPages = 1;
+  List<Map<String, dynamic>> _accumulatedTasks = [];
+
+  void getPaginatedTasks(int pageNumber, int pageSize) {
+      _paginatedTasks = TaskServices.fetchDateFilteredPaginatedTasks(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
-    );
+      pageNumber,
+      pageSize,
+    ).then((response) {
+      /*
+      print("Full response structure: $tasksResponse");
+      print("Available keys: ${tasksResponse.keys.toList()}");
+      */
+      
+      var itemsKey = response.containsKey('Items') ? 'Items' : 'items';
+
+      if (response.containsKey(itemsKey) && response[itemsKey] is List) {
+        List<Map<String, dynamic>> tasks = (response[itemsKey] as List)
+            .map((task) => task as Map<String, dynamic>)
+            .toList();
+
+
+        /*
+        print("Tasks list: $tasks");
+        
+        for (var task in tasks) {
+          print("Task: $task");
+        }
+        */
+
+        var totalCountKey = response.containsKey('TotalCount') ? 'TotalCount' : 'totalCount';
+        var pageNumberKey = response.containsKey('PageNumber') ? 'PageNumber' : 'pageNumber';
+        var pageSizeKey = response.containsKey('PageSize') ? 'PageSize' : 'pageSize';
+        var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
+
+        print("Total Count: ${response[totalCountKey]}");
+        print("Current Page: ${response[pageNumberKey]}");
+        print("Page Size: ${response[pageSizeKey]}");
+        print("Total Pages: ${response[totalPagesKey]}");
+        
+        
+        setState(() {
+          _accumulatedTasks.addAll(tasks);
+          this._pageNumber++;
+          this._totalPages = response[totalPagesKey] ?? 1;
+        });
+
+        return _accumulatedTasks;
+      }
+      
+      //else
+      print("No items found in response: ${response.keys}");
+      return <Map<String, dynamic>>[];
+    });
   }
 
   String? _selectedUrgency;
@@ -258,7 +320,7 @@ class _TaskTabState extends State<TaskTab> {
                       ),
                       const SizedBox(height: 20),
                       FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _allTasks,
+                        future: _paginatedTasks,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
@@ -315,58 +377,80 @@ class _TaskTabState extends State<TaskTab> {
                               );
                             }
                             
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: tasks.length,
-                              itemBuilder: (context, index) {
-                                final task = tasks[index];
-                                final affectedZoneName = task['affected_zone']?['name'] ?? 'Sin zona';
+                            return Column(
+                              children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: tasks.length,
+                                  itemBuilder: (context, index) {
+                                    final task = tasks[index];
+                                    final affectedZoneName = task['affected_zone']?['name'] ?? 'Sin zona';
 
-                                return Card(
-                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                                  elevation: 4,
-                                  child: ListTile(
-                                    contentPadding: const EdgeInsets.all(16.0),
-                                    title: Text(
-                                      task['name'] ?? 'Sin nombre',
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
-                                          style: const TextStyle(fontSize: 14),
+                                    return Card(
+                                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                                      elevation: 4,
+                                      child: ListTile(
+                                        contentPadding: const EdgeInsets.all(16.0),
+                                        title: Text(
+                                          task['name'] ?? 'Sin nombre',
+                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         ),
-                                        Text(
-                                          'Estado: ${task['state'] ?? 'Desconocido'}',
-                                          style: const TextStyle(fontSize: 14),
+                                        subtitle: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              'Estado: ${task['state'] ?? 'Desconocido'}',
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                            Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
+                                          ],
                                         ),
-                                        Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
-                                      ],
-                                    ),
-                                    trailing: task['affected_zone'] != null
-                                      ? IconButton(
-                                          icon: const Icon(Icons.location_on, color: Colors.red),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => MapScreen(
-                                                  lat: task['latitude'],
-                                                  lng: task['longitude'],
-                                                  initialZoom: 16.0,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : null,
+                                        trailing: task['affected_zone'] != null
+                                          ? IconButton(
+                                              icon: const Icon(Icons.location_on, color: Colors.red),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => MapScreen(
+                                                      lat: task['latitude'],
+                                                      lng: task['longitude'],
+                                                      initialZoom: 16.0,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: (_pageNumber > _totalPages)
+                                      ? null // disables the button
+                                      : () {
+                                          setState(() {
+                                            getPaginatedTasks(this._pageNumber, this._pageSize);
+                                          });
+                                        },
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Cargar más'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             );
                           }
                         },

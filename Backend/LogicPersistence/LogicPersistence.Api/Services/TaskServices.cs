@@ -260,12 +260,27 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksAsync(int pageNumber, int pageSize) {
-			return await _paginationService.GetPaginatedAsync<Models.Task>(pageNumber, pageSize, "task", "created_at DESC, id DESC");
+			return await _paginationService.GetPaginatedAsync<Models.Task>(
+				pageNumber,
+				pageSize,
+				"task",
+				"created_at DESC, id DESC");
+		}
+
+		public async Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
+			return await _paginationService.GetPaginatedByDateRangeAsync<Models.Task>(
+				page, 
+				size, 
+				"task", 
+				fromDate, 
+				toDate, 
+				"created_at DESC, id DESC", 
+				"created_at");
 		}
 
 		#region Internal Methods
 		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
-		//chapuza de método
+		//chapuza de método	//el chapuzador que bien chapuzee, buen chapuzeador será
 		public async Task<AffectedZoneWithPointsDTO?> GetAffectedZoneForTasks(Models.Task task) {
 			var mapServices = new MapServices(_locationRepository, _victimRepository, _volunteerRepository, _affectedZoneRepository, _taskRepository, _pointRepository);
 
