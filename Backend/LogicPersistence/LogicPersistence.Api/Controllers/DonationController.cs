@@ -205,6 +205,18 @@ namespace LogicPersistence.Api.Controllers
             }
         }
 
+        [HttpGet("physical-donations/sum-by-week")]
+        public async Task<IActionResult> GetPhysicalDonationsSumByWeekAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donationsSum = await _donationServices.GetPhysicalDonationsSumByWeekAsync(fromDate, toDate);
+                return Ok(donationsSum);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         #endregion
         #region MonetaryDonation
         [HttpPost("monetary-donations")]
@@ -290,6 +302,18 @@ namespace LogicPersistence.Api.Controllers
             try {
                 var donations = await _donationServices.GetMonetaryDonationsByDateAsync(fromDate, toDate);
                 return Ok(donations);
+            } catch (InvalidOperationException ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("monetary-donations/sum-by-week")]
+        public async Task<IActionResult> GetMonetaryDonationsSumByWeekAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
+            try {
+                var donationsSum = await _donationServices.GetMonetaryDonationsSumByWeekAsync(fromDate, toDate);
+                return Ok(donationsSum);
             } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             } catch (Exception ex) {

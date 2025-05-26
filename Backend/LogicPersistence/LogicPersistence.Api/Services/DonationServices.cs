@@ -141,8 +141,7 @@ namespace LogicPersistence.Api.Services
                 );
         }
 
-        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) 
-        {
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) {
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
             var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
 
@@ -172,8 +171,26 @@ namespace LogicPersistence.Api.Services
         }
 
         public async Task<(IEnumerable<PhysicalDonation> PhysicalDonations, int TotalCount)> GetPaginatedPhysicalDonationsAsync(int pageNumber, int pageSize) {
-			return await _paginationService.GetPaginatedAsync<PhysicalDonation>(pageNumber, pageSize, "physical_donation", "created_at DESC, id DESC");
-		}
+            return await _paginationService.GetPaginatedAsync<PhysicalDonation>(pageNumber, pageSize, "physical_donation", "created_at DESC, id DESC");
+        }
+
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
+
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return filteredDonations
+                .GroupBy(GetWeekStartDate)
+                .OrderBy(kvp => kvp.Key)
+                .ToDictionary(
+                    group => $"{group.Key:yyyy-MM-dd}",
+                    group => group.Sum(d => d.quantity)
+                );
+
+        }
 
         #endregion
         #region MonetaryDonation
@@ -300,6 +317,23 @@ namespace LogicPersistence.Api.Services
             return await _paginationService.GetPaginatedAsync<MonetaryDonation>(pageNumber, pageSize, "monetary_donation", "created_at DESC, id DESC");
         }
 
+        public async Task<Dictionary<string, double>> GetMonetaryDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
+
+            var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
+            var filteredDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+
+            return filteredDonations
+                .GroupBy(GetWeekStartDate)
+                .OrderBy(kvp => kvp.Key)
+                .ToDictionary(
+                    group => $"{group.Key:yyyy-MM-dd}",
+                    group => group.Sum(d => d.amount)
+                );
+        }
+
         #endregion
         #region Other methods
         public async Task<int> GetTotalAmountDonorsAsync(DateTime fromDate, DateTime toDate) {
@@ -325,6 +359,15 @@ namespace LogicPersistence.Api.Services
 
             return uniqueDonors.Count;
         }
+        #endregion
+        #region Internal Methods
+
+        private static DateTime GetWeekStartDate<T>(T donation) where T : Donation {
+            var dayOfWeek = (int)donation.donation_date.DayOfWeek;
+            var daysToSubtract = dayOfWeek == 0 ? 6 : dayOfWeek - 1;
+            return donation.donation_date.Date.AddDays(-daysToSubtract);
+        }
+
         #endregion
     }
 }

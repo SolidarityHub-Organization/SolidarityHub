@@ -3,8 +3,7 @@ using System.Numerics;
 
 namespace LogicPersistence.Api.Models.DTOs;
 
-public class VolunteerCreateDto
-{
+public class VolunteerCreateDto {
     [Required]
     [EmailAddress]
     [MaxLength(255)]
@@ -41,8 +40,7 @@ public class VolunteerCreateDto
     public int? location_id { get; set; }
 }
 
-public class VolunteerUpdateDto
-{
+public class VolunteerUpdateDto {
     [Required]
     public int id { get; set; }
 
@@ -82,8 +80,7 @@ public class VolunteerUpdateDto
     public int? location_id { get; set; }
 }
 
-public class VolunteerDisplayDto
-{
+public class VolunteerDisplayDto {
     public int id { get; set; }
     public string email { get; set; } = string.Empty;
     public string password { get; set; } = string.Empty;
@@ -98,8 +95,7 @@ public class VolunteerDisplayDto
     public int? location_id { get; set; }
 }
 
-public class VolunteerWithDetailsDisplayDto
-{
+public class VolunteerWithDetailsDisplayDto {
     public int id { get; set; }
     public string email { get; set; } = string.Empty;
     public string name { get; set; } = string.Empty;
@@ -115,5 +111,6 @@ public class VolunteerWithDetailsDisplayDto
     public int? location_id { get; set; }
     public LocationDisplayDto? location { get; set; }
     public String locationJson { get; set; } = string.Empty;
-
+    public IEnumerable<VolunteerTimeDisplayDto> availableTimes { get; set; } = [];
+    public String availableTimesJson { get; set; } = string.Empty;
 }

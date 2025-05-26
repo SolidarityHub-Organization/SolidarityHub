@@ -5,6 +5,7 @@ import 'package:solidarityhub/utils/logger.dart';
 import 'dart:math' as math;
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/widgets/common/custom_pie_chart.dart';
+import 'package:solidarityhub/widgets/common/custom_bar_chart.dart';
 
 class RecursosTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -35,6 +36,11 @@ class _RecursosTabState extends State<RecursosTab> {
   late Future<int> _totalDonorsFuture;
   late Future<Map<String, int>> _donationsByTypeFuture;
   final ScrollController _pieChartScrollController = ScrollController();
+  final ScrollController _barChartScrollController = ScrollController();
+
+
+  String _selectedDonationType = 'physical';
+  late Future<Map<String, double>> _weeklyDonationsFuture;
   
   @override
   void initState() {
@@ -70,6 +76,19 @@ class _RecursosTabState extends State<RecursosTab> {
       startDate,
       endDate,
     );
+
+    _loadWeeklyDonationsData();
+  }
+
+  void _loadWeeklyDonationsData() {
+    final startDate = _adjustStartDate(widget.fechaInicio);
+    final endDate = _adjustEndDate(widget.fechaFin);
+    
+    if (_selectedDonationType == 'physical') {
+      _weeklyDonationsFuture = DonationServices.fetchPhysicalDonationsSumByWeek(startDate, endDate);
+    } else {
+      _weeklyDonationsFuture = DonationServices.fetchMonetaryDonationsSumByWeek(startDate, endDate);
+    }
   }
   
   @override
@@ -84,10 +103,20 @@ class _RecursosTabState extends State<RecursosTab> {
       _loadDashboardData();
     }
   }
+
+  void _onDonationTypeChanged(String? newValue) {
+    if (newValue != null && newValue != _selectedDonationType) {
+      setState(() {
+        _selectedDonationType = newValue;
+        _loadWeeklyDonationsData();
+      });
+    }
+  }
   
   @override
   void dispose() {
     _pieChartScrollController.dispose();
+    _barChartScrollController.dispose();
     super.dispose();
   }
   
@@ -689,6 +718,20 @@ class _RecursosTabState extends State<RecursosTab> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  
+                  // Divider
+                  const Divider(
+                    height: 40,
+                    thickness: 2,
+                    indent: 40,
+                    endIndent: 40,
+                    color: Colors.grey,
+                  ),
+                  
+                  // Weekly Donations Bar Chart
+                  _buildWeeklyDonationsChart(),
+                  
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -939,6 +982,134 @@ class _RecursosTabState extends State<RecursosTab> {
       ),
     );
   }
+
+
+  String _formatWeekLabel(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      
+      return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
+    } catch (e) {
+      print('Error formateando fecha: $dateString, error: $e');
+      return dateString;
+    }
+  }
+
+  Widget _buildWeeklyDonationsChart() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Padding(
+            padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Evolución semanal de donaciones',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedDonationType,
+                      onChanged: _onDonationTypeChanged,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'physical',
+                          child: Row(
+                            children: [
+                              Icon(Icons.inventory, size: 16, color: Colors.blue),
+                              SizedBox(width: 8),
+                              Text('Donaciones Físicas'),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'monetary',
+                          child: Row(
+                            children: [
+                              Icon(Icons.euro, size: 16, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text('Donaciones Monetarias'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                      dropdownColor: Colors.white,
+                      elevation: 2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Container(
+            height: 500,
+            child: FutureBuilder<Map<String, double>>(
+              future: _weeklyDonationsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error al cargar los datos: ${snapshot.error}',
+                      style: TextStyle(color: Colors.red[700]),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('No hay datos disponibles para este periodo'),
+                  );
+                }
+
+
+                final data = snapshot.data!.entries
+                    .map((entry) => {
+                          'item1': _formatWeekLabel(entry.key),
+                          'item2': entry.value,
+                        })
+                    .toList();
+
+                return CustomBarChart(
+                  data: data,
+                  barColor: _selectedDonationType == 'physical' 
+                      ? const Color(0xFF2196F3) 
+                      : const Color(0xFF4CAF50),
+                  tooltipColor: _selectedDonationType == 'physical' 
+                      ? const Color(0xFF2196F3)
+                      : const Color(0xFF4CAF50),
+                  legendScrollController: _barChartScrollController,
+                  padding: const EdgeInsets.fromLTRB(40.0, 0.0, 50.0, 80.0),
+                  threshold: 0.0, 
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
