@@ -256,6 +256,8 @@ class TaskTableController {
     _lastDeletedTask = task;
 
     try {
+      // give the user time to revert the deletion
+      await Future.delayed(const Duration(seconds: 10));
       await TaskServices.deleteTask(task.id);
       await fetchTasks();
       if (onComplete != null) {
@@ -276,8 +278,8 @@ class TaskTableController {
         name: _lastDeletedTask!.name,
         description: _lastDeletedTask!.description,
         selectedVolunteers: _lastDeletedTask!.assignedVolunteers.map((v) => v.id).toList(),
-        latitude: _lastDeletedTask!.location?.latitude.toString() ?? "0",
-        longitude: _lastDeletedTask!.location?.longitude.toString() ?? "0",
+        latitude: _lastDeletedTask!.location?.latitude.toString() ?? '0',
+        longitude: _lastDeletedTask!.location?.longitude.toString() ?? '0',
         startDate: _lastDeletedTask!.startDate,
         endDate: _lastDeletedTask!.endDate,
         selectedVictim: _lastDeletedTask!.assignedVictim.map((v) => v.id).toList(),
