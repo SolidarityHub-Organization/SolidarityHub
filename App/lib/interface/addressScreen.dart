@@ -30,6 +30,20 @@ class _AddressScreenState extends State<AddressScreen> {
 
   late AddressController controller;
 
+  void _saveState(){
+    final address = [
+      controller.addressLine1Controller.text,
+      controller.addressLine2Controller.text,
+      controller.postalCodeController.text,
+      controller.cityController.text,
+      controller.provinceController.text,
+      controller.countryController.text,
+    ].join(', ');
+
+    widget.manager.userData.address = address;
+    widget.manager.saveStep();
+  }
+
   void _validateAndSubmitAddress() {
     setState(() {
       _address1HasError = controller.addressLine1Controller.text.isEmpty;
@@ -45,17 +59,7 @@ class _AddressScreenState extends State<AddressScreen> {
       _postalCodeError = _postalCodeHasError ? 'Este campo es obligatorio' : null;
 
       if (!(_address1HasError || _countryHasError || _provinceHasError || _cityHasError || _postalCodeHasError)) {
-        final address = [
-          controller.addressLine1Controller.text,
-          controller.addressLine2Controller.text,
-          controller.postalCodeController.text,
-          controller.cityController.text,
-          controller.provinceController.text,
-          controller.countryController.text,
-        ].join(', ');
-
-        widget.manager.userData.address = address;
-        widget.manager.saveStep();
+        _saveState();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Dirección enviada correctamente")),
@@ -114,20 +118,23 @@ class _AddressScreenState extends State<AddressScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white,),
           onPressed: () {
-            final address = [
-              controller.addressLine1Controller.text,
-              controller.addressLine2Controller.text,
-              controller.postalCodeController.text,
-              controller.cityController.text,
-              controller.provinceController.text,
-              controller.countryController.text,
-            ].join(', ');
-            widget.manager.userData.address = address;
-            widget.manager.saveStep();
+            _saveState();
             widget.manager.restorePreviousStep();
             Navigator.pop(context);
           },
-        )
+        ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 3 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
       ),
       backgroundColor: Colors.red,
       body: SafeArea(

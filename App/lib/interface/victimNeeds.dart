@@ -48,7 +48,19 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
               widget.manager.restorePreviousStep();
               Navigator.pop(context);
             },
-          )
+          ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 4.5 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
       ),
       backgroundColor: Colors.red,
       body: Center(

@@ -40,7 +40,20 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
             Navigator.pop(context);
           },
         ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 4 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
       ),
+
       backgroundColor: Colors.red,
       body: SafeArea(
         child: Center(

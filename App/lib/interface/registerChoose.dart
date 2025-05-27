@@ -39,6 +39,14 @@ class _RegisterChooseState extends State<RegisterChoose> {
     _controller.identificationController.text = widget.manager.userData.identification ?? '';
   }
 
+  void _saveState(){
+    widget.manager.userData.name = _controller.nameController.text;
+    widget.manager.userData.surname = _controller.surnameController.text;
+    widget.manager.userData.birthDate = _controller.birthDateController.text;
+    widget.manager.userData.phone = _controller.phoneController.text;
+    widget.manager.userData.identification = _controller.identificationController.text;
+    widget.manager.saveStep();
+  }
 
   void _submitFormConValidacion(String rol, BuildContext context) {
     setState(() {
@@ -103,12 +111,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
       }
 
       if (isValid) {
-        widget.manager.userData.name = _controller.nameController.text;
-        widget.manager.userData.surname = _controller.surnameController.text;
-        widget.manager.userData.birthDate = _controller.birthDateController.text;
-        widget.manager.userData.phone = _controller.phoneController.text;
-        widget.manager.userData.identification = _controller.identificationController.text;
-        widget.manager.saveStep();
+        _saveState();
         _controller.submitForm(rol, context);
       }
 
@@ -121,15 +124,28 @@ class _RegisterChooseState extends State<RegisterChoose> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              widget.manager.saveStep();
-              widget.manager.restorePreviousStep();
-              Navigator.pop(context);
-            },
-          )
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            _saveState();
+            widget.manager.restorePreviousStep();
+            Navigator.pop(context);
+          },
+        ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 2 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
       ),
+
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
