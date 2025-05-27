@@ -93,6 +93,8 @@ class _SchedulesState extends State<Schedules> {
                     onChanged: (bool? value) {
                     setState(() {
                     controller.updateSelectedTimes(label, value ?? false);
+                    widget.manager.userData.schedule = controller.selectedTimes.join(', ');
+                    widget.manager.saveStep();
                         });
                       },
                     );
