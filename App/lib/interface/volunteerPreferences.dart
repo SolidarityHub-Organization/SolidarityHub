@@ -18,6 +18,22 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
   void initState() {
     super.initState();
     controller = VolunteerPreferencesController(widget.manager);
+
+    final selected = widget.manager.userData.preferences?.split(', ') ?? [];
+
+    for (var key in controller.preferences.keys) {
+      controller.preferences[key] = selected.contains(key);
+    }
+  }
+
+  void _saveState(){
+    final selectedPrefs = controller.preferences.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    widget.manager.userData.preferences = selectedPrefs.join(', ');
+    widget.manager.saveStep();
   }
 
   @override
@@ -28,6 +44,7 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
+              _saveState();
               widget.manager.restorePreviousStep();
               Navigator.pop(context);
             },
@@ -88,7 +105,7 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
-                            widget.manager.saveStep();
+                            _saveState();
                             controller.finalizeRegistration(context);
                           }
                               : null,

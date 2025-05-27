@@ -18,6 +18,22 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
   void initState() {
     super.initState();
     controller = VictimNeedsController(widget.manager);
+
+    final selected = widget.manager.userData.needs?.split(', ') ?? [];
+
+    for (var key in controller.needs.keys) {
+      controller.needs[key] = selected.contains(key);
+    }
+  }
+
+  void _saveState(){
+    final selectedPrefs = controller.needs.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    widget.manager.userData.needs = selectedPrefs.join(', ');
+    widget.manager.saveStep();
   }
 
   @override
@@ -28,6 +44,7 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
+              _saveState();
               widget.manager.restorePreviousStep();
               Navigator.pop(context);
             },
@@ -88,7 +105,7 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
-                            widget.manager.saveStep();
+                            _saveState();
                             controller.finalizeRegistration(context);
                           }
                               : null,

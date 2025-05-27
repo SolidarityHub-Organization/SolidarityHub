@@ -13,6 +13,14 @@ class Schedules extends StatefulWidget {
 }
 
 class _SchedulesState extends State<Schedules> {
+
+  @override
+  void initState() {
+    super.initState();
+    final selected = widget.manager.userData.schedule?.split(', ') ?? [];
+    controller.selectedTimes.addAll(selected);
+  }
+
   final SchedulesController controller = SchedulesController();
 
   final Map<String, String> timeLabels = {
@@ -30,6 +38,7 @@ class _SchedulesState extends State<Schedules> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
+              widget.manager.saveStep();
               widget.manager.restorePreviousStep();
               Navigator.pop(context);
             },

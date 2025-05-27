@@ -19,7 +19,13 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
   void initState() {
     super.initState();
     controller = AfectadosNecessitiesController(widget.manager);
+
+    final selected = widget.manager.userData.needs?.split(', ') ?? [];
+    for (var item in controller.needs) {
+      item.selected = selected.contains(item.label);
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +35,7 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
+            widget.manager.saveStep();
             widget.manager.restorePreviousStep();
             Navigator.pop(context);
           },

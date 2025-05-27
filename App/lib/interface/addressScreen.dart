@@ -45,14 +45,23 @@ class _AddressScreenState extends State<AddressScreen> {
       _postalCodeError = _postalCodeHasError ? 'Este campo es obligatorio' : null;
 
       if (!(_address1HasError || _countryHasError || _provinceHasError || _cityHasError || _postalCodeHasError)) {
-        controller.submitAddress();
+        final address = [
+          controller.addressLine1Controller.text,
+          controller.addressLine2Controller.text,
+          controller.postalCodeController.text,
+          controller.cityController.text,
+          controller.provinceController.text,
+          controller.countryController.text,
+        ].join(', ');
+
+        widget.manager.userData.address = address;
+        widget.manager.saveStep();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Dirección enviada correctamente")),
         );
 
         if(widget.manager.userData.role == 'Volunteer'){
-          widget.manager.saveStep();
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -61,7 +70,6 @@ class _AddressScreenState extends State<AddressScreen> {
           );
         }
         else{
-          widget.manager.saveStep();
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -79,7 +87,18 @@ class _AddressScreenState extends State<AddressScreen> {
   void initState() {
     super.initState();
     controller = AddressController(widget.manager.userData);
+
+    final addressParts = (widget.manager.userData.address ?? '').split(', ');
+    if (addressParts.length >= 6) {
+      controller.addressLine1Controller.text = addressParts[0];
+      controller.addressLine2Controller.text = addressParts[1];
+      controller.postalCodeController.text = addressParts[2];
+      controller.cityController.text = addressParts[3];
+      controller.provinceController.text = addressParts[4];
+      controller.countryController.text = addressParts[5];
+    }
   }
+
 
   @override
   void dispose() {
@@ -95,6 +114,7 @@ class _AddressScreenState extends State<AddressScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white,),
           onPressed: () {
+            widget.manager.saveStep();
             widget.manager.restorePreviousStep();
             Navigator.pop(context);
           },

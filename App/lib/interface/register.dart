@@ -82,6 +82,7 @@ class _RegisterState extends State<Register> {
 
       if (isValid) {
         registerController.register(context);
+        manager.saveStep();
       }
     });
   }

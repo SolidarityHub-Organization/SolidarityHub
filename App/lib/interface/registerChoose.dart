@@ -31,7 +31,14 @@ class _RegisterChooseState extends State<RegisterChoose> {
   void initState() {
     super.initState();
     _controller = RegisterChooseController(widget.manager);
+
+    _controller.nameController.text = widget.manager.userData.name ?? '';
+    _controller.surnameController.text = widget.manager.userData.surname ?? '';
+    _controller.birthDateController.text = widget.manager.userData.birthDate ?? '';
+    _controller.phoneController.text = widget.manager.userData.phone ?? '';
+    _controller.identificationController.text = widget.manager.userData.identification ?? '';
   }
+
 
   void _submitFormConValidacion(String rol, BuildContext context) {
     setState(() {
@@ -96,6 +103,11 @@ class _RegisterChooseState extends State<RegisterChoose> {
       }
 
       if (isValid) {
+        widget.manager.userData.name = _controller.nameController.text;
+        widget.manager.userData.surname = _controller.surnameController.text;
+        widget.manager.userData.birthDate = _controller.birthDateController.text;
+        widget.manager.userData.phone = _controller.phoneController.text;
+        widget.manager.userData.identification = _controller.identificationController.text;
         widget.manager.saveStep();
         _controller.submitForm(rol, context);
       }
@@ -112,6 +124,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
+              widget.manager.saveStep();
               widget.manager.restorePreviousStep();
               Navigator.pop(context);
             },
