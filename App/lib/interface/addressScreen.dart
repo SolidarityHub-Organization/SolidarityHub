@@ -114,6 +114,15 @@ class _AddressScreenState extends State<AddressScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white,),
           onPressed: () {
+            final address = [
+              controller.addressLine1Controller.text,
+              controller.addressLine2Controller.text,
+              controller.postalCodeController.text,
+              controller.cityController.text,
+              controller.provinceController.text,
+              controller.countryController.text,
+            ].join(', ');
+            widget.manager.userData.address = address;
             widget.manager.saveStep();
             widget.manager.restorePreviousStep();
             Navigator.pop(context);
