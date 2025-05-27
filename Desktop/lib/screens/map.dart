@@ -126,6 +126,28 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           }
         }).toList();
 
+    List<Marker> specialRouteMarkers = [];
+    if (controller.routeStart != null) {
+      specialRouteMarkers.add(
+        Marker(
+          point: controller.routeStart!,
+          width: 40,
+          height: 40,
+          child: Icon(Icons.flag, color: Colors.green, size: 36),
+        ),
+      );
+    }
+    if (controller.routeEnd != null) {
+      specialRouteMarkers.add(
+        Marker(
+          point: controller.routeEnd!,
+          width: 40,
+          height: 40,
+          child: Icon(Icons.flag, color: Colors.red, size: 36),
+        ),
+      );
+    }
+
     return Container(
       margin: EdgeInsets.all(12.0),
       decoration: BoxDecoration(
@@ -156,6 +178,12 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                     controller.updateZoom(position.zoom!);
                   }
                 },
+                onTap: (tapPosition, point) {
+                  if (controller.isRouteMapActive) {
+                    // Si el mapa de rutas está activo, generamos la ruta
+                    controller.generateRouteMap(tapPosition, point, context);
+                  }
+                },
               ),
               children: [
                 TileLayer(
@@ -180,10 +208,16 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                               .toList()
                           : [],
                 ),
-                MarkerLayer(markers: flutterMapMarkers),
+
+                PolylineLayer(
+                  polylines:
+                      controller.isRouteMapActive
+                          ? [Polyline(points: controller.routePoints, strokeWidth: 5.0, color: Colors.blue)]
+                          : [],
+                ),
+                MarkerLayer(markers: [...flutterMapMarkers, ...specialRouteMarkers]),
               ],
             ),
-
             // Barra de búsqueda
             Positioned(
               top: 16,
@@ -204,7 +238,6 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                 onClear: () => _searchController.clear(),
               ),
             ),
-
             // Botones de filtro
             Positioned(
               top: 82,
@@ -267,7 +300,74 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                 color: Colors.red,
               ),
             ),
-
+            // Botón de mapa de rutas
+            Positioned(
+              bottom: 16,
+              left: 180,
+              child: MapFilterButton(
+                label: 'Mapa de rutas',
+                isSelected: controller.isRouteMapActive,
+                onPressed: () => controller.toggleRouteMap(context),
+                icon: Icons.alt_route,
+                color: Colors.red,
+              ),
+            ),
+            //Boton para elegir el tipo de ruta
+            if (controller.isRouteMapActive)
+              Positioned(
+                top: 80,
+                right: 16,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                  ),
+                  child: DropdownButton<TypeofRoute>(
+                    value: controller.selectedRouteType,
+                    underline: SizedBox(),
+                    icon: Icon(Icons.arrow_drop_down),
+                    items: [
+                      DropdownMenuItem(
+                        value: TypeofRoute.car,
+                        child: Row(
+                          children: [
+                            Icon(Icons.directions_car, color: Colors.black),
+                            SizedBox(width: 8),
+                            Text('Coche'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: TypeofRoute.bike,
+                        child: Row(
+                          children: [
+                            Icon(Icons.directions_bike, color: Colors.black),
+                            SizedBox(width: 8),
+                            Text('Bicicleta'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: TypeofRoute.walking,
+                        child: Row(
+                          children: [
+                            Icon(Icons.directions_walk, color: Colors.black),
+                            SizedBox(width: 8),
+                            Text('Andando'),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onChanged: (type) {
+                      if (type != null) {
+                        controller.setRouteType(type);
+                      }
+                    },
+                  ),
+                ),
+              ),
             // Leyendas condicionales
             if (controller.isHeatMapActive) Positioned(bottom: 70, left: 16, child: HeatMapLegend()),
 

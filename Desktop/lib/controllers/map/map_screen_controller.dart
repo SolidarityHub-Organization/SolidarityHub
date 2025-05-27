@@ -1,13 +1,20 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/controllers/map/cluster_controller.dart';
 import 'package:solidarityhub/services/location_services.dart';
 import 'package:solidarityhub/services/location_external_services.dart';
 import 'package:solidarityhub/services/affected_zone_services.dart';
+import 'package:solidarityhub/services/route_services.dart';
+import 'package:solidarityhub/utils/route_result.dart';
 
 // Enumeración para los modos de visualización del mapa
 enum MapViewMode { victim, volunteer, task, meeting_point, pickup_point }
+
+// Enumeración para los tipos de rutas
+enum TypeofRoute { car, walking, bike }
 
 // Modelo para los polígonos del mapa de calor
 class MapPolygon {
@@ -32,11 +39,25 @@ class MapScreenController extends ChangeNotifier {
   // Filtros activos
   final Set<MapViewMode> _selectedModes = {MapViewMode.victim}; // Por defecto mostrar víctimas
 
+  //Tipo de rutas seleccionada
+  TypeofRoute? _selectedRouteType = TypeofRoute.car; // Por defecto tipo de ruta coche
+
   // Marcador seleccionado
   MapMarker? _selectedMarker;
 
   // Estado del mapa de calor
   bool _isHeatMapActive = false;
+
+// Estado del mapa de rutas
+  bool _isRouteMapActive = false;
+
+// Variables para el mapa de rutas
+  LatLng? _routeStart;
+  LatLng? _routeEnd;
+  List<LatLng> _routePoints = [];
+  double? _routeDistance;
+  double? _routeDuration;
+  RouteResult? _routeResult;
 
   // Nivel de zoom actual
   double _currentZoom = 13.0;
@@ -48,8 +69,17 @@ class MapScreenController extends ChangeNotifier {
   Set<MapViewMode> get selectedModes => _selectedModes;
   MapMarker? get selectedMarker => _selectedMarker;
   bool get isHeatMapActive => _isHeatMapActive;
+  bool get isRouteMapActive => _isRouteMapActive;
   double get currentZoom => _currentZoom;
   List<MapPolygon> get polygons => _polygons;
+  LatLng? get routeStart => _routeStart;
+  LatLng? get routeEnd => _routeEnd;
+  List<LatLng> get routePoints => _routePoints;
+  TypeofRoute? get selectedRouteType => _selectedRouteType;
+  double? get routeDistance => _routeDistance;
+  double? get routeDuration => _routeDuration;
+  RouteResult? get routeResult => _routeResult;
+  
 
   // Constructor
   MapScreenController();
@@ -116,6 +146,75 @@ class MapScreenController extends ChangeNotifier {
       _polygons = _createSampleHeatMap();
       notifyListeners();
     }
+  }
+
+  void setRouteType(TypeofRoute type) {
+    _selectedRouteType = type;
+    notifyListeners();
+  }
+
+  void toggleRouteMap( BuildContext context){
+    _isRouteMapActive = !_isRouteMapActive;
+    if (_isRouteMapActive) {
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecciona el punto de partida y luego el de llegada en el mapa.')),
+      );     
+    } else {
+      _routeStart = null;
+      _routeEnd = null;
+      _routePoints = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> generateRouteMap(TapPosition tapPosition, LatLng point, BuildContext context) async {
+    if(_routeStart == null){
+       _routeStart = point;
+       notifyListeners();
+       ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ahora selecciona el punto de llegada.')),
+          );
+    } else if (_routeEnd == null){
+      _routeEnd = point;
+      notifyListeners();
+      await _calculateRoute(context);
+      }  
+  }
+
+  Future<void> _calculateRoute(BuildContext context ) async {
+    if (_routeStart != null && _routeEnd != null) {
+      final zonasAEvitar = await AffectedZoneServices.fetchAffectedZonesPoints();
+    try {
+      switch (_selectedRouteType) {
+        case TypeofRoute.car:
+          
+          _routeResult = await RouteServices.fetchCarRoute(_routeStart!, _routeEnd!, zonasAEvitar);
+          _routePoints = _routeResult!.points;
+          _routeDistance = _routeResult!.distance;
+          _routeDuration = _routeResult!.duration;
+          print('Coordenadas que devuelve, $_routePoints');
+          break;
+        case TypeofRoute.walking:
+          _routeResult = await RouteServices.fetchWalkingRoute(_routeStart!, _routeEnd!, zonasAEvitar);
+          _routePoints = _routeResult!.points;
+          _routeDistance = _routeResult!.distance;
+          _routeDuration = _routeResult!.duration;
+          break;
+        case TypeofRoute.bike:
+          _routeResult = await RouteServices.fetchBikeRoute(_routeStart!, _routeEnd!, zonasAEvitar);
+          _routePoints = _routeResult!.points;
+          _routeDistance = _routeResult!.distance;
+          _routeDuration = _routeResult!.duration;
+          break;
+        default:
+          throw Exception('Tipo de ruta no soportado');
+      }
+      notifyListeners();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al calcular ruta: $e')));
+    }
+  }
   }
 
   // Convertir zonas afectadas a polígonos
@@ -208,6 +307,7 @@ class MapScreenController extends ChangeNotifier {
 
     return polygons;
   }
+
 
   // Obtener el color para un cluster basado en sus elementos
   Color getClusterColor(List<MapMarker> items) {
