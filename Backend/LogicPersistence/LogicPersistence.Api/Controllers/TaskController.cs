@@ -255,5 +255,48 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpGet("tasks/paginated")]
+		public async Task<IActionResult> GetPaginatedTasksAsync([FromQuery] int page = 1, [FromQuery] int size = 10) {
+			try {
+				var (tasks, totalCount) = await _taskServices.GetPaginatedTasksAsync(page, size);
+
+				return Ok(new {
+					Items = tasks,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+		
+		[HttpGet("tasks/dashboard/paginated")]
+		public async Task<IActionResult> GetPaginatedTasksForDashboardAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate, [FromQuery] int page = 1, [FromQuery] int size = 10) {
+			try {
+				var (tasks, totalCount) = await _taskServices.GetPaginatedTasksForDashboardAsync(fromDate, toDate, page, size);
+				
+				return Ok(new
+				{
+					Items = tasks,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

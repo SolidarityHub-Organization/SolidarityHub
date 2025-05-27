@@ -88,7 +88,7 @@ class _VolunteerTabState extends State<VolunteerTab> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
+                      return const Center(child: Text('No hay datos para mostrar.'));
                     } else {
                       final data = snapshot.data!;
 
@@ -113,24 +113,14 @@ class _VolunteerTabState extends State<VolunteerTab> {
                             legendScrollController: _barChartLegendController,
                           ),
                           const SizedBox(height: 15),
-                          const Divider(
-                            height: 40,
-                            thickness: 2,
-                            indent: 40,
-                            endIndent: 40,
-                            color: Colors.grey,
-                          ),
+                          const Divider(height: 40, thickness: 2, indent: 40, endIndent: 40, color: Colors.grey),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
                               child: Text(
                                 'Proporción de voluntarios por habilidad',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                                 textAlign: TextAlign.left,
                               ),
                             ),
@@ -159,4 +149,3 @@ class _VolunteerTabState extends State<VolunteerTab> {
     );
   }
 }
-

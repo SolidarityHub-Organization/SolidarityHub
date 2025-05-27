@@ -81,6 +81,23 @@ class TaskServices {
     return tasks;
   }
 
+  static Future<Map<String, dynamic>> fetchDateFilteredPaginatedTasks(DateTime startDate, DateTime endDate, int page, int size) async {
+    final response = await ApiServices.get(
+      'tasks/dashboard/paginated'
+      '?fromDate=${startDate.toIso8601String()}'
+      '&toDate=${endDate.toIso8601String()}'
+      '&page=$page'
+      '&size=$size',
+    );
+    Map<String, dynamic> result = {};
+
+    if (response.statusCode.ok) {
+      result = json.decode(response.body);
+    }
+
+    return result;
+  }
+
   static Future<List<Map<String, dynamic>>> fetchAllTasksWithDetails() async {
     final response = await ApiServices.get('tasks-with-details');
     List<Map<String, dynamic>> tasks = [];

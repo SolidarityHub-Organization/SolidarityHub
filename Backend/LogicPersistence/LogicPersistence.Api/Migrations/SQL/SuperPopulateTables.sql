@@ -1,6 +1,6 @@
 -- VALENCIA CITY LOCATIONS (Centro, Barrios principales)
 INSERT INTO "location" ("latitude", "longitude") VALUES
-  -- Centro histórico
+-- Victimas
   (39.4699, -0.3763),  -- Plaza del Ayuntamiento
   (39.4698, -0.3779),  -- Plaza de la Reina
   (39.4697, -0.3774),  -- Plaza de la Virgen
@@ -16,144 +16,167 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4675, -0.3690),  -- Mercado Colón
   (39.4740, -0.3750),  -- Plaza del Mercado
   (39.4680, -0.3740),  -- Calle Colón
-  (39.4660, -0.3760),  -- Gran Vía Marqués del Turia
-  (39.4645, -0.3745),  -- Calle Xàtiva
-  (39.4685, -0.3685),  -- Calle Poeta Querol
-  (39.4705, -0.3715),  -- Plaza Alfonso el Magnánimo
-  (39.4725, -0.3745),  -- Plaza del Patriarca
-  (39.4730, -0.3770),  -- El Carmen
-  (39.4690, -0.3790),  -- Velluters
-  (39.4710, -0.3800),  -- Sant Francesc
-  (39.4695, -0.3755),  -- La Seu
-  (39.4715, -0.3785),  -- La Xerea
-  (39.4557, -0.3521),  -- Ciudad de las Artes
-  (39.4561, -0.3419),  -- Oceanogràfic
-  (39.4560, -0.3419),  -- Hemisfèric
-  (39.4550, -0.3480),  -- Museo de las Ciencias
-  (39.4545, -0.3500),  -- Palau de les Arts
-  (39.4565, -0.3440),  -- L'Àgora
-  (39.4575, -0.3460),  -- Jardín del Turia (zona CAC)
-  (39.4620, -0.3650),  -- Centro Russafa
-  (39.4610, -0.3660),  -- Calle Sueca
-  (39.4630, -0.3640),  -- Mercado de Russafa
-  (39.4615, -0.3675),  -- Plaza Honduras
-  (39.4625, -0.3665),  -- Calle Denia
-  (39.4605, -0.3645),  -- Calle Maestro Gozalbo
-  (39.4783, -0.3767),  -- Jardines del Real (Viveros)
-  (39.4789, -0.3676),  -- Jardín Botánico
-  (39.4788, -0.3669),  -- Jardines de Monforte
-  (39.4800, -0.3750),  -- Parque de Cabecera
-  (39.4795, -0.3720),  -- Jardines de Viveros Norte
-  (39.4770, -0.3690),  -- Parque de la Rambleta
-  (39.4736, -0.3583),  -- Puerto de Valencia
-  (39.4852, -0.3504),  -- Playa de la Malvarrosa
-  (39.4803, -0.3407),  -- Playa de las Arenas
-  (39.4589, -0.3337),  -- Marina Real
-  (39.4820, -0.3520),  -- Paseo Marítimo
-  (39.4840, -0.3480),  -- Playa Patacona
-  (39.4810, -0.3460),  -- Puerto Deportivo
-  (39.4830, -0.3440),  -- Las Arenas Centro
+  (39.4699, -0.3763),  -- Plaza del Ayuntamiento
+  (39.4698, -0.3779),  -- Plaza de la Reina
+  (39.4697, -0.3774),  -- Plaza de la Virgen
+  (39.4715, -0.3677),  -- Mercado Central
+  (39.4735, -0.3787),  -- Torres de Serranos
+  (39.4744, -0.3798),  -- Torres de Quart
+  (39.4751, -0.3815),  -- IVAM
+  (39.4706, -0.3751),  -- Catedral de Valencia
+  (39.4720, -0.3695),  -- Lonja de la Seda
+  (39.4725, -0.3803),  -- Puente de Serranos
+  (39.4650, -0.3773),  -- Estación del Norte
+  (39.4632, -0.3795),  -- Plaza de Toros
+  (39.4675, -0.3690),  -- Mercado Colón
+  (39.4740, -0.3750),  -- Plaza del Mercado
+  (39.4680, -0.3740),  -- Calle Colón
   (39.4860, -0.3557),  -- Plaza de Benimaclet
   (39.4845, -0.3571),  -- Calle Emilio Baró
   (39.4853, -0.3543),  -- Estación de Benimaclet
   (39.4870, -0.3565),  -- Mercado de Benimaclet
   (39.4855, -0.3580),  -- Calle Primado Reig
-  (39.4890, -0.3890),  -- Centro Campanar
-  (39.4875, -0.3905),  -- Parque de Campanar
-  (39.4885, -0.3875),  -- Metro Campanar
-  (39.4580, -0.3420),  -- Centro Algirós
-  (39.4570, -0.3435),  -- Politécnico UPV
-  (39.4590, -0.3405),  -- Ciudad Politécnica
-  (39.4503, -0.3257),  -- El Saler
-  (39.4490, -0.3280),  -- Pinedo
-  (39.4520, -0.3240),  -- El Palmar
-  (39.4480, -0.3300),  -- El Perellonet
-  (39.5039, -0.4449),  -- Paterna Centro
-  (39.5020, -0.4430),  -- Paterna Este
-  (39.5050, -0.4470),  -- Paterna Oeste
-  (39.4925, -0.3827),  -- Tavernes Blanques
-  (39.4935, -0.3810),  -- Tavernes Centro
-  (39.4943, -0.3370),  -- Alboraya Patacona
-  (39.4854, -0.3518),  -- Alboraya Centro
-  (39.4920, -0.3390),  -- Alboraya Norte
-  (39.4890, -0.3450),  -- Port Saplaya
-  (39.6850, -0.2660),  -- Sagunto Centro
-  (39.6880, -0.2680),  -- Sagunto Puerto
-  (39.6820, -0.2640),  -- Teatro Romano
-  (39.6860, -0.2700),  -- Sagunto Norte
-  (39.6170, -0.2890),  -- Puçol Centro
-  (39.6150, -0.2870),  -- Puçol Playa
-  (39.6770, -0.2430),  -- Canet Centro
-  (39.6790, -0.2410),  -- Canet Playa
-  (39.7200, -0.3100),  -- Benavites
-  (39.6590, -0.3420),  -- Quart de les Valls
-  (39.6930, -0.3250),  -- Segart
-  (39.4370, -0.4670),  -- Torrent Centro
-  (39.4350, -0.4690),  -- Torrent Sur
-  (39.4390, -0.4650),  -- Torrent Norte
-  (39.4630, -0.4580),  -- Xirivella Centro
-  (39.4640, -0.4600),  -- Xirivella Norte
-  (39.4738, -0.4329),  -- Mislata Centro
-  (39.4750, -0.4310),  -- Mislata Este
-  (39.3717, -0.4215),  -- Picassent Centro
-  (39.3700, -0.4200),  -- Picassent Sur
-  (39.4810, -0.4520),  -- Aldaia Centro
-  (39.4820, -0.4540),  -- Aldaia Norte
-  (39.4050, -0.4100),  -- Catarroja Centro
-  (39.4030, -0.4080),  -- Catarroja Sur
-  (39.4200, -0.3950),  -- Massanassa Centro
-  (39.4270, -0.4170),  -- Paiporta Centro
-  (39.4250, -0.4150),  -- Paiporta Sur
-  (39.4810, -0.4330),  -- Quart de Poblet Centro
-  (39.4800, -0.4350),  -- Quart de Poblet Sur
-  (39.4920, -0.4610),  -- Manises Centro
-  (39.4900, -0.4630),  -- Manises Aeropuerto
-  (39.5084, -0.4147),  -- Burjassot Centro
-  (39.5100, -0.4130),  -- Burjassot Norte
-  (39.5200, -0.4050),  -- Godella Centro
-  (39.5220, -0.4030),  -- Godella Norte
-  (39.5350, -0.4200),  -- Rocafort Centro
-  (39.5700, -0.4450),  -- Bétera Centro
-  (39.5720, -0.4430),  -- Bétera Norte
-  (39.6100, -0.5940),  -- Llíria Centro
-  (39.6120, -0.5920),  -- Llíria Norte
-  (39.6080, -0.5960),  -- Llíria Sur
-  (39.1520, -0.4350),  -- Alzira Centro
-  (39.1500, -0.4330),  -- Alzira Norte
-  (39.1540, -0.4370),  -- Alzira Sur
-  (38.9900, -0.5200),  -- Xàtiva Centro
-  (38.9920, -0.5180),  -- Xàtiva Norte
-  (38.9880, -0.5220),  -- Xàtiva Sur
-  (39.1670, -0.2510),  -- Cullera Centro
-  (39.1650, -0.2490),  -- Cullera Playa
-  (39.1690, -0.2530),  -- Cullera Norte
+  (39.4852, -0.3504),  -- Playa de la Malvarrosa
+  (39.4803, -0.3407),  -- Playa de las Arenas
+  (39.4820, -0.3520),  -- Paseo Marítimo
+  (39.4840, -0.3480),  -- Playa Patacona
+  (39.4830, -0.3440),  -- Las Arenas Centro
+--Fin Victimas
+-- Inicio volunteer
+  (39.4840, -0.4000),  -- Valencia - Campanar Centro
+  (39.4855, -0.4020),  -- Valencia - Parque de Campanar
+  (39.4865, -0.3980),  -- Valencia - Metro Campanar
+  (39.4872, -0.3995),  -- Valencia - Zona Industrial Campanar
+  (39.4880, -0.3970),  -- Valencia - Barrio Campanar Norte
+  (39.4370, -0.4670),  -- Torrent Centro (zona afectada: Metropolitana Sur)
+  (39.4350, -0.4690),  -- Torrent Sur (zona afectada: Metropolitana Sur)
+  (39.3717, -0.4215),  -- Picassent Centro (zona afectada: Metropolitana Sur)
+  (39.4050, -0.4100),  -- Catarroja Centro (zona afectada: Metropolitana Sur)
+  (39.4270, -0.4170),  -- Paiporta Centro (zona afectada: Metropolitana Sur)
+  (39.4788, -0.3669),  -- Valencia - Jardines de Monforte
+  (39.4800, -0.3750),  -- Valencia - Parque de Cabecera
+  (39.4795, -0.3720),  -- Valencia - Jardines de Viveros Norte
+  (39.4770, -0.3690),  -- Valencia - Parque de la Rambleta
+  (39.4736, -0.3583),  -- Valencia - Puerto de Valencia (zona afectada: Marítima Malvarrosa)
+  (39.4852, -0.3504),  -- Valencia - Playa de la Malvarrosa (zona afectada: Marítima Malvarrosa)
+  (39.4803, -0.3407),  -- Valencia - Playa de las Arenas (zona afectada: Marítima Malvarrosa)
+  (39.4589, -0.3337),  -- Valencia - Marina Real (zona afectada: Marítima Malvarrosa)
+  (39.4820, -0.3520),  -- Valencia - Paseo Marítimo (zona afectada: Marítima Malvarrosa)
+  (39.4840, -0.3480),  -- Valencia - Playa Patacona (zona afectada: Marítima Malvarrosa)
+  (39.4810, -0.3460),  -- Valencia - Puerto Deportivo
+  (39.4830, -0.3440),  -- Valencia - Las Arenas Centro
+  (39.4860, -0.3557),  -- Valencia - Plaza de Benimaclet (zona afectada: Benimaclet Norte)
+  (39.4845, -0.3571),  -- Valencia - Calle Emilio Baró (zona afectada: Benimaclet Norte)
+  (39.4853, -0.3543),  -- Valencia - Estación de Benimaclet (zona afectada: Benimaclet Norte)
+  (39.4870, -0.3565),  -- Valencia - Mercado de Benimaclet (zona afectada: Benimaclet Norte)
+  (39.4855, -0.3580),  -- Valencia - Calle Primado Reig (zona afectada: Benimaclet Norte)
+  (39.4890, -0.3890),  -- Valencia - Campanar Centro (repetido para variedad)
+  (39.4875, -0.3905),  -- Valencia - Parque de Campanar (repetido para variedad)
+  (39.4885, -0.3875),  -- Valencia - Metro Campanar (repetido para variedad)
+  (39.4580, -0.3420),  -- Valencia - Centro Algirós
+  (39.4570, -0.3435),  -- Valencia - Politécnico UPV
+  (39.4590, -0.3405),  -- Valencia - Ciudad Politécnica
+  (39.4503, -0.3257),  -- El Saler (zona afectada: Costera Sur)
+  (39.4490, -0.3280),  -- Pinedo (zona afectada: Costera Sur)
+  (39.4520, -0.3240),  -- El Palmar (zona afectada: Costera Sur)
+  (39.4480, -0.3300),  -- El Perellonet (zona afectada: Costera Sur)
+  (39.5039, -0.4449),  -- Paterna Centro (zona afectada: Metropolitana Sur)
+  (39.5020, -0.4430),  -- Paterna Este (zona afectada: Metropolitana Sur)
+  (39.5050, -0.4470),  -- Paterna Oeste (zona afectada: Metropolitana Sur)
+--Fin volunteer
+-- Inicio task
+  (39.4782, -0.3768),  -- Valencia - Plaza del Ayuntamiento
+  (39.4667, -0.3770),  -- Valencia - Ruzafa
+  (39.4840, -0.3557),  -- Valencia - Benimaclet
+  (39.4700, -0.3320),  -- Valencia - Malvarrosa
+  (39.4845, -0.4000),  -- Valencia - Campanar
+  (39.4699, -0.3763),  -- Valencia - Centro Histórico
+  (39.4715, -0.3677),  -- Valencia - Mercado Central
+  (39.4744, -0.3798),  -- Valencia - Torres de Quart
+  (39.4751, -0.3815),  -- Valencia - IVAM
+  (39.4706, -0.3751),  -- Valencia - Catedral
+  (39.4720, -0.3695),  -- Valencia - Lonja de la Seda
+  (39.4725, -0.3803),  -- Valencia - Puente de Serranos
+  (39.4650, -0.3773),  -- Valencia - Estación del Norte
+  (39.4632, -0.3795),  -- Valencia - Plaza de Toros
+  (39.4675, -0.3690),  -- Valencia - Mercado Colón
+  (39.4740, -0.3750),  -- Valencia - Plaza del Mercado
+  (39.4680, -0.3740),  -- Valencia - Calle Colón
+  (39.4860, -0.3557),  -- Valencia - Plaza de Benimaclet
+  (39.4845, -0.3571),  -- Valencia - Calle Emilio Baró
+  (39.4853, -0.3543),  -- Valencia - Estación de Benimaclet
+  (39.4870, -0.3565),  -- Valencia - Mercado de Benimaclet
+  (39.4855, -0.3580),  -- Valencia - Calle Primado Reig
+  (39.4852, -0.3504),  -- Valencia - Playa de la Malvarrosa
+  (39.4803, -0.3407),  -- Valencia - Playa de las Arenas
+  (39.4820, -0.3520),  -- Valencia - Paseo Marítimo
+  (39.4840, -0.3480),  -- Valencia - Playa Patacona
+  (39.4830, -0.3440),  -- Valencia - Las Arenas Centro
+  (39.4580, -0.3420),  -- Valencia - Centro Algirós
+  (39.4370, -0.4670),  -- Torrent Centro (Metropolitana Sur)
+  (39.4050, -0.4100),  -- Catarroja Centro (Metropolitana Sur)
+  (39.3717, -0.4215),  -- Picassent Centro (Metropolitana Sur)
+  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
+  (39.6150, -0.2870),  -- Puçol Playa (Zona Norte Sagunto)
+  (39.1520, -0.4350),  -- Alzira Centro (Zona Interior Ribera)
+  (38.9900, -0.5200),  -- Xàtiva Centro (Zona Interior Ribera)
+  (39.1670, -0.2510),  -- Cullera Centro (Zona Costera Sur)
+  (38.9670, -0.1800),  -- Gandia Centro (Zona Costera Sur)
+  (38.9200, -0.1200),  -- Oliva Centro (Zona Costera Sur)
+  (39.6100, -0.5940),  -- Llíria Centro (Zona Montañosa Interior)
+  (39.8500, -0.4900),  -- Segorbe Centro (Zona Montañosa Interior)
+  (39.4200, -0.7900),  -- Buñol Centro (Zona Montañosa Interior)
+  (39.5084, -0.4147),  -- Burjassot Centro (Metropolitana Sur)
+  (39.5200, -0.4050),  -- Godella Centro (Metropolitana Sur)
+  (39.5350, -0.4200),  -- Rocafort Centro (Metropolitana Sur)
+  (39.5700, -0.4450),  -- Bétera Centro (Metropolitana Sur)
+  (39.4920, -0.4610),  -- Manises Centro (Metropolitana Sur)
+  (39.4810, -0.4330),  -- Quart de Poblet Centro (Metropolitana Sur)
+  (39.4800, -0.4350),  -- Quart de Poblet Sur (Metropolitana Sur)
   (39.1200, -0.4500),  -- Carcaixent Centro
-  (39.1950, -0.4350),  -- Algemesí Centro;
+  (39.1950, -0.4350),  -- Algemesí Centro
   (39.2050, -0.3100),  -- Sueca Centro
   (39.2070, -0.3080),  -- Sueca Norte
   (39.2750, -0.3450),  -- Sollana Centro
-  (39.2850, -0.4180),  -- Almussafes Centro;
-  (38.9670, -0.1800),  -- Gandia Centro
+  (39.2850, -0.4180),  -- Almussafes Centro
   (38.9650, -0.1780),  -- Gandia Playa
   (38.9690, -0.1820),  -- Gandia Norte
-  (38.9200, -0.1200),  -- Oliva Centro
+--Fin task
+--Inicio pickup points
+  (39.4699, -0.3763),  -- Valencia - Plaza del Ayuntamiento (Zona Centro Valencia)
+  (39.4667, -0.3770),  -- Valencia - Ruzafa (Zona Russafa-Eixample)
+  (39.4860, -0.3557),  -- Valencia - Benimaclet (Zona Benimaclet Norte)
+  (39.4852, -0.3504),  -- Valencia - Playa de la Malvarrosa (Zona Marítima Malvarrosa)
+  (39.4845, -0.4000),  -- Valencia - Campanar (Zona Industrial Campanar)
+  (39.4370, -0.4670),  -- Torrent Centro (Zona Metropolitana Sur)
+  (39.5084, -0.4147),  -- Burjassot Centro (Zona Metropolitana Sur)
+  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
+  (39.1520, -0.4350),  -- Alzira Centro (Zona Interior Ribera)
+  (38.9670, -0.1800),  -- Gandia Centro (Zona Costera Sur)
   (38.9180, -0.1180),  -- Oliva Playa
-  (39.0750, -0.2450),  -- Tavernes Centro;
-  (38.9750, -0.6050),  -- Canals Centro
-  (39.1000, -0.5050),  -- L'Alcúdia Centro;
-  (38.8200, -0.6050),  -- Ontinyent Centro
-  (38.8220, -0.6030),  -- Ontinyent Norte
-  (38.8450, -0.5200),  -- Albaida Centro;
-  (38.7450, -0.4350),  -- Cocentaina Centro
-  (38.7650, -0.4650),  -- Muro Centro;
-  (38.7050, -0.4750),  -- Alcoy Centro
-  (38.7070, -0.4730),  -- Alcoy Norte
-  (38.7030, -0.4770),  -- Alcoy Sur;
-  (39.8500, -0.4900),  -- Segorbe Centro
-  (39.8520, -0.4880),  -- Segorbe Norte
-  (39.8750, -0.4100),  -- Altura Centro
+--Fin pickup points
+-- Inicio meeting points
+  (39.4699, -0.3763),  -- Valencia - Plaza del Ayuntamiento (Zona Centro Valencia)
+  (39.4795, -0.3720),  -- Valencia - Jardines de Viveros (Zona Centro Norte)
+  (39.4736, -0.3583),  -- Valencia - Ciudad de las Artes y Ciencias (Zona Sur)
+  (39.4751, -0.3815),  -- Valencia - IVAM (Zona Centro Histórico)
+  (39.4589, -0.3337),  -- Valencia - Marina Real (Zona Marítima)
+  (39.4860, -0.3557),  -- Valencia - Plaza de Benimaclet (Zona Benimaclet Norte)
+  (39.4852, -0.3504),  -- Valencia - Malvarrosa Beach (Zona Marítima Malvarrosa)
+  (39.4845, -0.4000),  -- Valencia - Campanar Park (Zona Industrial Campanar)
+  (39.5039, -0.4449),  -- Paterna Centro (Zona Metropolitana Sur)
+  (39.5024, -0.3480),  -- Alboraya Centro (Zona Norte)
+  (39.4503, -0.3257),  -- El Saler (Zona Costera Sur)
+  (39.4700, -0.4250),  -- Mislata Centro (Zona Metropolitana Oeste)
+  (39.5084, -0.4147),  -- Burjassot Centro (Zona Metropolitana Sur)
+  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
+-- Fin meeting points
+
+-- A partir de aqui hay locations adicionales. Para que este mas o menos organizado, si necesitais añadir mas elementos de cualquier tipo,
+--  porfavor hacedlo ordenado como esta hecho hasta este punto, es decir, por tandas y poniendo comentarios con inicio y fin, para que asi sea más facil de editar
+
   (39.9100, -0.5650),  -- Jérica Centro;
-  (39.4650, -0.7150),  -- Chiva Centro
+  (39.4741, -0.7104),  -- Chiva Centro
   (39.4200, -0.7900),  -- Buñol Centro
   (39.7500, -0.9850),  -- Chelva Centro;
   (39.5600, -0.6200),  -- Villamarxant Centro
@@ -162,27 +185,7 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4738, -0.3733),  -- Tarea zona afectada 2
   (39.4820, -0.3590),  -- Zona portuaria adicional
   (39.4710, -0.3820),  -- Centro histórico adicional
-  (39.4600, -0.3500),  -- Zona sur adicional
-  -- Zona Afectada 1: Centro Valencia (3 puntos)
-  (39.4721, -0.3764), (39.4703, -0.3752), (39.4690, -0.3771),
-  -- Zona Afectada 2: Russafa-Eixample (3 puntos)
-  (39.4618, -0.3658), (39.4628, -0.3642), (39.4612, -0.3668),
-  -- Zona Afectada 3: Benimaclet (3 puntos)
-  (39.4862, -0.3559), (39.4848, -0.3573), (39.4875, -0.3548),
-  -- Zona Afectada 4: Malvarrosa-Cabañal (3 puntos)
-  (39.4855, -0.3502), (39.4848, -0.3485), (39.4835, -0.3495),
-  -- Zona Afectada 5: Campanar (3 puntos)
-  (39.4892, -0.3888), (39.4878, -0.3902), (39.4883, -0.3873),
-  -- Zona Afectada 6: Torrent-Picassent (3 puntos)
-  (39.4372, -0.4672), (39.3719, -0.4217), (39.4058, -0.4102),
-  -- Zona Afectada 7: Sagunto (3 puntos)
-  (39.6852, -0.2662), (39.6878, -0.2682), (39.6825, -0.2645),
-  -- Zona Afectada 8: Xàtiva-Alzira (3 puntos)
-  (38.9902, -0.5202), (39.1522, -0.4352), (39.1672, -0.2512),
-  -- Zona Afectada 9: Gandia-Oliva (3 puntos)
-  (38.9672, -0.1802), (38.9202, -0.1202), (39.0752, -0.2452),
-  -- Zona Afectada 10: Alcoy-Ontinyent (3 puntos)
-  (38.7052, -0.4752), (38.8202, -0.6052), (38.7452, -0.4352),
+  (39.4600, -0.3500),  -- Zona sur adicional (id 162)
   -- Valencia City - Barrios adicionales
   (39.4567, -0.3892), (39.4723, -0.3621), (39.4834, -0.3734), (39.4912, -0.3612), (39.4645, -0.3567),
   (39.4756, -0.3823), (39.4589, -0.3712), (39.4678, -0.3634), (39.4801, -0.3598), (39.4523, -0.3445),
@@ -218,7 +221,29 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.4819, -0.3570), (39.4888, -0.3949), (39.4865, -0.3645), (39.4842, -0.3621), (39.4906, -0.3967),
   (39.4831, -0.3558), (39.4900, -0.3961), (39.4877, -0.3629), (39.4854, -0.3605), (39.4917, -0.3979),
   (39.4839, -0.3546), (39.4912, -0.3973), (39.4889, -0.3629), (39.4866, -0.3605), (39.4930, -0.3989),
-  (39.4853, -0.3534), (39.4927, -0.3983), (39.4904, -0.3629), (39.4881, -0.3605), (39.4943, -0.3999);
+  (39.4853, -0.3534), (39.4927, -0.3983), (39.4904, -0.3629), (39.4881, -0.3605), (39.4943, -0.3999),
+  
+  -- ESTAS LOCATIONS PORFAVOR SIEMPRE AL FINAL, NO AÑADIR NINGUNO ABAJO
+  -- Zona Afectada 1: Alboraya (3 puntos)
+  (39.5024, -0.3480), (39.4929, -0.3487), (39.4980, -0.3581),
+  -- Zona Afectada 2: Zona Malvarrosa (3 puntos)
+  (39.4634, -0.3238), (39.4642, -0.3370), (39.4943, -0.3270),
+  -- Zona Afectada 3: Burjassot (3 puntos)
+  (39.5056, -0.4056), (39.5082, -0.4236), (39.5138, -0.4153),
+  -- Zona Afectada 4: Ciutat Vella (3 puntos)
+  (39.4713, -0.3723), (39.4729, -0.3801), (39.4789, -0.3774),
+  -- Zona Afectada 5: Quart de Poblet (3 puntos)
+  (39.4712, -0.4258), (39.4859, -0.4364), (39.4819, -0.4558),
+  -- Zona Afectada 6: Chiva (3 puntos)
+  (39.4811, -0.7282), (39.4700, -0.7042), (39.4509, -0.7380),
+  -- Zona Afectada 7: Aldaya, Torrent y Picanya (3 puntos)
+  (39.4709, -0.4624), (39.4263, -0.4983), (39.4258, -0.4044),
+  -- Zona Afectada 8: Xàtiva (3 puntos)
+  (38.9935, -0.5202), (38.9860, -0.5252), (38.9890, -0.5147),
+  -- Zona Afectada 9: Gandia-Oliva (3 puntos)
+  (38.9672, -0.1802), (38.9202, -0.1202), (39.0752, -0.2452),
+  -- Zona Afectada 10: Alcoy-Ontinyent (3 puntos)
+  (38.7052, -0.4752), (38.8202, -0.6052), (38.7452, -0.4352);
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
   ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
@@ -226,174 +251,174 @@ INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_nu
   ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, '5553456789', '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
   ('Admin', 'Admin', 'admin@admin.com','admin', 1, '5554567890', '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
 
--- CREATE 44 VICTIMS
+-- CREATE 40 VICTIMS
 INSERT INTO "victim" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
-  ('Carmen', 'García', 'carmen.garcia@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '963123456', 'Calle Colón 15, Valencia', 'VCT-001-2025', 15),
-  ('Antonio', 'Martínez', 'antonio.martinez@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '963234567', 'Plaza del Ayuntamiento 8, Valencia', 'VCT-002-2025', 1),
-  ('María José', 'López', 'mariajose.lopez@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '963345678', 'Calle Sagunto 22, Valencia', 'VCT-003-2025', 32),
-  ('Francisco', 'Rodríguez', 'francisco.rodriguez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '963456789', 'Av. del Puerto 45, Valencia', 'VCT-004-2025', 44),
-  ('Ana', 'Fernández', 'ana.fernandez@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '963567890', 'C/ Russafa 12, Valencia', 'VCT-005-2025', 33),
-  ('José Luis', 'Sánchez', 'joseluis.sanchez@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '963678901', 'Benimaclet 78, Valencia', 'VCT-006-2025', 52),
-  ('Isabel', 'Pérez', 'isabel.perez@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '963789012', 'Campanar 34, Valencia', 'VCT-007-2025', 56),
-  ('Manuel', 'Gómez', 'manuel.gomez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '963890123', 'Malvarrosa 67, Valencia', 'VCT-008-2025', 45),
-  ('Pilar', 'Jiménez', 'pilar.jimenez@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '963901234', 'Torrent Centro, Valencia', 'VCT-009-2025', 82),
-  ('Carlos', 'Ruiz', 'carlos.ruiz@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '964012345', 'Sagunto Centro', 'VCT-010-2025', 70),
-  ('Dolores', 'Hernández', 'dolores.hernandez@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '964123456', 'Xàtiva Centro', 'VCT-011-2025', 115),
-  ('Rafael', 'Moreno', 'rafael.moreno@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '964234567', 'Alzira Norte', 'VCT-012-2025', 113),
-  ('Esperanza', 'Muñoz', 'esperanza.munoz@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '964345678', 'Cullera Playa', 'VCT-013-2025', 119),
-  ('Vicente', 'Álvarez', 'vicente.alvarez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '964456789', 'Gandia Centro', 'VCT-014-2025', 127),
-  ('Amparo', 'Romero', 'amparo.romero@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '964567890', 'Burjassot Norte', 'VCT-015-2025', 103),
-  ('Joaquín', 'Torres', 'joaquin.torres@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '964678901', 'Mislata Centro', 'VCT-016-2025', 88),
-  ('Remedios', 'Domínguez', 'remedios.dominguez@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '964789012', 'Paterna Este', 'VCT-017-2025', 64),
-  ('Emilio', 'Vázquez', 'emilio.vazquez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '964890123', 'Picassent Sur', 'VCT-018-2025', 90),
-  ('Concepción', 'Ramos', 'concepcion.ramos@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '964901234', 'Catarroja Sur', 'VCT-019-2025', 93),
-  ('Sebastián', 'Gil', 'sebastian.gil@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '965012345', 'Alboraya Centro', 'VCT-020-2025', 68),
-  ('Rosario', 'Serrano', 'rosario.serrano@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '965123456', 'Godella Norte', 'VCT-021-2025', 105),
-  ('Ángel', 'Blanco', 'angel.blanco@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '965234567', 'Llíria Centro', 'VCT-022-2025', 109),
-  ('Encarnación', 'Castro', 'encarnacion.castro@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '965345678', 'Sueca Norte', 'VCT-023-2025', 123),
-  ('Juan Carlos', 'Ortega', 'juancarlos.ortega@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '965456789', 'Alcoy Centro', 'VCT-024-2025', 144),
-  ('Mercedes', 'Rubio', 'mercedes.rubio@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '965567890', 'Ontinyent Norte', 'VCT-025-2025', 142),
-  ('Andrés', 'Moya', 'andres.moya@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '965678901', 'Segorbe Norte', 'VCT-026-2025', 147),
-  ('Josefa', 'Delgado', 'josefa.delgado@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '965789012', 'Chiva Centro', 'VCT-027-2025', 150),
-  ('Gregorio', 'Medina', 'gregorio.medina@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '965890123', 'Bétera Norte', 'VCT-028-2025', 108),
-  ('Milagros', 'Garrido', 'milagros.garrido@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '965901234', 'Manises Aeropuerto', 'VCT-029-2025', 101),
-  ('Evaristo', 'Cabrera', 'evaristo.cabrera@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '966012345', 'Quart de Poblet Sur', 'VCT-030-2025', 98),
-  ('Encarna', 'Santana', 'encarna.santana@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '966123456', 'Paiporta Sur', 'VCT-031-2025', 96),
-  ('Leopoldo', 'Herrera', 'leopoldo.herrera@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '966234567', 'Massanassa Centro', 'VCT-032-2025', 94),
-  ('Inmaculada', 'León', 'inmaculada.leon@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '966345678', 'Aldaia Norte', 'VCT-033-2025', 92),
-  ('Fermín', 'Méndez', 'fermin.mendez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '966456789', 'Xirivella Norte', 'VCT-034-2025', 84),
-  ('Visitación', 'Peña', 'visitacion.pena@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '966567890', 'Torrent Norte', 'VCT-035-2025', 83),
-  ('Saturnino', 'Vega', 'saturnino.vega@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '966678901', 'Puçol Centro', 'VCT-036-2025', 74),
-  ('Purificación', 'Lozano', 'purificacion.lozano@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '966789012', 'Canet Centro', 'VCT-037-2025', 76),
-  ('Herminio', 'Jiménez', 'herminio.jimenez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '966890123', 'Oliva Centro', 'VCT-038-2025', 129),
-  ('Felicidad', 'Guerrero', 'felicidad.guerrero@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '966901234', 'Algemesí Centro', 'VCT-039-2025', 121),
-  ('Abundio', 'Prieto', 'abundio.prieto@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '967012345', 'Carcaixent Centro', 'VCT-040-2025', 120);
+  ('Carmen', 'García', 'carmen.garcia@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '963123456', 'Calle Colón 15, Valencia', 'VCT-001-2025', 1),
+  ('Antonio', 'Martínez', 'antonio.martinez@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '963234567', 'Plaza del Ayuntamiento 8, Valencia', 'VCT-002-2025', 2),
+  ('María José', 'López', 'mariajose.lopez@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '963345678', 'Calle Sagunto 22, Valencia', 'VCT-003-2025', 3),
+  ('Francisco', 'Rodríguez', 'francisco.rodriguez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '963456789', 'Av. del Puerto 45, Valencia', 'VCT-004-2025', 4),
+  ('Ana', 'Fernández', 'ana.fernandez@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '963567890', 'C/ Russafa 12, Valencia', 'VCT-005-2025', 5),
+  ('José Luis', 'Sánchez', 'joseluis.sanchez@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '963678901', 'Benimaclet 78, Valencia', 'VCT-006-2025', 6),
+  ('Isabel', 'Pérez', 'isabel.perez@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '963789012', 'Campanar 34, Valencia', 'VCT-007-2025', 7),
+  ('Manuel', 'Gómez', 'manuel.gomez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '963890123', 'Malvarrosa 67, Valencia', 'VCT-008-2025', 8),
+  ('Pilar', 'Jiménez', 'pilar.jimenez@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '963901234', 'Torrent Centro, Valencia', 'VCT-009-2025', 9),
+  ('Carlos', 'Ruiz', 'carlos.ruiz@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '964012345', 'Sagunto Centro', 'VCT-010-2025', 10),
+  ('Dolores', 'Hernández', 'dolores.hernandez@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '964123456', 'Xàtiva Centro', 'VCT-011-2025', 11),
+  ('Rafael', 'Moreno', 'rafael.moreno@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '964234567', 'Alzira Norte', 'VCT-012-2025', 12),
+  ('Esperanza', 'Muñoz', 'esperanza.munoz@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '964345678', 'Cullera Playa', 'VCT-013-2025', 13),
+  ('Vicente', 'Álvarez', 'vicente.alvarez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '964456789', 'Gandia Centro', 'VCT-014-2025', 14),
+  ('Amparo', 'Romero', 'amparo.romero@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '964567890', 'Burjassot Norte', 'VCT-015-2025', 15),
+  ('Joaquín', 'Torres', 'joaquin.torres@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '964678901', 'Mislata Centro', 'VCT-016-2025', 16),
+  ('Remedios', 'Domínguez', 'remedios.dominguez@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '964789012', 'Paterna Este', 'VCT-017-2025', 17),
+  ('Emilio', 'Vázquez', 'emilio.vazquez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '964890123', 'Picassent Sur', 'VCT-018-2025', 18),
+  ('Concepción', 'Ramos', 'concepcion.ramos@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '964901234', 'Catarroja Sur', 'VCT-019-2025', 19),
+  ('Sebastián', 'Gil', 'sebastian.gil@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '965012345', 'Alboraya Centro', 'VCT-020-2025', 20),
+  ('Rosario', 'Serrano', 'rosario.serrano@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '965123456', 'Godella Norte', 'VCT-021-2025', 21),
+  ('Ángel', 'Blanco', 'angel.blanco@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '965234567', 'Llíria Centro', 'VCT-022-2025', 22),
+  ('Encarnación', 'Castro', 'encarnacion.castro@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '965345678', 'Sueca Norte', 'VCT-023-2025', 23),
+  ('Juan Carlos', 'Ortega', 'juancarlos.ortega@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '965456789', 'Alcoy Centro', 'VCT-024-2025', 24),
+  ('Mercedes', 'Rubio', 'mercedes.rubio@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '965567890', 'Ontinyent Norte', 'VCT-025-2025', 25),
+  ('Andrés', 'Moya', 'andres.moya@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '965678901', 'Segorbe Norte', 'VCT-026-2025', 26),
+  ('Josefa', 'Delgado', 'josefa.delgado@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '965789012', 'Chiva Centro', 'VCT-027-2025', 27),
+  ('Gregorio', 'Medina', 'gregorio.medina@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '965890123', 'Bétera Norte', 'VCT-028-2025', 28),
+  ('Milagros', 'Garrido', 'milagros.garrido@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '965901234', 'Manises Aeropuerto', 'VCT-029-2025', 29),
+  ('Evaristo', 'Cabrera', 'evaristo.cabrera@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '966012345', 'Quart de Poblet Sur', 'VCT-030-2025', 30),
+  ('Encarna', 'Santana', 'encarna.santana@email.com', '$2a$12$gK6ByD5rYpjKXKPwjQF0y.ZTqJawPmPE/tvyWG9Jd02mHynm7RhLG', 34, '966123456', 'Paiporta Sur', 'VCT-031-2025', 31),
+  ('Leopoldo', 'Herrera', 'leopoldo.herrera@email.com', '$2a$12$1Wmcp3eV9hMMKCC14banc.GQ3.qW8wroD582CGnuVrA.tgm0W8REK', 34, '966234567', 'Massanassa Centro', 'VCT-032-2025', 32),
+  ('Inmaculada', 'León', 'inmaculada.leon@email.com', '$2a$12$0VT37J97D356KoQ8ZS2NAen4x5NAKWaYkNBYl/LGBSB7AeNnuY4XG', 34, '966345678', 'Aldaia Norte', 'VCT-033-2025', 33),
+  ('Fermín', 'Méndez', 'fermin.mendez@email.com', '$2a$12$eOKsPJL6PYJ/U1F9MFjgIuhiDybZXBZRrRsPaeIplk0Y9Xf.d2IXK', 34, '966456789', 'Xirivella Norte', 'VCT-034-2025', 34),
+  ('Visitación', 'Peña', 'visitacion.pena@email.com', '$2a$12$KmS5FBVMmQXwDB20zcCwGO8c7o.Omht5LdK6QerZ8IFaGGlJxqCCO', 34, '966567890', 'Torrent Norte', 'VCT-035-2025', 35),
+  ('Saturnino', 'Vega', 'saturnino.vega@email.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 34, '966678901', 'Puçol Centro', 'VCT-036-2025', 36),
+  ('Purificación', 'Lozano', 'purificacion.lozano@email.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 34, '966789012', 'Canet Centro', 'VCT-037-2025', 37),
+  ('Herminio', 'Jiménez', 'herminio.jimenez@email.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 34, '966890123', 'Oliva Centro', 'VCT-038-2025', 38),
+  ('Felicidad', 'Guerrero', 'felicidad.guerrero@email.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 34, '966901234', 'Algemesí Centro', 'VCT-039-2025', 39),
+  ('Abundio', 'Prieto', 'abundio.prieto@email.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 34, '967012345', 'Carcaixent Centro', 'VCT-040-2025', 40);
 
 -- UPDATE LOCATIONS WITH VICTIM IDS
-UPDATE "location" SET "victim_id" = 1 WHERE "id" = 15;
-UPDATE "location" SET "victim_id" = 2 WHERE "id" = 1;
-UPDATE "location" SET "victim_id" = 3 WHERE "id" = 32;
-UPDATE "location" SET "victim_id" = 4 WHERE "id" = 44;
-UPDATE "location" SET "victim_id" = 5 WHERE "id" = 33;
-UPDATE "location" SET "victim_id" = 6 WHERE "id" = 52;
-UPDATE "location" SET "victim_id" = 7 WHERE "id" = 56;
-UPDATE "location" SET "victim_id" = 8 WHERE "id" = 45;
-UPDATE "location" SET "victim_id" = 9 WHERE "id" = 82;
-UPDATE "location" SET "victim_id" = 10 WHERE "id" = 70;
-UPDATE "location" SET "victim_id" = 11 WHERE "id" = 115;
-UPDATE "location" SET "victim_id" = 12 WHERE "id" = 113;
-UPDATE "location" SET "victim_id" = 13 WHERE "id" = 119;
-UPDATE "location" SET "victim_id" = 14 WHERE "id" = 127;
-UPDATE "location" SET "victim_id" = 15 WHERE "id" = 103;
-UPDATE "location" SET "victim_id" = 16 WHERE "id" = 88;
-UPDATE "location" SET "victim_id" = 17 WHERE "id" = 64;
-UPDATE "location" SET "victim_id" = 18 WHERE "id" = 90;
-UPDATE "location" SET "victim_id" = 19 WHERE "id" = 93;
-UPDATE "location" SET "victim_id" = 20 WHERE "id" = 68;
-UPDATE "location" SET "victim_id" = 21 WHERE "id" = 105;
-UPDATE "location" SET "victim_id" = 22 WHERE "id" = 109;
-UPDATE "location" SET "victim_id" = 23 WHERE "id" = 123;
-UPDATE "location" SET "victim_id" = 24 WHERE "id" = 144;
-UPDATE "location" SET "victim_id" = 25 WHERE "id" = 142;
-UPDATE "location" SET "victim_id" = 26 WHERE "id" = 147;
-UPDATE "location" SET "victim_id" = 27 WHERE "id" = 150;
-UPDATE "location" SET "victim_id" = 28 WHERE "id" = 108;
-UPDATE "location" SET "victim_id" = 29 WHERE "id" = 101;
-UPDATE "location" SET "victim_id" = 30 WHERE "id" = 98;
-UPDATE "location" SET "victim_id" = 31 WHERE "id" = 96;
-UPDATE "location" SET "victim_id" = 32 WHERE "id" = 94;
-UPDATE "location" SET "victim_id" = 33 WHERE "id" = 92;
-UPDATE "location" SET "victim_id" = 34 WHERE "id" = 84;
-UPDATE "location" SET "victim_id" = 35 WHERE "id" = 83;
-UPDATE "location" SET "victim_id" = 36 WHERE "id" = 74;
-UPDATE "location" SET "victim_id" = 37 WHERE "id" = 76;
-UPDATE "location" SET "victim_id" = 38 WHERE "id" = 129;
-UPDATE "location" SET "victim_id" = 39 WHERE "id" = 121;
-UPDATE "location" SET "victim_id" = 40 WHERE "id" = 120;
+UPDATE "location" SET "victim_id" = 1 WHERE "id" = 1;
+UPDATE "location" SET "victim_id" = 2 WHERE "id" = 2;
+UPDATE "location" SET "victim_id" = 3 WHERE "id" = 3;
+UPDATE "location" SET "victim_id" = 4 WHERE "id" = 4;
+UPDATE "location" SET "victim_id" = 5 WHERE "id" = 5;
+UPDATE "location" SET "victim_id" = 6 WHERE "id" = 6;
+UPDATE "location" SET "victim_id" = 7 WHERE "id" = 7;
+UPDATE "location" SET "victim_id" = 8 WHERE "id" = 8;
+UPDATE "location" SET "victim_id" = 9 WHERE "id" = 9;
+UPDATE "location" SET "victim_id" = 10 WHERE "id" = 10;
+UPDATE "location" SET "victim_id" = 11 WHERE "id" = 11;
+UPDATE "location" SET "victim_id" = 12 WHERE "id" = 12;
+UPDATE "location" SET "victim_id" = 13 WHERE "id" = 13;
+UPDATE "location" SET "victim_id" = 14 WHERE "id" = 14;
+UPDATE "location" SET "victim_id" = 15 WHERE "id" = 15;
+UPDATE "location" SET "victim_id" = 16 WHERE "id" = 16;
+UPDATE "location" SET "victim_id" = 17 WHERE "id" = 17;
+UPDATE "location" SET "victim_id" = 18 WHERE "id" = 18;
+UPDATE "location" SET "victim_id" = 19 WHERE "id" = 19;
+UPDATE "location" SET "victim_id" = 20 WHERE "id" = 20;
+UPDATE "location" SET "victim_id" = 21 WHERE "id" = 21;
+UPDATE "location" SET "victim_id" = 22 WHERE "id" = 22;
+UPDATE "location" SET "victim_id" = 23 WHERE "id" = 23;
+UPDATE "location" SET "victim_id" = 24 WHERE "id" = 24;
+UPDATE "location" SET "victim_id" = 25 WHERE "id" = 25;
+UPDATE "location" SET "victim_id" = 26 WHERE "id" = 26;
+UPDATE "location" SET "victim_id" = 27 WHERE "id" = 27;
+UPDATE "location" SET "victim_id" = 28 WHERE "id" = 28;
+UPDATE "location" SET "victim_id" = 29 WHERE "id" = 29;
+UPDATE "location" SET "victim_id" = 30 WHERE "id" = 30;
+UPDATE "location" SET "victim_id" = 31 WHERE "id" = 31;
+UPDATE "location" SET "victim_id" = 32 WHERE "id" = 32;
+UPDATE "location" SET "victim_id" = 33 WHERE "id" = 33;
+UPDATE "location" SET "victim_id" = 34 WHERE "id" = 34;
+UPDATE "location" SET "victim_id" = 35 WHERE "id" = 35;
+UPDATE "location" SET "victim_id" = 36 WHERE "id" = 36;
+UPDATE "location" SET "victim_id" = 37 WHERE "id" = 37;
+UPDATE "location" SET "victim_id" = 38 WHERE "id" = 38;
+UPDATE "location" SET "victim_id" = 39 WHERE "id" = 39;
+UPDATE "location" SET "victim_id" = 40 WHERE "id" = 40;
 
 INSERT INTO "volunteer" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
-  ('Frank', 'Lee', 'frank@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556667777', '101 Volunteer St, Philadelphia, PA 19101', 'VOL-001-2025', 46), -- Location ID 46
-  ('Grace', 'Kim', 'grace@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557778888', '202 Volunteer Ave, San Diego, CA 92101', 'VOL-002-2025', 47), -- Location ID 47
-  ('Henry', 'Chen', 'henry@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558889999', '303 Volunteer Blvd, San Francisco, CA 94101', 'VOL-003-2025', 48), -- Location ID 48
-  ('Isabel', 'Lopez', 'isabel@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559990000', '404 Volunteer Dr, Austin, TX 78701', 'VOL-004-2025', 49), -- Location ID 49
-  ('Jake', 'Williams', 'jake@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550001111', '505 Volunteer Ln, Denver, CO 80201', 'VOL-005-2025', 50),  -- Location ID 50
-  ('Laura', 'Gomez', 'laura@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551113333', '606 Volunteer Rd, Seattle, WA 98101', 'VOL-006-2025', 51),  -- Location ID 51
-  ('Kevin', 'Smith', 'kevin@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552224444', '707 Volunteer Way, Miami, FL 33101', 'VOL-007-2025', 53),  -- Location ID 53
-  ('Megan', 'Jones', 'megan@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553335555', '808 Volunteer Pl, Boston, MA 02101', 'VOL-008-2025', 54),  -- Location ID 54
-  ('Oscar', 'Garcia', 'oscar@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554446666', '909 Volunteer Cir, Atlanta, GA 30301', 'VOL-009-2025', 55),  -- Location ID 55
-  ('Paula', 'Davis', 'paula@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555557777', '1010 Volunteer Ave, Dallas, TX 75201', 'VOL-010-2025', 57), -- Location ID 57
-  ('Ricardo', 'Perez', 'ricardo@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556668888', '1111 Volunteer Rd, Chicago, IL 60601', 'VOL-011-2025', 58), -- Location ID 58
-  ('Sofia', 'Martinez', 'sofia@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557779999', '1212 Volunteer Ln, Houston, TX 77001', 'VOL-012-2025', 59), -- Location ID 59
-  ('Thomas', 'Anderson', 'thomas@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558880000', '1313 Volunteer Way, Phoenix, AZ 85001', 'VOL-013-2025', 60), -- Location ID 60
-  ('Ursula', 'Taylor', 'ursula@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559991111', '1414 Volunteer Pl, San Antonio, TX 78201', 'VOL-014-2025', 61), -- Location ID 61
-  ('Victor', 'Brown', 'victor@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550002222', '1515 Volunteer Cir, San Diego, CA 92101', 'VOL-015-2025', 62), -- Location ID 62
-  ('Wendy', 'Miller', 'wendy@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551114444', '1616 Volunteer Ave, Philadelphia, PA 19101', 'VOL-016-2025', 63), -- Location ID 63
-  ('Xavier', 'Davis', 'xavier@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552225555', '1717 Volunteer Rd, New York, NY 10001', 'VOL-017-2025', 65), -- Location ID 65
-  ('Yolanda', 'Garcia', 'yolanda@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553336666', '1818 Volunteer Ln, Los Angeles, CA 90001', 'VOL-018-2025', 66), -- Location ID 66
-  ('Zachary', 'Rodriguez', 'zachary@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554447777', '1919 Volunteer Way, Chicago, IL 60601', 'VOL-019-2025', 67), -- Location ID 67
-  ('Alice', 'Wilson', 'alice@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555558888', '2020 Volunteer Pl, Houston, TX 77001', 'VOL-020-2025', 69), -- Location ID 69
-  ('Bob', 'Anderson', 'bob@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556669999', '2121 Volunteer Cir, Phoenix, AZ 85001', 'VOL-021-2025', 71), -- Location ID 71
-  ('Cathy', 'Thomas', 'cathy@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557770000', '2222 Volunteer Ave, San Antonio, TX 78201', 'VOL-022-2025', 72), -- Location ID 72
-  ('David', 'Jackson', 'david@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558881111', '2323 Volunteer Rd, San Diego, CA 92101', 'VOL-023-2025', 73), -- Location ID 73
-  ('Emily', 'White', 'emily@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559992222', '2424 Volunteer Ln, Philadelphia, PA 19101', 'VOL-024-2025', 75), -- Location ID 75
-  ('Frank', 'Harris', 'frankh@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550003333', '2525 Volunteer Way, New York, NY 10001', 'VOL-025-2025', 77), -- Location ID 77
-  ('Gina', 'Martin', 'gina@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551115555', '2626 Volunteer Pl, Los Angeles, CA 90001', 'VOL-026-2025', 78), -- Location ID 78
-  ('Harry', 'Thompson', 'harry@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552226666', '2727 Volunteer Cir, Chicago, IL 60601', 'VOL-027-2025', 79), -- Location ID 79
-  ('Irene', 'Garcia', 'irene@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553337777', '2828 Volunteer Ave, Houston, TX 77001', 'VOL-028-2025', 80), -- Location ID 80
-  ('Jack', 'Clark', 'jack@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554448888', '2929 Volunteer Rd, Phoenix, AZ 85001', 'VOL-029-2025', 81), -- Location ID 81
-  ('Karen', 'Lewis', 'karen@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555559999', '3030 Volunteer Ln, San Antonio, TX 78201', 'VOL-030-2025', 85), -- Location ID 85
-  ('Liam', 'Hall', 'liam@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556660000', '3131 Volunteer Way, San Diego, CA 92101', 'VOL-031-2025', 86), -- Location ID 86
-  ('Mia', 'Young', 'mia@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557771111', '3232 Volunteer Pl, Philadelphia, PA 19101', 'VOL-032-2025', 87), -- Location ID 87
-  ('Noah', 'Allen', 'noah@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558882222', '3333 Volunteer Cir, New York, NY 10001', 'VOL-033-2025', 89), -- Location ID 89
-  ('Olivia', 'Wright', 'olivia@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559993333', '3434 Volunteer Ave, Los Angeles, CA 90001', 'VOL-034-2025', 91), -- Location ID 91
-  ('Peter', 'King', 'peter@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550004444', '3535 Volunteer Rd, Chicago, IL 60601', 'VOL-035-2025', 95), -- Location ID 95
-  ('Quinn', 'Scott', 'quinn@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551116666', '3636 Volunteer Ln, Houston, TX 77001', 'VOL-036-2025', 97), -- Location ID 97
-  ('Rachel', 'Green', 'rachel@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552227777', '3737 Volunteer Way, Phoenix, AZ 85001', 'VOL-037-2025', 99), -- Location ID 99
-  ('Samuel', 'Baker', 'samuel@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553338888', '3838 Volunteer Pl, San Antonio, TX 78201', 'VOL-038-2025', 100), -- Location ID 100
-  ('Tina', 'Carter', 'tina@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554449999', '3939 Volunteer Cir, San Diego, CA 92101', 'VOL-039-2025', 102), -- Location ID 102
-  ('Uma', 'Mitchell', 'uma@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555550000', '4040 Volunteer Ave, Philadelphia, PA 19101', 'VOL-040-2025', 104); -- Location ID 104
+  ('Frank', 'Lee', 'frank@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556667777', '101 Volunteer St, Philadelphia, PA 19101', 'VOL-001-2025', 41),
+  ('Grace', 'Kim', 'grace@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557778888', '202 Volunteer Ave, San Diego, CA 92101', 'VOL-002-2025', 42),
+  ('Henry', 'Chen', 'henry@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558889999', '303 Volunteer Blvd, San Francisco, CA 94101', 'VOL-003-2025', 43),
+  ('Isabel', 'Lopez', 'isabel@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559990000', '404 Volunteer Dr, Austin, TX 78701', 'VOL-004-2025', 44),
+  ('Jake', 'Williams', 'jake@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550001111', '505 Volunteer Ln, Denver, CO 80201', 'VOL-005-2025', 45),
+  ('Laura', 'Gomez', 'laura@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551113333', '606 Volunteer Rd, Seattle, WA 98101', 'VOL-006-2025', 46),
+  ('Kevin', 'Smith', 'kevin@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552224444', '707 Volunteer Way, Miami, FL 33101', 'VOL-007-2025', 47),
+  ('Megan', 'Jones', 'megan@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553335555', '808 Volunteer Pl, Boston, MA 02101', 'VOL-008-2025', 48),
+  ('Oscar', 'Garcia', 'oscar@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554446666', '909 Volunteer Cir, Atlanta, GA 30301', 'VOL-009-2025', 49),
+  ('Paula', 'Davis', 'paula@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555557777', '1010 Volunteer Ave, Dallas, TX 75201', 'VOL-010-2025', 50),
+  ('Ricardo', 'Perez', 'ricardo@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556668888', '1111 Volunteer Rd, Chicago, IL 60601', 'VOL-011-2025', 51),
+  ('Sofia', 'Martinez', 'sofia@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557779999', '1212 Volunteer Ln, Houston, TX 77001', 'VOL-012-2025', 52),
+  ('Thomas', 'Anderson', 'thomas@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558880000', '1313 Volunteer Way, Phoenix, AZ 85001', 'VOL-013-2025', 53),
+  ('Ursula', 'Taylor', 'ursula@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559991111', '1414 Volunteer Pl, San Antonio, TX 78201', 'VOL-014-2025', 54),
+  ('Victor', 'Brown', 'victor@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550002222', '1515 Volunteer Cir, San Diego, CA 92101', 'VOL-015-2025', 55),
+  ('Wendy', 'Miller', 'wendy@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551114444', '1616 Volunteer Ave, Philadelphia, PA 19101', 'VOL-016-2025', 56),
+  ('Xavier', 'Davis', 'xavier@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552225555', '1717 Volunteer Rd, New York, NY 10001', 'VOL-017-2025', 57),
+  ('Yolanda', 'Garcia', 'yolanda@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553336666', '1818 Volunteer Ln, Los Angeles, CA 90001', 'VOL-018-2025', 58),
+  ('Zachary', 'Rodriguez', 'zachary@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554447777', '1919 Volunteer Way, Chicago, IL 60601', 'VOL-019-2025', 59),
+  ('Alice', 'Wilson', 'alice@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555558888', '2020 Volunteer Pl, Houston, TX 77001', 'VOL-020-2025', 60),
+  ('Bob', 'Anderson', 'bob@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556669999', '2121 Volunteer Cir, Phoenix, AZ 85001', 'VOL-021-2025', 61),
+  ('Cathy', 'Thomas', 'cathy@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557770000', '2222 Volunteer Ave, San Antonio, TX 78201', 'VOL-022-2025', 62),
+  ('David', 'Jackson', 'david@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558881111', '2323 Volunteer Rd, San Diego, CA 92101', 'VOL-023-2025', 63),
+  ('Emily', 'White', 'emily@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559992222', '2424 Volunteer Ln, Philadelphia, PA 19101', 'VOL-024-2025', 64),
+  ('Frank', 'Harris', 'frankh@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550003333', '2525 Volunteer Way, New York, NY 10001', 'VOL-025-2025', 65),
+  ('Gina', 'Martin', 'gina@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551115555', '2626 Volunteer Pl, Los Angeles, CA 90001', 'VOL-026-2025', 66),
+  ('Harry', 'Thompson', 'harry@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552226666', '2727 Volunteer Cir, Chicago, IL 60601', 'VOL-027-2025', 67),
+  ('Irene', 'Garcia', 'irene@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553337777', '2828 Volunteer Ave, Houston, TX 77001', 'VOL-028-2025', 68),
+  ('Jack', 'Clark', 'jack@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554448888', '2929 Volunteer Rd, Phoenix, AZ 85001', 'VOL-029-2025', 69),
+  ('Karen', 'Lewis', 'karen@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555559999', '3030 Volunteer Ln, San Antonio, TX 78201', 'VOL-030-2025', 70),
+  ('Liam', 'Hall', 'liam@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5556660000', '3131 Volunteer Way, San Diego, CA 92101', 'VOL-031-2025', 71),
+  ('Mia', 'Young', 'mia@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5557771111', '3232 Volunteer Pl, Philadelphia, PA 19101', 'VOL-032-2025', 72),
+  ('Noah', 'Allen', 'noah@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5558882222', '3333 Volunteer Cir, New York, NY 10001', 'VOL-033-2025', 73),
+  ('Olivia', 'Wright', 'olivia@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5559993333', '3434 Volunteer Ave, Los Angeles, CA 90001', 'VOL-034-2025', 74),
+  ('Peter', 'King', 'peter@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5550004444', '3535 Volunteer Rd, Chicago, IL 60601', 'VOL-035-2025', 75),
+  ('Quinn', 'Scott', 'quinn@example.com', '$2a$12$1V.4auSYXgNH2xAqE93aS.LuDHpti6ldZZThDSM0VvrogryE8W0Ui', 1, '5551116666', '3636 Volunteer Ln, Houston, TX 77001', 'VOL-036-2025', 76),
+  ('Rachel', 'Green', 'rachel@example.com', '$2a$12$iDfI0RWwfUEwEc7MDYZpsOD6vFylnT1gSkl3rF8IC.mtQMQKytrXG', 1, '5552227777', '3737 Volunteer Way, Phoenix, AZ 85001', 'VOL-037-2025', 77),
+  ('Samuel', 'Baker', 'samuel@example.com', '$2a$12$T3OQ8bab.LX/YzJYYFW5N.ww8GfrFYdpLrHhD45ZJKg5D0rAgZlS2', 1, '5553338888', '3838 Volunteer Pl, San Antonio, TX 78201', 'VOL-038-2025', 78),
+  ('Tina', 'Carter', 'tina@example.com', '$2a$12$Hb3xZZWmPDyz6mTkD1qF9.K3ayAr0bd97UQJMc2lUvqQs8Idz3XYi', 1, '5554449999', '3939 Volunteer Cir, San Diego, CA 92101', 'VOL-039-2025', 79),
+  ('Uma', 'Mitchell', 'uma@example.com', '$2a$12$ZylpiL9Cn/Emf7W5/dpizeDEvZDniwJsEnicRLAkRodkYIj5q1Tou', 1, '5555550000', '4040 Volunteer Ave, Philadelphia, PA 19101', 'VOL-040-2025', 80);
 
 -- Update location table to assign volunteer_id
-UPDATE "location" SET "volunteer_id" = 1 WHERE "id" = 46;
-UPDATE "location" SET "volunteer_id" = 2 WHERE "id" = 47;
-UPDATE "location" SET "volunteer_id" = 3 WHERE "id" = 48;
-UPDATE "location" SET "volunteer_id" = 4 WHERE "id" = 49;
-UPDATE "location" SET "volunteer_id" = 5 WHERE "id" = 50;
-UPDATE "location" SET "volunteer_id" = 6 WHERE "id" = 51;
-UPDATE "location" SET "volunteer_id" = 7 WHERE "id" = 53;
-UPDATE "location" SET "volunteer_id" = 8 WHERE "id" = 54;
-UPDATE "location" SET "volunteer_id" = 9 WHERE "id" = 55;
-UPDATE "location" SET "volunteer_id" = 10 WHERE "id" = 57;
-UPDATE "location" SET "volunteer_id" = 11 WHERE "id" = 58;
-UPDATE "location" SET "volunteer_id" = 12 WHERE "id" = 59;
-UPDATE "location" SET "volunteer_id" = 13 WHERE "id" = 60;
-UPDATE "location" SET "volunteer_id" = 14 WHERE "id" = 61;
-UPDATE "location" SET "volunteer_id" = 15 WHERE "id" = 62;
-UPDATE "location" SET "volunteer_id" = 16 WHERE "id" = 63;
-UPDATE "location" SET "volunteer_id" = 17 WHERE "id" = 65;
-UPDATE "location" SET "volunteer_id" = 18 WHERE "id" = 66;
-UPDATE "location" SET "volunteer_id" = 19 WHERE "id" = 67;
-UPDATE "location" SET "volunteer_id" = 20 WHERE "id" = 69;
-UPDATE "location" SET "volunteer_id" = 21 WHERE "id" = 71;
-UPDATE "location" SET "volunteer_id" = 22 WHERE "id" = 72;
-UPDATE "location" SET "volunteer_id" = 23 WHERE "id" = 73;
-UPDATE "location" SET "volunteer_id" = 24 WHERE "id" = 75;
-UPDATE "location" SET "volunteer_id" = 25 WHERE "id" = 77;
-UPDATE "location" SET "volunteer_id" = 26 WHERE "id" = 78;
-UPDATE "location" SET "volunteer_id" = 27 WHERE "id" = 79;
-UPDATE "location" SET "volunteer_id" = 28 WHERE "id" = 80;
-UPDATE "location" SET "volunteer_id" = 29 WHERE "id" = 81;
-UPDATE "location" SET "volunteer_id" = 30 WHERE "id" = 85;
-UPDATE "location" SET "volunteer_id" = 31 WHERE "id" = 86;
-UPDATE "location" SET "volunteer_id" = 32 WHERE "id" = 87;
-UPDATE "location" SET "volunteer_id" = 33 WHERE "id" = 89;
-UPDATE "location" SET "volunteer_id" = 34 WHERE "id" = 91;
-UPDATE "location" SET "volunteer_id" = 35 WHERE "id" = 95;
-UPDATE "location" SET "volunteer_id" = 36 WHERE "id" = 97;
-UPDATE "location" SET "volunteer_id" = 37 WHERE "id" = 99;
-UPDATE "location" SET "volunteer_id" = 38 WHERE "id" = 100;
-UPDATE "location" SET "volunteer_id" = 39 WHERE "id" = 102;
-UPDATE "location" SET "volunteer_id" = 40 WHERE "id" = 104;
+UPDATE "location" SET "volunteer_id" = 1 WHERE "id" = 41;
+UPDATE "location" SET "volunteer_id" = 2 WHERE "id" = 42;
+UPDATE "location" SET "volunteer_id" = 3 WHERE "id" = 43;
+UPDATE "location" SET "volunteer_id" = 4 WHERE "id" = 44;
+UPDATE "location" SET "volunteer_id" = 5 WHERE "id" = 45;
+UPDATE "location" SET "volunteer_id" = 6 WHERE "id" = 46;
+UPDATE "location" SET "volunteer_id" = 7 WHERE "id" = 47;
+UPDATE "location" SET "volunteer_id" = 8 WHERE "id" = 48;
+UPDATE "location" SET "volunteer_id" = 9 WHERE "id" = 49;
+UPDATE "location" SET "volunteer_id" = 10 WHERE "id" = 50;
+UPDATE "location" SET "volunteer_id" = 11 WHERE "id" = 51;
+UPDATE "location" SET "volunteer_id" = 12 WHERE "id" = 52;
+UPDATE "location" SET "volunteer_id" = 13 WHERE "id" = 53;
+UPDATE "location" SET "volunteer_id" = 14 WHERE "id" = 54;
+UPDATE "location" SET "volunteer_id" = 15 WHERE "id" = 55;
+UPDATE "location" SET "volunteer_id" = 16 WHERE "id" = 56;
+UPDATE "location" SET "volunteer_id" = 17 WHERE "id" = 57;
+UPDATE "location" SET "volunteer_id" = 18 WHERE "id" = 58;
+UPDATE "location" SET "volunteer_id" = 19 WHERE "id" = 59;
+UPDATE "location" SET "volunteer_id" = 20 WHERE "id" = 60;
+UPDATE "location" SET "volunteer_id" = 21 WHERE "id" = 61;
+UPDATE "location" SET "volunteer_id" = 22 WHERE "id" = 62;
+UPDATE "location" SET "volunteer_id" = 23 WHERE "id" = 63;
+UPDATE "location" SET "volunteer_id" = 24 WHERE "id" = 64;
+UPDATE "location" SET "volunteer_id" = 25 WHERE "id" = 65;
+UPDATE "location" SET "volunteer_id" = 26 WHERE "id" = 66;
+UPDATE "location" SET "volunteer_id" = 27 WHERE "id" = 67;
+UPDATE "location" SET "volunteer_id" = 28 WHERE "id" = 68;
+UPDATE "location" SET "volunteer_id" = 29 WHERE "id" = 69;
+UPDATE "location" SET "volunteer_id" = 30 WHERE "id" = 70;
+UPDATE "location" SET "volunteer_id" = 31 WHERE "id" = 71;
+UPDATE "location" SET "volunteer_id" = 32 WHERE "id" = 72;
+UPDATE "location" SET "volunteer_id" = 33 WHERE "id" = 73;
+UPDATE "location" SET "volunteer_id" = 34 WHERE "id" = 74;
+UPDATE "location" SET "volunteer_id" = 35 WHERE "id" = 75;
+UPDATE "location" SET "volunteer_id" = 36 WHERE "id" = 76;
+UPDATE "location" SET "volunteer_id" = 37 WHERE "id" = 77;
+UPDATE "location" SET "volunteer_id" = 38 WHERE "id" = 78;
+UPDATE "location" SET "volunteer_id" = 39 WHERE "id" = 79;
+UPDATE "location" SET "volunteer_id" = 40 WHERE "id" = 80;
 
 
 
@@ -407,118 +432,118 @@ INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") 
   ('Zona Metropolitana Sur', 'Municipios del área metropolitana sur', 'High', 1),
   ('Zona Norte Sagunto', 'Área industrial y portuaria del norte', 'Critical', 1),
   ('Zona Interior Ribera', 'Poblaciones del interior afectadas', 'Medium', 1),
-  ('Zona Costera Sur', 'Costa sur de la provincia', 'High', 1),
-  ('Zona Montañosa Interior', 'Área montañosa del interior', 'Low', 1);
+  ('Zona Costera Sur', 'Costa sur de la provincia', 'None', 1),
+  ('Zona Montañosa Interior', 'Área montañosa del interior', 'None', 1);
 
 -- ASSIGN LOCATIONS TO AFFECTED ZONES (3 locations per zone)
 INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
   -- Zona Centro Valencia (locations 139-141)
-  (1, 139), (1, 140), (1, 141),
+  (1, 318), (1, 319), (1, 320),
   -- Zona Russafa-Eixample (locations 142-144)
-  (2, 142), (2, 143), (2, 144),
+  (2, 321), (2, 322), (2, 323),
   -- Zona Benimaclet Norte (locations 145-147)
-  (3, 145), (3, 146), (3, 147),
+  (3, 324), (3, 325), (3, 326),
   -- Zona Marítima Malvarrosa (locations 148-150)
-  (4, 148), (4, 149), (4, 150),
+  (4, 327), (4, 328), (4, 329),
   -- Zona Industrial Campanar (locations 151-153)
-  (5, 151), (5, 152), (5, 153),
+  (5, 330), (5, 331), (5, 332),
   -- Zona Metropolitana Sur (locations 154-156)
-  (6, 154), (6, 155), (6, 156),
+  (6, 333), (6, 334), (6, 335),
   -- Zona Norte Sagunto (locations 157-159)
-  (7, 157), (7, 158), (7, 159),
+  (7, 336), (7, 337), (7, 338),
   -- Zona Interior Ribera (locations 160-162)
-  (8, 160), (8, 161), (8, 162),
+  (8, 339), (8, 340), (8, 341),
   -- Zona Costera Sur (locations 163-165)
-  (9, 163), (9, 164), (9, 165),
+  (9, 342), (9, 343), (9, 344),
   -- Zona Montañosa Interior (locations 166-168)
-  (10, 166), (10, 167), (10, 168);
+  (10, 345), (10, 346), (10, 347);
 
 
 
 
 INSERT INTO "physical_donation" ("item_name", "description", "quantity", "item_type", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
-  ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-05-24 10:00:00', 1, NULL, NULL),
-  ('Botiquines', 'Suministros médicos básicos', 20, 'Medicine', '2025-05-24 11:30:00', 2, NULL, NULL),
-  ('Mantas', 'Mantas de lana calientes', 30, 'Clothes', '2025-05-24 09:15:00', 3, NULL, NULL),
-  ('Comida Enlatada', 'Alimentos no perecederos surtidos', 100, 'Food', '2025-05-24 14:45:00', 4, NULL, NULL),
-  ('Herramientas Eléctricas', 'Conjunto de herramientas para reconstrucción', 5, 'Tools', '2025-05-24 16:20:00', 5, NULL, NULL),
-  ('Fórmula para Bebés', 'Suministros de nutrición infantil', 25, 'Food', '2025-05-24 08:30:00', NULL, 1, NULL),
-  ('Tiendas de Campaña', 'Refugio temporal', 15, 'Other', '2025-05-24 13:10:00', NULL, 2, NULL),
+  ('Agua Embotellada', 'Cajas de 24 botellas de agua', 50, 'Food', '2025-05-20 10:00:00', 1, NULL, NULL),
+  ('Botiquines', 'Suministros médicos básicos', 20, 'Medicine', '2025-05-21 11:30:00', 2, NULL, NULL),
+  ('Mantas', 'Mantas de lana calientes', 30, 'Clothes', '2025-05-19 09:15:00', 3, NULL, NULL),
+  ('Comida Enlatada', 'Alimentos no perecederos surtidos', 100, 'Food', '2025-05-22 14:45:00', 4, NULL, NULL),
+  ('Herramientas Eléctricas', 'Conjunto de herramientas para reconstrucción', 5, 'Tools', '2025-05-18 16:20:00', 5, NULL, NULL),
+  ('Fórmula para Bebés', 'Suministros de nutrición infantil', 25, 'Food', '2025-05-23 08:30:00', NULL, 1, NULL),
+  ('Tiendas de Campaña', 'Refugio temporal', 15, 'Other', '2025-05-17 13:10:00', NULL, 2, NULL),
   ('Medicamentos', 'Medicamentos variados sin receta', 40, 'Medicine', '2025-05-24 10:45:00', NULL, 3, NULL),
-  ('Ropa de Invierno', 'Abrigos, guantes y bufandas', 60, 'Clothes', '2025-05-24 12:00:00', 6, NULL, NULL),
-  ('Linternas', 'Linternas de mano con baterías', 35, 'Tools', '2025-05-24 15:30:00', 7, NULL, NULL),
-  ('Productos de Higiene', 'Jabón, champú, pasta de dientes', 80, 'Other', '2025-05-24 11:00:00', 8, NULL, NULL),
-  ('Sacos de Dormir', 'Sacos de dormir para clima frío', 20, 'Clothes', '2025-05-24 14:30:00', 9, NULL, NULL),
-  ('Kits de Cocina', 'Utensilios básicos de cocina', 10, 'Tools', '2025-05-24 17:00:00', 10, NULL, NULL),
-  ('Alimentos para Mascotas', 'Comida para perros y gatos', 45, 'Food', '2025-05-24 09:00:00', 11, NULL, NULL),
-  ('Juguetes', 'Juguetes para niños', 55, 'Other', '2025-05-24 12:30:00', 12, NULL, NULL),
-  ('Libros', 'Libros para todas las edades', 70, 'Other', '2025-05-24 16:00:00', 13, NULL, NULL),
-  ('Baterías', 'Baterías AA y AAA', 90, 'Tools', '2025-05-24 10:00:00', 14, NULL, NULL),
-  ('Velas', 'Velas para iluminación', 105, 'Other', '2025-05-24 13:30:00', 15, NULL, NULL),
-  ('Cargadores de Teléfono', 'Cargadores portátiles para teléfonos', 120, 'Tools', '2025-05-24 17:30:00', 16, NULL, NULL),
-  ('Pañales', 'Pañales para bebés', 135, 'Other', '2025-05-24 11:30:00', 17, NULL, NULL),
-  ('Toallas', 'Toallas de baño', 150, 'Clothes', '2025-05-24 15:00:00', 18, NULL, NULL),
-  ('Cepillos de Dientes', 'Cepillos de dientes individuales', 165, 'Other', '2025-05-24 09:30:00', 19, NULL, NULL),
-  ('Papel Higiénico', 'Rollos de papel higiénico', 180, 'Other', '2025-05-24 13:00:00', 20, NULL, NULL),
-  ('Jabón de Manos', 'Botellas de jabón de manos', 195, 'Other', '2025-05-24 16:30:00', 21, NULL, NULL),
-  ('Desinfectante de Manos', 'Botellas de desinfectante de manos', 210, 'Medicine', '2025-05-24 10:30:00', 22, NULL, NULL),
-  ('Mascarillas', 'Mascarillas faciales', 225, 'Medicine', '2025-05-24 14:00:00', 23, NULL, NULL),
-  ('Guantes', 'Guantes de látex', 240, 'Medicine', '2025-05-24 17:00:00', 24, NULL, NULL),
-  ('Termómetros', 'Termómetros digitales', 255, 'Medicine', '2025-05-24 11:00:00', 25, NULL, NULL),
-  ('Kits de Costura', 'Kits básicos de costura', 270, 'Tools', '2025-05-24 14:30:00', 26, NULL, NULL),
-  ('Paraguas', 'Paraguas plegables', 285, 'Other', '2025-05-24 18:00:00', 27, NULL, NULL),
-  ('Impermeables', 'Impermeables para adultos', 300, 'Clothes', '2025-05-24 12:00:00', 28, NULL, NULL),
-  ('Sombreros', 'Sombreros para el sol', 315, 'Clothes', '2025-05-24 15:30:00', 29, NULL, NULL),
-  ('Gafas de Sol', 'Gafas de sol', 330, 'Other', '2025-05-24 09:00:00', 30, NULL, NULL),
-  ('Crema Solar', 'Crema solar de amplio espectro', 345, 'Medicine', '2025-05-24 12:30:00', 31, NULL, NULL),
-  ('Repelente de Insectos', 'Repelente de insectos', 360, 'Medicine', '2025-05-24 16:00:00', 32, NULL, NULL),
-  ('Agua Oxigenada', 'Botellas de agua oxigenada', 375, 'Medicine', '2025-05-24 10:00:00', NULL, NULL, 1);
+  ('Ropa de Invierno', 'Abrigos, guantes y bufandas', 60, 'Clothes', '2025-05-16 12:00:00', 6, NULL, NULL),
+  ('Linternas', 'Linternas de mano con baterías', 35, 'Tools', '2025-05-25 15:30:00', 7, NULL, NULL),
+  ('Productos de Higiene', 'Jabón, champú, pasta de dientes', 80, 'Other', '2025-05-15 11:00:00', 8, NULL, NULL),
+  ('Sacos de Dormir', 'Sacos de dormir para clima frío', 20, 'Clothes', '2025-05-26 14:30:00', 9, NULL, NULL),
+  ('Kits de Cocina', 'Utensilios básicos de cocina', 10, 'Tools', '2025-05-14 17:00:00', 10, NULL, NULL),
+  ('Alimentos para Mascotas', 'Comida para perros y gatos', 45, 'Food', '2025-05-27 09:00:00', 11, NULL, NULL),
+  ('Juguetes', 'Juguetes para niños', 55, 'Other', '2025-05-13 12:30:00', 12, NULL, NULL),
+  ('Libros', 'Libros para todas las edades', 70, 'Other', '2025-05-28 16:00:00', 13, NULL, NULL),
+  ('Baterías', 'Baterías AA y AAA', 90, 'Tools', '2025-05-12 10:00:00', 14, NULL, NULL),
+  ('Velas', 'Velas para iluminación', 105, 'Other', '2025-05-29 13:30:00', 15, NULL, NULL),
+  ('Cargadores de Teléfono', 'Cargadores portátiles para teléfonos', 120, 'Tools', '2025-05-11 17:30:00', 16, NULL, NULL),
+  ('Pañales', 'Pañales para bebés', 135, 'Other', '2025-05-30 11:30:00', 17, NULL, NULL),
+  ('Toallas', 'Toallas de baño', 150, 'Clothes', '2025-05-10 15:00:00', 18, NULL, NULL),
+  ('Cepillos de Dientes', 'Cepillos de dientes individuales', 165, 'Other', '2025-05-31 09:30:00', 19, NULL, NULL),
+  ('Papel Higiénico', 'Rollos de papel higiénico', 180, 'Other', '2025-05-09 13:00:00', 20, NULL, NULL),
+  ('Jabón de Manos', 'Botellas de jabón de manos', 195, 'Other', '2025-06-01 16:30:00', 21, NULL, NULL),
+  ('Desinfectante de Manos', 'Botellas de desinfectante de manos', 210, 'Medicine', '2025-05-08 10:30:00', 22, NULL, NULL),
+  ('Mascarillas', 'Mascarillas faciales', 225, 'Medicine', '2025-06-02 14:00:00', 23, NULL, NULL),
+  ('Guantes', 'Guantes de látex', 240, 'Medicine', '2025-05-07 17:00:00', 24, NULL, NULL),
+  ('Termómetros', 'Termómetros digitales', 255, 'Medicine', '2025-06-03 11:00:00', 25, NULL, NULL),
+  ('Kits de Costura', 'Kits básicos de costura', 270, 'Tools', '2025-05-06 14:30:00', 26, NULL, NULL),
+  ('Paraguas', 'Paraguas plegables', 285, 'Other', '2025-06-04 18:00:00', 27, NULL, NULL),
+  ('Impermeables', 'Impermeables para adultos', 300, 'Clothes', '2025-05-05 12:00:00', 28, NULL, NULL),
+  ('Sombreros', 'Sombreros para el sol', 315, 'Clothes', '2025-06-05 15:30:00', 29, NULL, NULL),
+  ('Gafas de Sol', 'Gafas de sol', 330, 'Other', '2025-05-04 09:00:00', 30, NULL, NULL),
+  ('Crema Solar', 'Crema solar de amplio espectro', 345, 'Medicine', '2025-06-06 12:30:00', 31, NULL, NULL),
+  ('Repelente de Insectos', 'Repelente de insectos', 360, 'Medicine', '2025-05-03 16:00:00', 32, NULL, NULL),
+  ('Agua Oxigenada', 'Botellas de agua oxigenada', 375, 'Medicine', '2025-06-07 10:00:00', NULL, NULL, 1);
 
 
 
 INSERT INTO "monetary_donation" ("amount", "currency", "payment_status", "transaction_id", "payment_service", "donation_date", "volunteer_id", "admin_id", "victim_id") VALUES
-  (50.00, 'EUR', 'Completed', 'MD-001', 'PayPal', '2025-05-24 12:00:00', 1, NULL, NULL),
-  (100.00, 'USD', 'Completed', 'MD-002', 'CreditCard', '2025-05-24 13:00:00', NULL, 1, NULL),
-  (75.00, 'EUR', 'Completed', 'MD-003', 'BankTransfer', '2025-05-24 14:00:00', 3, NULL, NULL),
-  (25.00, 'USD', 'Completed', 'PayPal', 'CreditCard', '2025-05-24 15:00:00', NULL, NULL, 4),
-  (200.00, 'USD', 'Completed', 'MD-005', 'CreditCard', '2025-05-24 16:00:00', 5, NULL, NULL),
-  (500.00, 'EUR', 'Completed', 'MD-006', 'BankTransfer', '2025-05-24 17:00:00', NULL, 2, NULL),
-  (350.00, 'USD', 'Completed', 'MD-007', 'PayPal', '2025-05-24 18:00:00', 7, NULL, NULL),
-  (120.00, 'EUR', 'Completed', 'MD-008', 'CreditCard', '2025-05-24 19:00:00', NULL, NULL, 8),
-  (90.00, 'USD', 'Completed', 'MD-009', 'BankTransfer', '2025-05-24 20:00:00', 9, NULL, NULL),
-  (60.00, 'EUR', 'Completed', 'MD-010', 'PayPal', '2025-05-24 21:00:00', NULL, 3, NULL),
-  (150.00, 'USD', 'Completed', 'MD-011', 'CreditCard', '2025-05-24 22:00:00', 11, NULL, NULL),
-  (220.00, 'EUR', 'Completed', 'MD-012', 'BankTransfer', '2025-05-24 23:00:00', NULL, NULL, 12),
-  (80.00, 'USD', 'Completed', 'MD-013', 'PayPal', '2025-05-25 00:00:00', 13, NULL, NULL),
-  (300.00, 'EUR', 'Completed', 'MD-014', 'CreditCard', '2025-05-25 01:00:00', NULL, 1, NULL),
-  (450.00, 'USD', 'Completed', 'MD-015', 'BankTransfer', '2025-05-25 02:00:00', 15, NULL, NULL),
-  (110.00, 'EUR', 'Completed', 'MD-016', 'PayPal', '2025-05-25 03:00:00', NULL, NULL, 16),
-  (70.00, 'USD', 'Completed', 'MD-017', 'CreditCard', '2025-05-25 04:00:00', 17, NULL, NULL),
-  (180.00, 'EUR', 'Completed', 'MD-018', 'BankTransfer', '2025-05-25 05:00:00', NULL, 2, NULL),
-  (270.00, 'USD', 'Completed', 'MD-019', 'PayPal', '2025-05-25 06:00:00', 19, NULL, NULL),
-  (95.00, 'EUR', 'Completed', 'MD-020', 'CreditCard', '2025-05-25 07:00:00', NULL, NULL, 20),
-  (130.00, 'USD', 'Completed', 'MD-021', 'BankTransfer', '2025-05-25 08:00:00', 21, NULL, NULL),
-  (380.00, 'EUR', 'Completed', 'MD-022', 'PayPal', '2025-05-25 09:00:00', NULL, 3, NULL),
-  (410.00, 'USD', 'Completed', 'MD-023', 'CreditCard', '2025-05-25 10:00:00', 23, NULL, NULL),
-  (160.00, 'EUR', 'Completed', 'MD-024', 'BankTransfer', '2025-05-25 11:00:00', NULL, NULL, 24),
-  (290.00, 'USD', 'Completed', 'MD-025', 'PayPal', '2025-05-25 12:00:00', 25, NULL, NULL),
-  (330.00, 'EUR', 'Completed', 'MD-026', 'CreditCard', '2025-05-25 13:00:00', NULL, 1, NULL),
-  (190.00, 'USD', 'Completed', 'MD-027', 'BankTransfer', '2025-05-25 14:00:00', 27, NULL, NULL),
-  (240.00, 'EUR', 'Completed', 'MD-028', 'PayPal', '2025-05-25 15:00:00', NULL, NULL, 28),
-  (360.00, 'USD', 'Completed', 'MD-029', 'CreditCard', '2025-05-25 16:00:00', 29, NULL, NULL),
-  (40.00, 'EUR', 'Completed', 'MD-030', 'BankTransfer', '2025-05-25 17:00:00', NULL, 2, NULL),
-  (170.00, 'USD', 'Completed', 'MD-031', 'PayPal', '2025-05-25 18:00:00', 31, NULL, NULL),
-  (210.00, 'EUR', 'Completed', 'MD-032', 'CreditCard', '2025-05-25 19:00:00', NULL, NULL, 32),
-  (310.00, 'USD', 'Completed', 'MD-033', 'BankTransfer', '2025-05-25 20:00:00', 33, NULL, NULL),
-  (480.00, 'EUR', 'Completed', 'MD-034', 'PayPal', '2025-05-25 21:00:00', NULL, 3, NULL),
-  (140.00, 'USD', 'Completed', 'MD-035', 'CreditCard', '2025-05-25 22:00:00', 35, NULL, NULL),
-  (260.00, 'EUR', 'Completed', 'MD-036', 'BankTransfer', '2025-05-25 23:00:00', NULL, 1, NULL),
-  (390.00, 'USD', 'Completed', 'MD-037', 'PayPal', '2025-05-26 00:00:00', 37, NULL, NULL),
-  (55.00, 'EUR', 'Completed', 'MD-038', 'CreditCard', '2025-05-26 01:00:00', NULL, NULL, 38),
-  (105.00, 'USD', 'Completed', 'MD-039', 'BankTransfer', '2025-05-26 02:00:00', 39, NULL, NULL),
-  (78.00, 'EUR', 'Completed', 'MD-040', 'PayPal', '2025-05-26 03:00:00', NULL, 2, NULL),
-  (155.00, 'USD', 'Completed', 'MD-041', 'CreditCard', '2025-05-26 04:00:00', 1, NULL, NULL),
-  (225.00, 'EUR', 'Completed', 'MD-042', 'BankTransfer', '2025-05-26 05:00:00', NULL, NULL, 2);
+  (50.00, 'EUR', 'Completed', 'MD-001', 'PayPal', '2025-05-01 10:00:00', 1, NULL, NULL),
+  (100.00, 'USD', 'Completed', 'MD-002', 'CreditCard', '2025-05-02 11:30:00', NULL, 1, NULL),
+  (75.00, 'EUR', 'Completed', 'MD-003', 'BankTransfer', '2025-05-03 14:45:00', 3, NULL, NULL),
+  (25.00, 'USD', 'Completed', 'MD-004', 'PayPal', '2025-05-04 16:00:00', NULL, NULL, 4),
+  (200.00, 'USD', 'Completed', 'MD-005', 'CreditCard', '2025-05-05 09:15:00', 5, NULL, NULL),
+  (500.00, 'EUR', 'Completed', 'MD-006', 'BankTransfer', '2025-05-06 08:30:00', NULL, 2, NULL),
+  (350.00, 'USD', 'Completed', 'MD-007', 'PayPal', '2025-05-07 13:10:00', 7, NULL, NULL),
+  (120.00, 'EUR', 'Completed', 'MD-008', 'CreditCard', '2025-05-08 10:45:00', NULL, NULL, 8),
+  (90.00, 'USD', 'Completed', 'MD-009', 'BankTransfer', '2025-05-09 15:30:00', 9, NULL, NULL),
+  (60.00, 'EUR', 'Completed', 'MD-010', 'PayPal', '2025-05-10 11:00:00', NULL, 3, NULL),
+  (150.00, 'USD', 'Completed', 'MD-011', 'CreditCard', '2025-05-11 12:30:00', 11, NULL, NULL),
+  (220.00, 'EUR', 'Completed', 'MD-012', 'BankTransfer', '2025-05-12 14:30:00', NULL, NULL, 12),
+  (80.00, 'USD', 'Completed', 'MD-013', 'PayPal', '2025-05-13 17:00:00', 13, NULL, NULL),
+  (300.00, 'EUR', 'Completed', 'MD-014', 'CreditCard', '2025-05-14 09:00:00', NULL, 1, NULL),
+  (450.00, 'USD', 'Completed', 'MD-015', 'BankTransfer', '2025-05-15 10:30:00', 15, NULL, NULL),
+  (110.00, 'EUR', 'Completed', 'MD-016', 'PayPal', '2025-05-16 13:00:00', NULL, NULL, 16),
+  (70.00, 'USD', 'Completed', 'MD-017', 'CreditCard', '2025-05-17 15:00:00', 17, NULL, NULL),
+  (180.00, 'EUR', 'Completed', 'MD-018', 'BankTransfer', '2025-05-18 16:30:00', NULL, 2, NULL),
+  (270.00, 'USD', 'Completed', 'MD-019', 'PayPal', '2025-05-19 18:00:00', 19, NULL, NULL),
+  (95.00, 'EUR', 'Completed', 'MD-020', 'CreditCard', '2025-05-20 09:30:00', NULL, NULL, 20),
+  (130.00, 'USD', 'Completed', 'MD-021', 'BankTransfer', '2025-05-21 11:00:00', 21, NULL, NULL),
+  (380.00, 'EUR', 'Completed', 'MD-022', 'PayPal', '2025-05-22 12:30:00', NULL, 3, NULL),
+  (410.00, 'USD', 'Completed', 'MD-023', 'CreditCard', '2025-05-23 14:00:00', 23, NULL, NULL),
+  (160.00, 'EUR', 'Completed', 'MD-024', 'BankTransfer', '2025-05-24 15:30:00', NULL, NULL, 24),
+  (290.00, 'USD', 'Completed', 'MD-025', 'PayPal', '2025-05-25 17:00:00', 25, NULL, NULL),
+  (330.00, 'EUR', 'Completed', 'MD-026', 'CreditCard', '2025-05-26 18:30:00', NULL, 1, NULL),
+  (190.00, 'USD', 'Completed', 'MD-027', 'BankTransfer', '2025-05-27 09:00:00', 27, NULL, NULL),
+  (240.00, 'EUR', 'Completed', 'MD-028', 'PayPal', '2025-05-28 10:30:00', NULL, NULL, 28),
+  (360.00, 'USD', 'Completed', 'MD-029', 'CreditCard', '2025-05-29 12:00:00', 29, NULL, NULL),
+  (40.00, 'EUR', 'Completed', 'MD-030', 'BankTransfer', '2025-05-30 13:30:00', NULL, 2, NULL),
+  (170.00, 'USD', 'Completed', 'MD-031', 'PayPal', '2025-05-31 15:00:00', 31, NULL, NULL),
+  (210.00, 'EUR', 'Completed', 'MD-032', 'CreditCard', '2025-05-15 19:00:00', NULL, NULL, 32),
+  (310.00, 'USD', 'Completed', 'MD-033', 'BankTransfer', '2025-05-16 20:00:00', 33, NULL, NULL),
+  (480.00, 'EUR', 'Completed', 'MD-034', 'PayPal', '2025-05-17 21:00:00', NULL, 3, NULL),
+  (140.00, 'USD', 'Completed', 'MD-035', 'CreditCard', '2025-05-18 22:00:00', 35, NULL, NULL),
+  (260.00, 'EUR', 'Completed', 'MD-036', 'BankTransfer', '2025-05-19 23:00:00', NULL, 1, NULL),
+  (390.00, 'USD', 'Completed', 'MD-037', 'PayPal', '2025-05-20 08:00:00', 37, NULL, NULL),
+  (55.00, 'EUR', 'Completed', 'MD-038', 'CreditCard', '2025-05-21 09:00:00', NULL, NULL, 38),
+  (105.00, 'USD', 'Completed', 'MD-039', 'BankTransfer', '2025-05-22 10:00:00', 39, NULL, NULL),
+  (78.00, 'EUR', 'Completed', 'MD-040', 'PayPal', '2025-05-23 11:00:00', NULL, 2, NULL),
+  (155.00, 'USD', 'Completed', 'MD-041', 'CreditCard', '2025-05-24 12:00:00', 1, NULL, NULL),
+  (225.00, 'EUR', 'Completed', 'MD-042', 'BankTransfer', '2025-05-25 13:00:00', NULL, NULL, 2);
 
 
 INSERT INTO "place" ("name", "admin_id") VALUES
@@ -563,61 +588,62 @@ INSERT INTO "skill" ("name", "level", "admin_id") VALUES
 
 
 INSERT INTO "task" ("name", "description", "admin_id", "location_id", "start_date", "end_date") VALUES
-  ('Distribuir Agua Xirivella', 'Repartir agua embotellada en Xirivella', 1, 116, '2025-05-25 08:00:00', NULL),
-  ('Asistencia Médica Aldaia', 'Atención médica básica en Aldaia', 2, 117, '2025-05-25 09:00:00', NULL),
-  ('Limpieza Escombros Catarroja', 'Retirar escombros en Catarroja', 3, 118, '2025-05-25 10:00:00', NULL),
-  ('Servicio Comida Massanassa', 'Preparar comida en Massanassa', 1, 122, '2025-05-25 11:00:00', NULL),
-  ('Cuidado Infantil Paiporta', 'Cuidado de niños en Paiporta', 2, 124, '2025-05-25 12:00:00', NULL),
-  ('Distribuir Medicamentos Burjassot', 'Entrega de medicamentos en Burjassot', 1, 125, '2025-05-25 13:00:00', NULL),
-  ('Recolección Donaciones Godella', 'Recibir donaciones en Godella', 2, 126, '2025-05-25 14:00:00', NULL),
-  ('Apoyo Psicológico Rocafort', 'Apoyo emocional en Rocafort', 3, 128, '2025-05-25 15:00:00', NULL),
-  ('Organización Suministros Bétera', 'Ordenar suministros en Bétera', 1, 130, '2025-05-25 16:00:00', NULL),
-  ('Transporte Víctimas Llíria', 'Traslado de víctimas a Llíria', 2, 131, '2025-05-25 17:00:00', NULL),
-  ('Distribución Ropa Alzira', 'Entrega de ropa en Alzira', 3, 132, '2025-05-25 18:00:00', NULL),
-  ('Asistencia Veterinaria Xàtiva', 'Cuidado de animales en Xàtiva', 1, 133, '2025-05-25 19:00:00', NULL),
-  ('Mantenimiento Refugio Cullera', 'Mantenimiento en Cullera', 2, 134, '2025-05-25 20:00:00', NULL),
-  ('Comunicación Afectados Carcaixent', 'Informar a afectados en Carcaixent', 3, 135, '2025-05-25 21:00:00', NULL),
-  ('Distribución Kits Algemesí', 'Entrega de kits en Algemesí', 1, 136, '2025-05-25 22:00:00', NULL),
-  ('Apoyo Tercera Edad Sueca', 'Asistencia a mayores en Sueca', 2, 137, '2025-05-25 23:00:00', NULL),
-  ('Organización Eventos Sollana', 'Eventos en Sollana', 3, 138, '2025-05-26 00:00:00', NULL),
-  ('Transporte Suministros Almussafes', 'Traslado a Almussafes', 1, 139, '2025-05-26 01:00:00', NULL),
-  ('Distribución Alimentos Gandia', 'Entrega de alimentos en Gandia', 2, 140, '2025-05-26 02:00:00', NULL),
-  ('Asistencia Discapacidad Oliva', 'Apoyo a discapacitados en Oliva', 3, 141, '2025-05-26 03:00:00', NULL),
-  ('Mantenimiento Equipos Tavernes', 'Mantenimiento en Tavernes', 1, 143, '2025-05-26 04:00:00', NULL),
-  ('Comunicación Familias Canals', 'Informar a familias en Canals', 2, 144, '2025-05-26 05:00:00', NULL),
-  ('Distribución Material Alcudia', 'Entrega de material en Alcúdia', 3, 145, '2025-05-26 06:00:00', NULL),
-  ('Apoyo Madres Ontinyent', 'Apoyo a madres en Ontinyent', 1, 146, '2025-05-26 07:00:00', NULL),
-  ('Organización Actividades Albaida', 'Actividades en Albaida', 2, 148, '2025-05-26 08:00:00', NULL),
-  ('Transporte Personal Cocentaina', 'Traslado personal en Cocentaina', 3, 149, '2025-05-26 09:00:00', NULL),
-  ('Distribución Juguetes Muro', 'Entrega de juguetes en Muro', 1, 151, '2025-05-26 10:00:00', NULL),
-  ('Asistencia Refugiados Alcoy', 'Apoyo a refugiados en Alcoy', 2, 152, '2025-05-26 11:00:00', NULL),
-  ('Mantenimiento Instalaciones Segorbe', 'Reparaciones en Segorbe', 3, 153, '2025-05-26 12:00:00', NULL),
-  ('Comunicación Voluntarios Altura', 'Coordinar voluntarios en Altura', 1, 154, '2025-05-26 13:00:00', NULL),
-  ('Distribución Libros Jérica', 'Entrega de libros en Jérica', 2, 155, '2025-05-26 14:00:00', NULL),
-  ('Apoyo Familias Chiva', 'Apoyo a familias en Chiva', 3, 156, '2025-05-26 15:00:00', NULL),
-  ('Organización Talleres Buñol', 'Talleres en Buñol', 1, 157, '2025-05-26 16:00:00', NULL),
-  ('Transporte Equipos Chelva', 'Traslado equipos en Chelva', 2, 158, '2025-05-26 17:00:00', NULL),
-  ('Distribución Baterías Villamarxant', 'Entrega de baterías en Villamarxant', 3, 159, '2025-05-26 18:00:00', NULL),
-  ('Asistencia Sin Hogar Benaguasil', 'Apoyo a sin hogar en Benaguasil', 1, 160, '2025-05-26 19:00:00', NULL),
-  ('Mantenimiento Vehículos Paterna', 'Reparación vehículos en Paterna', 2, 161, '2025-05-26 20:00:00', NULL),
-  ('Comunicación Donantes Tavernes', 'Informar a donantes en Tavernes', 3, 162, '2025-05-26 21:00:00', NULL),
-  ('Distribución Velas Xirivella', 'Entrega de velas en Xirivella', 1, 163, '2025-05-26 22:00:00', NULL),
-  ('Apoyo Víctimas Aldaia', 'Apoyo a víctimas en Aldaia', 2, 164, '2025-05-26 23:00:00', NULL),
-  ('Organización Charlas Catarroja', 'Charlas en Catarroja', 3, 165, '2025-05-27 00:00:00', NULL),
-  ('Transporte Alimentos Massanassa', 'Traslado alimentos a Massanassa', 1, 166, '2025-05-27 01:00:00', NULL),
-  ('Distribución Cargadores Paiporta', 'Entrega cargadores en Paiporta', 2, 167, '2025-05-27 02:00:00', NULL),
-  ('Asistencia Desplazados Burjassot', 'Apoyo a desplazados en Burjassot', 3, 168, '2025-05-27 03:00:00', NULL),
-  ('Mantenimiento Sistemas Godella', 'Reparación sistemas en Godella', 1, 169, '2025-05-27 04:00:00', NULL),
-  ('Comunicación Medios Rocafort', 'Informar a medios en Rocafort', 2, 170, '2025-05-27 05:00:00', NULL),
-  ('Distribución Pañales Bétera', 'Entrega pañales en Bétera', 3, 171, '2025-05-27 06:00:00', NULL),
-  ('Apoyo Refugiados Llíria', 'Apoyo a refugiados en Llíria', 1, 172, '2025-05-27 07:00:00', NULL),
-  ('Organización Juegos Alzira', 'Juegos en Alzira', 2, 173, '2025-05-27 08:00:00', NULL),
-  ('Transporte Agua Xàtiva', 'Traslado agua en Xàtiva', 3, 174, '2025-05-27 09:00:00', NULL),
-  ('Distribución Toallas Cullera', 'Entrega toallas en Cullera', 1, 175, '2025-05-27 10:00:00', NULL),
-  ('Asistencia Aislados Carcaixent', 'Apoyo a aislados en Carcaixent', 2, 176, '2025-05-27 11:00:00', NULL),
-  ('Mantenimiento Iluminación Algemesí', 'Reparación luces en Algemesí', 3, 177, '2025-05-27 12:00:00', NULL),
-  ('Comunicación Autoridades Sueca', 'Informar a autoridades en Sueca', 1, 178, '2025-05-27 13:00:00', NULL),
-  ('Distribución Cepillos Sollana', 'Entrega cepillos en Sollana', 2, 179, '2025-05-27 14:00:00', NULL);
+  ('Distribuir Agua Centro Valencia', 'Repartir agua embotellada en el centro histórico', 1, 81, '2025-05-25 08:00:00', NULL),
+  ('Asistencia Médica Russafa', 'Atención médica básica en Russafa', 2, 82, '2025-05-25 09:00:00', NULL),
+  ('Limpieza Escombros Benimaclet', 'Retirar escombros en Benimaclet', 3, 83, '2025-05-25 10:00:00', NULL),
+  ('Servicio Comida Malvarrosa', 'Preparar comida en Malvarrosa', 1, 84, '2025-05-25 11:00:00', NULL),
+  ('Cuidado Infantil Campanar', 'Cuidado de niños en Campanar', 2, 85, '2025-05-25 12:00:00', NULL),
+  ('Distribuir Medicamentos Torrent', 'Entrega de medicamentos en Torrent', 1, 86, '2025-05-25 13:00:00', NULL),
+  ('Recolección Donaciones Sagunto', 'Recibir donaciones en Sagunto', 2, 87, '2025-05-25 14:00:00', NULL),
+  ('Apoyo Psicológico Xàtiva', 'Apoyo emocional en Xàtiva', 3, 88, '2025-05-25 15:00:00', NULL),
+  ('Organización Suministros Gandia', 'Ordenar suministros en Gandia', 1, 89, '2025-05-25 16:00:00', NULL),
+  ('Transporte Víctimas Alcoy', 'Traslado de víctimas en Alcoy', 2, 90, '2025-05-25 17:00:00', NULL),
+  ('Distribución Ropa Valencia Norte', 'Entrega de ropa en Valencia Norte', 3, 91, '2025-05-25 18:00:00', NULL),
+  ('Asistencia Veterinaria Valencia Sur', 'Cuidado de animales en Valencia Sur', 1, 92, '2025-05-25 19:00:00', NULL),
+  ('Mantenimiento Refugio Valencia Este', 'Mantenimiento en Valencia Este', 2, 93, '2025-05-25 20:00:00', NULL),
+  ('Comunicación Afectados Valencia Oeste', 'Informar a afectados en Valencia Oeste', 3, 94, '2025-05-25 21:00:00', NULL),
+  ('Distribución Kits Paterna', 'Entrega de kits en Paterna', 1, 95, '2025-05-25 22:00:00', NULL),
+  ('Apoyo Tercera Edad Burjassot', 'Asistencia a mayores en Burjassot', 2, 96, '2025-05-25 23:00:00', NULL),
+  ('Organización Eventos Mislata', 'Eventos en Mislata', 3, 97, '2025-05-26 00:00:00', NULL),
+  ('Transporte Suministros Aldaia', 'Traslado a Aldaia', 1, 98, '2025-05-26 01:00:00', NULL),
+  ('Distribución Alimentos Picassent', 'Entrega de alimentos en Picassent', 2, 99, '2025-05-26 02:00:00', NULL),
+  ('Asistencia Discapacidad Catarroja', 'Apoyo a discapacitados en Catarroja', 3, 100, '2025-05-26 03:00:00', NULL),
+  ('Mantenimiento Equipos Massanassa', 'Mantenimiento en Massanassa', 1, 101, '2025-05-26 04:00:00', NULL),
+  ('Comunicación Familias Paiporta', 'Informar a familias en Paiporta', 2, 102, '2025-05-26 05:00:00', NULL),
+  ('Distribución Material Quart Poblet', 'Entrega de material en Quart de Poblet', 3, 103, '2025-05-26 06:00:00', NULL),
+  ('Apoyo Madres Manises', 'Apoyo a madres en Manises', 1, 104, '2025-05-26 07:00:00', NULL),
+  ('Organización Actividades Godella', 'Actividades en Godella', 2, 105, '2025-05-26 08:00:00', NULL),
+  ('Transporte Personal Rocafort', 'Traslado personal en Rocafort', 3, 106, '2025-05-26 09:00:00', NULL),
+  ('Distribución Juguetes Bétera', 'Entrega de juguetes en Bétera', 1, 107, '2025-05-26 10:00:00', NULL),
+  ('Asistencia Refugiados Llíria', 'Apoyo a refugiados en Llíria', 2, 108, '2025-05-26 11:00:00', NULL),
+  ('Construcción Refugios Alzira', 'Construcción en Alzira', 3, 109, '2025-05-26 12:00:00', NULL),
+  ('Comunicación Voluntarios Cullera', 'Coordinar voluntarios en Cullera', 1, 110, '2025-05-26 13:00:00', NULL),
+  ('Distribución Libros Carcaixent', 'Entrega de libros en Carcaixent', 2, 111, '2025-05-26 14:00:00', NULL),
+  ('Apoyo Familias Algemesí', 'Apoyo a familias en Algemesí', 3, 112, '2025-05-26 15:00:00', NULL),
+  ('Organización Talleres Sueca', 'Talleres en Sueca', 1, 113, '2025-05-26 16:00:00', NULL),
+  ('Transporte Equipos Sollana', 'Traslado equipos en Sollana', 2, 114, '2025-05-26 17:00:00', NULL),
+  ('Distribución Baterías Almussafes', 'Entrega de baterías en Almussafes', 3, 115, '2025-05-26 18:00:00', NULL),
+  ('Asistencia Sin Hogar Oliva', 'Apoyo a sin hogar en Oliva', 1, 116, '2025-05-26 19:00:00', NULL),
+  ('Mantenimiento Vehículos Tavernes', 'Reparación vehículos en Tavernes', 2, 117, '2025-05-26 20:00:00', NULL),
+  ('Comunicación Donantes Canals', 'Informar a donantes en Canals', 3, 118, '2025-05-26 21:00:00', NULL),
+  ('Distribución Velas Alcúdia', 'Entrega de velas en Alcúdia', 1, 119, '2025-05-26 22:00:00', NULL),
+  ('Apoyo Víctimas Ontinyent', 'Apoyo a víctimas en Ontinyent', 2, 120, '2025-05-26 23:00:00', NULL),
+  ('Organización Charlas Albaida', 'Charlas en Albaida', 3, 121, '2025-05-27 00:00:00', NULL),
+  ('Transporte Alimentos Cocentaina', 'Traslado alimentos a Cocentaina', 1, 122, '2025-05-27 01:00:00', NULL),
+  ('Distribución Cargadores Muro', 'Entrega cargadores en Muro', 2, 123, '2025-05-27 02:00:00', NULL),
+  ('Asistencia Desplazados Segorbe', 'Apoyo a desplazados en Segorbe', 3, 124, '2025-05-27 03:00:00', NULL),
+  ('Mantenimiento Sistemas Altura', 'Reparación sistemas en Altura', 1, 125, '2025-05-27 04:00:00', NULL),
+  ('Comunicación Medios Jérica', 'Informar a medios en Jérica', 2, 126, '2025-05-27 05:00:00', NULL),
+  ('Distribución Pañales Chiva', 'Entrega pañales en Chiva', 3, 127, '2025-05-27 06:00:00', NULL),
+  ('Apoyo Refugiados Buñol', 'Apoyo a refugiados en Buñol', 1, 128, '2025-05-27 07:00:00', NULL),
+  ('Organización Juegos Chelva', 'Juegos en Chelva', 2, 129, '2025-05-27 08:00:00', NULL),
+  ('Transporte Agua Villamarxant', 'Traslado agua en Villamarxant', 3, 130, '2025-05-27 09:00:00', NULL),
+  ('Distribución Toallas Benaguasil', 'Entrega toallas en Benaguasil', 1, 131, '2025-05-27 10:00:00', NULL),
+  ('Asistencia Aislados Alboraya', 'Apoyo a aislados en Alboraya', 2, 132, '2025-05-27 11:00:00', NULL),
+  ('Mantenimiento Iluminación Xirivella', 'Reparación luces en Xirivella', 3, 133, '2025-05-27 12:00:00', NULL),
+  ('Comunicación Autoridades Tavernes Blanques', 'Informar a autoridades en Tavernes Blanques', 1, 134, '2025-05-27 13:00:00', NULL),
+  ('Distribución Cepillos Port Saplaya', 'Entrega cepillos en Port Saplaya', 2, 135, '2025-05-27 14:00:00', NULL),
+  ('Apoyo Puçol', 'Asistencia general en Puçol', 3, 136, '2025-05-27 15:00:00', NULL);
 
 INSERT INTO "task_time" ("start_time", "end_time", "date", "task_id") VALUES
   ('09:00', '14:00', '2025-05-28', 1),   -- Task 1 uses Morning Slot
@@ -1001,23 +1027,23 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (13, 13, 'Pending'),
   (14, 14, 'Assigned'),
   (15, 15, 'Pending'),
-  (16, 16, 'Assigned'),
-  (17, 17, 'Pending'),
-  (18, 18, 'Assigned'),
+  (16, 16, 'Completed'),
+  (17, 17, 'Completed'),
+  (18, 18, 'Completed'),
   (19, 19, 'Pending'),
   (20, 20, 'Assigned'),
   (21, 21, 'Pending'),
-  (22, 22, 'Assigned'),
+  (22, 22, 'Completed'),
   (23, 23, 'Pending'),
   (24, 24, 'Assigned'),
-  (25, 25, 'Pending'),
+  (25, 25, 'Completed'),
   (26, 26, 'Assigned'),
   (27, 27, 'Pending'),
   (28, 28, 'Assigned'),
   (29, 29, 'Pending'),
   (30, 30, 'Assigned'),
   (31, 31, 'Pending'),
-  (32, 32, 'Assigned'),
+  (32, 32, 'Completed'),
   (33, 33, 'Pending'),
   (34, 34, 'Assigned'),
   (35, 35, 'Pending'),
@@ -1032,7 +1058,7 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (4, 44, 'Assigned'),
   (5, 45, 'Pending'),
   (6, 46, 'Assigned'),
-  (7, 47, 'Pending'),
+  (7, 47, 'Completed'),
   (8, 48, 'Assigned'),
   (9, 49, 'Pending'),
   (10, 50, 'Assigned'),
@@ -1040,7 +1066,7 @@ INSERT INTO "volunteer_task" ("volunteer_id", "task_id", "state") VALUES
   (12, 52, 'Assigned'),
   (13, 53, 'Pending'),
   (14, 54, 'Assigned'),
-  (15, 55, 'Pending');
+  (15, 55, 'Completed');
 
 INSERT INTO "volunteer_place" ("volunteer_id", "place_id") VALUES
   (1, 1), (1, 3),
@@ -1116,17 +1142,17 @@ INSERT INTO "point_time" ("start_time", "end_time", "start_date", "end_date") VA
 
 
 INSERT INTO "pickup_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
-  ('Centro Acopio Valencia', 'Centro principal de recogida de donaciones', 1, 169, 1),
-  ('Punto Recogida Paterna', 'Punto de recogida en el ayuntamiento', 2, 170, 2),
-  ('Alboraya Solidaria', 'Centro de recogida comunitario', 3, 171, 3),
-  ('El Saler Aid Point', 'Punto de recogida zona playa', 4, 172, 1),
-  ('Mislata Ayuda', 'Centro de donaciones municipal', 5, 173, 2),
-  ('Burjassot Recoge', 'Centro de donaciones municipal', 6, 174, 3),
-  ('Benimaclet Apoya', 'Centro de donaciones municipal', 7, 175, 1),
-  ('Malvarrosa Dona', 'Centro de donaciones municipal', 8, 176, 2),
-  ('Campanar Entrega', 'Centro de donaciones municipal', 9, 177, 3),
-  ('Torrent Dona', 'Centro de donaciones municipal', 10, 178, 1),
-  ('Sagunto Recoge', 'Centro de donaciones municipal', 11, 179, 2);
+  ('Centro Acopio Plaza Ayuntamiento', 'Centro principal de recogida en el corazón de Valencia', 1, 137, 1),
+  ('Punto Recogida Ruzafa', 'Punto de recogida en el barrio de Ruzafa', 2, 138, 2),
+  ('Benimaclet Solidario', 'Centro de recogida comunitario en el barrio universitario', 3, 139, 3),
+  ('Malvarrosa Aid Point', 'Punto de recogida en la zona de playa', 4, 140, 1),
+  ('Campanar Ayuda', 'Centro de donaciones en la zona industrial de Campanar', 5, 141, 2),
+  ('Torrent Solidario', 'Centro de recogida para la zona metropolitana sur', 6, 142, 3),
+  ('Burjassot Recoge', 'Punto de donaciones en el centro de Burjassot', 7, 143, 1),
+  ('Sagunto Solidario', 'Centro de donaciones para la zona norte', 8, 144, 2),
+  ('Alzira Entrega', 'Punto de recogida en la Ribera Alta', 9, 145, 3),
+  ('Gandia Dona', 'Centro de donaciones para la costa sur', 10, 146, 1),
+  ('Oliva Recoge', 'Punto de recogida en la playa de Oliva', 11, 147, 2);
 
 
 
@@ -1151,20 +1177,20 @@ INSERT INTO "point_donation" ("point_id", "donation_id") VALUES
 
 
 INSERT INTO "meeting_point" ("name", "description", "time_id", "location_id", "admin_id") VALUES
-  ('Plaza Ayuntamiento', 'Punto de encuentro principal', 1, 180, 1),
-  ('Jardines Viveros', 'Punto de encuentro zona norte', 2, 181, 2),
-  ('CAC Meeting Point', 'Punto de encuentro zona sur', 3, 182, 3),
-  ('IVAM Plaza', 'Punto de encuentro centro histórico', 4, 183, 1),
-  ('Marina Real', 'Punto de encuentro zona marítima', 5, 184, 2),
-  ('Benimaclet Square', 'Punto de encuentro para residentes de Benimaclet', 6, 185, 3),
-  ('Malvarrosa Beach Access', 'Punto de encuentro cerca de la playa de la Malvarrosa', 7, 186, 1),
-  ('Campanar Park Entrance', 'Punto de encuentro en la entrada del parque de Campanar', 8, 187, 2),
-  ('Paterna City Hall', 'Punto de encuentro en el centro de Paterna', 9, 188, 3),
-  ('Alboraya Metro Station', 'Punto de encuentro cerca del metro de Alboraya', 10, 189, 1),
-  ('El Saler Bus Stop', 'Punto de encuentro en la zona de El Saler', 11, 190, 2),
-  ('Mislata Central Park', 'Punto de encuentro en el parque central de Mislata', 12, 191, 3),
-  ('Burjassot Cultural Center', 'Punto de encuentro cerca del centro cultural de Burjassot', 13, 192, 1),
-  ('Sagunto Roman Theatre', 'Punto de encuentro cerca del Teatro Romano de Sagunto', 14, 193, 2);
+  ('Plaza Ayuntamiento', 'Punto de encuentro principal', 1, 148, 1),
+  ('Jardines Viveros', 'Punto de encuentro zona norte', 2, 149, 2),
+  ('CAC Meeting Point', 'Punto de encuentro zona sur', 3, 150, 3),
+  ('IVAM Plaza', 'Punto de encuentro centro histórico', 4, 151, 1),
+  ('Marina Real', 'Punto de encuentro zona marítima', 5, 152, 2),
+  ('Benimaclet Square', 'Punto de encuentro para residentes de Benimaclet', 6, 153, 3),
+  ('Malvarrosa Beach Access', 'Punto de encuentro cerca de la playa de la Malvarrosa', 7, 154, 1),
+  ('Campanar Park Entrance', 'Punto de encuentro en la entrada del parque de Campanar', 8, 155, 2),
+  ('Paterna City Hall', 'Punto de encuentro en el centro de Paterna', 9, 156, 3),
+  ('Alboraya Metro Station', 'Punto de encuentro cerca del metro de Alboraya', 10, 157, 1),
+  ('El Saler Bus Stop', 'Punto de encuentro en la zona de El Saler', 11, 158, 2),
+  ('Mislata Central Park', 'Punto de encuentro en el parque central de Mislata', 12, 159, 3),
+  ('Burjassot Cultural Center', 'Punto de encuentro cerca del centro cultural de Burjassot', 13, 160, 1),
+  ('Sagunto Roman Theatre', 'Punto de encuentro cerca del Teatro Romano de Sagunto', 14, 161, 2);
 
 
 UPDATE "victim"

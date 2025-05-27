@@ -24,6 +24,7 @@ class _ListaNecesidadesPageState extends State<ListaNecesidadesPage> {
   Future<void> _cargarNecesidades() async {
     try {
       final data = await _service.obtenerTodasLasNecesidades();
+      print(data);
       setState(() => _necesidades = data);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

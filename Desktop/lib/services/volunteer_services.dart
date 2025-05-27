@@ -12,7 +12,6 @@ class VolunteerServices {
       final List<dynamic> data = json.decode(response.body);
       volunteers = data.map((item) => Volunteer.fromJson(item as Map<String, dynamic>)).toList();
     }
-
     return volunteers;
   }
 

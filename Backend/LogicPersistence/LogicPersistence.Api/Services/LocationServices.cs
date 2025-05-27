@@ -3,13 +3,16 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services {
 	public class LocationServices : ILocationServices {
 		private readonly ILocationRepository _locationRepository;
+		private readonly IPaginationService _paginationService;
 
-		public LocationServices(ILocationRepository locationRepository) {
+		public LocationServices(ILocationRepository locationRepository, IPaginationService paginationService) {
 			_locationRepository = locationRepository;
+			_paginationService = paginationService;
 		}
 
 
@@ -72,6 +75,10 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to retrieve locations.");
 			}
 			return locations;
+		}
+
+		public async Task<(IEnumerable<Location> Locations, int TotalCount)> GetPaginatedLocationsAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<Location>(pageNumber, pageSize, "location", "created_at DESC, id DESC");
 		}
 	}
 }

@@ -11,6 +11,7 @@ class AutoAssignerDialogController {
 
   AssignmentStrategyType selectedStrategy = AssignmentStrategyType.proximidad;
   int volunteersPerTask = 1;
+  final Set<TaskWithDetails> selectedTasks = {};
 
   final List<TaskWithDetails> tasks;
   final VoidCallback onTasksUpdated;
@@ -33,20 +34,30 @@ class AutoAssignerDialogController {
       return;
     }
 
-    final count = tasks.where((task) => (task.assignedVolunteers.length) < value).length;
+    final count = selectedTasks.where((task) => (task.assignedVolunteers.length) < value).length;
     affectedTasksNotifier.value = count;
   }
 
   Future<bool> assignTasks(BuildContext context) async {
     if (formKey.currentState?.validate() ?? false) {
+      if (selectedTasks.isEmpty) {
+        AppSnackBar.show(
+          context: context,
+          message: 'Por favor, selecciona al menos una tarea.',
+          type: SnackBarType.error,
+        );
+        return false;
+      }
+
       volunteersPerTask = int.parse(numberController.text);
 
       try {
-        int potentiallyAffectedTasks = tasks.where((task) => task.assignedVolunteers.length < volunteersPerTask).length;
+        int potentiallyAffectedTasks =
+            selectedTasks.where((task) => task.assignedVolunteers.length < volunteersPerTask).length;
 
         await AutoAssigner(
           selectedStrategy,
-        ).assignTasks(tasks, await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
+        ).assignTasks(selectedTasks.toList(), await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
 
         onTasksUpdated();
 

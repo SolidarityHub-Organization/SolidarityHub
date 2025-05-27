@@ -10,6 +10,7 @@ class HeatMapLegend extends StatelessWidget {
         LegendItem(color: Colors.red.withOpacity(0.8), label: 'Alta'),
         LegendItem(color: Colors.orange.withOpacity(0.8), label: 'Media'),
         LegendItem(color: Colors.yellow.withOpacity(0.8), label: 'Baja'),
+        LegendItem(color: Colors.grey.withOpacity(0.8), label: 'Sin nivel definido'),
       ],
     );
   }

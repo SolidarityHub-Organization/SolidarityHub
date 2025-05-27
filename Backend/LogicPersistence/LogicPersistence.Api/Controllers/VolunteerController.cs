@@ -200,7 +200,7 @@ namespace LogicPersistence.Api.Controllers
                 
                 var response = new
                 {
-                    Volunteers = volunteers,
+                    Items = volunteers,
                     TotalCount = totalCount,
                     PageNumber = pageNumber,
                     PageSize = pageSize,

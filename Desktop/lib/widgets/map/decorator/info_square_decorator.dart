@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import '../factory_method_info/info_square_factory.dart';
 
@@ -118,6 +119,11 @@ class CompleteStyleDecorator implements InfoSquare {
   }
 
   Widget _buildStyledInfoRow(InfoRowData row) {
+    // Comprobar si es una fila de ubicación para agregar el botón de copiar
+    bool isLocationRow = row.label == 'Ubicación' || row.label.toLowerCase().contains('ubicación');
+    bool isPositionRow = row.label == 'Coordenadas' || row.label.toLowerCase().contains('coordenadas');
+    bool isSelectable = isLocationRow || isPositionRow;
+
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.all(12),
@@ -127,21 +133,45 @@ class CompleteStyleDecorator implements InfoSquare {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: primaryColor.withOpacity(0.5), width: 1.5),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(row.icon, size: 16, color: primaryColor),
-          SizedBox(height: 6),
-          Text(
-            row.label,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: primaryColor),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-          Divider(height: 16, thickness: 1, color: primaryColor.withOpacity(0.2)),
-          Text(row.value, style: TextStyle(fontSize: 14)),
-        ],
+      child: Builder(
+        builder:
+            (context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(row.icon, size: 16, color: primaryColor),
+                    if (isSelectable)
+                      InkWell(
+                        onTap: () {
+                          // Copiar el texto al portapapeles
+                          Clipboard.setData(ClipboardData(text: row.value));
+                          // Mostrar un SnackBar o mensaje de éxito
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('¡Texto copiado al portapapeles!'), duration: Duration(seconds: 2)),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(Icons.copy, size: 16, color: primaryColor),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 6),
+                Text(
+                  row.label,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: primaryColor),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                Divider(height: 16, thickness: 1, color: primaryColor.withOpacity(0.2)),
+                // Usar SelectableText en lugar de Text para permitir selección con el ratón
+                SelectableText(row.value, style: TextStyle(fontSize: 14)),
+              ],
+            ),
       ),
     );
   }
@@ -164,26 +194,5 @@ class CompleteStyleDecorator implements InfoSquare {
     }
   }
 
-  Widget _buildInfoRow(InfoRowData row) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(row.icon, color: primaryColor, size: 20),
-          SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(row.label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey[700])),
-                SizedBox(height: 2),
-                Text(row.value, style: TextStyle(fontSize: 16, color: row.valueColor ?? Colors.black87)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Método eliminado ya que no se utiliza
 }

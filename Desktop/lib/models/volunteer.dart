@@ -1,5 +1,6 @@
 import 'package:solidarityhub/models/location.dart';
 import 'package:solidarityhub/models/skill.dart';
+import 'package:solidarityhub/models/volunteer_time.dart';
 
 class Volunteer {
   final int id;
@@ -13,6 +14,7 @@ class Volunteer {
   final int? locationId;
   final Location? location;
   final List<Skill> skills;
+  final List<VolunteerTime> availableTimes;
 
   Volunteer({
     required this.id,
@@ -26,6 +28,7 @@ class Volunteer {
     required this.locationId,
     this.location,
     required this.skills,
+    this.availableTimes = const [],
   });
 
   factory Volunteer.fromJson(Map<String, dynamic> json) {
@@ -41,6 +44,7 @@ class Volunteer {
       locationId: json['location_id'],
       location: json['location'] != null ? Location.fromJson(json['location']) : null,
       skills: (json['skills'] as List<dynamic>?)?.map((e) => Skill.fromJson(e)).toList() ?? [],
+      availableTimes: (json['availableTimes'] as List<dynamic>?)?.map((e) => VolunteerTime.fromJson(e)).toList() ?? [],
     );
   }
 }

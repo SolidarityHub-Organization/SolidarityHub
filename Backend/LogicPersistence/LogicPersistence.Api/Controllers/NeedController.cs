@@ -79,23 +79,17 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
-        [HttpGet("needs")]
-        public async Task<IActionResult> GetAllNeedsAsync()
-        {
-            try
-            {
-                var needs = await _needServices.GetAllNeedsAsync();
-                return Ok(needs);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+		[HttpGet("needs")]
+		public async Task<IActionResult> GetAllNeedsAsync() {
+			try {
+				var needs = await _needServices.GetAllNeedsAsync();
+				return Ok(needs);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 
 		[HttpGet("needs/victim-details/{id}")]
 		public async Task<IActionResult> GetNeedWithVictimDetailsAsync(int id) {
@@ -122,10 +116,31 @@ namespace LogicPersistence.Api.Controllers {
 		}
 
 		[HttpGet("needs/for-volunteer")]
-		public async Task <IActionResult> GetNeedsInProgressForVolunteers() {
+		public async Task<IActionResult> GetNeedsInProgressForVolunteers() {
 			try {
 				var result = await _needServices.GetNeedsInProgressForVolunteersAsync();
 				return Ok(result);
+			} catch (InvalidOperationException ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+		[HttpGet("needs/paginated")]
+		public async Task<IActionResult> GetPaginatedNeedsAsync([FromQuery] int page = 1, [FromQuery] int size = 10) {
+			try {
+				var (needs, totalCount) = await _needServices.GetPaginatedNeedsAsync(page, size);
+
+				return Ok(new {
+					Items = needs,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			} catch (ArgumentException ex) {
+				return BadRequest(ex.Message);
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
@@ -233,6 +248,36 @@ namespace LogicPersistence.Api.Controllers {
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+		
+		[HttpGet("need-types/paginated")]
+		public async Task<IActionResult> GetPaginatedNeedTypesAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (needTypes, totalCount) = await _needServices.GetPaginatedNeedTypesAsync(page, size);
+
+				return Ok(new
+				{
+					Items = needTypes,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}

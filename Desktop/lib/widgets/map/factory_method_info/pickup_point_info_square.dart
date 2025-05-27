@@ -16,10 +16,15 @@ class PickupPointInfoSquare implements InfoSquare {
 
         final Color primaryColor = Color.fromARGB(255, 30, 136, 229);
         final Color secondaryColor = Color.fromARGB(255, 100, 181, 246);
-
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.location_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
         ];
 
         if (mapMarker.time != null) {

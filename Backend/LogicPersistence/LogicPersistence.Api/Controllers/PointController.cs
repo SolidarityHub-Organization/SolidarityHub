@@ -6,177 +6,179 @@ namespace LogicPersistence.Api.Controllers
 {
     [Route("api/v1")]
     [ApiController]
-    public class PointController : ControllerBase
-    {
+    public class PointController : ControllerBase {
         private readonly IPointServices _pointServices;
 
-        public PointController(IPointServices pointServices)
-        {
+        public PointController(IPointServices pointServices) {
             _pointServices = pointServices;
         }
 
-#region PickupPoint
+        #region PickupPoint
         [HttpPost("pickup-points")]
-        public async Task<IActionResult> CreatePickupPointAsync(PickupPointCreateDto pickupPointCreateDto)
-        {
-            try
-            {
+        public async Task<IActionResult> CreatePickupPointAsync(PickupPointCreateDto pickupPointCreateDto) {
+            try {
                 var pickupPoint = await _pointServices.CreatePickupPointAsync(pickupPointCreateDto);
                 return CreatedAtRoute(nameof(GetPickupPointByIdAsync), new { id = pickupPoint.id }, pickupPoint);
-            }
-            catch (ArgumentNullException ex)
-            {
+            } catch (ArgumentNullException ex) {
                 return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
+            } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("pickup-points/{id}", Name = "GetPickupPointByIdAsync")]
-        public async Task<IActionResult> GetPickupPointByIdAsync(int id)
-        {
-            try
-            {
+        public async Task<IActionResult> GetPickupPointByIdAsync(int id) {
+            try {
                 var pickupPoint = await _pointServices.GetPickupPointByIdAsync(id);
                 return Ok(pickupPoint);
-            }
-            catch (KeyNotFoundException ex)
-            {
+            } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut("pickup-points/{id}")]
-        public async Task<IActionResult> UpdatePickupPointAsync(int id, PickupPointUpdateDto pickupPointUpdateDto)
-        {
-            try
-            {
+        public async Task<IActionResult> UpdatePickupPointAsync(int id, PickupPointUpdateDto pickupPointUpdateDto) {
+            try {
                 var result = await _pointServices.UpdatePickupPointAsync(id, pickupPointUpdateDto);
                 return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
+            } catch (ArgumentException ex) {
                 return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
+            } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("pickup-points")]
-        public async Task<IActionResult> GetAllPickupPointsAsync()
-        {
-            try
-            {
+        public async Task<IActionResult> GetAllPickupPointsAsync() {
+            try {
                 var pickups = await _pointServices.GetAllPickupPointsAsync();
                 return Ok(pickups);
-            }
-            catch (InvalidOperationException ex)
-            {
+            } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-#endregion
-#region MeetingPoint
+
+        [HttpGet("pickup-points/paginated")]
+		public async Task<IActionResult> GetPaginatedPickupPointsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (pickupPoints, totalCount) = await _pointServices.GetPaginatedPickupPointsAsync(page, size);
+
+				return Ok(new
+				{
+					Items = pickupPoints,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+        #endregion
+        #region MeetingPoint
         [HttpPost("meeting-points")]
-        public async Task<IActionResult> CreateMeetingPointAsync(MeetingPointCreateDto meetingPointCreateDto)
-        {
-            try
-            {
+        public async Task<IActionResult> CreateMeetingPointAsync(MeetingPointCreateDto meetingPointCreateDto) {
+            try {
                 var meetingPoint = await _pointServices.CreateMeetingPointAsync(meetingPointCreateDto);
                 return CreatedAtRoute(nameof(GetMeetingPointByIdAsync), new { id = meetingPoint.id }, meetingPoint);
-            }
-            catch (ArgumentNullException ex)
-            {
+            } catch (ArgumentNullException ex) {
                 return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
+            } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("meeting-points/{id}", Name = "GetMeetingPointByIdAsync")]
-        public async Task<IActionResult> GetMeetingPointByIdAsync(int id)
-        {
-            try
-            {
+        public async Task<IActionResult> GetMeetingPointByIdAsync(int id) {
+            try {
                 var meetingPoint = await _pointServices.GetMeetingPointByIdAsync(id);
                 return Ok(meetingPoint);
-            }
-            catch (KeyNotFoundException ex)
-            {
+            } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPut("meeting-points/{id}")]
-        public async Task<IActionResult> UpdateMeetingPointAsync(int id, MeetingPointUpdateDto meetingPointUpdateDto)
-        {
-            try
-            {
+        public async Task<IActionResult> UpdateMeetingPointAsync(int id, MeetingPointUpdateDto meetingPointUpdateDto) {
+            try {
                 var result = await _pointServices.UpdateMeetingPointAsync(id, meetingPointUpdateDto);
                 return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
+            } catch (ArgumentException ex) {
                 return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
+            } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("meeting-points")]
-        public async Task<IActionResult> GetAllMeetingPointsAsync()
-        {
-            try
-            {
+        public async Task<IActionResult> GetAllMeetingPointsAsync() {
+            try {
                 var meetings = await _pointServices.GetAllMeetingPointsAsync();
                 return Ok(meetings);
-            }
-            catch (InvalidOperationException ex)
-            {
+            } catch (InvalidOperationException ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-#endregion
         
+        [HttpGet("meeting-points/paginated")]
+		public async Task<IActionResult> GetPaginatedMeetingPointsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (meetingPoints, totalCount) = await _pointServices.GetPaginatedMeetingPointsAsync(page, size);
+
+				return Ok(new
+				{
+					Items = meetingPoints,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+#endregion
+
     }
 }
