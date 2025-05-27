@@ -2,7 +2,6 @@ import 'package:app/interface/registerChoose.dart';
 import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerController.dart';
-import '../models/user_registration_data.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -32,6 +31,12 @@ class _RegisterState extends State<Register> {
   void dispose() {
     registerController.dispose();
     super.dispose();
+  }
+
+  void _saveState(){
+    manager.userData.email = registerController.emailController.text.trim();
+    manager.userData.password = registerController.passwordController.text;
+    manager.saveStep();
   }
 
   void _register() async {
@@ -98,12 +103,13 @@ class _RegisterState extends State<Register> {
       bool success = await registerController.register();
 
       if (!success) {
-        manager.saveStep();
+        _saveState();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RegisterChoose(manager)),
         );
       } else {
+        _saveState();
         setState(() {
           _emailHasError = true;
           _emailErrorText = 'Este correo ya está registrado';
