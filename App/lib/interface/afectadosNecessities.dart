@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
 import '../controllers/afectadosNecessitiesController.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: AfectadosNecessities(),
-  ));
-}
+import 'package:app/services/register_flow_manager.dart';
 
 class AfectadosNecessities extends StatefulWidget {
-  const AfectadosNecessities({Key? key}) : super(key: key);
+  final RegisterFlowManager manager;
+
+  const AfectadosNecessities({Key? key, required this.manager}) : super(key: key);
 
   @override
   _AfectadosNecessitiesState createState() => _AfectadosNecessitiesState();
 }
 
 class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
-  final AfectadosNecessitiesController controller = AfectadosNecessitiesController();
+  late AfectadosNecessitiesController controller;
   bool showError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AfectadosNecessitiesController(widget.manager);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            widget.manager.restorePreviousStep();
+            Navigator.pop(context);
+          },
+        ),
+      ),
       backgroundColor: Colors.red,
       body: SafeArea(
         child: Center(
@@ -29,7 +41,6 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
             children: [
               Image.asset('assets/logo.png', height: 100),
               const SizedBox(height: 20),
-
               Expanded(
                 child: SingleChildScrollView(
                   child: Container(
@@ -48,7 +59,6 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
                         ),
                         const SizedBox(height: 16),
                         const Text('Seleccione sus necesidades:', style: TextStyle(fontSize: 16)),
-
                         const SizedBox(height: 12),
                         ...controller.needs.map((item) {
                           return CheckboxListTile(
@@ -64,7 +74,6 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
                             },
                           );
                         }).toList(),
-
                         if (showError)
                           const Padding(
                             padding: EdgeInsets.only(top: 8),
@@ -73,7 +82,6 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
                               style: TextStyle(color: Colors.red, fontSize: 12),
                             ),
                           ),
-
                         const SizedBox(height: 20),
                         Center(
                           child: ElevatedButton(
@@ -87,6 +95,7 @@ class _AfectadosNecessitiesState extends State<AfectadosNecessities> {
                                   showError = false;
                                 });
                                 controller.submit();
+                                widget.manager.saveStep(); // Guardar estado final
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text("Formulario enviado")),
                                 );

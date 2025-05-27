@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '/interface/registerChoose.dart';
@@ -10,9 +11,9 @@ class RegisterController {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatPasswordController = TextEditingController();
 
-  final UserRegistrationData userData;
+  final RegisterFlowManager manager;
 
-  RegisterController(this.userData);
+  RegisterController(this.manager);
 
   bool validatePasswords() {
     return passwordController.text == repeatPasswordController.text;
@@ -25,7 +26,7 @@ class RegisterController {
         print("Datos de login guardados en el modelo:");
         print("Continua Registro");
         Navigator.push(context,
-          MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+          MaterialPageRoute(builder: (context) => RegisterChoose(manager),),);
       }
       else {
         print("El Email introducido ya existe");
@@ -35,8 +36,8 @@ class RegisterController {
       print("Error de conexión con el servidor: $e");
     }
       if(validatePasswords() && emailController.text.isNotEmpty) {
-        userData.email = emailController.text.trim();
-        userData.password = passwordController.text;
+        manager.userData.email = emailController.text.trim();
+        manager.userData.password = passwordController.text;
       }
     }
 

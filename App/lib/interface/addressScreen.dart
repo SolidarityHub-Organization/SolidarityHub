@@ -1,4 +1,5 @@
 import 'package:app/interface/schedules.dart';
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '/controllers/addressScreenController.dart';
 import '/models/user_registration_data.dart';
@@ -6,8 +7,8 @@ import 'package:flutter/services.dart';
 import '/interface/victimNeeds.dart'; // Siguiente pantalla
 
 class AddressScreen extends StatefulWidget {
-  final UserRegistrationData userData;
-  const AddressScreen({Key? key, required this.userData}) : super(key: key);
+  final RegisterFlowManager manager;
+  const AddressScreen({Key? key, required this.manager}) : super(key: key);
 
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -50,19 +51,21 @@ class _AddressScreenState extends State<AddressScreen> {
           const SnackBar(content: Text("Dirección enviada correctamente")),
         );
 
-        if(widget.userData.role == 'Volunteer'){
+        if(widget.manager.userData.role == 'Volunteer'){
+          widget.manager.saveStep();
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Schedules(userData: widget.userData),
+              builder: (context) => Schedules(manager: widget.manager),
             ),
           );
         }
         else{
+          widget.manager.saveStep();
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => VictimNecessities(userData: widget.userData),
+              builder: (context) => VictimNecessities(manager: widget.manager),
             ),
           );
         }
@@ -75,7 +78,7 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   void initState() {
     super.initState();
-    controller = AddressController(widget.userData);
+    controller = AddressController(widget.manager.userData);
   }
 
   @override
@@ -87,6 +90,16 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            widget.manager.restorePreviousStep();
+            Navigator.pop(context);
+          },
+        )
+      ),
       backgroundColor: Colors.red,
       body: SafeArea(
         child: LayoutBuilder(

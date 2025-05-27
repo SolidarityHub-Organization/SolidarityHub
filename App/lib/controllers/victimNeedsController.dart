@@ -1,3 +1,4 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
@@ -5,9 +6,9 @@ import 'dart:convert';
 import 'package:app/interface/loginUI.dart';
 
 class VictimNeedsController {
-  final UserRegistrationData userData;
+  final RegisterFlowManager manager;
 
-  VictimNeedsController(this.userData);
+  VictimNeedsController(this.manager);
 
   final Map<String, bool> needs = {
     'Comida': true,
@@ -37,10 +38,10 @@ class VictimNeedsController {
 
     print("Necesidades seleccionadas: $selected");
 
-    userData.needs = selected.join(', ');
+    manager.userData.needs = selected.join(', ');
 
     try {
-      final response = await AuthService.registerVictims(userData.toJson());
+      final response = await AuthService.registerVictims(manager.userData.toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print("Registro exitoso");
@@ -55,7 +56,7 @@ class VictimNeedsController {
     }
 
     print("[VictimNeedsController] Datos personales guardados:");
-    print(userData.toJson());
+    print(manager.userData.toJson());
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Registro finalizado con éxito.")),

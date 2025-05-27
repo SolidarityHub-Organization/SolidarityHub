@@ -1,3 +1,4 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 import '../services/auth_service.dart';
@@ -12,10 +13,9 @@ class RegisterChooseController {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController identificationController = TextEditingController();
   String? selectedRole;
+  final RegisterFlowManager manager;
 
-  final UserRegistrationData userData;
-
-  RegisterChooseController(this.userData);
+  RegisterChooseController(this.manager);
 
 
 
@@ -43,18 +43,18 @@ class RegisterChooseController {
     print('Rol seleccionado: $role');
     print('DNI: $identification');
 
-    userData.name = nameController.text.trim();
-    userData.surname = surnameController.text.trim();
-    userData.birthDate = birthDateController.text.trim();
-    userData.phone = phoneController.text.trim();
-    userData.identification = identificationController.text.trim();
-    userData.role = role;
+    manager.userData.name = nameController.text.trim();
+    manager.userData.surname = surnameController.text.trim();
+    manager.userData.birthDate = birthDateController.text.trim();
+    manager.userData.phone = phoneController.text.trim();
+    manager.userData.identification = identificationController.text.trim();
+    manager.userData.role = role;
 
     print("[RegisterChooseController] Datos personales guardados:");
 
     Navigator.push(context,
       MaterialPageRoute(
-        builder: (context) => AddressScreen(userData: userData),),);
+        builder: (context) => AddressScreen(manager: manager),),);
 
   }
   bool isValidPhone(String phone) {

@@ -1,10 +1,11 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/controllers/victimNeedsController.dart';
 import '/models/user_registration_data.dart';
 
 class VictimNecessities extends StatefulWidget {
-  final UserRegistrationData userData;
-  VictimNecessities({required this.userData});
+  final RegisterFlowManager manager;
+  VictimNecessities({required this.manager});
 
   @override
   _VictimNecessitiesState createState() => _VictimNecessitiesState();
@@ -16,12 +17,22 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
   @override
   void initState() {
     super.initState();
-    controller = VictimNeedsController(widget.userData);
+    controller = VictimNeedsController(widget.manager);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          )
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
@@ -77,6 +88,7 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
+                            widget.manager.saveStep();
                             controller.finalizeRegistration(context);
                           }
                               : null,

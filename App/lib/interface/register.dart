@@ -1,3 +1,4 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerController.dart';
 import '../models/user_registration_data.dart';
@@ -8,7 +9,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  late UserRegistrationData userData;
+  late RegisterFlowManager manager;
   late RegisterController registerController;
   bool _showError = false;
   bool _emailHasError = false;
@@ -22,8 +23,8 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    userData = UserRegistrationData();
-    registerController = RegisterController(userData);
+    manager = RegisterFlowManager();
+    registerController = RegisterController(manager);
   }
 
   @override

@@ -1,10 +1,11 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/controllers/volunteerPreferencesController.dart';
 import '/models/user_registration_data.dart';
 
 class VolunteerPreferences extends StatefulWidget {
-  final UserRegistrationData userData;
-  VolunteerPreferences({required this.userData});
+  final RegisterFlowManager manager;
+  VolunteerPreferences({required this.manager});
 
   @override
   _VolunteerPreferencesState createState() => _VolunteerPreferencesState();
@@ -16,12 +17,22 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
   @override
   void initState() {
     super.initState();
-    controller = VolunteerPreferencesController(widget.userData);
+    controller = VolunteerPreferencesController(widget.manager);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          )
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
@@ -77,6 +88,7 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
+                            widget.manager.saveStep();
                             controller.finalizeRegistration(context);
                           }
                               : null,

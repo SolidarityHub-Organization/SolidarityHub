@@ -1,4 +1,9 @@
+import 'package:app/services/register_flow_manager.dart';
+
 class AfectadosNecessitiesController {
+  final RegisterFlowManager manager;
+  AfectadosNecessitiesController(this.manager);
+
   final List<NeedItem> needs = [
     NeedItem(label: 'Comida'),
     NeedItem(label: 'Productos farmacéuticos'),

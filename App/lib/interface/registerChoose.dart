@@ -1,11 +1,12 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerChooseController.dart';
 import '../models/user_registration_data.dart';
 import 'package:flutter/services.dart';
 
 class RegisterChoose extends StatefulWidget {
-  final UserRegistrationData userData;
-  RegisterChoose(this.userData);
+  final RegisterFlowManager manager;
+  RegisterChoose(this.manager);
 
   @override
   _RegisterChooseState createState() => _RegisterChooseState();
@@ -29,7 +30,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
   @override
   void initState() {
     super.initState();
-    _controller = RegisterChooseController(widget.userData);
+    _controller = RegisterChooseController(widget.manager);
   }
 
   void _submitFormConValidacion(String rol, BuildContext context) {
@@ -95,6 +96,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
       }
 
       if (isValid) {
+        widget.manager.saveStep();
         _controller.submitForm(rol, context);
       }
 
@@ -105,6 +107,16 @@ class _RegisterChooseState extends State<RegisterChoose> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          )
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
