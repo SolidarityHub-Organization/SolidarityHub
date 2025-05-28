@@ -3,6 +3,7 @@ import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerController.dart';
 import '../models/button_creator.dart';
+import '../services/register_validator.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -41,67 +42,24 @@ class _RegisterState extends State<Register> {
   }
 
   void _register() async {
-    // Resetear errores sin usar async dentro de setState
-    setState(() {
-      _emailHasError = false;
-      _passwordHasError = false;
-      _repeatPasswordHasError = false;
+    final email = registerController.emailController.text.trim();
+    final password = registerController.passwordController.text;
+    final repeatPassword = registerController.repeatPasswordController.text;
 
-      _emailErrorText = null;
-      _passwordErrorText = null;
-      _repeatPasswordErrorText = null;
+    setState(() {
+      _emailErrorText = RegisterValidator.validateEmail(email);
+      _passwordErrorText = RegisterValidator.validatePassword(password);
+      _repeatPasswordErrorText = RegisterValidator.validateRepeatPassword(password, repeatPassword);
+
+      _emailHasError = _emailErrorText != null;
+      _passwordHasError = _passwordErrorText != null;
+      _repeatPasswordHasError = _repeatPasswordErrorText != null;
     });
 
-    bool isValid = true;
-
-    String email = registerController.emailController.text.trim();
-    String password = registerController.passwordController.text;
-    String repeatPassword = registerController.repeatPasswordController.text;
-
-    if (email.isEmpty) {
-      isValid = false;
-      setState(() {
-        _emailHasError = true;
-        _emailErrorText = 'El email no puede estar vacío';
-      });
-    } else if (!email.contains('@')) {
-      isValid = false;
-      setState(() {
-        _emailHasError = true;
-        _emailErrorText = 'Introduce un email válido';
-      });
-    }
-
-    if (password.isEmpty) {
-      isValid = false;
-      setState(() {
-        _passwordHasError = true;
-        _passwordErrorText = 'La contraseña no puede estar vacía';
-      });
-    } else if (password.length < 6) {
-      isValid = false;
-      setState(() {
-        _passwordHasError = true;
-        _passwordErrorText = 'Debe tener al menos 6 caracteres';
-      });
-    }
-
-    if (repeatPassword.isEmpty) {
-      isValid = false;
-      setState(() {
-        _repeatPasswordHasError = true;
-        _repeatPasswordErrorText = 'Repite la contraseña';
-      });
-    } else if (password != repeatPassword) {
-      isValid = false;
-      setState(() {
-        _repeatPasswordHasError = true;
-        _repeatPasswordErrorText = 'Las contraseñas no coinciden';
-      });
-    }
+    final isValid = !_emailHasError && !_passwordHasError && !_repeatPasswordHasError;
 
     if (isValid) {
-      bool success = await registerController.register();
+      final success = await registerController.register();
 
       if (!success) {
         _saveState();
@@ -110,7 +68,6 @@ class _RegisterState extends State<Register> {
           MaterialPageRoute(builder: (context) => RegisterChoose(manager)),
         );
       } else {
-        _saveState();
         setState(() {
           _emailHasError = true;
           _emailErrorText = 'Este correo ya está registrado';
