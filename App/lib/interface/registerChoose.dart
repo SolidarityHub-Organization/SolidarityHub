@@ -22,25 +22,11 @@ class _RegisterChooseState extends State<RegisterChoose> {
   void initState() {
     super.initState();
     _controller = RegisterChooseController(widget.manager);
-
-    _controller.nameController.text = _controller.name ?? '';
-    _controller.surnameController.text = _controller.surname ?? '';
-    _controller.birthDateController.text = _controller.birthDate ?? '';
-    _controller.phoneController.text = _controller.phone ?? '';
-    _controller.identificationController.text = _controller.identification ?? '';
   }
 
-  void _saveState() {
-    _controller.name = _controller.nameController.text;
-    _controller.surname = _controller.surnameController.text;
-    _controller.birthDate = _controller.birthDateController.text;
-    _controller.phone = _controller.phoneController.text;
-    _controller.identification = _controller.identificationController.text;
-    _controller.saveProgress();
-  }
 
   void nextStep(String rol) {
-    _saveState();
+    _controller.saveState();
     _controller.submitForm(rol, context);
   }
 
@@ -52,7 +38,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            _saveState();
+            _controller.saveState();
             widget.manager.restorePreviousStep();
             Navigator.pop(context);
           },

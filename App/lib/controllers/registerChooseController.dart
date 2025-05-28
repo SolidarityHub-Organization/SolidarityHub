@@ -42,13 +42,8 @@ class RegisterChooseController {
   TextEditingController get identificationController => _identificationController;
 
   void submitForm(String role, BuildContext context) {
-    manager.userData.name = name;
-    manager.userData.surname = surname;
-    manager.userData.birthDate = birthDate;
-    manager.userData.phone = phone;
-    manager.userData.identification = identification;
     manager.userData.role = role;
-    manager.saveStep();
+    saveState();
 
     Navigator.push(
       context,
@@ -66,8 +61,14 @@ class RegisterChooseController {
     _phoneController.dispose();
     _identificationController.dispose();
   }
+  
 
-  void saveProgress() {
+  void saveState() {
+    manager.userData.name = name;
+    manager.userData.surname = surname;
+    manager.userData.birthDate = birthDate;
+    manager.userData.phone = phone;
+    manager.userData.identification = identification;
     manager.saveStep();
   }
 
