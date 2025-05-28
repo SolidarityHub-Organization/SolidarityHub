@@ -484,16 +484,29 @@ class _TaskTabState extends State<TaskTab> {
   }
 
   List<PieChartSectionData> _generatePieSections(Map<String, dynamic> data) {
-    final Map<String, dynamic> sanitizedData = {};
+    
+    final Map<String, dynamic> normalizedData = {};
     data.forEach((key, value) {
-      sanitizedData[key] = value ?? 0;
+      String normalizedKey;
+      
+      String lowerKey = key.toLowerCase();
+      
+      if (lowerKey.contains('assign') || lowerKey.contains('asign')) {
+        normalizedKey = 'Assigned';
+      } else if (lowerKey.contains('pend') || lowerKey == 'por hacer') {
+        normalizedKey = 'Pending';
+      } else if (lowerKey.contains('comple') || lowerKey.contains('termin')) {
+        normalizedKey = 'Completed';
+      } else {
+        normalizedKey = key;
+      }
+      
+      normalizedData[normalizedKey] = (normalizedData[normalizedKey] ?? 0) + (value ?? 0);
     });
     
-    // filter out unknown tasks
-    final filteredData = Map<String, dynamic>.from(sanitizedData)
+    final filteredData = Map<String, dynamic>.from(normalizedData)
       ..removeWhere((key, value) => key == 'Unknown' || key == 'Desconocido');
     
-    // check for data to show
     bool hasData = filteredData.values.any((value) => (value as num) > 0);
     
     if (!hasData) {

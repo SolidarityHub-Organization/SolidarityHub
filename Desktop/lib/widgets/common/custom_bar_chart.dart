@@ -206,6 +206,20 @@ class CustomBarChart extends StatelessWidget {
         ? _processDataWithThreshold(data!) 
         : [];
     
+final double maxY = processedData.isNotEmpty
+    ? processedData.map((item) => (item['item2'] ?? 0).toDouble()).reduce((a, b) => a > b ? a : b)
+    : 1;
+
+double yAxisInterval;
+if (maxY > 20) {
+  double rawInterval = (maxY / 10).ceilToDouble();
+  yAxisInterval = (rawInterval % 5 == 0)
+      ? rawInterval
+      : (rawInterval + (5 - rawInterval % 5));
+} else {
+  yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
+}
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -264,10 +278,10 @@ class CustomBarChart extends StatelessWidget {
                             leftTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                interval: 1,
+                                interval: yAxisInterval,
                                 reservedSize: 40,
                                 getTitlesWidget: (value, meta) {
-                                  if (value % 1 == 0) {
+                                  if (value % yAxisInterval == 0) {
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 8.0),
                                       child: Text(
@@ -277,6 +291,8 @@ class CustomBarChart extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                         ),
+                                        softWrap: false,
+                                        overflow: TextOverflow.visible,
                                       ),
                                     );
                                   }
