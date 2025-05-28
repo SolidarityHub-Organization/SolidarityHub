@@ -174,15 +174,16 @@ namespace LogicPersistence.Api.Services
             return await _paginationService.GetPaginatedAsync<PhysicalDonation>(pageNumber, pageSize, "physical_donation", "created_at DESC, id DESC");
         }
 
-        public async Task<Dictionary<string, int>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
+        public async Task<Dictionary<string, double>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
             if (fromDate > toDate) {
                 throw new ArgumentException("From date cannot be greater than to date.");
             }
 
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
-            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
+            var result = InitializeLast8WeeksDoubleDictionary(toDate);
 
-            var result = InitializeLast6WeeksIntDictionary(toDate);
+            var weekStartDates = result.Keys.Select(DateTime.Parse).ToHashSet();
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate && weekStartDates.Contains(GetWeekStartDate(d)));
 
             var groupedDonations = filteredDonations
                 .GroupBy(GetWeekStartDate)
@@ -192,7 +193,9 @@ namespace LogicPersistence.Api.Services
                 );
 
             foreach (var kvp in groupedDonations) {
-                result[kvp.Key] = kvp.Value;
+                if (result.ContainsKey(kvp.Key)) {
+                    result[kvp.Key] = kvp.Value;
+                }
             }
 
             return result;
@@ -328,9 +331,9 @@ namespace LogicPersistence.Api.Services
             }
 
             var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
-            var filteredDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
-
-            var result = InitializeLast6WeeksDoubleDictionary(toDate);
+            var result = InitializeLast8WeeksDoubleDictionary(toDate);
+            var weekStartDates = result.Keys.Select(DateTime.Parse).ToHashSet();
+            var filteredDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate && weekStartDates.Contains(GetWeekStartDate(d)));
 
             var groupedDonations = filteredDonations
                 .GroupBy(GetWeekStartDate)
@@ -340,7 +343,9 @@ namespace LogicPersistence.Api.Services
                 );
 
             foreach (var kvp in groupedDonations) {
-                result[kvp.Key] = kvp.Value;
+                if (result.ContainsKey(kvp.Key)) {
+                    result[kvp.Key] = kvp.Value;
+                }
             }
 
             return result;
@@ -380,25 +385,13 @@ namespace LogicPersistence.Api.Services
             return donation.donation_date.Date.AddDays(-daysToSubtract);
         }
 
-        private static Dictionary<string, int> InitializeLast6WeeksIntDictionary(DateTime referenceDate) {
-            var dict = new Dictionary<string, int>();
-            int daysToSubtract = (int)referenceDate.DayOfWeek == 0 ? 6 : (int)referenceDate.DayOfWeek - 1;
-            DateTime weekStart = referenceDate.Date.AddDays(-daysToSubtract);
-
-            for (int i = 5; i >= 0; i--) {
-                var week = weekStart.AddDays(-7 * i);
-                dict[week.ToString("yyyy-MM-dd")] = 0;
-            }
-            return dict;
-        }
-        
-        private static Dictionary<string, double> InitializeLast6WeeksDoubleDictionary(DateTime referenceDate)
+        private static Dictionary<string, double> InitializeLast8WeeksDoubleDictionary(DateTime referenceDate)
         {
             var dict = new Dictionary<string, double>();
             int daysToSubtract = (int)referenceDate.DayOfWeek == 0 ? 6 : (int)referenceDate.DayOfWeek - 1;
             DateTime weekStart = referenceDate.Date.AddDays(-daysToSubtract);
 
-            for (int i = 5; i >= 0; i--)
+            for (int i = 7; i >= 0; i--)
             {
                 var week = weekStart.AddDays(-7 * i);
                 dict[week.ToString("yyyy-MM-dd")] = 0.0;

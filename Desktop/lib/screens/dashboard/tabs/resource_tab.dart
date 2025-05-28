@@ -6,6 +6,8 @@ import 'dart:math' as math;
 import 'package:solidarityhub/widgets/common/two_dimensional_scroll_widget.dart';
 import 'package:solidarityhub/widgets/common/custom_pie_chart.dart';
 import 'package:solidarityhub/widgets/common/custom_bar_chart.dart';
+import 'package:solidarityhub/widgets/common/custom_line_chart.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class RecursosTab extends StatefulWidget {
   final DateTime? fechaInicio;
@@ -988,7 +990,8 @@ class _RecursosTabState extends State<RecursosTab> {
     try {
       final date = DateTime.parse(dateString);
       
-      return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
+      // Formatear como "dd-mm-yyyy"
+      return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
     } catch (e) {
       print('Error formateando fecha: $dateString, error: $e');
       return dateString;
@@ -1001,7 +1004,6 @@ class _RecursosTabState extends State<RecursosTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Padding(
             padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
             child: Row(
@@ -1082,25 +1084,27 @@ class _RecursosTabState extends State<RecursosTab> {
                   );
                 }
 
+                final List<String> xLabels = [];
+                final List<FlSpot> spots = [];
+                
+                int index = 0;
+                for (final entry in snapshot.data!.entries) {
+                  xLabels.add(_formatWeekLabel(entry.key));
+                  spots.add(FlSpot(index.toDouble(), entry.value));
+                  index++;
+                }
 
-                final data = snapshot.data!.entries
-                    .map((entry) => {
-                          'item1': _formatWeekLabel(entry.key),
-                          'item2': entry.value,
-                        })
-                    .toList();
-
-                return CustomBarChart(
-                  data: data,
-                  barColor: _selectedDonationType == 'physical' 
+                return CustomLineChart(
+                  spots: spots,
+                  xLabels: xLabels,
+                  lineColor: _selectedDonationType == 'physical' 
                       ? const Color(0xFF2196F3) 
-                      : const Color(0xFF4CAF50),
-                  tooltipColor: _selectedDonationType == 'physical' 
-                      ? const Color(0xFF2196F3)
-                      : const Color(0xFF4CAF50),
-                  legendScrollController: _barChartScrollController,
+                      : const Color(0xFF4CAF50), 
+                  areaColor: _selectedDonationType == 'physical' 
+                      ? const Color(0xFF2196F3).withOpacity(0.3) 
+                      : const Color(0xFF4CAF50).withOpacity(0.3), 
+                  title: '', 
                   padding: const EdgeInsets.fromLTRB(40.0, 0.0, 50.0, 80.0),
-                  threshold: 0.0, 
                 );
               },
             ),

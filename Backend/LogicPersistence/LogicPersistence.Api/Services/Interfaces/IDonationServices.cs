@@ -16,7 +16,7 @@ namespace LogicPersistence.Api.Services
         Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate);
         Task<IEnumerable<PhysicalDonationDisplayDto>> GetPhysicalDonationsByDateAsync(DateTime fromDate, DateTime toDate);
 		Task<(IEnumerable<PhysicalDonation> PhysicalDonations, int TotalCount)> GetPaginatedPhysicalDonationsAsync(int pageNumber, int pageSize);
-        Task<Dictionary<string, int>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate);
+        Task<Dictionary<string, double>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate);
         #endregion
 
         #region MonetaryDonation
