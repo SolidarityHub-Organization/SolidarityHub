@@ -39,6 +39,15 @@ String? validatePhoneWithoutEmpty(String? value){
   }
   return null;
 }
+
+String? validateIdentification(String? value){
+  final dniRegExp = RegExp(r'^\d{8}[A-Z]$');
+  if(!dniRegExp.hasMatch(value!)){
+    return 'Introduce un DNI válido';
+  }
+  return null;
+}
+
 String? validateEmailWithoutEmpty(String? value) {
   if (value == null || value.isEmpty) return null;
   if (!value.contains('@')) return 'Introduce un email válido';
