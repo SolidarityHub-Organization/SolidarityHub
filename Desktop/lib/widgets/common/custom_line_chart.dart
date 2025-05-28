@@ -115,6 +115,20 @@ class CustomLineChart extends StatelessWidget {
     
     final bottomReservedSize = _calculateMaxTitleWidth(context, xLabels);
 
+    final maxY = spots.isNotEmpty
+        ? spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b)
+        : 1;
+
+    double yAxisInterval;
+    if (maxY > 20) {
+      double rawInterval = (maxY / 10).ceilToDouble();
+      yAxisInterval = (rawInterval % 5 == 0)
+          ? rawInterval
+          : (rawInterval + (5 - rawInterval % 5));
+    } else {
+      yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -167,14 +181,22 @@ class CustomLineChart extends StatelessWidget {
                 minX: 0,
                 maxX: spots.isNotEmpty ? (spots.length - 1).toDouble() : 0,
                 minY: 0,
-                maxY: spots.isNotEmpty ? spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) : 1,
+                maxY: maxY.toDouble(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      interval: 1,
+                      interval: yAxisInterval,
                       getTitlesWidget: (value, meta) {
-                        return Text(value.toInt().toString(), style: const TextStyle(fontSize: 12));
+                        if (value % yAxisInterval == 0) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(fontSize: 12),
+                            softWrap: false,
+                            overflow: TextOverflow.visible,
+                          );
+                        }
+                        return const SizedBox.shrink();
                       },
                     ),
                   ),
