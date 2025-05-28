@@ -41,14 +41,6 @@ class RegisterChooseController {
   set identification(String value) => _identificationController.text = value;
   TextEditingController get identificationController => _identificationController;
 
-  bool isValidPhone(String value) {
-    return RegExp(r'^\d{9}$').hasMatch(value);
-  }
-
-  bool isValidIdentification(String value) {
-    return RegExp(r'^\d{8}[A-Z]$').hasMatch(value);
-  }
-
   void submitForm(String role, BuildContext context) {
     manager.userData.name = name;
     manager.userData.surname = surname;
@@ -74,4 +66,9 @@ class RegisterChooseController {
     _phoneController.dispose();
     _identificationController.dispose();
   }
+
+  void saveProgress() {
+    manager.saveStep();
+  }
+
 }

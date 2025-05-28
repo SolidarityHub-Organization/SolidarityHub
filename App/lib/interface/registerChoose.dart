@@ -36,7 +36,7 @@ class _RegisterChooseState extends State<RegisterChoose> {
     _controller.birthDate = _controller.birthDateController.text;
     _controller.phone = _controller.phoneController.text;
     _controller.identification = _controller.identificationController.text;
-    widget.manager.saveStep();
+    _controller.saveProgress();
   }
 
   void nextStep(String rol) {
