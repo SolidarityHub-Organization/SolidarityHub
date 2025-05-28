@@ -2,6 +2,7 @@ import 'package:app/interface/registerChoose.dart';
 import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerController.dart';
+import '../models/button_creator.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -159,16 +160,10 @@ class _RegisterState extends State<Register> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => registerController.onRegisterTabPressed(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text("Registro", style: TextStyle(color: Colors.white)),
+                        child: buildCustomButton(
+                          "Registro",
+                          () => registerController.onRegisterTabPressed(context),
+                          verticalPadding: 12,
                         ),
                       ),
                     ],

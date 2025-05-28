@@ -42,7 +42,6 @@ class SolicitarRecursoController {
       'description': descripcion,
       'victim_id': id,
       'need_type_id': recurso.id,
-      //'cantidad': int.tryParse(cantidad) ?? 0,
     };
     print(solicitud);
 
