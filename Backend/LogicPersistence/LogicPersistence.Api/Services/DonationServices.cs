@@ -182,19 +182,24 @@ namespace LogicPersistence.Api.Services
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
             var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
 
-            return filteredDonations
+            var result = InitializeLast6WeeksIntDictionary(toDate);
+
+            var groupedDonations = filteredDonations
                 .GroupBy(GetWeekStartDate)
-                .OrderBy(kvp => kvp.Key)
                 .ToDictionary(
                     group => $"{group.Key:yyyy-MM-dd}",
                     group => group.Sum(d => d.quantity)
                 );
 
+            foreach (var kvp in groupedDonations) {
+                result[kvp.Key] = kvp.Value;
+            }
+
+            return result;
         }
 
         #endregion
         #region MonetaryDonation
-
         public async Task<MonetaryDonationDisplayDto> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto) {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
@@ -325,13 +330,20 @@ namespace LogicPersistence.Api.Services
             var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
             var filteredDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
 
-            return filteredDonations
+            var result = InitializeLast6WeeksDoubleDictionary(toDate);
+
+            var groupedDonations = filteredDonations
                 .GroupBy(GetWeekStartDate)
-                .OrderBy(kvp => kvp.Key)
                 .ToDictionary(
                     group => $"{group.Key:yyyy-MM-dd}",
                     group => group.Sum(d => d.amount)
                 );
+
+            foreach (var kvp in groupedDonations) {
+                result[kvp.Key] = kvp.Value;
+            }
+
+            return result;
         }
 
         #endregion
@@ -366,6 +378,32 @@ namespace LogicPersistence.Api.Services
             var dayOfWeek = (int)donation.donation_date.DayOfWeek;
             var daysToSubtract = dayOfWeek == 0 ? 6 : dayOfWeek - 1;
             return donation.donation_date.Date.AddDays(-daysToSubtract);
+        }
+
+        private static Dictionary<string, int> InitializeLast6WeeksIntDictionary(DateTime referenceDate) {
+            var dict = new Dictionary<string, int>();
+            int daysToSubtract = (int)referenceDate.DayOfWeek == 0 ? 6 : (int)referenceDate.DayOfWeek - 1;
+            DateTime weekStart = referenceDate.Date.AddDays(-daysToSubtract);
+
+            for (int i = 5; i >= 0; i--) {
+                var week = weekStart.AddDays(-7 * i);
+                dict[week.ToString("yyyy-MM-dd")] = 0;
+            }
+            return dict;
+        }
+        
+        private static Dictionary<string, double> InitializeLast6WeeksDoubleDictionary(DateTime referenceDate)
+        {
+            var dict = new Dictionary<string, double>();
+            int daysToSubtract = (int)referenceDate.DayOfWeek == 0 ? 6 : (int)referenceDate.DayOfWeek - 1;
+            DateTime weekStart = referenceDate.Date.AddDays(-daysToSubtract);
+
+            for (int i = 5; i >= 0; i--)
+            {
+                var week = weekStart.AddDays(-7 * i);
+                dict[week.ToString("yyyy-MM-dd")] = 0.0;
+            }
+            return dict;
         }
 
         #endregion
