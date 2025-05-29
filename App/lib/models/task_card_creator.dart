@@ -47,17 +47,6 @@ class TaskCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.orangeAccent,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text("Ver Detalles", style: TextStyle(color: Colors.white)),
-            ),
-          ),
         ],
       ),
     );
