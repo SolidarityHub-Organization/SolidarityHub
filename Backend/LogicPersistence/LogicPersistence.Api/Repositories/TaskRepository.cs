@@ -373,13 +373,28 @@ public class TaskRepository : ITaskRepository {
     public async Task<IEnumerable<TaskWithLocationInfoDto>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-        SELECT t.*,
-        l.latitude,
-        l.longitude
+		SELECT t.*,
+			   l.latitude,
+			   l.longitude
 		FROM task t
 		JOIN volunteer_task vt ON t.id = vt.task_id
-		join location l on t.location_id = l.id
-        WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Pending'";
+		JOIN location l ON t.location_id = l.id
+		WHERE vt.volunteer_id = @volunteerId
+		  AND vt.state = 'Pending'
+		  AND NOT EXISTS (
+			SELECT 1
+			FROM volunteer_task vt2
+			JOIN task_time tt1 ON tt1.task_id = vt2.task_id
+			JOIN task_time tt2 ON tt2.task_id = t.id
+			WHERE vt2.volunteer_id = @volunteerId
+			AND vt2.state = 'Assigned'
+			  AND vt2.task_id != t.id -- Evitar que compare con sí mismo
+			  AND (
+				tt1.date = tt2.date
+				AND tt1.start_time < tt2.end_time
+				AND tt1.end_time > tt2.start_time
+			  )
+		  )";
 
         return await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId });
     }
@@ -387,7 +402,8 @@ public class TaskRepository : ITaskRepository {
     public async Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-        SELECT t.*,
+
+		SELECT t.*,
         l.latitude,
         l.longitude
 		FROM task t
