@@ -20,4 +20,14 @@ class DatabaseServices {
 
     print('Database cleared successfully.');
   }
+
+  static Future<void> superPopulateDatabase() async {
+    final response = await ApiServices.post('database/superpopulate');
+
+    if (!response.statusCode.ok) {
+      throw Exception('Error when superpopulating database: ${response.body}');
+    }
+
+    print('Database superpopulated successfully.');
+  }
 }

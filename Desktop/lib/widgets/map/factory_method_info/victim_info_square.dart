@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
 import 'info_square_factory.dart';
 import '../../../services/location_external_services.dart';
-import '../decorador/info_square_decorator.dart';
+import '../decorator/info_square_decorator.dart';
 
 class VictimInfoSquare implements InfoSquare {
   // Método para obtener el color según el nivel de urgencia
@@ -33,12 +33,17 @@ class VictimInfoSquare implements InfoSquare {
 
         // Definir colores temáticos para víctimas
         final Color primaryColor = Colors.red.shade700;
-        final Color secondaryColor = Colors.red.shade300;
-
-        // Crear las filas de información con textos que se puedan ajustar
+        final Color secondaryColor =
+            Colors.red.shade300; // Crear las filas de información con textos que se puedan ajustar
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.person_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
           InfoRowData(
             icon: Icons.priority_high,
             label: 'Nivel de urgencia',

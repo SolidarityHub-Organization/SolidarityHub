@@ -10,5 +10,7 @@ namespace LogicPersistence.Api.Services {
 		Task<IEnumerable<Victim>> GetAllVictimsAsync();
 		Task<int> GetVictimsCountAsync(DateTime fromDate, DateTime toDate);
 		Task<IEnumerable<(string date, int count)>> GetVictimsCountByDateAsync();
+        Task<(IEnumerable<Victim> Victims, int TotalCount)> GetPaginatedVictimsAsync(int pageNumber, int pageSize);
+
 	}
 }

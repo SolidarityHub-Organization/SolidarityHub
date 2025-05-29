@@ -3,6 +3,7 @@ import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:solidarityhub/widgets/donations/assign_donation_dialog.dart';
 import 'package:solidarityhub/widgets/donations/create_donation_dialog.dart';
+import 'package:solidarityhub/widgets/donations/create_monetary_donation_dialog.dart';
 import 'package:solidarityhub/models/volunteer.dart';
 import 'package:solidarityhub/services/donation_services.dart';
 import 'package:solidarityhub/services/volunteer_services.dart';
@@ -874,11 +875,6 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         controller: _tabController,
         children: [_buildPhysicalDonationsTab(), _buildMonetaryDonationsTab()],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _tabController.index == 0 ? _showCreateDonationDialog : null,
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
     );
   }
 
@@ -903,6 +899,23 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Donaciones Físicas', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: _showCreateDonationDialog,
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: const Text('Nueva Donación', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           _buildResumeSection(),
           const SizedBox(height: 16),
           _buildFilterBar(),
@@ -947,6 +960,34 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       isLoading: _isLoading,
       errorMessage: _errorMessage,
       onRefresh: _fetchMonetaryDonations,
+      volunteers: _volunteers,
     );
+  }
+
+  Future<void> _showCreateMonetaryDonationDialog() async {
+    final result = await showDialog<MonetaryDonation>(
+      context: context,
+      builder: (context) => CreateMonetaryDonationDialog(volunteers: _volunteers),
+    );
+
+    if (result != null) {
+      try {
+        final createdDonation = await DonationServices.createMonetaryDonation(result);
+        setState(() {
+          _monetaryDonations.add(createdDonation);
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Donación monetaria creada exitosamente')));
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al crear la donación monetaria: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
   }
 }

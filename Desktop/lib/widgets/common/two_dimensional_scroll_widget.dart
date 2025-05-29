@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class TwoDimensionalScrollWidget extends StatefulWidget {
   final Widget child;
-  const TwoDimensionalScrollWidget({super.key, required this.child});
+  final void Function(ScrollController)? onVerticalControllerReady;
+  const TwoDimensionalScrollWidget({
+    super.key,
+    required this.child,
+    this.onVerticalControllerReady,
+  });
 
   @override
   State<TwoDimensionalScrollWidget> createState() => _TwoDimensionalScrollWidgetState();
@@ -11,6 +16,12 @@ class TwoDimensionalScrollWidget extends StatefulWidget {
 class _TwoDimensionalScrollWidgetState extends State<TwoDimensionalScrollWidget> {
   final ScrollController _verticalController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.onVerticalControllerReady?.call(_verticalController);
+  }
 
   @override
   void dispose() {

@@ -1,4 +1,5 @@
 import 'package:app/interface/schedules.dart';
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '/controllers/addressScreenController.dart';
 import '/models/user_registration_data.dart';
@@ -6,8 +7,8 @@ import 'package:flutter/services.dart';
 import '/interface/victimNeeds.dart'; // Siguiente pantalla
 
 class AddressScreen extends StatefulWidget {
-  final UserRegistrationData userData;
-  const AddressScreen({Key? key, required this.userData}) : super(key: key);
+  final RegisterFlowManager manager;
+  const AddressScreen({Key? key, required this.manager}) : super(key: key);
 
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -29,6 +30,20 @@ class _AddressScreenState extends State<AddressScreen> {
 
   late AddressController controller;
 
+  void _saveState(){
+    final address = [
+      controller.addressLine1Controller.text,
+      controller.addressLine2Controller.text,
+      controller.postalCodeController.text,
+      controller.cityController.text,
+      controller.provinceController.text,
+      controller.countryController.text,
+    ].join(', ');
+
+    widget.manager.userData.address = address;
+    widget.manager.saveStep();
+  }
+
   void _validateAndSubmitAddress() {
     setState(() {
       _address1HasError = controller.addressLine1Controller.text.isEmpty;
@@ -44,17 +59,17 @@ class _AddressScreenState extends State<AddressScreen> {
       _postalCodeError = _postalCodeHasError ? 'Este campo es obligatorio' : null;
 
       if (!(_address1HasError || _countryHasError || _provinceHasError || _cityHasError || _postalCodeHasError)) {
-        controller.submitAddress();
+        _saveState();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Dirección enviada correctamente")),
         );
 
-        if(widget.userData.role == 'Volunteer'){
+        if(widget.manager.userData.role == 'Volunteer'){
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Schedules(userData: widget.userData),
+              builder: (context) => Schedules(manager: widget.manager),
             ),
           );
         }
@@ -62,7 +77,7 @@ class _AddressScreenState extends State<AddressScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => VictimNecessities(userData: widget.userData),
+              builder: (context) => VictimNecessities(manager: widget.manager),
             ),
           );
         }
@@ -75,8 +90,19 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   void initState() {
     super.initState();
-    controller = AddressController(widget.userData);
+    controller = AddressController(widget.manager.userData);
+
+    final addressParts = (widget.manager.userData.address ?? '').split(', ');
+    if (addressParts.length >= 6) {
+      controller.addressLine1Controller.text = addressParts[0];
+      controller.addressLine2Controller.text = addressParts[1];
+      controller.postalCodeController.text = addressParts[2];
+      controller.cityController.text = addressParts[3];
+      controller.provinceController.text = addressParts[4];
+      controller.countryController.text = addressParts[5];
+    }
   }
+
 
   @override
   void dispose() {
@@ -87,6 +113,29 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            _saveState();
+            widget.manager.restorePreviousStep();
+            Navigator.pop(context);
+          },
+        ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 3 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       backgroundColor: Colors.red,
       body: SafeArea(
         child: LayoutBuilder(

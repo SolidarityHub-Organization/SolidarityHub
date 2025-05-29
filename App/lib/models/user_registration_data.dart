@@ -13,6 +13,8 @@ class UserRegistrationData {
   int? prefix;
   String? identification;
 
+  UserRegistrationData();
+
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -47,6 +49,20 @@ class UserRegistrationData {
       'password': null,
     };
   }
-
+  factory UserRegistrationData.clone(UserRegistrationData original) {
+    return UserRegistrationData()
+      ..email = original.email
+      ..password = original.password
+      ..name = original.name
+      ..surname = original.surname
+      ..birthDate = original.birthDate
+      ..phone = original.phone
+      ..role = original.role
+      ..address = original.address
+      ..schedule = original.schedule
+      ..preferences = original.preferences
+      ..needs = original.needs
+      ..prefix = original.prefix
+      ..identification = original.identification;
+  }
 }
-

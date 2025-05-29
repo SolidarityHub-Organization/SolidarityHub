@@ -199,7 +199,27 @@ class TaskTableCell extends StatelessWidget {
           onTaskChanged();
         });
 
-        AppSnackBar.show(context: context, message: 'Tarea eliminada con éxito', type: SnackBarType.info);
+        // Mostrar SnackBar con opción de deshacer
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Tarea eliminada'),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Deshacer',
+              onPressed: () async {
+                try {
+                  await controller.restoreLastDeletedTask();
+                  onTaskChanged();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tarea restaurada')));
+                } catch (e) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error al restaurar la tarea: ${e.toString()}')));
+                }
+              },
+            ),
+          ),
+        );
       } catch (e) {
         AppSnackBar.show(
           context: context,

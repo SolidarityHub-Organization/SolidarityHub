@@ -17,7 +17,7 @@ namespace LogicPersistence.Api.Controllers
         [ActionName(nameof(CreateAdminAsync))]
         public async Task<IActionResult> CreateAdminAsync(AdminCreateDto adminCreateDto) {
             try {
-                var admin = await _adminServices.CreateAdminAsync(adminCreateDto);               
+                var admin = await _adminServices.CreateAdminAsync(adminCreateDto);
                 return CreatedAtAction(nameof(CreateAdminAsync), new { id = admin.id }, admin);
             } catch (ArgumentNullException ex) {
                 return BadRequest(ex.Message);
@@ -104,8 +104,7 @@ namespace LogicPersistence.Api.Controllers
         public async Task<IActionResult> LogInAdminAsync(string email, string password) {
             try {
                 var res = await _adminServices.LogInAdminAsync(email, password);
-                if (!res)
-                {
+                if (!res) {
                     return Unauthorized(res);
                 }
                 return Ok(res);
@@ -115,5 +114,35 @@ namespace LogicPersistence.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("admins/paginated")]
+		public async Task<IActionResult> GetPaginatedAdminsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (admins, totalCount) = await _adminServices.GetPaginatedAdminsAsync(page, size);
+
+				return Ok(new
+				{
+					Items = admins,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
     }
 }

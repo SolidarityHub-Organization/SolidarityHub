@@ -1,33 +1,26 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '/controllers/schedulesController.dart';
 import '/models/user_registration_data.dart';
 import 'registerChoose.dart';
 
-void main() {
-  runApp(SchedulesApp());
-}
-
-class SchedulesApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Solidary Hub - Horarios',
-      theme: ThemeData(primarySwatch: Colors.red),
-      home: Schedules(userData: UserRegistrationData()),
-    );
-  }
-}
-
 class Schedules extends StatefulWidget {
-  final UserRegistrationData userData;
-  Schedules({required this.userData});
+  final RegisterFlowManager manager;
+  Schedules({required this.manager});
 
   @override
   _SchedulesState createState() => _SchedulesState();
 }
 
 class _SchedulesState extends State<Schedules> {
+
+  @override
+  void initState() {
+    super.initState();
+    final selected = widget.manager.userData.schedule?.split(', ') ?? [];
+    controller.selectedTimes.addAll(selected);
+  }
+
   final SchedulesController controller = SchedulesController();
 
   final Map<String, String> timeLabels = {
@@ -40,6 +33,29 @@ class _SchedulesState extends State<Schedules> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              widget.manager.saveStep();
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 4 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: SingleChildScrollView(
@@ -77,6 +93,8 @@ class _SchedulesState extends State<Schedules> {
                     onChanged: (bool? value) {
                     setState(() {
                     controller.updateSelectedTimes(label, value ?? false);
+                    widget.manager.userData.schedule = controller.selectedTimes.join(', ');
+                    widget.manager.saveStep();
                         });
                       },
                     );
@@ -86,8 +104,9 @@ class _SchedulesState extends State<Schedules> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (controller.selectedTimes.isNotEmpty) {
-                            widget.userData.schedule = controller.selectedTimes.join(', ');
-                            controller.goToNextScreen(context, widget.userData);
+                            widget.manager.userData.schedule = controller.selectedTimes.join(', ');
+                            widget.manager.saveStep();
+                            controller.goToNextScreen(context, widget.manager);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Selecciona al menos un horario antes de continuar.')),

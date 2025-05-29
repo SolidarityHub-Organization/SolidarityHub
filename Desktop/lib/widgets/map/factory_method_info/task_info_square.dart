@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/mapMarker.dart';
 import 'info_square_factory.dart';
 import '../../../services/location_external_services.dart';
-import '../decorador/info_square_decorator.dart';
+import '../decorator/info_square_decorator.dart';
 
 class TaskInfoSquare implements InfoSquare {
   // Método para obtener el icono según el estado
@@ -54,12 +54,16 @@ class TaskInfoSquare implements InfoSquare {
 
         // Definir colores temáticos para tareas
         final Color primaryColor = Colors.orange;
-        final Color secondaryColor = Colors.orange.shade300;
-
-        // Crear las filas de información
+        final Color secondaryColor = Colors.orange.shade300; // Crear las filas de información
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.description, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
         ];
 
         // Agregar estado si existe

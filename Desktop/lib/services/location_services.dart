@@ -90,14 +90,32 @@ class LocationServices {
 
       locations =
           data.map((location) {
+            // Calcular la cantidad total de donaciones sumando las cantidades de cada item
+            int totalDonations = 0;
+            if (location['physical_donation'] is List) {
+              List<dynamic> donations = location['physical_donation'];
+              for (var donation in donations) {
+                if (donation is Map && donation.containsKey('quantity')) {
+                  // Convertir quantity a entero de forma segura
+                  var quantity = donation['quantity'];
+                  if (quantity is int) {
+                    totalDonations += quantity;
+                  } else if (quantity != null) {
+                    // Intentar convertir otros tipos a entero
+                    totalDonations += int.tryParse(quantity.toString()) ?? 0;
+                  }
+                }
+              }
+            }
+
             return {
               'id': location['id'],
               'name': location['name'],
               'latitude': location['latitude'],
               'longitude': location['longitude'],
               'type': location['type'],
-              'time': location['time'],
               'physical_donation': location['physical_donation'],
+              'quantity': totalDonations,
             };
           }).toList();
     }
@@ -120,7 +138,6 @@ class LocationServices {
               'latitude': location['latitude'],
               'longitude': location['longitude'],
               'type': location['type'],
-              'time': location['time'],
             };
           }).toList();
     }

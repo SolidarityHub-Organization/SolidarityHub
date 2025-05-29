@@ -21,5 +21,7 @@ namespace LogicPersistence.Api.Services {
 		Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId);
 		Task<Models.Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, UpdateTaskStateDto updateTaskStateDto);
 		Task<string> GetMaxUrgencyLevelForTaskAsync(int taskId);
+		Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksAsync(int pageNumber, int pageSize);
+		Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size);
 	}
 }

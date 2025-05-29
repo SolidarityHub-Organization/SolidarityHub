@@ -189,24 +189,47 @@ class CreateTaskController {
 
   Future<void> searchAddress() async {
     final address = searchAddressController.text.trim();
-    final locationCoords = await LocationExternalServices.getLatLonFromAddress(address);
-    selectedLocation = locationCoords?['location'] as LatLng;
-    mapController.move(selectedLocation, locationCoords?['zoomLevel'] ?? 15.0);
+    try {
+      final result = await LocationExternalServices.getLatLngFromAddress(address);
 
-    _updateLocationControllers(selectedLocation);
-    _updateMarker(selectedLocation);
-    mapController.move(selectedLocation, 15.0);
+      if (result != null) {
+        // Usamos directamente el resultado como LatLng
+        selectedLocation = result;
+        mapController.move(selectedLocation, 15.0);
+
+        _updateLocationControllers(selectedLocation);
+        _updateMarker(selectedLocation);
+      }
+    } catch (e) {
+      print('Error al buscar dirección: $e');
+      // Manejo de errores si es necesario
+    }
   }
 
   List<Volunteer> filteredVolunteers() {
-    if (searchVolunteersController.text.isEmpty && searchSkillsController.text.isEmpty) {
-      return volunteers;
+    DateTime? taskStart = startDate;
+    DateTime? taskEnd = endDate;
+    
+    bool isVolunteerAvailable(Volunteer volunteer) {
+      if (volunteer.availableTimes.isEmpty || taskStart == null) return false;
+      final int taskDay = taskStart.weekday % 7; // Dart: 1=Mon, VolunteerTime: 0=Sun
+      final String taskStartStr = taskStart.toIso8601String().substring(11, 16); // 'HH:mm'
+      final String taskEndStr = (taskEnd ?? taskStart).toIso8601String().substring(11, 16);
+      for (final vt in volunteer.availableTimes) {
+        if (vt.day == taskDay) {
+          if (vt.startTime.compareTo(taskStartStr) <= 0 && vt.endTime.compareTo(taskEndStr) >= 0) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
     final nameQuery = searchVolunteersController.text.toLowerCase();
     final skillsQuery = searchSkillsController.text.toLowerCase();
 
     return volunteers.where((volunteer) {
+      if (!isVolunteerAvailable(volunteer)) return false;
       // Filtrado por datos personales
       final matchesSearch =
           searchVolunteersController.text.isEmpty ||

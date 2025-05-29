@@ -133,6 +133,7 @@ class SkillBasedAssignmentStrategy implements AssignmentStrategy {
 
 class AutoAssigner {
   late AssignmentStrategy _strategy;
+  List<TaskWithDetails>? _previousState;
 
   AutoAssigner(AssignmentStrategyType strategyType) {
     setStrategy(strategyType);
@@ -156,6 +157,25 @@ class AutoAssigner {
   }
 
   Future<void> assignTasks(List<TaskWithDetails> tasks, List<Volunteer> volunteers, int volunteersPerTask) async {
+    _previousState =
+        tasks
+            .map(
+              (task) => TaskWithDetails(
+                id: task.id,
+                name: task.name,
+                description: task.description,
+                adminId: task.adminId,
+                locationId: task.locationId,
+                startDate: task.startDate,
+                endDate: task.endDate,
+                assignedVolunteers: List.from(task.assignedVolunteers),
+                assignedVictim: List.from(task.assignedVictim),
+                location: task.location,
+                skills: List.from(task.skills),
+              ),
+            )
+            .toList();
+
     List<TaskWithDetails> tasksToUpdate = _strategy.assignTasks(tasks, volunteers, volunteersPerTask);
     List<Future> futures = [];
 
@@ -164,6 +184,18 @@ class AutoAssigner {
     }
 
     await Future.wait(futures);
+  }
+
+  Future<void> undoAssignment() async {
+    if (_previousState == null) return;
+
+    List<Future> futures = [];
+    for (var task in _previousState!) {
+      futures.add(TaskServices.updateTask(task));
+    }
+
+    await Future.wait(futures);
+    _previousState = null;
   }
 }
 

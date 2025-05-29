@@ -2,16 +2,19 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Mappers;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
     public class VolunteerServices : IVolunteerServices
     {
         private readonly IVolunteerRepository _volunteerRepository;
+        private readonly IPaginationService _paginationService;
 
-        public VolunteerServices(IVolunteerRepository volunteerRepository)
+        public VolunteerServices(IVolunteerRepository volunteerRepository, IPaginationService paginationService)
         {
             _volunteerRepository = volunteerRepository;
+            _paginationService = paginationService;
         }
 
         public async Task<Volunteer> CreateVolunteerAsync(VolunteerCreateDto volunteerCreateDto)
@@ -128,25 +131,8 @@ namespace LogicPersistence.Api.Services
             return volunteers.Count();
         }
 
-        public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
-        {
-            if (pageNumber < 1)
-                throw new ArgumentException("Page number must be greater than or equal to 1.");
-
-            if (pageSize < 1)
-                throw new ArgumentException("Page size must be greater than or equal to 1.");
-
-            var result = await _volunteerRepository.GetPaginatedVolunteersAsync(pageNumber, pageSize);
-
-            if (result.Volunteers == null)
-                throw new InvalidOperationException("Failed to retrieve paginated volunteers.");
-
-            int totalPages = (int)Math.Ceiling(result.TotalCount / (double)pageSize);
-
-            if (totalPages > 0 && pageNumber > totalPages)
-                throw new ArgumentException($"Page number {pageNumber} exceeds total pages {totalPages}.");
-
-            return result;
-        }
+        public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<Volunteer>(pageNumber, pageSize, "volunteer", "created_at DESC, id DESC");
+		}
     }
 }

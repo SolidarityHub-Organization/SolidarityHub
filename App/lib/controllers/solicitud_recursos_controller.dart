@@ -42,7 +42,6 @@ class SolicitarRecursoController {
       'description': descripcion,
       'victim_id': id,
       'need_type_id': recurso.id,
-      //'cantidad': int.tryParse(cantidad) ?? 0,
     };
     print(solicitud);
 
@@ -50,6 +49,7 @@ class SolicitarRecursoController {
 
     if (exito) {
       _mostrarMensaje(context, 'Solicitud enviada con éxito.');
+      limpiarCampos();
     } else {
       _mostrarMensaje(context, 'Error al enviar la solicitud.');
     }
@@ -64,5 +64,10 @@ class SolicitarRecursoController {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(mensaje)),
     );
+  }
+
+  void limpiarCampos(){
+    cantidadController.clear();
+    descripcionController.clear();
   }
 }

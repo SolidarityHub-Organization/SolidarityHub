@@ -80,7 +80,7 @@ class _VictimsTabState extends State<VictimsTab> {
                 } else if (snapshotCount.hasError) {
                   return Center(child: Text('Error: ${snapshotCount.error}'));
                 } else if (!snapshotCount.hasData || snapshotCount.data!.isEmpty) {
-                  return const Center(child: Text('No data available'));
+                  return const Center(child: Text('No hay datos para mostrar.'));
                 } else {
                   final lineData = snapshotCount.data!;
                   final sortedLineData = lineData..sort((a, b) => (a['date'] ?? '').compareTo(b['date'] ?? ''));
@@ -153,13 +153,8 @@ class _VictimsTabState extends State<VictimsTab> {
                             titleBottomMargin: 25.0,
                             padding: const EdgeInsets.fromLTRB(60, 0, 70, 50),
                           ),
-                          const Divider(
-                            height: 40,
-                            thickness: 2,
-                            indent: 40,
-                            endIndent: 40,
-                            color: Colors.grey,
-                          ),                          CustomBarChart(
+                          const Divider(height: 40, thickness: 2, indent: 40, endIndent: 40, color: Colors.grey),
+                          CustomBarChart(
                             data: transformedNeedsData,
                             barColor: Colors.red,
                             title: 'Número de afectados por tipos de necesidad',
@@ -168,24 +163,14 @@ class _VictimsTabState extends State<VictimsTab> {
                             threshold: 10.0,
                             legendScrollController: _legendScrollController,
                           ),
-                          const Divider(
-                            height: 40,
-                            thickness: 2,
-                            indent: 40,
-                            endIndent: 40,
-                            color: Colors.grey,
-                          ),
+                          const Divider(height: 40, thickness: 2, indent: 40, endIndent: 40, color: Colors.grey),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(60.0, 16.0, 60.0, 25.0),
                               child: Text(
                                 'Proporción de afectados por tipos de necesidad',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                                 textAlign: TextAlign.left,
                               ),
                             ),
@@ -196,14 +181,15 @@ class _VictimsTabState extends State<VictimsTab> {
                             constraints: BoxConstraints(minWidth: math.max(700, constraints.maxWidth * 0.8)),
                             height: 400,
                             child: CustomPieChart(
-                              data: needsData
-                                  .map(
-                                    (item) => {
-                                      'type': (item['type'] ?? 'Unknown').toString(),
-                                      'count': item['count'] ?? 0,
-                                    },
-                                  )
-                                  .toList(),
+                              data:
+                                  needsData
+                                      .map(
+                                        (item) => {
+                                          'type': (item['type'] ?? 'Unknown').toString(),
+                                          'count': item['count'] ?? 0,
+                                        },
+                                      )
+                                      .toList(),
                               legendScrollController: _legendScrollController,
                               padding: const EdgeInsets.fromLTRB(30, 0, 20, 50),
                             ),

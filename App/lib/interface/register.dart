@@ -1,6 +1,9 @@
+import 'package:app/interface/registerChoose.dart';
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../controllers/registerController.dart';
-import '../models/user_registration_data.dart';
+import '../models/button_creator.dart';
+import '../services/register_validator.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -8,7 +11,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  late UserRegistrationData userData;
+  late RegisterFlowManager manager;
   late RegisterController registerController;
   bool _showError = false;
   bool _emailHasError = false;
@@ -22,8 +25,8 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    userData = UserRegistrationData();
-    registerController = RegisterController(userData);
+    manager = RegisterFlowManager();
+    registerController = RegisterController(manager);
   }
 
   @override
@@ -32,58 +35,47 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
-  void _register() {
-    setState(() {
-      // Resetear errores
-      _emailHasError = false;
-      _passwordHasError = false;
-      _repeatPasswordHasError = false;
-
-      _emailErrorText = null;
-      _passwordErrorText = null;
-      _repeatPasswordErrorText = null;
-
-      bool isValid = true;
-
-      String email = registerController.emailController.text.trim();
-      String password = registerController.passwordController.text;
-      String repeatPassword = registerController.repeatPasswordController.text;
-
-      if (email.isEmpty) {
-        _emailHasError = true;
-        _emailErrorText = 'El email no puede estar vacío';
-        isValid = false;
-      } else if (!email.contains('@')) {
-        _emailHasError = true;
-        _emailErrorText = 'Introduce un email válido';
-        isValid = false;
-      }
-
-      if (password.isEmpty) {
-        _passwordHasError = true;
-        _passwordErrorText = 'La contraseña no puede estar vacía';
-        isValid = false;
-      } else if (password.length < 6) {
-        _passwordHasError = true;
-        _passwordErrorText = 'Debe tener al menos 6 caracteres';
-        isValid = false;
-      }
-
-      if (repeatPassword.isEmpty) {
-        _repeatPasswordHasError = true;
-        _repeatPasswordErrorText = 'Repite la contraseña';
-        isValid = false;
-      } else if (password != repeatPassword) {
-        _repeatPasswordHasError = true;
-        _repeatPasswordErrorText = 'Las contraseñas no coinciden';
-        isValid = false;
-      }
-
-      if (isValid) {
-        registerController.register(context);
-      }
-    });
+  void _saveState(){
+    manager.userData.email = registerController.emailController.text.trim();
+    manager.userData.password = registerController.passwordController.text;
+    manager.saveStep();
   }
+
+  void _register() async {
+    final email = registerController.emailController.text.trim();
+    final password = registerController.passwordController.text;
+    final repeatPassword = registerController.repeatPasswordController.text;
+
+    setState(() {
+      _emailErrorText = RegisterValidator.validateEmail(email);
+      _passwordErrorText = RegisterValidator.validatePassword(password);
+      _repeatPasswordErrorText = RegisterValidator.validateRepeatPassword(password, repeatPassword);
+
+      _emailHasError = _emailErrorText != null;
+      _passwordHasError = _passwordErrorText != null;
+      _repeatPasswordHasError = _repeatPasswordErrorText != null;
+    });
+
+    final isValid = !_emailHasError && !_passwordHasError && !_repeatPasswordHasError;
+
+    if (isValid) {
+      final success = await registerController.register();
+
+      if (!success) {
+        _saveState();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RegisterChoose(manager)),
+        );
+      } else {
+        setState(() {
+          _emailHasError = true;
+          _emailErrorText = 'Este correo ya está registrado';
+        });
+      }
+    }
+  }
+
 
 
 
@@ -125,16 +117,10 @@ class _RegisterState extends State<Register> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => registerController.onRegisterTabPressed(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text("Registro", style: TextStyle(color: Colors.white)),
+                        child: buildCustomButton(
+                          "Registro",
+                          () => registerController.onRegisterTabPressed(context),
+                          verticalPadding: 12,
                         ),
                       ),
                     ],

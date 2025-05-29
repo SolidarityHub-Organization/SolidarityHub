@@ -3,6 +3,7 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 
 // The services are the classes that contain the business logic of the application. They are responsible for processing the data and performing the necessary operations to fulfill the requests from the client passed from the controllers.
@@ -11,9 +12,11 @@ using LogicPersistence.Api.Repositories.Interfaces;
 namespace LogicPersistence.Api.Services {
 	public class VictimServices : IVictimServices {
 		private readonly IVictimRepository _victimRepository;
+		private readonly IPaginationService _paginationService;
 
-		public VictimServices(IVictimRepository victimRepository, ILocationRepository locationRepository) {
+		public VictimServices(IVictimRepository victimRepository, ILocationRepository locationRepository, IPaginationService paginationService) {
 			_victimRepository = victimRepository;
+			_paginationService = paginationService;
 		}
 
 
@@ -99,6 +102,8 @@ namespace LogicPersistence.Api.Services {
 			return victimsCountByDate.Select(v => (v.Date.ToString("dd-MM-yyyy"), v.Count)).ToList();
 		}
 
-		
+		public async Task<(IEnumerable<Victim> Victims, int TotalCount)> GetPaginatedVictimsAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<Victim>(pageNumber, pageSize, "victim", "created_at DESC, id DESC");
+		}
 	}
 }

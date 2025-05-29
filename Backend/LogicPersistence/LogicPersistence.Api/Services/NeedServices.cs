@@ -2,13 +2,16 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Mappers;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services {
 	public class NeedServices : INeedServices {
 		private readonly INeedRepository _needRepository;
+		private readonly IPaginationService _paginationService;
 
-		public NeedServices(INeedRepository needRepository) {
+		public NeedServices(INeedRepository needRepository, IPaginationService paginationService) {
 			_needRepository = needRepository;
+			_paginationService = paginationService;
 		}
 
 		#region Needs
@@ -66,15 +69,13 @@ namespace LogicPersistence.Api.Services {
 			}
 		}
 
-        public async Task<IEnumerable<Need>> GetAllNeedsAsync()
-        {
-            var needs = await _needRepository.GetAllNeedsAsync();
-            if (needs == null)
-            {
-                throw new InvalidOperationException("Failed to retrieve needs.");
-            }
-            return needs;
-        }
+		public async Task<IEnumerable<Need>> GetAllNeedsAsync() {
+			var needs = await _needRepository.GetAllNeedsAsync();
+			if (needs == null) {
+				throw new InvalidOperationException("Failed to retrieve needs.");
+			}
+			return needs;
+		}
 
 		public async Task<IEnumerable<NeedWithVictimDetailsDto>> GetNeedWithVictimDetailsAsync(int id) {
 
@@ -86,32 +87,33 @@ namespace LogicPersistence.Api.Services {
 
 		}
 
-		public async Task<Need> UpdateNeedStatusAsync(int id,UpdateNeedStatusDto updateNeedStatusDto) {
+		public async Task<Need> UpdateNeedStatusAsync(int id, UpdateNeedStatusDto updateNeedStatusDto) {
 			var existingNeed = await _needRepository.GetNeedByIdAsync(id);
-            if (existingNeed == null)
-            {
-                throw new KeyNotFoundException($"Need with id {id} not found.");
-            }
+			if (existingNeed == null) {
+				throw new KeyNotFoundException($"Need with id {id} not found.");
+			}
 
-            return await _needRepository.UpdateNeedStatusAsync(id, updateNeedStatusDto.status);
-        }
+			return await _needRepository.UpdateNeedStatusAsync(id, updateNeedStatusDto.status);
+		}
 
 		public async Task<IEnumerable<NeedsForVolunteersDto>> GetNeedsInProgressForVolunteersAsync() {
 			var NeedsInProgress = await _needRepository.GetNeedsInProgressForVolunteersAsync();
-			if(NeedsInProgress == null) {
+			if (NeedsInProgress == null) {
 				throw new InvalidOperationException("Failed to retrieve needs in progress");
 			}
 			return NeedsInProgress;
 		}
 
+		public async Task<(IEnumerable<Need> Needs, int TotalCount)> GetPaginatedNeedsAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<Need>(pageNumber, pageSize, "need", "created_at DESC, id DESC");
+		}
+
 		#endregion
 		#region NeedTypes
-		public async Task<NeedType> CreateNeedTypeAsync(NeedTypeCreateDto needTypeCreateDto)
-        {
-            if (needTypeCreateDto == null)
-            {
-                throw new ArgumentNullException(nameof(needTypeCreateDto));
-            }
+		public async Task<NeedType> CreateNeedTypeAsync(NeedTypeCreateDto needTypeCreateDto) {
+			if (needTypeCreateDto == null) {
+				throw new ArgumentNullException(nameof(needTypeCreateDto));
+			}
 
 			var needType = await _needRepository.CreateNeedTypeAsync(needTypeCreateDto.ToNeedType());
 			if (needType == null) {
@@ -201,6 +203,9 @@ namespace LogicPersistence.Api.Services {
 			return res;
 		}
 
+		public async Task<(IEnumerable<NeedType> NeedTypes, int TotalCount)> GetPaginatedNeedTypesAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<NeedType>(pageNumber, pageSize, "need_type", "created_at DESC, id DESC");
+		}
 
 		#endregion
 	}

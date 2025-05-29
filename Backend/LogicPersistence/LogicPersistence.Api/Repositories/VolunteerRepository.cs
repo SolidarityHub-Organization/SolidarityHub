@@ -1,16 +1,17 @@
 namespace LogicPersistence.Api.Repositories;
+
 using Dapper;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Repositories;
 using Newtonsoft.Json;
 using Npgsql;
 
-public class VolunteerRepository : IVolunteerRepository
-{
+public class VolunteerRepository : IVolunteerRepository {
     private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
 
-    public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer)
-    {
+
+    public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO volunteer (email, password, name, surname, prefix, phone_number, address, identification, location_id)
@@ -20,8 +21,7 @@ public class VolunteerRepository : IVolunteerRepository
         return await connection.QuerySingleAsync<Volunteer>(sql, volunteer);  // Get the complete record back with QuerySingleAsync (works with RETURNING *)
     }
 
-    public async Task<Volunteer> UpdateVolunteerAsync(Volunteer volunteer)
-    {
+    public async Task<Volunteer> UpdateVolunteerAsync(Volunteer volunteer) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             UPDATE volunteer
@@ -40,8 +40,7 @@ public class VolunteerRepository : IVolunteerRepository
         return await connection.QuerySingleAsync<Volunteer>(sql, volunteer);
     }
 
-    public async Task<bool> DeleteVolunteerAsync(int id)
-    {
+    public async Task<bool> DeleteVolunteerAsync(int id) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "DELETE FROM volunteer WHERE id = @id";
 
@@ -49,16 +48,14 @@ public class VolunteerRepository : IVolunteerRepository
         return rowsAffected > 0;
     }
 
-    public async Task<IEnumerable<Volunteer>> GetAllVolunteersAsync()
-    {
+    public async Task<IEnumerable<Volunteer>> GetAllVolunteersAsync() {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "SELECT * FROM volunteer";
 
         return await connection.QueryAsync<Volunteer>(sql);
     }
 
-    public async Task<IEnumerable<VolunteerWithDetailsDisplayDto>> GetAllVolunteersWithDetailsAsync()
-    {
+    public async Task<IEnumerable<VolunteerWithDetailsDisplayDto>> GetAllVolunteersWithDetailsAsync() {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
         WITH volunteer_skills AS (
@@ -80,6 +77,20 @@ public class VolunteerRepository : IVolunteerRepository
                 skill s ON vs.skill_id = s.id
             GROUP BY
                 v.id
+        ),
+        volunteer_time AS (
+            SELECT
+                vt.volunteer_id,
+                json_agg(
+                    json_build_object(
+                        'id', vt.id,
+                        'start_time', vt.start_time,
+                        'end_time', vt.end_time,
+                        'day', vt.day
+                    )
+                ) FILTER (WHERE vt.id IS NOT NULL) AS times
+            FROM volunteer_time vt
+            GROUP BY vt.volunteer_id
         ),
         volunteer_locations AS (
             SELECT
@@ -106,6 +117,7 @@ public class VolunteerRepository : IVolunteerRepository
             v.created_at,
             v.location_id,
             COALESCE(vs.skills, '[]') as skillsJson,
+            COALESCE(vt.times, '[]') as availableTimesJson,
             vl.location_data as locationJson
         FROM
             volunteer v
@@ -113,17 +125,20 @@ public class VolunteerRepository : IVolunteerRepository
             volunteer_skills vs ON v.id = vs.volunteer_id
         LEFT JOIN
             volunteer_locations vl ON v.id = vl.volunteer_id
+        LEFT JOIN
+            volunteer_time vt ON v.id = vt.volunteer_id
         ";
 
-        var volunteers = await connection.QueryAsync<VolunteerWithDetailsDisplayDto>(sql);
+        var volunteers = (await connection.QueryAsync<VolunteerWithDetailsDisplayDto>(sql)).ToList();
 
-        foreach (var volunteer in volunteers)
-        {
+        foreach (var volunteer in volunteers) {
             volunteer.skills = JsonConvert.DeserializeObject<IEnumerable<SkillDisplayDto>>(volunteer.skillsJson) ?? [];
             volunteer.skillsJson = "";
 
-            if (volunteer.locationJson != null)
-            {
+            volunteer.availableTimes = JsonConvert.DeserializeObject<IEnumerable<VolunteerTimeDisplayDto>>(volunteer.availableTimesJson) ?? [];
+            volunteer.availableTimesJson = "";
+
+            if (volunteer.locationJson != null) {
                 volunteer.location = JsonConvert.DeserializeObject<LocationDisplayDto>(volunteer.locationJson);
                 volunteer.locationJson = "";
             }
@@ -132,40 +147,18 @@ public class VolunteerRepository : IVolunteerRepository
         return volunteers;
     }
 
-    public async Task<Volunteer?> GetVolunteerByIdAsync(int id)
-    {
+    public async Task<Volunteer?> GetVolunteerByIdAsync(int id) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "SELECT * FROM volunteer WHERE id = @id";
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { id });
     }
-    
-    public async Task<Volunteer?> GetVolunteerByEmailAsync(string email)
-    {
+
+    public async Task<Volunteer?> GetVolunteerByEmailAsync(string email) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = "SELECT * FROM volunteer WHERE email = @email";
 
         return await connection.QuerySingleOrDefaultAsync<Volunteer>(sql, new { email });
     }
 
-    //TODO: make this method generic so it accepts any other item too, and make non paginated version too
-    public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetPaginatedVolunteersAsync(int pageNumber, int pageSize)
-    {
-        using var connection = new NpgsqlConnection(connectionString);
-        
-        const string countSql = "SELECT COUNT(*) FROM volunteer";
-        int totalCount = await connection.QuerySingleAsync<int>(countSql);
-        
-        const string paginatedSql = @"
-            SELECT * 
-            FROM volunteer
-            ORDER BY created_at DESC, id DESC
-            OFFSET @Offset
-            LIMIT @PageSize";
-
-        int offset = (pageNumber - 1) * pageSize;
-        var volunteers = await connection.QueryAsync<Volunteer>(paginatedSql, new { Offset = offset, PageSize = pageSize });
-        
-        return (volunteers, totalCount);
-    }
 }

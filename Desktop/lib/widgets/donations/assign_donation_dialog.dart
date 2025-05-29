@@ -3,6 +3,7 @@ import 'package:solidarityhub/services/victim_services.dart';
 import 'package:solidarityhub/models/donation.dart';
 import 'package:solidarityhub/models/victim.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 class AssignDonationDialog extends StatefulWidget {
   final String baseUrl;
@@ -139,6 +140,7 @@ class _AssignDonationDialogState extends State<AssignDonationDialog> {
                 initialValue: _quantity.toString(),
                 decoration: const InputDecoration(labelText: 'Cantidad', border: OutlineInputBorder()),
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged: (value) {
                   setState(() {
                     _quantity = int.tryParse(value) ?? 1;

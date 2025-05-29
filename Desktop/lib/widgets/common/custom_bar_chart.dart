@@ -26,54 +26,52 @@ class CustomBarChart extends StatelessWidget {
   });
 
   List<Map<String, dynamic>> _processDataWithThreshold(List<Map<String, dynamic>> rawData) {
-    if (rawData.isEmpty || rawData.length <= 1) return rawData;
+  if (rawData.isEmpty || rawData.length <= 1) return rawData;
+  
+  final totalValue = rawData.fold<double>(
+    0, (sum, entry) => sum + (entry['item2'] as num).toDouble()
+  );
+  
+  if (totalValue <= 0) return rawData;
+  
+  final sortedData = List<Map<String, dynamic>>.from(rawData);
+  
+  final List<Map<String, dynamic>> mainItems = [];
+  final List<Map<String, dynamic>> otherItems = [];
+  
+  for (var entry in sortedData) {
+    final percentage = (entry['item2'] as num).toDouble() / totalValue * 100;
     
-    final totalValue = rawData.fold<double>(
+    if (percentage < threshold) {
+      otherItems.add(entry);
+    } else {
+      mainItems.add(entry);
+    }
+  }
+  
+  if (mainItems.length < 2 && sortedData.length >= 2) {
+    mainItems.clear();
+    mainItems.addAll(sortedData.sublist(0, 2));
+    otherItems.clear();
+    if (sortedData.length > 2) {
+      otherItems.addAll(sortedData.sublist(2));
+    }
+  }
+  
+  if (otherItems.isNotEmpty) {
+    final double othersValue = otherItems.fold<double>(
       0, (sum, entry) => sum + (entry['item2'] as num).toDouble()
     );
     
-    if (totalValue <= 0) return rawData;
-    
-    final sortedData = List<Map<String, dynamic>>.from(rawData)
-      ..sort((a, b) => (b['item2'] as num).compareTo(a['item2'] as num));
-
-    final List<Map<String, dynamic>> mainItems = [];
-    final List<Map<String, dynamic>> otherItems = [];
-    
-    for (var entry in sortedData) {
-      final percentage = (entry['item2'] as num).toDouble() / totalValue * 100;
-      
-      if (percentage < threshold) {
-        otherItems.add(entry);
-      } else {
-        mainItems.add(entry);
-      }
-    }
-    
-    // if there are less than 2 main items, keep at least the top 2 items
-    if (mainItems.length < 2 && sortedData.length >= 2) {
-      mainItems.clear();
-      mainItems.addAll(sortedData.sublist(0, 2));
-      otherItems.clear();
-      if (sortedData.length > 2) {
-        otherItems.addAll(sortedData.sublist(2));
-      }
-    }
-    
-    if (otherItems.isNotEmpty) {
-      final double othersValue = otherItems.fold<double>(
-        0, (sum, entry) => sum + (entry['item2'] as num).toDouble()
-      );
-      
-      mainItems.add({
-        'item1': 'Otros',
-        'item2': othersValue,
-        'isOthers': true,
-        'otherItems': otherItems,
-      });
-    }
-    
-    return mainItems;
+    mainItems.add({
+      'item1': 'Otros',
+      'item2': othersValue,
+      'isOthers': true,
+      'otherItems': otherItems,
+    });
+  }
+  
+  return mainItems;
   }
 
   double _calculateMaxTitleWidth(List<Map<String, dynamic>> data) {
@@ -198,7 +196,14 @@ class CustomBarChart extends StatelessWidget {
       ],
     );
   }
+
+double _calculateMaxYLabelWidth(double maxY, double interval) {
+  maxY = math.max(maxY, 1.0);
   
+  int maxDigits = maxY.toInt().toString().length;
+  return (maxDigits * 10.0) + 15.0;
+}
+
   @override
   Widget build(BuildContext context) {
     final hasValidData = data != null && data!.isNotEmpty && 
@@ -207,6 +212,22 @@ class CustomBarChart extends StatelessWidget {
     final processedData = hasValidData 
         ? _processDataWithThreshold(data!) 
         : [];
+    
+    final double maxY = processedData.isNotEmpty
+      ? processedData.map((item) => (item['item2'] ?? 0).toDouble()).reduce((a, b) => a > b ? a : b)
+      : 1;
+
+    double yAxisInterval;
+    if (maxY > 20) {
+      double rawInterval = (maxY / 10).ceilToDouble();
+      yAxisInterval = (rawInterval % 5 == 0)
+          ? rawInterval
+          : (rawInterval + (5 - rawInterval % 5));
+    } else {
+      yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
+    }
+    
+    final yAxisWidth = _calculateMaxYLabelWidth(maxY, yAxisInterval);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -266,10 +287,10 @@ class CustomBarChart extends StatelessWidget {
                             leftTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                interval: 1,
-                                reservedSize: 40,
+                                interval: yAxisInterval,
+                                reservedSize: yAxisWidth,
                                 getTitlesWidget: (value, meta) {
-                                  if (value % 1 == 0) {
+                                  if (value % yAxisInterval == 0) {
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 8.0),
                                       child: Text(
@@ -279,6 +300,9 @@ class CustomBarChart extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                         ),
+                                        softWrap: false,
+                                        textAlign: TextAlign.right,
+                                        overflow: TextOverflow.visible,
                                       ),
                                     );
                                   }

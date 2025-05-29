@@ -3,16 +3,19 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
     public class DonationServices : IDonationServices {
         private readonly IDonationRepository _donationRepository;
         private readonly IVolunteerRepository _volunteerRepository;
+        private readonly IPaginationService _paginationService;
 
-        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository) {
+        public DonationServices(IDonationRepository donationRepository, IVolunteerRepository volunteerRepository, IPaginationService paginationService) {
             _donationRepository = donationRepository;
             _volunteerRepository = volunteerRepository;
+            _paginationService = paginationService;
         }
 
         #region PhysicalDonation
@@ -138,8 +141,7 @@ namespace LogicPersistence.Api.Services
                 );
         }
 
-        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) 
-        {
+        public async Task<Dictionary<string, int>> GetPhysicalDonationsCountByTypeAsync(DateTime fromDate, DateTime toDate) {
             var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
             var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate);
 
@@ -167,9 +169,40 @@ namespace LogicPersistence.Api.Services
 
             return result;
         }
+
+        public async Task<(IEnumerable<PhysicalDonation> PhysicalDonations, int TotalCount)> GetPaginatedPhysicalDonationsAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<PhysicalDonation>(pageNumber, pageSize, "physical_donation", "created_at DESC, id DESC");
+        }
+
+        public async Task<Dictionary<string, double>> GetPhysicalDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
+
+            var donations = await _donationRepository.GetAllPhysicalDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve physical donations.");
+            var result = InitializeLast8WeeksDoubleDictionary(toDate);
+
+            var weekStartDates = result.Keys.Select(DateTime.Parse).ToHashSet();
+            var filteredDonations = donations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate && weekStartDates.Contains(GetWeekStartDate(d)));
+
+            var groupedDonations = filteredDonations
+                .GroupBy(GetWeekStartDate)
+                .ToDictionary(
+                    group => $"{group.Key:yyyy-MM-dd}",
+                    group => group.Sum(d => d.quantity)
+                );
+
+            foreach (var kvp in groupedDonations) {
+                if (result.ContainsKey(kvp.Key)) {
+                    result[kvp.Key] = kvp.Value;
+                }
+            }
+
+            return result;
+        }
+
         #endregion
         #region MonetaryDonation
-
         public async Task<MonetaryDonationDisplayDto> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto) {
             if (donationCreateDto == null) {
                 throw new ArgumentNullException(nameof(donationCreateDto));
@@ -288,6 +321,35 @@ namespace LogicPersistence.Api.Services
             return totalEuro + totalDollar;
         }
 
+        public async Task<(IEnumerable<MonetaryDonation> MonetaryDonations, int TotalCount)> GetPaginatedMonetaryDonationsAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<MonetaryDonation>(pageNumber, pageSize, "monetary_donation", "created_at DESC, id DESC");
+        }
+
+        public async Task<Dictionary<string, double>> GetMonetaryDonationsSumByWeekAsync(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("From date cannot be greater than to date.");
+            }
+
+            var monetaryDonations = await _donationRepository.GetAllMonetaryDonationsAsync() ?? throw new InvalidOperationException("Failed to retrieve monetary donations.");
+            var result = InitializeLast8WeeksDoubleDictionary(toDate);
+            var weekStartDates = result.Keys.Select(DateTime.Parse).ToHashSet();
+            var filteredDonations = monetaryDonations.Where(d => d.donation_date >= fromDate && d.donation_date <= toDate && weekStartDates.Contains(GetWeekStartDate(d)));
+
+            var groupedDonations = filteredDonations
+                .GroupBy(GetWeekStartDate)
+                .ToDictionary(
+                    group => $"{group.Key:yyyy-MM-dd}",
+                    group => group.Sum(d => d.amount)
+                );
+
+            foreach (var kvp in groupedDonations) {
+                if (result.ContainsKey(kvp.Key)) {
+                    result[kvp.Key] = kvp.Value;
+                }
+            }
+
+            return result;
+        }
 
         #endregion
         #region Other methods
@@ -314,6 +376,29 @@ namespace LogicPersistence.Api.Services
 
             return uniqueDonors.Count;
         }
+        #endregion
+        #region Internal Methods
+
+        private static DateTime GetWeekStartDate<T>(T donation) where T : Donation {
+            var dayOfWeek = (int)donation.donation_date.DayOfWeek;
+            var daysToSubtract = dayOfWeek == 0 ? 6 : dayOfWeek - 1;
+            return donation.donation_date.Date.AddDays(-daysToSubtract);
+        }
+
+        private static Dictionary<string, double> InitializeLast8WeeksDoubleDictionary(DateTime referenceDate)
+        {
+            var dict = new Dictionary<string, double>();
+            int daysToSubtract = (int)referenceDate.DayOfWeek == 0 ? 6 : (int)referenceDate.DayOfWeek - 1;
+            DateTime weekStart = referenceDate.Date.AddDays(-daysToSubtract);
+
+            for (int i = 7; i >= 0; i--)
+            {
+                var week = weekStart.AddDays(-7 * i);
+                dict[week.ToString("yyyy-MM-dd")] = 0.0;
+            }
+            return dict;
+        }
+
         #endregion
     }
 }

@@ -1,10 +1,11 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/controllers/volunteerPreferencesController.dart';
 import '/models/user_registration_data.dart';
 
 class VolunteerPreferences extends StatefulWidget {
-  final UserRegistrationData userData;
-  VolunteerPreferences({required this.userData});
+  final RegisterFlowManager manager;
+  VolunteerPreferences({required this.manager});
 
   @override
   _VolunteerPreferencesState createState() => _VolunteerPreferencesState();
@@ -16,12 +17,51 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
   @override
   void initState() {
     super.initState();
-    controller = VolunteerPreferencesController(widget.userData);
+    controller = VolunteerPreferencesController(widget.manager);
+
+    final selected = widget.manager.userData.preferences?.split(', ') ?? [];
+
+    for (var key in controller.preferences.keys) {
+      controller.preferences[key] = selected.contains(key);
+    }
+  }
+
+  void _saveState(){
+    final selectedPrefs = controller.preferences.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    widget.manager.userData.preferences = selectedPrefs.join(', ');
+    widget.manager.saveStep();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              _saveState();
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 5 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
@@ -77,6 +117,7 @@ class _VolunteerPreferencesState extends State<VolunteerPreferences> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
+                            _saveState();
                             controller.finalizeRegistration(context);
                           }
                               : null,

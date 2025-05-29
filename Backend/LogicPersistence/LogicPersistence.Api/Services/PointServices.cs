@@ -3,20 +3,21 @@ using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
+using LogicPersistence.Api.Services.Interfaces;
 
 namespace LogicPersistence.Api.Services
 {
-    public class PointServices : IPointServices
-    {
+    public class PointServices : IPointServices {
         private readonly IPointRepository _pointRepository;
-        public PointServices(IPointRepository pointRepository)
-        {
+        private readonly IPaginationService _paginationService;
+
+        public PointServices(IPointRepository pointRepository, IPaginationService paginationService) {
             _pointRepository = pointRepository;
+            _paginationService = paginationService;
         }
 
-#region PickupPoint
-        public async Task<PickupPoint> CreatePickupPointAsync(PickupPointCreateDto pickupPointCreateDto) 
-        {
+        #region PickupPoint
+        public async Task<PickupPoint> CreatePickupPointAsync(PickupPointCreateDto pickupPointCreateDto) {
             if (pickupPointCreateDto == null) {
                 throw new ArgumentNullException(nameof(pickupPointCreateDto));
             }
@@ -29,8 +30,7 @@ namespace LogicPersistence.Api.Services
             return pickupPoint;
         }
 
-        public async Task<PickupPoint> UpdatePickupPointAsync(int id, PickupPointUpdateDto pickupPointUpdateDto) 
-        {
+        public async Task<PickupPoint> UpdatePickupPointAsync(int id, PickupPointUpdateDto pickupPointUpdateDto) {
             if (id != pickupPointUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
             }
@@ -43,8 +43,7 @@ namespace LogicPersistence.Api.Services
             return updatedPickupPoint;
         }
 
-        public async Task<PickupPoint> GetPickupPointByIdAsync(int id) 
-        {
+        public async Task<PickupPoint> GetPickupPointByIdAsync(int id) {
             var pickupPoint = await _pointRepository.GetPickupPointByIdAsync(id);
             if (pickupPoint == null) {
                 throw new KeyNotFoundException($"PickupPoint with id {id} not found.");
@@ -52,18 +51,20 @@ namespace LogicPersistence.Api.Services
             return pickupPoint;
         }
 
-        public async Task<IEnumerable<PickupPoint>> GetAllPickupPointsAsync() 
-        {
+        public async Task<IEnumerable<PickupPoint>> GetAllPickupPointsAsync() {
             var pickupPoints = await _pointRepository.GetAllPickupPointsAsync();
             if (pickupPoints == null) {
                 throw new KeyNotFoundException($"No PickupPoints found.");
             }
             return pickupPoints;
         }
-#endregion
-#region MeetingPoint
-        public async Task<MeetingPoint> CreateMeetingPointAsync(MeetingPointCreateDto meetingPointCreateDto) 
-        {
+
+        public async Task<(IEnumerable<PickupPoint> PickupPoints, int TotalCount)> GetPaginatedPickupPointsAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<PickupPoint>(pageNumber, pageSize, "pickup_point", "created_at DESC, id DESC");
+        }
+        #endregion
+        #region MeetingPoint
+        public async Task<MeetingPoint> CreateMeetingPointAsync(MeetingPointCreateDto meetingPointCreateDto) {
             if (meetingPointCreateDto == null) {
                 throw new ArgumentNullException(nameof(meetingPointCreateDto));
             }
@@ -76,8 +77,7 @@ namespace LogicPersistence.Api.Services
             return meetingPoint;
         }
 
-        public async Task<MeetingPoint> UpdateMeetingPointAsync(int id, MeetingPointUpdateDto meetingPointUpdateDto) 
-        {
+        public async Task<MeetingPoint> UpdateMeetingPointAsync(int id, MeetingPointUpdateDto meetingPointUpdateDto) {
             if (id != meetingPointUpdateDto.id) {
                 throw new ArgumentException("Ids do not match.");
             }
@@ -90,8 +90,7 @@ namespace LogicPersistence.Api.Services
             return updatedMeetingPoint;
         }
 
-        public async Task<MeetingPoint> GetMeetingPointByIdAsync(int id) 
-        {
+        public async Task<MeetingPoint> GetMeetingPointByIdAsync(int id) {
             var meetingPoint = await _pointRepository.GetMeetingPointByIdAsync(id);
             if (meetingPoint == null) {
                 throw new KeyNotFoundException($"MeetingPoint with id {id} not found.");
@@ -99,13 +98,16 @@ namespace LogicPersistence.Api.Services
             return meetingPoint;
         }
 
-        public async Task<IEnumerable<MeetingPoint>> GetAllMeetingPointsAsync() 
-        {
+        public async Task<IEnumerable<MeetingPoint>> GetAllMeetingPointsAsync() {
             var meetingPoints = await _pointRepository.GetAllMeetingPointsAsync();
             if (meetingPoints == null) {
                 throw new KeyNotFoundException($"No MeetingPoints found.");
             }
             return meetingPoints;
+        }
+        
+        public async Task<(IEnumerable<MeetingPoint> MeetingPoints, int TotalCount)> GetPaginatedMeetingPointsAsync(int pageNumber, int pageSize) {
+            return await _paginationService.GetPaginatedAsync<MeetingPoint>(pageNumber, pageSize, "meeting_point", "created_at DESC, id DESC");
         }
 #endregion
     }

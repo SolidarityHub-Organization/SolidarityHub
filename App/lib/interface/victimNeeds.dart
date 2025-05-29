@@ -1,10 +1,11 @@
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:app/controllers/victimNeedsController.dart';
 import '/models/user_registration_data.dart';
 
 class VictimNecessities extends StatefulWidget {
-  final UserRegistrationData userData;
-  VictimNecessities({required this.userData});
+  final RegisterFlowManager manager;
+  VictimNecessities({required this.manager});
 
   @override
   _VictimNecessitiesState createState() => _VictimNecessitiesState();
@@ -16,12 +17,51 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
   @override
   void initState() {
     super.initState();
-    controller = VictimNeedsController(widget.userData);
+    controller = VictimNeedsController(widget.manager);
+
+    final selected = widget.manager.userData.needs?.split(', ') ?? [];
+
+    for (var key in controller.needs.keys) {
+      controller.needs[key] = selected.contains(key);
+    }
+  }
+
+  void _saveState(){
+    final selectedPrefs = controller.needs.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    widget.manager.userData.needs = selectedPrefs.join(', ');
+    widget.manager.saveStep();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.red,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              _saveState();
+              widget.manager.restorePreviousStep();
+              Navigator.pop(context);
+            },
+          ),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(
+              value: 4.5 / 6, // Paso 2 de 6
+              backgroundColor: Colors.red[100],
+              color: Colors.white,
+              minHeight: 4,
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       backgroundColor: Colors.red,
       body: Center(
         child: Column(
@@ -77,6 +117,7 @@ class _VictimNecessitiesState extends State<VictimNecessities> {
                         child: ElevatedButton(
                           onPressed: controller.isAtLeastOneSelected()
                               ? () {
+                            _saveState();
                             controller.finalizeRegistration(context);
                           }
                               : null,

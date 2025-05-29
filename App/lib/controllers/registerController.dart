@@ -1,8 +1,8 @@
+
 import 'dart:convert';
 
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
-import '../models/user_registration_data.dart';
-import '/interface/registerChoose.dart';
 import '../services/auth_service.dart';
 
 class RegisterController {
@@ -10,35 +10,33 @@ class RegisterController {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatPasswordController = TextEditingController();
 
-  final UserRegistrationData userData;
+  final RegisterFlowManager manager;
 
-  RegisterController(this.userData);
+  RegisterController(this.manager);
 
   bool validatePasswords() {
     return passwordController.text == repeatPasswordController.text;
   }
 
-
-  void register(BuildContext context) async{
+  Future<bool> register() async {
     try {
-      if (AuthService.emailExists(emailController.text.trim()) != true) {
-        print("Datos de login guardados en el modelo:");
-        print("Continua Registro");
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => RegisterChoose(userData),),);
+      final email = emailController.text.trim();
+      final exists = await AuthService.emailExists(email);
+
+      if (exists) {
+        return false;
       }
-      else {
-        print("El Email introducido ya existe");
+
+      if (validatePasswords() && email.isNotEmpty) {
+        manager.userData.email = email;
+        manager.userData.password = passwordController.text;
+        return true;
       }
+    } catch (e) {
+      print("Error de conexión con el servidor: \$e");
     }
-    catch(e) {
-      print("Error de conexión con el servidor: $e");
-    }
-      if(validatePasswords() && emailController.text.isNotEmpty) {
-        userData.email = emailController.text.trim();
-        userData.password = passwordController.text;
-      }
-    }
+    return false;
+  }
 
   void dispose() {
     emailController.dispose();
@@ -56,6 +54,5 @@ class RegisterController {
     Navigator.pushNamed(context, '/register');
   }
 
+
 }
-
-

@@ -1,80 +1,75 @@
+import 'package:app/interface/addressScreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../models/user_registration_data.dart';
-import '../services/auth_service.dart';
-import '../interface/schedules.dart';
-import '../interface/addressScreen.dart';
-import 'dart:convert';
+
+import '../services/register_flow_manager.dart';
 
 class RegisterChooseController {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController surnameController = TextEditingController();
-  final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController identificationController = TextEditingController();
-  String? selectedRole;
+  final RegisterFlowManager manager;
 
-  final UserRegistrationData userData;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _identificationController = TextEditingController();
 
-  RegisterChooseController(this.userData);
+  RegisterChooseController(this.manager) {
+    name = manager.userData.name ?? '';
+    surname = manager.userData.surname ?? '';
+    birthDate = manager.userData.birthDate ?? '';
+    phone = manager.userData.phone ?? '';
+    identification = manager.userData.identification ?? '';
+  }
 
+  String get name => _nameController.text;
+  set name(String value) => _nameController.text = value;
+  TextEditingController get nameController => _nameController;
 
+  String get surname => _surnameController.text;
+  set surname(String value) => _surnameController.text = value;
+  TextEditingController get surnameController => _surnameController;
 
-  void submitForm(String role, BuildContext context) async {
-    String name = nameController.text.trim();
-    String surname = surnameController.text.trim();
-    String birthDate = birthDateController.text.trim();
-    String phone = phoneController.text.trim();
-    String identification = identificationController.text.trim();
+  String get birthDate => _birthDateController.text;
+  set birthDate(String value) => _birthDateController.text = value;
+  TextEditingController get birthDateController => _birthDateController;
 
-    if (name.isEmpty || surname.isEmpty || birthDate.isEmpty || phone.isEmpty || identification.isEmpty) {
-      print('Por favor, completa todos los campos.');
-      return;
-    }
+  String get phone => _phoneController.text;
+  set phone(String value) => _phoneController.text = value;
+  TextEditingController get phoneController => _phoneController;
 
-    if (!isValidPhone(phone)) {
-      print('El número de teléfono no es válido.');
-      return;
-    }
+  String get identification => _identificationController.text;
+  set identification(String value) => _identificationController.text = value;
+  TextEditingController get identificationController => _identificationController;
 
-    print('Nombre: $name');
-    print('Apellidos: $surname');
-    print('Fecha de nacimiento: $birthDate');
-    print('Teléfono: $phone');
-    print('Rol seleccionado: $role');
-    print('DNI: $identification');
+  void submitForm(String role, BuildContext context) {
+    manager.userData.role = role;
+    saveState();
 
-    userData.name = nameController.text.trim();
-    userData.surname = surnameController.text.trim();
-    userData.birthDate = birthDateController.text.trim();
-    userData.phone = phoneController.text.trim();
-    userData.identification = identificationController.text.trim();
-    userData.role = role;
-
-    print("[RegisterChooseController] Datos personales guardados:");
-
-    Navigator.push(context,
+    Navigator.push(
+      context,
       MaterialPageRoute(
-        builder: (context) => AddressScreen(userData: userData),),);
+        builder: (context) => AddressScreen(manager: manager),
+      ),
+    );
 
   }
-  bool isValidPhone(String phone) {
-    final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');
-    return phoneRegex.hasMatch(phone);
+
+  void dispose() {
+    _nameController.dispose();
+    _surnameController.dispose();
+    _birthDateController.dispose();
+    _phoneController.dispose();
+    _identificationController.dispose();
   }
+  
 
-  bool isValidIdentification(String identification) {
-    identification = identification.toUpperCase().trim();
-
-    // Expresión regular para formato correcto
-    final dniRegExp = RegExp(r'^\d{8}[A-Z]$');
-    if (!dniRegExp.hasMatch(identification)) return false;
-
-    // Letras de control
-    const letters = "TRWAGMYFPDXBNJZSQVHLCKE";
-    final number = int.parse(identification.substring(0, 8));
-    final letter = letters[number % 23];
-
-    return identification[8] == letter;
+  void saveState() {
+    manager.userData.name = name;
+    manager.userData.surname = surname;
+    manager.userData.birthDate = birthDate;
+    manager.userData.phone = phone;
+    manager.userData.identification = identification;
+    manager.saveStep();
   }
 
 }

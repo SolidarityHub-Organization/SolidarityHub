@@ -35,7 +35,7 @@ namespace LogicPersistence.Api.Services {
 
                 var victimDto = await MapMarkerFactory.CreateBaseMapMarker<VictimMapMarkerDTO>(victim, location);
                 victimDto.urgency_level = LogicPersistence.Api.Functionalities.EnumExtensions.GetDisplayName(urgencyLevel);
-
+                victimDto.name += " " + victim.surname;
                 result.Add(victimDto);
             }
 
@@ -48,7 +48,10 @@ namespace LogicPersistence.Api.Services {
 
             foreach (var volunteer in volunteers.Where(v => v.location_id.HasValue)) {
                 var location = await _locationRepository.GetLocationByIdAsync(volunteer.location_id.Value);
-                result.Add(await MapMarkerFactory.CreateBaseMapMarker<VolunteerMapMarkerDTO>(volunteer, location));
+
+                var volunteerDto = await MapMarkerFactory.CreateBaseMapMarker<VolunteerMapMarkerDTO>(volunteer, location);
+                volunteerDto.name += " " + volunteer.surname;
+                result.Add(volunteerDto);
             }
 
             return result;

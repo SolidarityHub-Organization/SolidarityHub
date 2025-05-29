@@ -27,7 +27,7 @@ class _TaskTabState extends State<TaskTab> {
   }
 
   late Future<Map<String, dynamic>> _taskTypeCount;
-  late Future<List<Map<String, dynamic>>> _allTasks;
+  late Future<List<Map<String, dynamic>>> _paginatedTasks;
 
   @override
   void initState() {
@@ -40,11 +40,74 @@ class _TaskTabState extends State<TaskTab> {
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
     );
-    
-    _allTasks = TaskServices.fetchAllTasks(
+
+    setState(() {
+      _accumulatedTasks.clear();
+      _pageNumber = 1;
+      _totalPages = 1;
+    });
+
+    _paginatedTasks = getPaginatedTasks(_pageNumber, _pageSize).then((result) {
+      setState(() {
+        _accumulatedTasks.addAll(result['tasks']);
+        _pageNumber++;
+        _totalPages = result['totalPages'];
+      });
+      return _accumulatedTasks;
+    });
+  }
+
+  int _pageNumber = 1;
+  final int _pageSize = 10; // number tasks retrieved per request
+  int _totalPages = 0;
+  List<Map<String, dynamic>> _accumulatedTasks = [];
+
+  Future<Map<String, dynamic>> getPaginatedTasks(int pageNumber, int pageSize) async {
+    final response = await TaskServices.fetchDateFilteredPaginatedTasks(
       _adjustStartDate(widget.fechaInicio),
       _adjustEndDate(widget.fechaFin),
+      pageNumber,
+      pageSize,
     );
+    
+    var itemsKey = response.containsKey('Items') ? 'Items' : 'items';
+    var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
+    
+    List<Map<String, dynamic>> tasks = [];
+    if (response.containsKey(itemsKey) && response[itemsKey] is List) {
+      tasks = (response[itemsKey] as List)
+          .map((task) => task as Map<String, dynamic>)
+          .toList();
+
+      /*
+      print("Tasks list: $tasks");
+      
+      for (var task in tasks) {
+        print("Task: $task");
+      }
+      */
+
+      var totalCountKey = response.containsKey('TotalCount') ? 'TotalCount' : 'totalCount';
+      var pageNumberKey = response.containsKey('PageNumber') ? 'PageNumber' : 'pageNumber';
+      var pageSizeKey = response.containsKey('PageSize') ? 'PageSize' : 'pageSize';
+      var totalPagesKey = response.containsKey('TotalPages') ? 'TotalPages' : 'totalPages';
+
+      print("Total Count: ${response[totalCountKey]}");
+      print("Current Page: ${response[pageNumberKey]}");
+      print("Page Size: ${response[pageSizeKey]}");
+      print("Total Pages: ${response[totalPagesKey]}");
+
+
+      // setState() not inside this method to avoid the UI flickering after clicking the "Cargar más" button because it loses its scroll position
+      
+    } else {
+      print("No items found in response: ${response.keys}");
+    }
+    
+    return {
+      'tasks': tasks,
+      'totalPages': response[totalPagesKey] ?? 1,
+    };
   }
 
   String? _selectedUrgency;
@@ -61,11 +124,14 @@ class _TaskTabState extends State<TaskTab> {
     }
   }
 
+  ScrollController? _mainVerticalController;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return TwoDimensionalScrollWidget(
+          onVerticalControllerReady: (ctrl) => _mainVerticalController = ctrl,
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minWidth: math.max(800.0, constraints.maxWidth),
@@ -258,7 +324,7 @@ class _TaskTabState extends State<TaskTab> {
                       ),
                       const SizedBox(height: 20),
                       FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _allTasks,
+                        future: _paginatedTasks,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
@@ -315,58 +381,93 @@ class _TaskTabState extends State<TaskTab> {
                               );
                             }
                             
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: tasks.length,
-                              itemBuilder: (context, index) {
-                                final task = tasks[index];
-                                final affectedZoneName = task['affected_zone']?['name'] ?? 'Sin zona';
+                            return Column(
+                              children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: tasks.length,
+                                  itemBuilder: (context, index) {
+                                    final task = tasks[index];
+                                    final affectedZoneName = task['affected_zone']?['name'] ?? 'Sin zona';
 
-                                return Card(
-                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                                  elevation: 4,
-                                  child: ListTile(
-                                    contentPadding: const EdgeInsets.all(16.0),
-                                    title: Text(
-                                      task['name'] ?? 'Sin nombre',
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
-                                          style: const TextStyle(fontSize: 14),
+                                    return Card(
+                                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                                      elevation: 4,
+                                      child: ListTile(
+                                        contentPadding: const EdgeInsets.all(16.0),
+                                        title: Text(
+                                          task['name'] ?? 'Sin nombre',
+                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                         ),
-                                        Text(
-                                          'Estado: ${task['state'] ?? 'Desconocido'}',
-                                          style: const TextStyle(fontSize: 14),
+                                        subtitle: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Urgencia: ${task['urgency_level'] ?? 'Desconocido'}',
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              'Estado: ${task['state'] ?? 'Desconocido'}',
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                            Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
+                                          ],
                                         ),
-                                        Text('Zona afectada: $affectedZoneName', style: const TextStyle(fontSize: 14)),
-                                      ],
-                                    ),
-                                    trailing: task['affected_zone'] != null
-                                      ? IconButton(
-                                          icon: const Icon(Icons.location_on, color: Colors.red),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => MapScreen(
-                                                  lat: task['latitude'],
-                                                  lng: task['longitude'],
-                                                  initialZoom: 16.0,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : null,
+                                        trailing: task['affected_zone'] != null
+                                          ? IconButton(
+                                              icon: const Icon(Icons.location_on, color: Colors.red),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => MapScreen(
+                                                      lat: task['latitude'],
+                                                      lng: task['longitude'],
+                                                      initialZoom: 16.0,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: (_pageNumber > _totalPages)
+                                      ? null
+                                      : () async {
+                                          final oldOffset = _mainVerticalController?.offset ?? 0.0;
+                                          
+                                          final result = await getPaginatedTasks(_pageNumber, _pageSize);
+                                          
+                                          setState(() {
+                                            _accumulatedTasks.addAll(result['tasks']);
+                                            _pageNumber++;
+                                            _totalPages = result['totalPages'];
+                                          });
+                                          
+                                          // wait for frame render, then jump to old offset
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            if (_mainVerticalController?.hasClients ?? false) {
+                                              _mainVerticalController!.jumpTo(oldOffset);
+                                            }
+                                          });
+                                        },
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Cargar más'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             );
                           }
                         },
@@ -383,16 +484,29 @@ class _TaskTabState extends State<TaskTab> {
   }
 
   List<PieChartSectionData> _generatePieSections(Map<String, dynamic> data) {
-    final Map<String, dynamic> sanitizedData = {};
+    
+    final Map<String, dynamic> normalizedData = {};
     data.forEach((key, value) {
-      sanitizedData[key] = value ?? 0;
+      String normalizedKey;
+      
+      String lowerKey = key.toLowerCase();
+      
+      if (lowerKey.contains('assign') || lowerKey.contains('asign')) {
+        normalizedKey = 'Assigned';
+      } else if (lowerKey.contains('pend') || lowerKey == 'por hacer') {
+        normalizedKey = 'Pending';
+      } else if (lowerKey.contains('comple') || lowerKey.contains('termin')) {
+        normalizedKey = 'Completed';
+      } else {
+        normalizedKey = key;
+      }
+      
+      normalizedData[normalizedKey] = (normalizedData[normalizedKey] ?? 0) + (value ?? 0);
     });
     
-    // filter out unknown tasks
-    final filteredData = Map<String, dynamic>.from(sanitizedData)
+    final filteredData = Map<String, dynamic>.from(normalizedData)
       ..removeWhere((key, value) => key == 'Unknown' || key == 'Desconocido');
     
-    // check for data to show
     bool hasData = filteredData.values.any((value) => (value as num) > 0);
     
     if (!hasData) {

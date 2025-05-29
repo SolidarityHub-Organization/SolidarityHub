@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'info_square_factory.dart';
 import '../../../services/location_external_services.dart';
-import '../decorador/info_square_decorator.dart';
+import '../decorator/info_square_decorator.dart';
 
 class PickupPointInfoSquare implements InfoSquare {
   @override
@@ -14,27 +14,49 @@ class PickupPointInfoSquare implements InfoSquare {
       builder: (context, snapshot) {
         String address = snapshot.hasData ? snapshot.data! : 'Cargando dirección...';
 
-        // Definir colores temáticos para puntos de recogida
         final Color primaryColor = Color.fromARGB(255, 30, 136, 229);
         final Color secondaryColor = Color.fromARGB(255, 100, 181, 246);
-
-        // Crear las filas de información
         List<InfoRowData> rows = [
           InfoRowData(icon: Icons.location_pin, label: 'Nombre', value: mapMarker.name),
           InfoRowData(icon: Icons.location_on, label: 'Ubicación', value: address),
+          InfoRowData(
+            icon: Icons.gps_fixed,
+            label: 'Coordenadas',
+            value:
+                '${mapMarker.position.latitude.toStringAsFixed(6)}, ${mapMarker.position.longitude.toStringAsFixed(6)}',
+          ),
         ];
 
-        // Agregar horario si existe
         if (mapMarker.time != null) {
-          rows.add(InfoRowData(icon: Icons.access_time, label: 'Horario', value: mapMarker.time.toString()));
+          String formattedTime = mapMarker.time is String ? mapMarker.time as String : mapMarker.time.toString();
+          rows.add(InfoRowData(icon: Icons.access_time, label: 'Horario', value: formattedTime));
         }
 
-        // Agregar donaciones si existen
         if (donations != null && donations.isNotEmpty) {
-          rows.add(InfoRowData(icon: Icons.card_giftcard, label: 'Donaciones', value: '${donations.length}'));
+          int totalQuantity = 0;
+          for (var donation in donations) {
+            if (donation is Map && donation.containsKey('quantity')) {
+              var quantity = donation['quantity'];
+              if (quantity is int) {
+                totalQuantity += quantity;
+              } else if (quantity != null) {
+                totalQuantity += int.tryParse(quantity.toString()) ?? 0;
+              }
+            }
+          }
+          rows.add(
+            InfoRowData(
+              icon: Icons.card_giftcard,
+              label: 'Tipos de donaciones',
+              value: '${donations.length} (${totalQuantity} unidades)',
+            ),
+          );
+        } else if (mapMarker.physicalDonation is int && mapMarker.physicalDonation != null) {
+          rows.add(
+            InfoRowData(icon: Icons.card_giftcard, label: 'Total donaciones', value: '${mapMarker.physicalDonation}'),
+          );
         }
 
-        // Usar el decorador completo
         InfoSquare emptySquare = EmptyInfoSquare();
         InfoSquare decoratedSquare = CompleteStyleDecorator.create(
           emptySquare,

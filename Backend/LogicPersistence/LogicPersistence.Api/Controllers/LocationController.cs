@@ -88,6 +88,34 @@ namespace LogicPersistence.Api.Controllers {
 			}
 		}
 
+		[HttpGet("locations/paginated")]
+		public async Task<IActionResult> GetPaginatedLocationsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+		{
+			try
+			{
+				var (locations, totalCount) = await _locationServices.GetPaginatedLocationsAsync(page, size);
 
+				return Ok(new
+				{
+					Items = locations,
+					TotalCount = totalCount,
+					PageNumber = page,
+					PageSize = size,
+					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+				});
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

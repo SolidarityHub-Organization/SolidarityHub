@@ -5,7 +5,6 @@ TRUNCATE TABLE point_donation CASCADE;
 TRUNCATE TABLE pickup_point CASCADE;
 TRUNCATE TABLE meeting_point CASCADE;
 TRUNCATE TABLE point_time CASCADE;
-TRUNCATE TABLE notifications CASCADE;
 TRUNCATE TABLE place_affected_zone CASCADE;
 TRUNCATE TABLE affected_zone_location CASCADE;
 TRUNCATE TABLE need_need_type CASCADE;
@@ -32,7 +31,6 @@ TRUNCATE TABLE admin CASCADE;
 TRUNCATE TABLE volunteer CASCADE;
 TRUNCATE TABLE victim CASCADE;
 TRUNCATE TABLE location CASCADE;
-
 -- Reset all sequences for tables with SERIAL columns
 SELECT setval(pg_get_serial_sequence('location', 'id'), 1, false);
 SELECT setval(pg_get_serial_sequence('victim', 'id'), 1, false);
@@ -52,7 +50,6 @@ SELECT setval(pg_get_serial_sequence('volunteer_time', 'id'), 1, false);
 SELECT setval(pg_get_serial_sequence('point_time', 'id'), 1, false);
 SELECT setval(pg_get_serial_sequence('pickup_point', 'id'), 1, false);
 SELECT setval(pg_get_serial_sequence('meeting_point', 'id'), 1, false);
-SELECT setval(pg_get_serial_sequence('notifications', 'id'), 1, false);
 
 SET CONSTRAINTS ALL IMMEDIATE;
 

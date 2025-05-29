@@ -11,6 +11,8 @@ class AutoAssignerDialogController {
 
   AssignmentStrategyType selectedStrategy = AssignmentStrategyType.proximidad;
   int volunteersPerTask = 1;
+  final Set<TaskWithDetails> selectedTasks = {};
+  late AutoAssigner _autoAssigner;
 
   final List<TaskWithDetails> tasks;
   final VoidCallback onTasksUpdated;
@@ -18,6 +20,7 @@ class AutoAssignerDialogController {
   AutoAssignerDialogController({required this.tasks, required this.onTasksUpdated}) {
     numberController.addListener(updateAffectedTasks);
     updateAffectedTasks();
+    _autoAssigner = AutoAssigner(selectedStrategy);
   }
 
   void dispose() {
@@ -33,27 +36,55 @@ class AutoAssignerDialogController {
       return;
     }
 
-    final count = tasks.where((task) => (task.assignedVolunteers.length) < value).length;
+    final count = selectedTasks.where((task) => (task.assignedVolunteers.length) < value).length;
     affectedTasksNotifier.value = count;
   }
 
   Future<bool> assignTasks(BuildContext context) async {
     if (formKey.currentState?.validate() ?? false) {
+      if (selectedTasks.isEmpty) {
+        AppSnackBar.show(
+          context: context,
+          message: 'Por favor, selecciona al menos una tarea.',
+          type: SnackBarType.error,
+        );
+        return false;
+      }
+
       volunteersPerTask = int.parse(numberController.text);
 
       try {
-        int potentiallyAffectedTasks = tasks.where((task) => task.assignedVolunteers.length < volunteersPerTask).length;
+        int potentiallyAffectedTasks =
+            selectedTasks.where((task) => task.assignedVolunteers.length < volunteersPerTask).length;
 
-        await AutoAssigner(
-          selectedStrategy,
-        ).assignTasks(tasks, await VolunteerServices.fetchVolunteersWithDetails(), volunteersPerTask);
+        await _autoAssigner.assignTasks(
+          selectedTasks.toList(),
+          await VolunteerServices.fetchVolunteersWithDetails(),
+          volunteersPerTask,
+        );
 
         onTasksUpdated();
 
-        AppSnackBar.show(
-          context: context,
-          message: 'Asignación completada. Se procesaron $potentiallyAffectedTasks tareas.',
-          type: SnackBarType.success,
+        // Mostrar SnackBar con opción de deshacer
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Asignación completada. Se procesaron $potentiallyAffectedTasks tareas.'),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Deshacer',
+              onPressed: () async {
+                try {
+                  await _autoAssigner.undoAssignment();
+                  onTasksUpdated();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Asignación deshecha')));
+                } catch (e) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error al deshacer la asignación: ${e.toString()}')));
+                }
+              },
+            ),
+          ),
         );
 
         return true;
@@ -72,5 +103,6 @@ class AutoAssignerDialogController {
 
   void setStrategy(AssignmentStrategyType strategy) {
     selectedStrategy = strategy;
+    _autoAssigner.setStrategy(strategy);
   }
 }

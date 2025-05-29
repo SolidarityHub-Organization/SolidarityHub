@@ -8,13 +8,13 @@ class VolunteerMarkerCreator implements MapMarkerCreator {
   Marker createMarker(MapMarker mapMarker, BuildContext context, Function(MapMarker) onMarkerTap) {
     return Marker(
       point: mapMarker.position,
-      width: 50,
-      height: 50,
+      width: 40,
+      height: 40,
       child: GestureDetector(
         onTap: () {
           onMarkerTap(mapMarker);
         },
-        child: const Icon(Icons.location_pin, color: Color.fromARGB(255, 255, 79, 135), size: 40),
+        child: Icon(Icons.volunteer_activism, color: Color.fromARGB(255, 255, 79, 135), size: 35),
       ),
     );
   }

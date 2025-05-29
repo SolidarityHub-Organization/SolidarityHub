@@ -1,4 +1,5 @@
 import 'package:app/interface/volunteerPreferences.dart';
+import 'package:app/services/register_flow_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/user_registration_data.dart';
 
@@ -13,11 +14,11 @@ class SchedulesController {
     }
   }
 
-  void goToNextScreen(BuildContext context, UserRegistrationData userData) {
+  void goToNextScreen(BuildContext context, RegisterFlowManager manager) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VolunteerPreferences(userData: userData),
+        builder: (context) => VolunteerPreferences(manager: manager),
       ),
     );
   }

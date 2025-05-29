@@ -3,12 +3,20 @@ using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Repositories;
+using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services;
+using LogicPersistence.Api.Services.Interfaces;
 using LogicPersistence.Api.Services.ObserverPattern;
 
 namespace LogicPersistence.Api.Services {
 	public class TaskServices : ITaskServices {
 		private readonly ITaskRepository _taskRepository;
+        private readonly ILocationRepository _locationRepository;
+        private readonly IVictimRepository _victimRepository;
+        private readonly IVolunteerRepository _volunteerRepository;
+        private readonly IAffectedZoneRepository _affectedZoneRepository;
+        private readonly IPointRepository _pointRepository;
+        private readonly IPaginationService _paginationService;
         private readonly List<ITaskAssignmentObserver> _observers = new();
 
         public void RegisterObserver(ITaskAssignmentObserver observer) {
@@ -23,8 +31,22 @@ namespace LogicPersistence.Api.Services {
             }
         }
 
-		public TaskServices(ITaskRepository taskRepository) {
-			_taskRepository = taskRepository;
+		public TaskServices(
+            ITaskRepository taskRepository,
+            ILocationRepository locationRepository,
+            IVictimRepository victimRepository,
+            IVolunteerRepository volunteerRepository,
+            IAffectedZoneRepository affectedZoneRepository,
+            IPointRepository pointRepository,
+            IPaginationService paginationService)
+		{
+            _taskRepository = taskRepository;
+            _locationRepository = locationRepository;
+            _victimRepository = victimRepository;
+            _volunteerRepository = volunteerRepository;
+            _affectedZoneRepository = affectedZoneRepository;
+            _pointRepository = pointRepository;
+            _paginationService = paginationService;
 		}
 
 
@@ -237,26 +259,38 @@ namespace LogicPersistence.Api.Services {
 			return urgencyLevel.GetDisplayName();
 		}
 
+		public async Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksAsync(int pageNumber, int pageSize) {
+			return await _paginationService.GetPaginatedAsync<Models.Task>(
+				pageNumber,
+				pageSize,
+				"task",
+				"created_at DESC, id DESC");
+		}
+
+		public async Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
+			return await _paginationService.GetPaginatedByDateRangeAsync<Models.Task>(
+				page, 
+				size, 
+				"task", 
+				fromDate, 
+				toDate, 
+				"created_at DESC, id DESC", 
+				"created_at");
+		}
+
 		#region Internal Methods
 		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
-		//chapuza de método
+		//chapuza de método	//el chapuzador que bien chapuzee, buen chapuzeador será
 		public async Task<AffectedZoneWithPointsDTO?> GetAffectedZoneForTasks(Models.Task task) {
-			var locationRepository = new LocationRepository();
-			var victimRepository = new VictimRepository();
-			var volunteerRepository = new VolunteerRepository();
-			var affectedZoneRepository = new AffectedZoneRepository();
-			var pointRepository = new PointRepository();
-			var taskRepository = _taskRepository;
+			var mapServices = new MapServices(_locationRepository, _victimRepository, _volunteerRepository, _affectedZoneRepository, _taskRepository, _pointRepository);
 
-			var mapServices = new MapServices(locationRepository, victimRepository, volunteerRepository, affectedZoneRepository, taskRepository, pointRepository);
-			var locationServices = new LocationServices(locationRepository);
 			var affectedZones = await mapServices.GetAllAffectedZonesWithPointsAsync();
 			if (affectedZones == null) {
 				throw new InvalidOperationException("Failed to retrieve affected zones.");
 			}
 
 			foreach (var affectedZone in affectedZones) {
-				var taskLocation = await locationServices.GetLocationByIdAsync(task.location_id);
+				var taskLocation = await _locationRepository.GetLocationByIdAsync(task.location_id);
 				if (taskLocation == null) {
 					throw new KeyNotFoundException($"Location with id {task.location_id} not found.");
 				}

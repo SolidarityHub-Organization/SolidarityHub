@@ -108,7 +108,13 @@ public static class BackendConfiguration {
 		// Register the TaskServices with the observer
 		builder.Services.AddScoped<ITaskServices>(provider => {
 			var repo = provider.GetRequiredService<ITaskRepository>();
-			var taskServices = new TaskServices(repo);
+			var locationRepo = provider.GetRequiredService<ILocationRepository>();
+			var victimRepo = provider.GetRequiredService<IVictimRepository>();
+			var volunteerRepo = provider.GetRequiredService<IVolunteerRepository>();
+			var affectedZoneRepo = provider.GetRequiredService<IAffectedZoneRepository>();
+			var pointRepo = provider.GetRequiredService<IPointRepository>();
+			var paginationService = provider.GetRequiredService<IPaginationService>();
+			var taskServices = new TaskServices(repo, locationRepo, victimRepo, volunteerRepo, affectedZoneRepo, pointRepo, paginationService);
 			var observer = provider.GetRequiredService<VolunteerNotificationObserver>();
 			taskServices.RegisterObserver(observer);
 			return taskServices;
@@ -134,6 +140,8 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<StrategyContext<AffectedZoneWithPointsDTO>>();
 		builder.Services.AddScoped<INotificationService, NotificationService>();
 		builder.Services.AddScoped<VolunteerNotificationObserver>();
+		builder.Services.AddScoped<IPaginationRepository, PaginationRepository>();
+		builder.Services.AddScoped<IPaginationService, PaginationService>();
 
 	}
 }

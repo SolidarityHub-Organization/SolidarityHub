@@ -2,169 +2,210 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:solidarityhub/models/imap_component.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/mapMarkerCluster.dart';
 
 class ClusterController {
-  static const double _ZOOM_THRESHOLD = 11.0;
-  static const double _EARTH_RADIUS = 6378137.0;
-  static const double _PIXEL_REFERENCE_ZOOM20 = 0.15;
-
-  // FUNCIONES PRINCIPALES PÚBLICAS
-
-  /// Crea clusters de marcadores basados en su proximidad geográfica
-  static List<MapMarker> createClusters(List<MapMarker> markers, double zoom, bool clusteringEnabled) {
-    if (!clusteringEnabled || zoom >= _ZOOM_THRESHOLD) {
-      return markers;
-    }
-
-    // Primero agrupamos por tipo
-    Map<String, List<MapMarker>> markersByType = {};
-    for (var marker in markers) {
-      if (!markersByType.containsKey(marker.type)) {
-        markersByType[marker.type] = [];
-      }
-      markersByType[marker.type]!.add(marker);
-    }
-
-    // Luego aplicamos clustering a cada grupo por separado
-    List<MapMarker> result = [];
-    markersByType.forEach((type, typeMarkers) {
-      final double baseDistance = _getBaseDistanceForZoom(zoom);
-      result.addAll(_groupMarkersIntoClusters(typeMarkers, zoom, baseDistance));
-    });
-
-    return result;
-  }
-
-  /// Crea un marcador visual para representar un cluster en el mapa
+  // Crea un marcador para un cluster en el mapa
   static Marker createClusterMarker(
-    MapMarker clusterMarker,
-    Function(MapMarker) onClusterTapped,
+    MapMarkerCluster cluster,
+    Function(IMapComponent) onTap,
     double currentZoom,
-    Function(LatLng, double) moveMap,
-    Color Function(String) getClusterColor,
+    Function(LatLng, double) onZoomTo,
+    Function(List<IMapComponent>) getClusterColor,
   ) {
+    final items = cluster.getChildren();
+    final color = getClusterColor(items);
+
+    // Ajustar el tamaño del cluster según la cantidad de elementos
+    double size = 80.0;
+    double fontSize = 16.0;
+
+    // Si es un cluster grande, hacerlo más notable
+    if (cluster.count > 20) {
+      size = 90.0;
+      fontSize = 18.0;
+    }
+
+    // Si es el cluster global (único), destacarlo más
+    if (cluster.id == 'main-cluster') {
+      size = 100.0;
+      fontSize = 20.0;
+    }
+
     return Marker(
-      point: clusterMarker.position,
-      width: 60,
-      height: 60,
-      alignment: Alignment.center,
-      child: _buildClusterWidget(clusterMarker, currentZoom, moveMap, getClusterColor),
-    );
-  }
-
-  /// Calcula la distancia entre dos posiciones geográficas considerando el zoom
-  static double calculateDistance(LatLng pos1, LatLng pos2, double zoom) {
-    double latFactor = _EARTH_RADIUS * 2 * pi / 360;
-    double lonFactor = _EARTH_RADIUS * 2 * pi / 360 * cos(pi * (pos1.latitude / 180));
-
-    double dy = (pos2.latitude - pos1.latitude) * latFactor;
-    double dx = (pos2.longitude - pos1.longitude) * lonFactor;
-    double distanceInMeters = sqrt(dx * dx + dy * dy);
-
-    return distanceInMeters / (_PIXEL_REFERENCE_ZOOM20 * pow(2, 20 - zoom));
-  }
-
-  // MÉTODOS PARA CREACIÓN DE CLUSTERS
-
-  /// Determina la distancia base para agrupar según el nivel de zoom
-  static double _getBaseDistanceForZoom(double zoom) {
-    if (zoom < 10) return 60.0;
-    if (zoom < 12) return 40.0;
-    return 20.0;
-  }
-
-  /// Agrupa marcadores en clusters según la distancia entre ellos
-  static List<MapMarker> _groupMarkersIntoClusters(List<MapMarker> markers, double zoom, double baseDistance) {
-    List<MapMarker> processedMarkers = [];
-    List<MapMarker> resultMarkers = [];
-
-    for (var marker in markers) {
-      if (processedMarkers.contains(marker)) continue;
-
-      // Buscamos solo marcadores del mismo tipo que el actual
-      List<MapMarker> cluster = _findNearbyMarkers(marker, markers, processedMarkers, zoom, baseDistance);
-
-      if (cluster.length > 1) {
-        resultMarkers.add(_createClusterMarker(cluster, resultMarkers.length));
-      } else {
-        resultMarkers.add(marker);
-      }
-    }
-
-    return resultMarkers;
-  }
-
-  /// Encuentra marcadores cercanos a un marcador base
-  static List<MapMarker> _findNearbyMarkers(
-    MapMarker baseMarker,
-    List<MapMarker> allMarkers,
-    List<MapMarker> processedMarkers,
-    double zoom,
-    double baseDistance,
-  ) {
-    List<MapMarker> cluster = [baseMarker];
-    processedMarkers.add(baseMarker);
-
-    for (var otherMarker in allMarkers) {
-      if (baseMarker != otherMarker && !processedMarkers.contains(otherMarker) && baseMarker.type == otherMarker.type) {
-        // Solo juntamos del mismo tipo
-        double distance = calculateDistance(baseMarker.position, otherMarker.position, zoom);
-
-        if (distance <= baseDistance) {
-          cluster.add(otherMarker);
-          processedMarkers.add(otherMarker);
-        }
-      }
-    }
-
-    return cluster;
-  }
-
-  /// Crea un marcador de cluster a partir de una lista de marcadores
-  static MapMarker _createClusterMarker(List<MapMarker> cluster, int index) {
-    LatLng clusterCenter = MapMarkerCluster.calculateClusterCenter(cluster);
-    // Aseguramos que el tipo del cluster sea el mismo que el de sus elementos
-    String clusterType = cluster[0].type;
-    return MapMarkerCluster.createCluster(
-      id: 'cluster_$index',
-      position: clusterCenter,
-      count: cluster.length,
-      items: cluster,
-      type: clusterType, // Conservamos el tipo para identificación del cluster
-    );
-  }
-
-  // MÉTODOS DE UI PARA VISUALIZACIÓN DE CLUSTERS
-
-  /// Construye el widget visual del cluster
-  static Widget _buildClusterWidget(
-    MapMarker clusterMarker,
-    double currentZoom,
-    Function(LatLng, double) moveMap,
-    Color Function(String) getClusterColor,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        // Al hacer clic, simplemente hacemos zoom en la posición del cluster
-        double zoomIncrement = 2.0;
-        moveMap(clusterMarker.position, currentZoom + zoomIncrement);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: getClusterColor(clusterMarker.type),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 6, offset: const Offset(0, 3))],
-        ),
-        child: Center(
-          child: Text(
-            '${clusterMarker.clusterCount}',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+      width: size,
+      height: size,
+      point: cluster.position,
+      child: GestureDetector(
+        onTap: () {
+          // Solo mostrar información del cluster, sin hacer zoom
+          onTap(cluster);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.7),
+            shape: BoxShape.circle,
+            border: Border.all(color: color, width: 2),
+            boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 2, offset: Offset(0, 1))],
+          ),
+          child: Center(
+            child: Text(
+              '${cluster.count}',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  // Algoritmo para agrupar marcadores en clusters
+  static List<IMapComponent> clusterMarkers(
+    List<IMapComponent> components,
+    double currentZoom,
+    {
+    double markerClusterDistance = 0.01,
+    double clusterClusterDistance = 0.02,
+    int maxLevels = 2,
+  }) {
+    // Calculate distances based on zoom
+    double baseDistance = 0.02;
+    double zoomFactor = pow(2, 16 - currentZoom) / 125;
+    double markerDist = baseDistance * zoomFactor;
+    double clusterDist = markerDist * 1.5;
+
+    if (components.isEmpty) return [];
+
+    // start with all components (markers and clusters)
+    List<IMapComponent> clustered = components;
+
+    // at each level, cluster markers and clusters together
+    for (int level = 0; level < maxLevels; level++) {
+      final distance = (level == 0) ? markerClusterDistance : clusterClusterDistance;
+      clustered = _proximityCluster(clustered, distance);
+
+      // if only one cluster remains, stop early
+      if (clustered.length <= 1) break;
+    }
+
+    return clustered;
+  }
+
+  // method treats clusters and markers identically for design pattern
+  static List<IMapComponent> _proximityCluster(List<IMapComponent> items, double distanceThreshold) {
+    final List<IMapComponent> result = [];
+    final List<bool> processed = List.filled(items.length, false);
+
+    for (int i = 0; i < items.length; i++) {
+      if (processed[i]) continue;
+      processed[i] = true;
+      final current = items[i];
+
+      List<IMapComponent> clusterItems = [current];
+
+      for (int j = 0; j < items.length; j++) {
+        if (i == j || processed[j]) continue;
+        final other = items[j];
+        final distance = _calculateDistance(
+          current.position.latitude,
+          current.position.longitude,
+          other.position.latitude,
+          other.position.longitude,
+        );
+        if (distance <= distanceThreshold) {
+          clusterItems.add(other);
+          processed[j] = true;
+        }
+      }
+
+      if (clusterItems.length == 1) {
+        result.add(current);
+      } else {
+        // Before creating a new cluster, check if there's only one existing cluster
+        // and everything else is single markers - in that case, just add items to 
+        // the existing cluster rather than creating a brand new one
+
+        MapMarkerCluster? existingCluster;
+        int clusterCount = 0;
+        
+        for (var item in clusterItems) {
+          if (item is MapMarkerCluster) {
+            existingCluster = item;
+            clusterCount++;
+          }
+        }
+        
+        // If there's exactly one cluster among the items, expand it
+        if (clusterCount == 1 && existingCluster != null) {
+          // Add all non-cluster items to the existing cluster
+          List<IMapComponent> newChildren = [...existingCluster.getChildren()];
+          for (var item in clusterItems) {
+            if (item != existingCluster) {
+              newChildren.add(item);
+            }
+          }
+          
+          result.add(MapMarkerCluster(
+            id: existingCluster.id,
+            name: existingCluster.name,
+            position: MapMarkerCluster.calculateClusterCenter(newChildren),
+            type: existingCluster.type,
+            children: newChildren,
+          ));
+        } else {
+          // create new cluster
+          final clusterId = 'cluster-${result.length}';
+          final clusterCenter = MapMarkerCluster.calculateClusterCenter(clusterItems);
+
+          // determine dominant type
+          Map<String, int> typeCounts = {};
+          for (var item in clusterItems) {
+            typeCounts[item.type] = (typeCounts[item.type] ?? 0) + 1;
+          }
+          String dominantType = 'victim';
+          int maxCount = 0;
+          typeCounts.forEach((type, count) {
+            if (count > maxCount) {
+              maxCount = count;
+              dominantType = type;
+            }
+          });
+
+          result.add(
+            MapMarkerCluster(
+              id: clusterId,
+              name: 'Cluster de marcadores',
+              position: clusterCenter,
+              type: dominantType,
+              children: clusterItems,
+            ),
+          );
+        }
+      }
+    }
+    return result;
+  }
+
+  // Cálculo simplificado de distancia usando la fórmula de Haversine
+  static double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 6371; // en kilómetros
+    final double latDiff = _degreesToRadians(lat2 - lat1);
+    final double lonDiff = _degreesToRadians(lon2 - lon1);
+
+    final double a =
+        (sin(latDiff / 2) * sin(latDiff / 2)) +
+        (cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) * sin(lonDiff / 2) * sin(lonDiff / 2));
+    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    final double distance = earthRadius * c;
+
+    // Convertimos a grados aproximados para facilitar la comparación
+    return distance / 111; // 111 km ~ 1 grado
+  }
+
+  // Convertir grados a radianes
+  static double _degreesToRadians(double degrees) {
+    return degrees * (pi / 180);
   }
 }

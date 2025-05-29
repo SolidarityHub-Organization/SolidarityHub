@@ -3,13 +3,13 @@ using LogicPersistence.Api.Models.DTOs;
 
 namespace LogicPersistence.Api.Services
 {
-    public interface IAffectedZoneServices
-    {
+    public interface IAffectedZoneServices {
         Task<AffectedZone> CreateAffectedZoneAsync(AffectedZoneCreateDto affectedZoneCreateDto);
         Task<AffectedZone> UpdateAffectedZoneAsync(int id, AffectedZoneUpdateDto affectedZoneUpdateDto);
         System.Threading.Tasks.Task DeleteAffectedZoneAsync(int id);
         Task<AffectedZone> GetAffectedZoneByIdAsync(int id);
         Task<IEnumerable<AffectedZone>> GetAllAffectedZonesAsync();
         Task<IEnumerable<AffectedZone>> GetAllRiskZonesAsync();
+        Task<(IEnumerable<AffectedZone> AffectedZones, int TotalCount)> GetPaginatedAffectedZonesAsync(int pageNumber, int pageSize);
     }
 }
