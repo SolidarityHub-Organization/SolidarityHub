@@ -2,19 +2,20 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:solidarityhub/models/imap_component.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/mapMarkerCluster.dart';
 
 class ClusterController {
   // Crea un marcador para un cluster en el mapa
   static Marker createClusterMarker(
-    MapMarker cluster,
-    Function(MapMarker) onTap,
+    MapMarkerCluster cluster,
+    Function(IMapComponent) onTap,
     double currentZoom,
     Function(LatLng, double) onZoomTo,
-    Function(List<MapMarker>) getClusterColor,
+    Function(List<IMapComponent>) getClusterColor,
   ) {
-    final items = cluster.clusterItems ?? [];
+    final items = cluster.getChildren();
     final color = getClusterColor(items);
 
     // Ajustar el tamaño del cluster según la cantidad de elementos
@@ -22,7 +23,7 @@ class ClusterController {
     double fontSize = 16.0;
 
     // Si es un cluster grande, hacerlo más notable
-    if (cluster.clusterCount != null && cluster.clusterCount! > 20) {
+    if (cluster.count > 20) {
       size = 90.0;
       fontSize = 18.0;
     }
@@ -51,7 +52,7 @@ class ClusterController {
           ),
           child: Center(
             child: Text(
-              '${cluster.clusterCount}',
+              '${cluster.count}',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize),
             ),
           ),
@@ -61,28 +62,28 @@ class ClusterController {
   }
 
   // Algoritmo para agrupar marcadores en clusters
-  static List<MapMarker> clusterMarkers(List<MapMarker> markers) {
-    if (markers.isEmpty) return [];
+  static List<IMapComponent> clusterMarkers(List<IMapComponent> components) {
+    if (components.isEmpty) return [];
 
-    // Ahora incluimos todos los marcadores para el clustering, incluyendo los pickup_points
-    final List<MapMarker> clusterableMarkers = List.from(markers);
+    // Incluimos todos los componentes para el clustering
+    final List<IMapComponent> clusterableComponents = List.from(components);
 
-    // Si hay solo un marcador, lo retornamos directamente
-    if (clusterableMarkers.length == 1) return clusterableMarkers;
+    // Si hay solo un componente, lo retornamos directamente
+    if (clusterableComponents.length == 1) return clusterableComponents;
 
     // Opciones de clustering:
-    // 1. Si hay pocos marcadores, creamos clusters por proximidad (como antes)
-    // 2. Si hay muchos marcadores o estamos muy alejados, creamos un único cluster global
+    // 1. Si hay pocos componentes, creamos clusters por proximidad
+    // 2. Si hay muchos componentes o estamos muy alejados, creamos un único cluster global
 
     // Para un único cluster global
-    if (clusterableMarkers.length > 5) {
-      // Crear un único cluster global con todos los marcadores
+    if (clusterableComponents.length > 5) {
+      // Crear un único cluster global con todos los componentes
       final clusterId = 'main-cluster';
-      final clusterCenter = MapMarkerCluster.calculateClusterCenter(clusterableMarkers);
+      final clusterCenter = MapMarkerCluster.calculateClusterCenter(clusterableComponents);
 
       // Determinar el tipo predominante en el cluster
       Map<String, int> typeCounts = {};
-      for (var item in clusterableMarkers) {
+      for (var item in clusterableComponents) {
         typeCounts[item.type] = (typeCounts[item.type] ?? 0) + 1;
       }
 
@@ -97,54 +98,54 @@ class ClusterController {
 
       // Crear y devolver un único cluster
       return [
-        MapMarkerCluster.createCluster(
+        MapMarkerCluster(
           id: clusterId,
+          name: 'Cluster Principal',
           position: clusterCenter,
-          count: clusterableMarkers.length,
-          items: clusterableMarkers,
           type: dominantType,
+          children: clusterableComponents,
         ),
       ];
     } else {
-      // Si hay pocos marcadores, aplicamos clustering por proximidad
+      // Si hay pocos componentes, aplicamos clustering por proximidad
       final clusterDistance = 0.01; // Aproximadamente 1km
-      final List<MapMarker> result = [];
-      final List<bool> processed = List.filled(clusterableMarkers.length, false);
+      final List<IMapComponent> result = [];
+      final List<bool> processed = List.filled(clusterableComponents.length, false);
 
-      for (int i = 0; i < clusterableMarkers.length; i++) {
+      for (int i = 0; i < clusterableComponents.length; i++) {
         if (processed[i]) continue;
         processed[i] = true;
-        final currentMarker = clusterableMarkers[i];
+        final currentComponent = clusterableComponents[i];
 
-        // Si el marcador ya es un cluster, lo agregamos directamente
-        if (currentMarker.isCluster) {
-          result.add(currentMarker);
+        // Si el componente ya es un cluster, lo agregamos directamente
+        if (currentComponent is MapMarkerCluster) {
+          result.add(currentComponent);
           continue;
         }
 
-        List<MapMarker> clusterItems = [currentMarker];
+        List<IMapComponent> clusterItems = [currentComponent];
 
-        // Buscar marcadores cercanos
-        for (int j = 0; j < clusterableMarkers.length; j++) {
+        // Buscar componentes cercanos
+        for (int j = 0; j < clusterableComponents.length; j++) {
           if (i == j || processed[j]) continue;
 
-          final otherMarker = clusterableMarkers[j];
+          final otherComponent = clusterableComponents[j];
           final distance = _calculateDistance(
-            currentMarker.position.latitude,
-            currentMarker.position.longitude,
-            otherMarker.position.latitude,
-            otherMarker.position.longitude,
+            currentComponent.position.latitude,
+            currentComponent.position.longitude,
+            otherComponent.position.latitude,
+            otherComponent.position.longitude,
           );
 
           if (distance <= clusterDistance) {
-            clusterItems.add(otherMarker);
+            clusterItems.add(otherComponent);
             processed[j] = true;
           }
         }
 
-        // Si solo hay un marcador, lo agregamos directamente
+        // Si solo hay un componente, lo agregamos directamente
         if (clusterItems.length == 1) {
-          result.add(currentMarker);
+          result.add(currentComponent);
         } else {
           // Crear un cluster
           final clusterId = 'cluster-${result.length}';
@@ -166,12 +167,12 @@ class ClusterController {
           });
 
           result.add(
-            MapMarkerCluster.createCluster(
+            MapMarkerCluster(
               id: clusterId,
+              name: 'Cluster de marcadores',
               position: clusterCenter,
-              count: clusterItems.length,
-              items: clusterItems,
               type: dominantType,
+              children: clusterItems,
             ),
           );
         }

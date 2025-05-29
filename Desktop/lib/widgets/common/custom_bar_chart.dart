@@ -196,7 +196,14 @@ class CustomBarChart extends StatelessWidget {
       ],
     );
   }
+
+double _calculateMaxYLabelWidth(double maxY, double interval) {
+  maxY = math.max(maxY, 1.0);
   
+  int maxDigits = maxY.toInt().toString().length;
+  return (maxDigits * 10.0) + 15.0;
+}
+
   @override
   Widget build(BuildContext context) {
     final hasValidData = data != null && data!.isNotEmpty && 
@@ -206,19 +213,21 @@ class CustomBarChart extends StatelessWidget {
         ? _processDataWithThreshold(data!) 
         : [];
     
-final double maxY = processedData.isNotEmpty
-    ? processedData.map((item) => (item['item2'] ?? 0).toDouble()).reduce((a, b) => a > b ? a : b)
-    : 1;
+    final double maxY = processedData.isNotEmpty
+      ? processedData.map((item) => (item['item2'] ?? 0).toDouble()).reduce((a, b) => a > b ? a : b)
+      : 1;
 
-double yAxisInterval;
-if (maxY > 20) {
-  double rawInterval = (maxY / 10).ceilToDouble();
-  yAxisInterval = (rawInterval % 5 == 0)
-      ? rawInterval
-      : (rawInterval + (5 - rawInterval % 5));
-} else {
-  yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
-}
+    double yAxisInterval;
+    if (maxY > 20) {
+      double rawInterval = (maxY / 10).ceilToDouble();
+      yAxisInterval = (rawInterval % 5 == 0)
+          ? rawInterval
+          : (rawInterval + (5 - rawInterval % 5));
+    } else {
+      yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
+    }
+    
+    final yAxisWidth = _calculateMaxYLabelWidth(maxY, yAxisInterval);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -279,7 +288,7 @@ if (maxY > 20) {
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 interval: yAxisInterval,
-                                reservedSize: 40,
+                                reservedSize: yAxisWidth,
                                 getTitlesWidget: (value, meta) {
                                   if (value % yAxisInterval == 0) {
                                     return Padding(
@@ -292,6 +301,7 @@ if (maxY > 20) {
                                           fontSize: 14,
                                         ),
                                         softWrap: false,
+                                        textAlign: TextAlign.right,
                                         overflow: TextOverflow.visible,
                                       ),
                                     );

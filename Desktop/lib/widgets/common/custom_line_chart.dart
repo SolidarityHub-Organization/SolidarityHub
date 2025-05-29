@@ -42,6 +42,11 @@ class CustomLineChart extends StatelessWidget {
     //return maxWidth * math.cos(rotationAngle) + maxWidth * math.sin(rotationAngle);
   } 
   
+  double _calculateMaxYLabelWidth(double maxY, double interval) {
+    int maxDigits = maxY.toInt().toString().length;
+    return (maxDigits * 8.0) + 10.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasValidData = spots.isNotEmpty && 
@@ -128,7 +133,9 @@ class CustomLineChart extends StatelessWidget {
     } else {
       yAxisInterval = (maxY / 10).ceilToDouble().clamp(1, double.infinity);
     }
-
+    
+    final yAxisWidth = _calculateMaxYLabelWidth(maxY.toDouble(), yAxisInterval);
+  
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -187,13 +194,18 @@ class CustomLineChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       interval: yAxisInterval,
+                      reservedSize: yAxisWidth,
                       getTitlesWidget: (value, meta) {
                         if (value % yAxisInterval == 0) {
-                          return Text(
-                            value.toInt().toString(),
-                            style: const TextStyle(fontSize: 12),
-                            softWrap: false,
-                            overflow: TextOverflow.visible,
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              value.toInt().toString(),
+                              style: const TextStyle(fontSize: 12),
+                              softWrap: false,
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.visible,
+                            ),
                           );
                         }
                         return const SizedBox.shrink();

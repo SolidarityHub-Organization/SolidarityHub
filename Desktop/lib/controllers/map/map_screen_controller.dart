@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:solidarityhub/models/imap_component.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/controllers/map/cluster_controller.dart';
 import 'package:solidarityhub/services/location_services.dart';
@@ -42,8 +43,8 @@ class MapScreenController extends ChangeNotifier {
   //Tipo de rutas seleccionada
   TypeofRoute? _selectedRouteType = TypeofRoute.car; // Por defecto tipo de ruta coche
 
-  // Marcador seleccionado
-  MapMarker? _selectedMarker;
+  // Componente seleccionado (puede ser MapMarker o MapMarkerCluster)
+  IMapComponent? _selectedMarker;
 
   // Estado del mapa de calor
   bool _isHeatMapActive = false;
@@ -64,10 +65,9 @@ class MapScreenController extends ChangeNotifier {
 
   // Polígonos para el mapa de calor
   List<MapPolygon> _polygons = [];
-
   // Getters
   Set<MapViewMode> get selectedModes => _selectedModes;
-  MapMarker? get selectedMarker => _selectedMarker;
+  IMapComponent? get selectedMarker => _selectedMarker;
   bool get isHeatMapActive => _isHeatMapActive;
   bool get isRouteMapActive => _isRouteMapActive;
   double get currentZoom => _currentZoom;
@@ -90,15 +90,14 @@ class MapScreenController extends ChangeNotifier {
       _currentZoom = zoom;
       notifyListeners();
     }
-  }
-
-  // Seleccionar un marcador
-  void selectMarker(MapMarker marker) {
-    _selectedMarker = marker;
+  }  // Seleccionar un componente del mapa (marcador o cluster)
+  void selectMarker(IMapComponent component) {
+    // Ahora podemos asignar directamente cualquier IMapComponent
+    _selectedMarker = component;
     notifyListeners();
   }
 
-  // Limpiar el marcador seleccionado
+  // Limpiar el componente seleccionado
   void clearSelectedMarker() {
     _selectedMarker = null;
     notifyListeners();
@@ -318,7 +317,7 @@ class MapScreenController extends ChangeNotifier {
 
 
   // Obtener el color para un cluster basado en sus elementos
-  Color getClusterColor(List<MapMarker> items) {
+  Color getClusterColor(List<IMapComponent> items) {
     if (items.isEmpty) return Colors.grey;
 
     // Contar los tipos en el cluster
@@ -353,10 +352,9 @@ class MapScreenController extends ChangeNotifier {
         return Colors.grey;
     }
   }
-
   // Obtener los marcadores filtrados y procesados según los filtros activos
-  List<MapMarker> getFilteredAndProcessedMarkers() {
-    List<MapMarker> filteredMarkers = [];
+  List<IMapComponent> getFilteredAndProcessedMarkers() {
+    List<IMapComponent> filteredMarkers = [];
 
     // Filtrar por los modos seleccionados
     if (_selectedModes.contains(MapViewMode.victim)) {

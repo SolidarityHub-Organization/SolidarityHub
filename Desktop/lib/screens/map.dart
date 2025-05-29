@@ -8,6 +8,8 @@ import 'package:solidarityhub/widgets/map/legends.dart';
 import 'package:solidarityhub/widgets/map/searchBar.dart';
 import 'package:solidarityhub/widgets/map/infoPanel.dart';
 import 'package:solidarityhub/widgets/map/factory_method_markers/marker_factory.dart';
+import 'package:solidarityhub/models/imap_component.dart';
+import 'package:solidarityhub/models/mapMarkerCluster.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
 
 class MapScreen extends StatefulWidget {
@@ -80,8 +82,7 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
 
   Widget _buildResponsiveLayout(BuildContext context, double infoPanelWidth) {
     return Row(
-      children: [
-        // Contenedor principal del mapa que se ajusta cuando se abre el panel
+      children: [        // Contenedor principal del mapa que se ajusta cuando se abre el panel
         Expanded(child: _buildMapWithOverlays(context, _screenController)),
 
         // Panel de información con animación
@@ -92,9 +93,9 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           child:
               _screenController.selectedMarker != null
                   ? MapInfoPanel(
-                    marker: _screenController.selectedMarker!,
-                    onClose: () => _screenController.clearSelectedMarker(),
-                  )
+                      component: _screenController.selectedMarker!,
+                      onClose: () => _screenController.clearSelectedMarker(),
+                    )
                   : Container(), // Contenedor vacío cuando no hay marcador seleccionado
         ),
       ],
@@ -102,29 +103,35 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
   }
 
   Widget _buildMapWithOverlays(BuildContext context, MapScreenController controller) {
-    // Obtener marcadores procesados
-    List<MapMarker> processedMarkers = controller.getFilteredAndProcessedMarkers();
+    // Now get a list of IMapComponent, not just MapMarker
+    List<IMapComponent> processedMarkers = controller.getFilteredAndProcessedMarkers();
 
-    // Generar marcadores para el mapa
-    List<Marker> flutterMapMarkers =
-        processedMarkers.map((mapMarker) {
-          if (mapMarker.isCluster) {
-            return ClusterController.createClusterMarker(
-              mapMarker,
-              (marker) {
-                // Al hacer tap en un cluster, sólo mostramos el panel de información
-                controller.selectMarker(marker);
-              },
-              controller.currentZoom,
-              // Esta función ya no se usará debido a nuestra modificación previa
-              (position, zoom) => {/* No hacer zoom al hacer clic */},
-              controller.getClusterColor,
-            );
-          } else {
-            final creator = getMarkerCreator(mapMarker.type);
-            return creator.createMarker(mapMarker, context, (marker) => controller.selectMarker(marker));
-          }
-        }).toList();
+    // Generate markers for the map
+    List<Marker> flutterMapMarkers = processedMarkers.map((marker) {
+      if (marker is MapMarkerCluster) {
+        return ClusterController.createClusterMarker(
+          marker,
+          (cluster) {
+            // Show info panel for cluster
+            controller.selectMarker(cluster);
+          },
+          controller.currentZoom,
+          (position, zoom) {/* No zoom on click */},
+          controller.getClusterColor,
+        );
+      } else if (marker is MapMarker) {
+        final creator = getMarkerCreator(marker.type);
+        return creator.createMarker(marker, context, (m) => controller.selectMarker(m));
+      } else {
+        // Should not happen, but fallback
+        return Marker(
+          point: marker.position,
+          width: 40,
+          height: 40,
+          child: Icon(Icons.location_on, color: Colors.grey),
+        );
+      }
+    }).toList();
 
     List<Marker> specialRouteMarkers = [];
     if (controller.routeStart != null) {

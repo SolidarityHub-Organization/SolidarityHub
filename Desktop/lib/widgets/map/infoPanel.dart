@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:solidarityhub/models/imap_component.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
+import 'package:solidarityhub/models/mapMarkerCluster.dart';
 import 'package:solidarityhub/widgets/map/factory_method_info/info_square_factory.dart';
 
 class MapInfoPanel extends StatelessWidget {
-  final MapMarker marker;
+  final IMapComponent component;
   final VoidCallback onClose;
 
-  const MapInfoPanel({Key? key, required this.marker, required this.onClose}) : super(key: key);
+  const MapInfoPanel({Key? key, required this.component, required this.onClose}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class MapInfoPanel extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   child: Text(
-                    marker.isCluster ? 'Grupo de marcadores' : 'Detalles',
+                    component is MapMarkerCluster ? 'Grupo de marcadores' : 'Detalles',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red),
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.ellipsis,
@@ -54,7 +56,7 @@ class MapInfoPanel extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(16),
-              child: marker.isCluster ? _buildClusterInfo(marker) : _buildMarkerInfo(marker),
+              child: component is MapMarkerCluster ? _buildClusterInfo(component as MapMarkerCluster) : _buildMarkerInfo(component as MapMarker),
             ),
           ),
         ],
@@ -68,8 +70,8 @@ class MapInfoPanel extends StatelessWidget {
     return infoSquare.buildInfoSquare(marker);
   }
 
-  Widget _buildClusterInfo(MapMarker cluster) {
-    final clusterItems = cluster.clusterItems ?? [];
+  Widget _buildClusterInfo(MapMarkerCluster cluster) {
+    final clusterItems = cluster.getChildren();
 
     return Container(
       width: double.infinity,
@@ -110,7 +112,7 @@ class MapInfoPanel extends StatelessWidget {
                 SizedBox(height: 4),
                 // Contador con número total de elementos
                 Text(
-                  "${cluster.clusterCount} elemento${cluster.clusterCount! > 1 ? 's' : ''} en total",
+                  "${cluster.count} elementos en esta área",
                   style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9)),
                 ),
               ],
@@ -162,7 +164,7 @@ class MapInfoPanel extends StatelessWidget {
   }
 
   // Nuevo método para construir elementos de cluster sin ListTile
-  Widget _buildClusterItem(MapMarker item) {
+  Widget _buildClusterItem(IMapComponent item) {
     // Función para convertir el tipo a un texto más amigable en español
     String getTipoTexto(String type) {
       switch (type.toLowerCase()) {
@@ -230,21 +232,8 @@ class MapInfoPanel extends StatelessWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
-          ), // Si es un punto de recogida, mostrar cantidad de donaciones
-          if (item.type == 'pickup_point')
-            Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Row(
-                children: [
-                  Icon(Icons.card_giftcard, size: 12, color: Colors.blue.shade700),
-                  SizedBox(width: 4),
-                  Text(
-                    'Donaciones: ${item.physicalDonation is int ? item.physicalDonation : 0}',
-                    style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
-                  ),
-                ],
-              ),
-            ),
+          ),
+          // Additional info may be added here if needed
         ],
       ),
     );

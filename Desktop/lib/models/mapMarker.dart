@@ -1,18 +1,23 @@
 import 'package:latlong2/latlong.dart';
+import 'imap_component.dart';
 
-class MapMarker {
+class MapMarker implements IMapComponent {
+  @override
   final String id;
+  @override
   final String name;
+  @override
   final LatLng position;
+  @override
   final String type;
   final String? urgencyLevel;
   final String? time;
   final String? state;
   final Map<String, dynamic>? skillsWithLevel;
   final dynamic physicalDonation;
-  final bool isCluster;
-  final int? clusterCount;
-  final List<MapMarker>? clusterItems;
+
+  @override
+  int get count => 1;
 
   MapMarker({
     required this.id,
@@ -24,9 +29,6 @@ class MapMarker {
     this.state,
     this.skillsWithLevel,
     this.physicalDonation,
-    this.isCluster = false,
-    this.clusterCount,
-    this.clusterItems,
   });
 
   // Método para crear una copia con diferentes atributos
@@ -40,9 +42,6 @@ class MapMarker {
     String? state,
     Map<String, dynamic>? skillsWithLevel,
     dynamic physicalDonation,
-    bool? isCluster,
-    int? clusterCount,
-    List<MapMarker>? clusterItems,
   }) {
     return MapMarker(
       id: id ?? this.id,
@@ -54,9 +53,6 @@ class MapMarker {
       state: state ?? this.state,
       skillsWithLevel: skillsWithLevel ?? this.skillsWithLevel,
       physicalDonation: physicalDonation ?? this.physicalDonation,
-      isCluster: isCluster ?? this.isCluster,
-      clusterCount: clusterCount ?? this.clusterCount,
-      clusterItems: clusterItems ?? this.clusterItems,
     );
   }
 
@@ -72,12 +68,6 @@ class MapMarker {
       state: map['state'],
       skillsWithLevel: map['skills_with_level'],
       physicalDonation: map['physical_donation'],
-      isCluster: map['is_cluster'] ?? false,
-      clusterCount: map['cluster_count'],
-      clusterItems:
-          map['cluster_items'] != null
-              ? (map['cluster_items'] as List).map((item) => MapMarker.fromMap(item as Map<String, dynamic>)).toList()
-              : null,
     );
   }
 }
