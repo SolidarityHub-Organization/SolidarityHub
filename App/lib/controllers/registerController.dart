@@ -53,4 +53,6 @@ class RegisterController {
     print("Pulsado Register");
     Navigator.pushNamed(context, '/register');
   }
+
+
 }
