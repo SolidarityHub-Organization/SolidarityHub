@@ -158,6 +158,7 @@ class _RegisterState extends State<Register> {
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Contraseña*',
+                      helperText: 'Debe tener al menos 6 caracteres',
                       errorText: _passwordErrorText,
                       prefixIcon: Icon(Icons.lock_outline, color: Colors.black),
                       border: OutlineInputBorder(
