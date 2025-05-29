@@ -1,6 +1,7 @@
 using LogicPersistence.Api.Mappers;
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Models.Builders;
 using LogicPersistence.Api.Repositories;
 using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services.Interfaces;
@@ -113,9 +114,20 @@ namespace LogicPersistence.Api.Services
                 throw new KeyNotFoundException($"Physical donation with id {id} not found");
             }
 
-            // Update the donation with victim_id set to null
-            donation.victim_id = null;
-            var result = await _donationRepository.UpdatePhysicalDonationAsync(donation);
+            // Update the donation with victim_id set to null using the builder
+            var updatedDonation = new PhysicalDonationBuilder()
+                .WithId(donation.id)
+                .WithItemName(donation.item_name)
+                .WithDescription(donation.description)
+                .WithQuantity(donation.quantity)
+                .WithItemType(donation.item_type)
+                .WithVolunteerId(donation.volunteer_id)
+                .WithAdminId(donation.admin_id)
+                .WithVictimId(null)  // Set to null to unassign
+                .WithDonationDate(donation.donation_date)
+                .Build();
+
+            var result = await _donationRepository.UpdatePhysicalDonationAsync(updatedDonation);
 
             if (result == null) {
                 throw new InvalidOperationException("Failed to unassign physical donation");

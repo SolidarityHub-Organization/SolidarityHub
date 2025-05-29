@@ -109,7 +109,7 @@ class DonationServices {
   static Future<int> fetchTotalPhysicalDonationsQuantity(DateTime fromDate, DateTime toDate) async {
     final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'physical-donations/total-amount?$params';
-    
+
     final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
@@ -148,7 +148,7 @@ class DonationServices {
       'donation_date': DateTime.now().toIso8601String(),
     };
 
-    final response = await ApiServices.post('monetary-donations', body: json.encode(donationData));
+    final response = await ApiServices.post('monetary-donations', body: donationData);
 
     if (response.statusCode.ok) {
       return MonetaryDonation.fromJson(json.decode(response.body));
@@ -193,7 +193,7 @@ class DonationServices {
   static Future<int> fetchTotalDonors(DateTime fromDate, DateTime toDate) async {
     final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'donations/total-donors?$params';
-    
+
     final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
@@ -207,12 +207,12 @@ class DonationServices {
   static Future<Map<String, int>> fetchPhysicalDonationsTotalAmountByType(DateTime fromDate, DateTime toDate) async {
     final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'physical-donations/total-by-type?$params';
-    
+
     final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
       final Map<String, dynamic> data = json.decode(response.body);
-      
+
       // Convertir el mapa dinámico a Map<String, int>
       Map<String, int> result = {};
       data.forEach((key, value) {
@@ -223,7 +223,7 @@ class DonationServices {
           result[key] = 0;
         }
       });
-      
+
       return result;
     } else {
       throw Exception('Error al obtener el total de donaciones por tipo: ${response.statusCode}');
@@ -233,12 +233,12 @@ class DonationServices {
   static Future<Map<String, double>> fetchPhysicalDonationsSumByWeek(DateTime fromDate, DateTime toDate) async {
     final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'physical-donations/sum-by-week?$params';
-    
+
     final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
       final Map<String, dynamic> data = json.decode(response.body);
-      
+
       Map<String, double> result = {};
       data.forEach((key, value) {
         if (value is double) {
@@ -249,7 +249,7 @@ class DonationServices {
           result[key] = 0.0;
         }
       });
-      
+
       return result;
     } else {
       throw Exception('Error al obtener la suma de donaciones físicas por semana: ${response.statusCode}');
@@ -259,12 +259,12 @@ class DonationServices {
   static Future<Map<String, double>> fetchMonetaryDonationsSumByWeek(DateTime fromDate, DateTime toDate) async {
     final String params = 'fromDate=${fromDate.toIso8601String()}&toDate=${toDate.toIso8601String()}';
     final uri = 'monetary-donations/sum-by-week?$params';
-    
+
     final response = await ApiServices.get(uri);
 
     if (response.statusCode.ok) {
       final Map<String, dynamic> data = json.decode(response.body);
-      
+
       Map<String, double> result = {};
       data.forEach((key, value) {
         if (value is double) {
@@ -275,7 +275,7 @@ class DonationServices {
           result[key] = 0.0;
         }
       });
-      
+
       return result;
     } else {
       throw Exception('Error al obtener la suma de donaciones monetarias por semana: ${response.statusCode}');

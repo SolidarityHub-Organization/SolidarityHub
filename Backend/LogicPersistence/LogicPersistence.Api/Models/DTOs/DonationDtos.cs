@@ -84,7 +84,7 @@ public class MonetaryDonationCreateDto : DonationBaseDto {
 	[Required]
 	public PaymentService payment_service { get; set; }
 
-	[Required]
+	// No requerido en la creación, se establecerá como Pending por defecto
 	public PaymentStatus payment_status { get; set; }
 
 	[Required]
