@@ -15,19 +15,8 @@ class AuthService {
     );
   }
 
-  static Future<http.Response> registerVictims(Map<String, dynamic> data) async {
-    final url = Uri.parse('http://localhost:5170/api/v1/signup');
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-
-    return response;
-  }
-
-  static Future<http.Response> registerVolunteer(Map<String, dynamic> data) async {
+  static Future<http.Response> register(Map<String, dynamic> data) async {
     final url = Uri.parse('http://localhost:5170/api/v1/signup');
 
     final response = await http.post(

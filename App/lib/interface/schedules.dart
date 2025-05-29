@@ -24,10 +24,10 @@ class _SchedulesState extends State<Schedules> {
   final SchedulesController controller = SchedulesController();
 
   final Map<String, String> timeLabels = {
-    'Mañana': '(8:00 - 11:00)',
-    'Mediodía': '(11:00 - 14:00)',
-    'Tarde': '(16:00 - 19:00)',
-    'Noche': '(19:00 - 22:00)',
+    '🌞 Mañana': '(8:00 - 11:00)',
+    '🌤️ Mediodía': '(11:00 - 14:00)',
+    '🌥️ Tarde': '(16:00 - 19:00)',
+    '🌙 Noche': '(19:00 - 22:00)',
   };
 
   @override
