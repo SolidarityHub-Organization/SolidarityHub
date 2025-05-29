@@ -1,3 +1,4 @@
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -376,12 +377,23 @@ class MapScreenController extends ChangeNotifier {
     // Aplicar clustering basado en el nivel de zoom    // A menor zoom, más agresivo el clustering
     // En zoom muy bajo, creamos un único cluster global
     if (_currentZoom < 10) {
-      // Forzamos a que siempre se cree un cluster principal
-      return ClusterController.clusterMarkers(filteredMarkers);
+      return ClusterController.clusterMarkers(
+        filteredMarkers, 
+        _currentZoom,
+        markerClusterDistance: 0.1 * pow(2, 16 - _currentZoom) / 125,
+        clusterClusterDistance: 0.2 * pow(2, 16 - _currentZoom) / 125,
+        maxLevels: 3 
+      );
     }
     // En zoom medio-bajo, aplicamos clustering normal si hay suficientes elementos
     else if (_currentZoom < 13 && filteredMarkers.length > 3) {
-      return ClusterController.clusterMarkers(filteredMarkers);
+      return ClusterController.clusterMarkers(
+        filteredMarkers, 
+        _currentZoom,
+        markerClusterDistance: 0.05 * pow(2, 16 - _currentZoom) / 125,
+        clusterClusterDistance: 0.1 * pow(2, 16 - _currentZoom) / 125,
+        maxLevels: 2
+      );
     }
 
     // Si el zoom es alto o hay pocos marcadores, mostramos marcadores individuales

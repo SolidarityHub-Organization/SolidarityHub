@@ -71,7 +71,9 @@ class MapInfoPanel extends StatelessWidget {
   }
 
   Widget _buildClusterInfo(MapMarkerCluster cluster) {
-    final clusterItems = cluster.getChildren();
+    // Get all leaf markers recursively
+    List<MapMarker> allLeafMarkers = _getAllLeafMarkers(cluster);
+    int totalCount = allLeafMarkers.length;
 
     return Container(
       width: double.infinity,
@@ -83,7 +85,6 @@ class MapInfoPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Encabezado sin Row
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -98,34 +99,30 @@ class MapInfoPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Icono en círculo
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.25), shape: BoxShape.circle),
                   child: Icon(Icons.group, color: Colors.white, size: 24),
                 ),
-                SizedBox(height: 12), // Texto del título - usar el nombre del marcador o el valor por defecto
+                SizedBox(height: 12),
                 Text(
                   cluster.id == 'main-cluster' ? "Todos los marcadores" : "Grupo de marcadores",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 SizedBox(height: 4),
-                // Contador con número total de elementos
                 Text(
-                  "${cluster.count} elementos en esta área",
+                  "$totalCount elementos en esta área",
                   style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9)),
                 ),
               ],
             ),
           ),
 
-          // Contenido
           Padding(
             padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título de la lista sin Row
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -140,11 +137,9 @@ class MapInfoPanel extends StatelessWidget {
 
                 SizedBox(height: 12),
 
-                // Lista de elementos con diseño modificado para prevenir desbordamiento
-                ...clusterItems.map((item) => _buildClusterItem(item)),
+                ...allLeafMarkers.map((item) => _buildClusterItem(item)),
 
-                // Mensaje de ayuda
-                if (clusterItems.length > 5)
+                if (allLeafMarkers.length > 5)
                   Padding(
                     padding: const EdgeInsets.only(top: 12.0),
                     child: Center(
@@ -233,9 +228,24 @@ class MapInfoPanel extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
           ),
-          // Additional info may be added here if needed
         ],
       ),
     );
+  }
+
+
+  List<MapMarker> _getAllLeafMarkers(IMapComponent component) {
+    List<MapMarker> result = [];
+    
+    if (component is MapMarker) {
+      result.add(component);
+    } else if (component is MapMarkerCluster) {
+      List<IMapComponent> children = component.getChildren();
+      for (var child in children) {
+        result.addAll(_getAllLeafMarkers(child));
+      }
+    }
+    
+    return result;
   }
 }

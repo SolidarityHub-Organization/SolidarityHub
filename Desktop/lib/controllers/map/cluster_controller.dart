@@ -62,102 +62,109 @@ class ClusterController {
   }
 
   // Algoritmo para agrupar marcadores en clusters
-  static List<IMapComponent> clusterMarkers(List<IMapComponent> components) {
+  static List<IMapComponent> clusterMarkers(
+    List<IMapComponent> components,
+    double currentZoom,
+    {
+    double markerClusterDistance = 0.01,
+    double clusterClusterDistance = 0.02,
+    int maxLevels = 2,
+  }) {
+    // Calculate distances based on zoom
+    double baseDistance = 0.02;
+    double zoomFactor = pow(2, 16 - currentZoom) / 125;
+    double markerDist = baseDistance * zoomFactor;
+    double clusterDist = markerDist * 1.5;
+
     if (components.isEmpty) return [];
 
-    // Incluimos todos los componentes para el clustering
-    final List<IMapComponent> clusterableComponents = List.from(components);
+    // start with all components (markers and clusters)
+    List<IMapComponent> clustered = components;
 
-    // Si hay solo un componente, lo retornamos directamente
-    if (clusterableComponents.length == 1) return clusterableComponents;
+    // at each level, cluster markers and clusters together
+    for (int level = 0; level < maxLevels; level++) {
+      final distance = (level == 0) ? markerClusterDistance : clusterClusterDistance;
+      clustered = _proximityCluster(clustered, distance);
 
-    // Opciones de clustering:
-    // 1. Si hay pocos componentes, creamos clusters por proximidad
-    // 2. Si hay muchos componentes o estamos muy alejados, creamos un único cluster global
+      // if only one cluster remains, stop early
+      if (clustered.length <= 1) break;
+    }
 
-    // Para un único cluster global
-    if (clusterableComponents.length > 5) {
-      // Crear un único cluster global con todos los componentes
-      final clusterId = 'main-cluster';
-      final clusterCenter = MapMarkerCluster.calculateClusterCenter(clusterableComponents);
+    return clustered;
+  }
 
-      // Determinar el tipo predominante en el cluster
-      Map<String, int> typeCounts = {};
-      for (var item in clusterableComponents) {
-        typeCounts[item.type] = (typeCounts[item.type] ?? 0) + 1;
+  // method treats clusters and markers identically for design pattern
+  static List<IMapComponent> _proximityCluster(List<IMapComponent> items, double distanceThreshold) {
+    final List<IMapComponent> result = [];
+    final List<bool> processed = List.filled(items.length, false);
+
+    for (int i = 0; i < items.length; i++) {
+      if (processed[i]) continue;
+      processed[i] = true;
+      final current = items[i];
+
+      List<IMapComponent> clusterItems = [current];
+
+      for (int j = 0; j < items.length; j++) {
+        if (i == j || processed[j]) continue;
+        final other = items[j];
+        final distance = _calculateDistance(
+          current.position.latitude,
+          current.position.longitude,
+          other.position.latitude,
+          other.position.longitude,
+        );
+        if (distance <= distanceThreshold) {
+          clusterItems.add(other);
+          processed[j] = true;
+        }
       }
 
-      String dominantType = 'victim'; // Por defecto
-      int maxCount = 0;
-      typeCounts.forEach((type, count) {
-        if (count > maxCount) {
-          maxCount = count;
-          dominantType = type;
-        }
-      });
+      if (clusterItems.length == 1) {
+        result.add(current);
+      } else {
+        // Before creating a new cluster, check if there's only one existing cluster
+        // and everything else is single markers - in that case, just add items to 
+        // the existing cluster rather than creating a brand new one
 
-      // Crear y devolver un único cluster
-      return [
-        MapMarkerCluster(
-          id: clusterId,
-          name: 'Cluster Principal',
-          position: clusterCenter,
-          type: dominantType,
-          children: clusterableComponents,
-        ),
-      ];
-    } else {
-      // Si hay pocos componentes, aplicamos clustering por proximidad
-      final clusterDistance = 0.01; // Aproximadamente 1km
-      final List<IMapComponent> result = [];
-      final List<bool> processed = List.filled(clusterableComponents.length, false);
-
-      for (int i = 0; i < clusterableComponents.length; i++) {
-        if (processed[i]) continue;
-        processed[i] = true;
-        final currentComponent = clusterableComponents[i];
-
-        // Si el componente ya es un cluster, lo agregamos directamente
-        if (currentComponent is MapMarkerCluster) {
-          result.add(currentComponent);
-          continue;
-        }
-
-        List<IMapComponent> clusterItems = [currentComponent];
-
-        // Buscar componentes cercanos
-        for (int j = 0; j < clusterableComponents.length; j++) {
-          if (i == j || processed[j]) continue;
-
-          final otherComponent = clusterableComponents[j];
-          final distance = _calculateDistance(
-            currentComponent.position.latitude,
-            currentComponent.position.longitude,
-            otherComponent.position.latitude,
-            otherComponent.position.longitude,
-          );
-
-          if (distance <= clusterDistance) {
-            clusterItems.add(otherComponent);
-            processed[j] = true;
+        MapMarkerCluster? existingCluster;
+        int clusterCount = 0;
+        
+        for (var item in clusterItems) {
+          if (item is MapMarkerCluster) {
+            existingCluster = item;
+            clusterCount++;
           }
         }
-
-        // Si solo hay un componente, lo agregamos directamente
-        if (clusterItems.length == 1) {
-          result.add(currentComponent);
+        
+        // If there's exactly one cluster among the items, expand it
+        if (clusterCount == 1 && existingCluster != null) {
+          // Add all non-cluster items to the existing cluster
+          List<IMapComponent> newChildren = [...existingCluster.getChildren()];
+          for (var item in clusterItems) {
+            if (item != existingCluster) {
+              newChildren.add(item);
+            }
+          }
+          
+          result.add(MapMarkerCluster(
+            id: existingCluster.id,
+            name: existingCluster.name,
+            position: MapMarkerCluster.calculateClusterCenter(newChildren),
+            type: existingCluster.type,
+            children: newChildren,
+          ));
         } else {
-          // Crear un cluster
+          // create new cluster
           final clusterId = 'cluster-${result.length}';
           final clusterCenter = MapMarkerCluster.calculateClusterCenter(clusterItems);
 
-          // Determinar el tipo predominante en el cluster
+          // determine dominant type
           Map<String, int> typeCounts = {};
           for (var item in clusterItems) {
             typeCounts[item.type] = (typeCounts[item.type] ?? 0) + 1;
           }
-
-          String dominantType = 'victim'; // Por defecto
+          String dominantType = 'victim';
           int maxCount = 0;
           typeCounts.forEach((type, count) {
             if (count > maxCount) {
@@ -177,8 +184,8 @@ class ClusterController {
           );
         }
       }
-      return result;
     }
+    return result;
   }
 
   // Cálculo simplificado de distancia usando la fórmula de Haversine
