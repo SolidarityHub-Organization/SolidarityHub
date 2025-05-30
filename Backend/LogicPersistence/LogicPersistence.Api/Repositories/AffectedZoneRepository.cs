@@ -6,7 +6,7 @@ using System.Data;
 namespace LogicPersistence.Api.Repositories;
 
 public class AffectedZoneRepository : IAffectedZoneRepository {
-	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+	private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 	public AffectedZoneRepository()
 	{

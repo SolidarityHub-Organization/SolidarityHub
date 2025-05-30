@@ -8,7 +8,7 @@ using System.Data;
 
 public class SkillRepository : ISkillRepository
 {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
     static SkillRepository()
     {

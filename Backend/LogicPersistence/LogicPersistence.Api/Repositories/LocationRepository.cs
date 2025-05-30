@@ -6,7 +6,7 @@ using Npgsql;
 namespace LogicPersistence.Api.Repositories;
 
 public class LocationRepository : ILocationRepository {
-	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+	private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 	public async Task<Location> CreateLocationAsync(Location location) {
 		using var connection = new NpgsqlConnection(connectionString);

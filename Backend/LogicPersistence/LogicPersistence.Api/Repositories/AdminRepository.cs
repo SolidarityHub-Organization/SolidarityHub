@@ -6,7 +6,7 @@ using Npgsql;
 
 public class AdminRepository : IAdminRepository
 {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
     public async Task<Admin> CreateAdminAsync(Admin admin)
     {

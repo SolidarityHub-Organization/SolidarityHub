@@ -9,7 +9,7 @@ public class NotificationService : INotificationService {
     private readonly string _connectionString;
 
     public NotificationService() {
-        _connectionString = DatabaseConfiguration.GetConnectionString();
+        _connectionString = DatabaseConfiguration.Instance.GetConnectionString();
     }
 
     public async Task<IEnumerable<Notification>> GetNotificationsForVolunteerAsync(int volunteerId) {

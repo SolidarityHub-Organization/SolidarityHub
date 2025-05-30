@@ -9,7 +9,7 @@ using LogicPersistence.Api.Models.DTOs;
 using System.Runtime.InteropServices;
 
 public class NeedRepository : INeedRepository {
-	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+	private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 	public NeedRepository() { }
 

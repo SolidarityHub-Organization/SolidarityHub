@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Npgsql;
 
 public class VolunteerRepository : IVolunteerRepository {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 
     public async Task<Volunteer> CreateVolunteerAsync(Volunteer volunteer) {

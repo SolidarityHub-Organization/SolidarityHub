@@ -7,7 +7,7 @@ using System.Data;
 namespace LogicPersistence.Api.Repositories;
 
 public class DonationRepository : IDonationRepository {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 #region PhysicalDonation
     public async Task<PhysicalDonation> CreatePhysicalDonationAsync(PhysicalDonation donation) 
