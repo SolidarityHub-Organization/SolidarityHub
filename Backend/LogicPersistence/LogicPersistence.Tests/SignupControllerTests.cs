@@ -8,6 +8,11 @@ using DotNetEnv;
 using Dapper;
 using Npgsql;
 
+/** Precondiciones:
+ * - La base de datos debe estar configurada y accesible.
+ * - El archivo .env.development debe contener las variables de entorno necesarias para la conexión a la base de datos.
+ */
+*/
 namespace LogicPersistence.Tests
 {
     public class SignupControllerTests : IClassFixture<WebApplicationFactory<App>>

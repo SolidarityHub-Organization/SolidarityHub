@@ -51,7 +51,7 @@ class VolunteerPreferencesController {
     manager.userData.preferences = selected.join(', ');
 
     try {
-      final response = await AuthService.registerVolunteer(manager.userData.toJson());
+      final response = await AuthService.register(manager.userData.toJson());
       if (response.statusCode == 200 || response.statusCode == 201 ) {
         final data = jsonDecode(response.body);
         print("Registro exitoso");

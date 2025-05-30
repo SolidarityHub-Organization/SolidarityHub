@@ -80,18 +80,20 @@ class AjustesCuenta extends StatelessWidget {
                           verticalPadding: 14,
                           horizontalPadding: 0,
                           backgroundColor: Colors.red,
+                          icon: Icon(Icons.settings, color: Colors.white),
                         ),
                       ),
-                      SizedBox(height: 16),
+                     /* SizedBox(height: 16),
                       _buildButton("Cambiar Horario"),
                       SizedBox(height: 16),
                       _buildButton("Cambiar Preferencias"),
                       SizedBox(height: 16),
-                      _buildButton("Cambiar Zona De\nPreferencia"),
+                      _buildButton("Cambiar Zona De\nPreferencia"),*/
                       SizedBox(height: 40),
                       buildCustomButton(
                           "Eliminar cuenta",
                           () => settingsController.onDeleteAccountPressed(context, id, role),
+                          icon: Icon(Icons.dangerous_outlined, color: Colors.white),
                       ),
                     ],
                   ),
@@ -115,11 +117,24 @@ class AjustesCuenta extends StatelessWidget {
         ),
         minimumSize: Size(double.infinity, 0),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white, fontSize: 14),
-        textAlign: TextAlign.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.settings,
+            color: Colors.white,
+            size: 18,
+          ),
+          SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(color: Colors.white, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
+
 }

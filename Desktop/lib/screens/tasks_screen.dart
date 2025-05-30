@@ -6,6 +6,10 @@ import 'package:solidarityhub/widgets/task_table/auto_assigner_dialog.dart';
 import 'package:solidarityhub/widgets/task_table/task_filter_panel.dart';
 import 'package:solidarityhub/widgets/task_table/task_table.dart';
 
+const Color kPrimaryRed = Color(0xFFF44336);
+const double kButtonHorizontal = 13.0;
+const double kButtonVertical = 16.0;
+
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
 
@@ -33,13 +37,13 @@ class _TasksScreenState extends State<TasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF44336),
+        backgroundColor: kPrimaryRed,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         elevation: 4,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +70,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: kButtonHorizontal, vertical: kButtonVertical),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                       ),
                       icon: const Icon(Icons.auto_fix_high),
@@ -79,9 +83,9 @@ class _TasksScreenState extends State<TasksScreen> {
                         }, null);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: kPrimaryRed,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: kButtonHorizontal, vertical: kButtonVertical),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                       ),
                       icon: const Icon(Icons.add, color: Colors.white),

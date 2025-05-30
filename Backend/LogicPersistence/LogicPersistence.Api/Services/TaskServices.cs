@@ -49,42 +49,64 @@ namespace LogicPersistence.Api.Services {
             _paginationService = paginationService;
 		}
 
+        protected virtual void ValidateDateRange(DateTime fromDate, DateTime toDate) {
+            if (fromDate > toDate) {
+                throw new ArgumentException("La fecha de inicio debe ser menor o igual que la fecha de finalización.");
+            }
+        }
+
+        protected virtual void ValidateState(string stateString) {
+            if (!Enum.TryParse<State>(stateString, true, out _)) {
+                throw new ArgumentException($"Valor de estado no válido: {stateString}");
+            }
+        }
+
+        protected virtual async Task<T> ExecuteWithValidation<T>(Func<Task<T>> operation, string errorMessage) where T : class {
+            var result = await operation();
+            if (result == null) {
+                throw new InvalidOperationException(errorMessage);
+            }
+            return result;
+        }
 
 		public async Task<Models.Task> CreateTaskAsync(TaskCreateDto taskCreateDto) {
 			if (taskCreateDto == null) {
 				throw new ArgumentNullException(nameof(taskCreateDto));
 			}
 
-			var task = await _taskRepository.CreateTaskAsync(taskCreateDto.ToTask(), taskCreateDto.volunteer_ids, taskCreateDto.victim_ids);
-			if (task == null) {
-				throw new InvalidOperationException("Failed to create task.");
+			var task = await ExecuteWithValidation(
+				() => _taskRepository.CreateTaskAsync(taskCreateDto.ToTask(), taskCreateDto.volunteer_ids, taskCreateDto.victim_ids),
+				"Failed to create task."
+			);
+
+			foreach (var volunteerId in taskCreateDto.volunteer_ids) {
+				NotifyTaskAssigned(volunteerId, task.id, task.name);
 			}
-            // Notify observers for each volunteer assigned
-            foreach (var volunteerId in taskCreateDto.volunteer_ids) {
-                NotifyTaskAssigned(volunteerId, task.id, task.name);
-            }
 			return task;
 		}
 
 		public async Task<Models.Task> GetTaskByIdAsync(int id) {
-			var task = await _taskRepository.GetTaskByIdAsync(id);
-			if (task == null) {
-				throw new KeyNotFoundException($"Task with id {id} not found.");
-			}
-			return task;
+			return await ExecuteWithValidation(
+				() => _taskRepository.GetTaskByIdAsync(id),
+				$"Task with id {id} not found."
+			);
 		}
 
 		public async Task<Models.Task> UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto) {
 			if (id != taskUpdateDto.id) {
 				throw new ArgumentException("Ids do not match.");
 			}
-			var existingTask = await _taskRepository.GetTaskByIdAsync(id);
-			if (existingTask == null) {
-				throw new KeyNotFoundException($"Task with id {id} not found.");
-			}
+
+			await ExecuteWithValidation(
+				() => _taskRepository.GetTaskByIdAsync(id),
+				$"Task with id {id} not found."
+			);
+
 			var updatedTask = taskUpdateDto.ToTask();
-			await _taskRepository.UpdateTaskAsync(updatedTask, taskUpdateDto.volunteer_ids, taskUpdateDto.victim_ids);
-			return updatedTask;
+			return await ExecuteWithValidation(
+				() => _taskRepository.UpdateTaskAsync(updatedTask, taskUpdateDto.volunteer_ids, taskUpdateDto.victim_ids),
+				$"Failed to update task with id {id}."
+			);
 		}
 
 		public async System.Threading.Tasks.Task DeleteTaskAsync(int id) {
@@ -147,6 +169,7 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<IEnumerable<int>> GetTaskIdsByStateAsync(string stateString) {
+			ValidateState(stateString);
 			if (!Enum.TryParse<State>(stateString, true, out State state)) {
 				throw new ArgumentException($"Invalid state value: {stateString}");
 			}
@@ -159,18 +182,15 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<IEnumerable<Models.Task>> GetTasksByStateAsync(string stateString, DateTime fromDate, DateTime toDate) {
-			if (fromDate > toDate) {
-				throw new ArgumentException("From date must be less than or equal to to date.");
-			}
-			if (!Enum.TryParse<State>(stateString, true, out State state)) {
-				throw new ArgumentException($"Invalid state value: {stateString}");
-			}
+			ValidateDateRange(fromDate, toDate);
+			ValidateState(stateString);
 
 			var tasksIds = await GetTaskIdsByStateAsync(stateString);
 			var tasks = await GetAllTasksAsync();
 			tasks = tasks.Where(t => tasksIds.Contains(t.id) && t.created_at >= fromDate && t.created_at <= toDate).ToList();
-			if (tasks.Count() == 0) {
-				throw new InvalidOperationException($"No tasks found for state {state} in the specified date range.");
+			
+			if (!tasks.Any()) {
+				throw new InvalidOperationException($"No tasks found for state {stateString} in the specified date range.");
 			}
 			return tasks;
 		}

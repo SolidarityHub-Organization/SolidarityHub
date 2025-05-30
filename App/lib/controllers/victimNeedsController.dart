@@ -41,7 +41,7 @@ class VictimNeedsController {
     manager.userData.needs = selected.join(', ');
 
     try {
-      final response = await AuthService.registerVictims(manager.userData.toJson());
+      final response = await AuthService.register(manager.userData.toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print("Registro exitoso");
