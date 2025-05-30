@@ -388,7 +388,7 @@ public class TaskRepository : ITaskRepository {
 			JOIN task_time tt2 ON tt2.task_id = t.id
 			WHERE vt2.volunteer_id = @volunteerId
 			AND vt2.state = 'Assigned'
-			  AND vt2.task_id != t.id -- Evitar que compare con sí mismo
+			  AND vt2.task_id != t.id 
 			  AND (
 				tt1.date = tt2.date
 				AND tt1.start_time < tt2.end_time
