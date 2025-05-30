@@ -373,30 +373,48 @@ public class TaskRepository : ITaskRepository {
     public async Task<IEnumerable<TaskWithLocationInfoDto>> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-		SELECT t.*,
-			   l.latitude,
-			   l.longitude
-		FROM task t
-		JOIN volunteer_task vt ON t.id = vt.task_id
-		JOIN location l ON t.location_id = l.id
-		WHERE vt.volunteer_id = @volunteerId
-		  AND vt.state = 'Pending'
-		  AND NOT EXISTS (
-			SELECT 1
-			FROM volunteer_task vt2
-			JOIN task_time tt1 ON tt1.task_id = vt2.task_id
-			JOIN task_time tt2 ON tt2.task_id = t.id
-			WHERE vt2.volunteer_id = @volunteerId
-			AND vt2.state = 'Assigned'
-			  AND vt2.task_id != t.id 
-			  AND (
-				tt1.date = tt2.date
-				AND tt1.start_time < tt2.end_time
-				AND tt1.end_time > tt2.start_time
-			  )
-		  )";
+        SELECT t.*,
+               l.latitude,
+               l.longitude
+        FROM task t
+        JOIN volunteer_task vt ON t.id = vt.task_id
+        JOIN location l ON t.location_id = l.id
+        WHERE vt.volunteer_id = @volunteerId
+          AND vt.state = 'Pending'
+          AND NOT EXISTS (
+            SELECT 1
+            FROM volunteer_task vt2
+            JOIN task_time tt1 ON tt1.task_id = vt2.task_id
+            JOIN task_time tt2 ON tt2.task_id = t.id
+            WHERE vt2.volunteer_id = @volunteerId
+            AND vt2.state = 'Assigned'
+              AND vt2.task_id != t.id 
+              AND (
+                tt1.date = tt2.date
+                AND tt1.start_time < tt2.end_time
+                AND tt1.end_time > tt2.start_time
+              )
+          )";
 
-        return await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId });
+        var tasks = (await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId })).ToList();
+
+        // Fetch all task times for these tasks in a single query
+        if (tasks.Count > 0) {
+            var taskIds = tasks.Select(t => t.id).ToArray();
+            const string timesSql = @"SELECT id, start_time::text as start_time, end_time::text as end_time, date, task_id FROM task_time WHERE task_id = ANY(@taskIds)";
+            var timesRaw = (await connection.QueryAsync<dynamic>(timesSql, new { taskIds })).ToList();
+            var times = timesRaw.Select(tr => new TaskTimeDisplayDto {
+                id = tr.id,
+                start_time = TimeOnly.Parse((string)tr.start_time),
+                end_time = TimeOnly.Parse((string)tr.end_time),
+                date = DateOnly.FromDateTime((DateTime)tr.date),
+                task_id = tr.task_id
+            }).ToList();
+            foreach (var task in tasks) {
+                task.times = times.Where(tt => tt.task_id == task.id).ToList();
+            }
+        }
+        return tasks;
     }
 
     public async Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
