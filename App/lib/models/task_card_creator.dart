@@ -23,7 +23,7 @@ class TaskCard extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: Colors.purple.shade100,
                 child: Text(
-                  'A', // Puedes usar la inicial del admin si tienes su nombre
+                  'A',
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
@@ -34,6 +34,8 @@ class TaskCard extends StatelessWidget {
                   Text(task.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 2),
                   Text('Coordenadas de la ubicación: ${task.latitude}, ${task.longitude}', style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                  const SizedBox(height: 2),
+                  Text('Horario de la tarea:', style: const TextStyle(fontSize: 13, color: Colors.grey)),
                 ],
               ),
             ],
