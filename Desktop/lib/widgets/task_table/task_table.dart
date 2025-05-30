@@ -2,80 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:solidarityhub/controllers/tasks/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/task_table_cell.dart';
 
-class TaskTable extends StatefulWidget {
+class TaskTableHeader extends StatelessWidget {
   final TaskTableController controller;
   final VoidCallback onTaskChanged;
+  final double tableWidth;
 
-  const TaskTable({super.key, required this.controller, required this.onTaskChanged});
-
-  @override
-  State<TaskTable> createState() => _TaskTableState();
-}
-
-class _TaskTableState extends State<TaskTable> {
-  final ScrollController _horizontalScrollController = ScrollController();
-  final ScrollController _verticalScrollController = ScrollController();
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.filteredTasksNotifier.addListener(_onFilteredTasksChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.controller.filteredTasksNotifier.removeListener(_onFilteredTasksChanged);
-    _horizontalScrollController.dispose();
-    _verticalScrollController.dispose();
-    super.dispose();
-  }
-
-  void _onFilteredTasksChanged() {
-    setState(() {});
-  }
+  const TaskTableHeader({
+    super.key,
+    required this.controller,
+    required this.onTaskChanged,
+    required this.tableWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Container(
-        width: MediaQuery.of(context).size.width - 32,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-        child: Scrollbar(
-          controller: _horizontalScrollController,
-          thumbVisibility: true,
-          notificationPredicate: (notification) => notification.depth == 0,
-          child: SingleChildScrollView(
-            controller: _horizontalScrollController,
-            scrollDirection: Axis.horizontal,
-            child: Column(children: [_buildTableHeader(), Expanded(child: _buildTableContent())]),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTableHeader() {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
       ),
       child: Row(
-        children: List.generate(widget.controller.columns.length, (columnIndex) {
-          final column = widget.controller.columns[columnIndex];
-          final width = (MediaQuery.of(context).size.width - 32) * column.width;
+        children: List.generate(controller.columns.length, (columnIndex) {
+          final column = controller.columns[columnIndex];
+          final width = tableWidth * column.width;
 
           return Container(
             width: width,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
               border: Border(
-                right:
-                    columnIndex < widget.controller.columns.length - 1
-                        ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
-                        : BorderSide.none,
+                right: columnIndex < controller.columns.length - 1
+                    ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
+                    : BorderSide.none,
               ),
             ),
             child: Row(
@@ -99,46 +57,44 @@ class _TaskTableState extends State<TaskTable> {
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Icon(
-                          widget.controller.sortField == column.id
-                              ? (widget.controller.sortAscending ? Icons.arrow_upward : Icons.arrow_downward)
+                          controller.sortField == column.id
+                              ? (controller.sortAscending ? Icons.arrow_upward : Icons.arrow_downward)
                               : Icons.unfold_more,
                           size: 18,
-                          color:
-                              widget.controller.sortField == column.id
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: controller.sortField == column.id
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       onTap: () {
-                        if (widget.controller.sortField == column.id) {
-                          widget.controller.sortAscending = !widget.controller.sortAscending;
+                        if (controller.sortField == column.id) {
+                          controller.sortAscending = !controller.sortAscending;
                         } else {
-                          widget.controller.sortField = column.id;
-                          widget.controller.sortAscending = true;
+                          controller.sortField = column.id;
+                          controller.sortAscending = true;
                         }
-                        widget.controller.applyFilters();
-                        widget.onTaskChanged();
+                        controller.applyFilters();
+                        onTaskChanged();
                       },
                     ),
                   ),
-                if (columnIndex < widget.controller.columns.length - 1)
+                if (columnIndex < controller.columns.length - 1)
                   MouseRegion(
                     cursor: SystemMouseCursors.resizeLeftRight,
                     child: GestureDetector(
                       onHorizontalDragUpdate: (details) {
-                        final totalWidth = MediaQuery.of(context).size.width - 32;
+                        final totalWidth = tableWidth;
                         final delta = details.delta.dx / totalWidth;
                         final minWidth = 0.05;
                         final maxWidth = 0.5;
 
-                        final newWidth = widget.controller.columns[columnIndex].width + delta;
-                        final nextWidth = widget.controller.columns[columnIndex + 1].width - delta;
+                        final newWidth = controller.columns[columnIndex].width + delta;
+                        final nextWidth = controller.columns[columnIndex + 1].width - delta;
                         if (newWidth >= minWidth &&
                             newWidth <= maxWidth &&
                             nextWidth >= minWidth &&
                             nextWidth <= maxWidth) {
-                          widget.controller.updateColumnWidths(columnIndex, newWidth, columnIndex + 1, nextWidth);
-                          setState(() {});
+                          controller.updateColumnWidths(columnIndex, newWidth, columnIndex + 1, nextWidth);
                         }
                       },
                       child: Container(
@@ -159,8 +115,74 @@ class _TaskTableState extends State<TaskTable> {
       ),
     );
   }
+}
 
-  Widget _buildTableContent() {
+class TaskTable extends StatefulWidget {
+  final TaskTableController controller;
+  final VoidCallback onTaskChanged;
+
+  const TaskTable({super.key, required this.controller, required this.onTaskChanged});
+
+  @override
+  State<TaskTable> createState() => _TaskTableState();
+}
+
+class _TaskTableState extends State<TaskTable> {
+  final ScrollController _horizontalScrollController = ScrollController();
+  final ScrollController _verticalScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.filteredTasksNotifier.addListener(_onFilteredTasksChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.filteredTasksNotifier.removeListener(_onFilteredTasksChanged);
+    _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
+    super.dispose();
+  }
+
+  void _onFilteredTasksChanged() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tableWidth = MediaQuery.of(context).size.width - 32;
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Container(
+        width: tableWidth,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        child: Scrollbar(
+          controller: _horizontalScrollController,
+          thumbVisibility: true,
+          notificationPredicate: (notification) => notification.depth == 0,
+          child: SingleChildScrollView(
+            controller: _horizontalScrollController,
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              children: [
+                TaskTableHeader(
+                  controller: widget.controller,
+                  onTaskChanged: widget.onTaskChanged,
+                  tableWidth: tableWidth,
+                ),
+                Expanded(child: _buildTableContent(tableWidth)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableContent(double tableWidth) {
     if (widget.controller.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -180,23 +202,21 @@ class _TaskTableState extends State<TaskTable> {
         children: List.generate(widget.controller.filteredTasks.length, (rowIndex) {
           final task = widget.controller.filteredTasks[rowIndex];
           return Container(
-            color:
-                rowIndex % 2 == 0
-                    ? Theme.of(context).colorScheme.surface
-                    : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            color: rowIndex % 2 == 0
+                ? Theme.of(context).colorScheme.surface
+                : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
             child: Row(
               children: List.generate(widget.controller.columns.length, (columnIndex) {
                 final column = widget.controller.columns[columnIndex];
-                final width = (MediaQuery.of(context).size.width - 32) * column.width;
+                final width = tableWidth * column.width;
 
                 return Container(
                   width: width,
                   decoration: BoxDecoration(
                     border: Border(
-                      right:
-                          columnIndex < widget.controller.columns.length - 1
-                              ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
-                              : BorderSide.none,
+                      right: columnIndex < widget.controller.columns.length - 1
+                          ? BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3), width: 1)
+                          : BorderSide.none,
                       bottom: BorderSide(color: Colors.grey[200]!),
                     ),
                   ),

@@ -6,6 +6,5 @@ abstract class IMapComponent {
   LatLng get position;
   String get type;
   
-  // Common calculation that both Marker and Cluster have
   int get count;
 }

@@ -7,7 +7,7 @@ using System.Data;
 namespace LogicPersistence.Api.Repositories;
 
 public class DonationRepository : IDonationRepository {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 #region PhysicalDonation
     public async Task<PhysicalDonation> CreatePhysicalDonationAsync(PhysicalDonation donation) 
@@ -133,10 +133,23 @@ public class DonationRepository : IDonationRepository {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
             INSERT INTO monetary_donation (amount, currency, payment_status, transaction_id, payment_service, donation_date, volunteer_id, admin_id, victim_id)
-            VALUES (@amount, @currency, @payment_status, @transaction_id, @payment_service, @donation_date, @volunteer_id, @admin_id, @victim_id) 
+            VALUES (@amount, @currency::currency, @payment_status::payment_status, @transaction_id, @payment_service::payment_service, @donation_date, @volunteer_id, @admin_id, @victim_id) 
             RETURNING *";
 
-        return await connection.QuerySingleAsync<MonetaryDonation>(sql, donation);
+        var parameters = new
+        {
+            amount = donation.amount,
+            currency = donation.currency.ToString(),
+            payment_status = donation.payment_status.ToString(),
+            transaction_id = donation.transaction_id,
+            payment_service = donation.payment_service.ToString(),
+            donation_date = donation.donation_date,
+            volunteer_id = donation.volunteer_id,
+            admin_id = donation.admin_id,
+            victim_id = donation.victim_id
+        };
+
+        return await connection.QuerySingleAsync<MonetaryDonation>(sql, parameters);
     }
 
     public async Task<MonetaryDonation> UpdateMonetaryDonationAsync(MonetaryDonation donation) 
@@ -145,10 +158,10 @@ public class DonationRepository : IDonationRepository {
         const string sql = @"
             UPDATE monetary_donation 
             SET amount = @amount,
-                currency = @currency,
-                payment_status = @payment_status,
+                currency = @currency::currency,
+                payment_status = @payment_status::payment_status,
                 transaction_id = @transaction_id,
-                payment_service = @payment_service,
+                payment_service = @payment_service::payment_service,
                 donation_date = @donation_date,
                 volunteer_id = @volunteer_id,
                 admin_id = @admin_id,
@@ -156,7 +169,21 @@ public class DonationRepository : IDonationRepository {
             WHERE id = @id
             RETURNING *";
 
-        return await connection.QuerySingleAsync<MonetaryDonation>(sql, donation);
+        var parameters = new
+        {
+            id = donation.id,
+            amount = donation.amount,
+            currency = donation.currency.ToString(),
+            payment_status = donation.payment_status.ToString(),
+            transaction_id = donation.transaction_id,
+            payment_service = donation.payment_service.ToString(),
+            donation_date = donation.donation_date,
+            volunteer_id = donation.volunteer_id,
+            admin_id = donation.admin_id,
+            victim_id = donation.victim_id
+        };
+
+        return await connection.QuerySingleAsync<MonetaryDonation>(sql, parameters);
     }
 
     public async Task<bool> DeleteMonetaryDonationAsync(int id) 

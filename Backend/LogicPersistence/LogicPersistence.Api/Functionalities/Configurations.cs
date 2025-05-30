@@ -7,15 +7,37 @@ using LogicPersistence.Api.Services;
 using LogicPersistence.Api.Services.Interfaces;
 using LogicPersistence.Api.Services.ObserverPattern;
 
+public sealed class DatabaseConfiguration {
+	private static DatabaseConfiguration? _instance;
+	private static readonly object _lock = new object();
+	private string? _connectionString;
 
+	private DatabaseConfiguration() { }
 
-public static class DatabaseConfiguration {
-	public static string GetConnectionString() {
-		return $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
-			   $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
-			   $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
-			   $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
-			   $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+	public static DatabaseConfiguration Instance {
+		get {
+			if (_instance == null) {
+				lock (_lock) {
+					_instance ??= new DatabaseConfiguration();
+				}
+			}
+			return _instance;
+		}
+	}
+
+	public string GetConnectionString() {
+		if (_connectionString == null) {
+			_connectionString = $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
+							  $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
+							  $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
+							  $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
+							  $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+		}
+		return _connectionString;
+	}
+
+	public void ResetConnectionString() {
+		_connectionString = null;
 	}
 }
 
@@ -45,7 +67,7 @@ public static class BackendConfiguration {
 		builder.Services.AddFluentMigratorCore()
 		.ConfigureRunner(rb => rb
 			.AddPostgres()
-			.WithGlobalConnectionString(DatabaseConfiguration.GetConnectionString())
+			.WithGlobalConnectionString(DatabaseConfiguration.Instance.GetConnectionString())
 			.ScanIn(typeof(DatabaseConfiguration).Assembly).For.Migrations())
 		.AddLogging(lb => lb.AddFluentMigratorConsole());
 	}

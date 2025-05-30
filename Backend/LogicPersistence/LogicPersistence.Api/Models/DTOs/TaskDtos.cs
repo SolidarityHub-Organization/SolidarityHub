@@ -119,4 +119,20 @@ public class TaskWithLocationInfoDto {
 	public double latitude;
 
 	public double longitude;
+
+	public List<TaskTimeDisplayDto>? times { get; set; } // Optional: all shifts/turnos for this task
+}
+
+public class TaskWithLocationAndTimesDto {
+    public int id { get; set; }
+    public string name { get; set; } = string.Empty;
+    public string description { get; set; } = string.Empty;
+    public DateTime created_at { get; set; }
+    public DateTime start_date { get; set; }
+    public DateTime? end_date { get; set; }
+    public int? admin_id { get; set; }
+    public int location_id { get; set; }
+    public double latitude { get; set; }
+    public double longitude { get; set; }
+    public List<TaskTimeDisplayDto> times { get; set; } = new();
 }

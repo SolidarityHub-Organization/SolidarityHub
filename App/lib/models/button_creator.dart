@@ -6,6 +6,7 @@ Widget buildCustomButton(
       double verticalPadding = 16,
       double horizontalPadding = 20,
       Color backgroundColor = Colors.red,
+      Widget? icon, // Ahora acepta cualquier widget (como Icon)
     }) {
   return ElevatedButton(
     onPressed: onPressed,
@@ -19,9 +20,20 @@ Widget buildCustomButton(
         horizontal: horizontalPadding,
       ),
     ),
-    child: Text(text, style: const TextStyle(color: Colors.white)),
+    child: icon != null
+        ? Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        SizedBox(width: 8),
+        Text(text, style: const TextStyle(color: Colors.white)),
+      ],
+    )
+        : Text(text, style: const TextStyle(color: Colors.white)),
   );
 }
+
+
 
 Widget buildButton(String text) {
   return ElevatedButton(

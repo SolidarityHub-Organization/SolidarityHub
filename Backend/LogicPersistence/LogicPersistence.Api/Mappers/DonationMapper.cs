@@ -2,65 +2,66 @@ namespace LogicPersistence.Api.Mappers;
 
 using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
+using LogicPersistence.Api.Models.Builders;
 
 public static class DonationMapper 
 {
     public static PhysicalDonation ToPhysicalDonation(this PhysicalDonationCreateDto donationCreateDto) 
     {
-        return new PhysicalDonation {
-            item_name = donationCreateDto.item_name,
-            description = donationCreateDto.description,
-            quantity = donationCreateDto.quantity,
-            item_type = donationCreateDto.item_type,
-            volunteer_id = donationCreateDto.volunteer_id,
-            admin_id = donationCreateDto.admin_id,
-            victim_id = donationCreateDto.victim_id,
-            donation_date = donationCreateDto.donation_date
-        };
+        return new PhysicalDonationBuilder()
+            .WithItemName(donationCreateDto.item_name)
+            .WithDescription(donationCreateDto.description)
+            .WithQuantity(donationCreateDto.quantity)
+            .WithItemType(donationCreateDto.item_type)
+            .WithVolunteerId(donationCreateDto.volunteer_id)
+            .WithAdminId(donationCreateDto.admin_id)
+            .WithVictimId(donationCreateDto.victim_id)
+            .WithDonationDate(donationCreateDto.donation_date)
+            .Build();
     }
 
     public static PhysicalDonation ToPhysicalDonation(this PhysicalDonationUpdateDto donationUpdateDto) 
     {
-        return new PhysicalDonation {
-            id = donationUpdateDto.id,
-            item_name = donationUpdateDto.item_name,
-            description = donationUpdateDto.description,
-            quantity = donationUpdateDto.quantity,
-            item_type = donationUpdateDto.item_type,
-            volunteer_id = donationUpdateDto.volunteer_id,
-            admin_id = donationUpdateDto.admin_id,
-            victim_id = donationUpdateDto.victim_id,
-            donation_date = donationUpdateDto.donation_date
-        };
+        return new PhysicalDonationBuilder()
+            .WithId(donationUpdateDto.id)
+            .WithItemName(donationUpdateDto.item_name)
+            .WithDescription(donationUpdateDto.description)
+            .WithQuantity(donationUpdateDto.quantity)
+            .WithItemType(donationUpdateDto.item_type)
+            .WithVolunteerId(donationUpdateDto.volunteer_id)
+            .WithAdminId(donationUpdateDto.admin_id)
+            .WithVictimId(donationUpdateDto.victim_id)
+            .WithDonationDate(donationUpdateDto.donation_date)
+            .Build();
     }
 
     public static MonetaryDonation ToMonetaryDonation(this MonetaryDonationCreateDto donationCreateDto) 
     {
-        return new MonetaryDonation {
-            amount = donationCreateDto.amount,
-            currency = donationCreateDto.currency,
-            payment_service = donationCreateDto.payment_service,
-            payment_status = PaymentStatus.Pending,  // always starts as pending
-            volunteer_id = donationCreateDto.volunteer_id,
-            admin_id = donationCreateDto.admin_id,
-            victim_id = donationCreateDto.victim_id,
-            donation_date = donationCreateDto.donation_date
-        };
+        return new MonetaryDonationBuilder()
+            .WithAmount(donationCreateDto.amount)
+            .WithCurrency(donationCreateDto.currency)
+            .WithPaymentService(donationCreateDto.payment_service)
+            .WithPaymentStatus(PaymentStatus.Pending)  // always starts as pending
+            .WithVolunteerId(donationCreateDto.volunteer_id)
+            .WithAdminId(donationCreateDto.admin_id)
+            .WithVictimId(donationCreateDto.victim_id)
+            .WithDonationDate(donationCreateDto.donation_date)
+            .Build();
     }
 
     public static MonetaryDonation ToMonetaryDonation(this MonetaryDonationUpdateDto donationUpdateDto) 
     {
-        return new MonetaryDonation {
-            id = donationUpdateDto.id,
-            amount = donationUpdateDto.amount,
-            currency = donationUpdateDto.currency,
-            payment_service = donationUpdateDto.payment_service,
-            payment_status = donationUpdateDto.payment_status,
-            volunteer_id = donationUpdateDto.volunteer_id,
-            admin_id = donationUpdateDto.admin_id,
-            victim_id = donationUpdateDto.victim_id,
-            donation_date = donationUpdateDto.donation_date
-        };
+        return new MonetaryDonationBuilder()
+            .WithId(donationUpdateDto.id)
+            .WithAmount(donationUpdateDto.amount)
+            .WithCurrency(donationUpdateDto.currency)
+            .WithPaymentService(donationUpdateDto.payment_service)
+            .WithPaymentStatus(donationUpdateDto.payment_status)
+            .WithVolunteerId(donationUpdateDto.volunteer_id)
+            .WithAdminId(donationUpdateDto.admin_id)
+            .WithVictimId(donationUpdateDto.victim_id)
+            .WithDonationDate(donationUpdateDto.donation_date)
+            .Build();
     }
 
     public static PhysicalDonationDisplayDto ToPhysicalDonationDisplayDto(this PhysicalDonation donation, Volunteer? volunteer = null) 

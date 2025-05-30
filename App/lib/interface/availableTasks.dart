@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../controllers/availableTasksController.dart';
 import '../models/task_post.dart';
 import '../models/task_card_creator.dart';
+import '../services/fetch_tasks.dart';
 
 class AvailableTasksScreen extends StatefulWidget {
   final int id;
@@ -21,7 +22,7 @@ class _AvailableTasksScreenState extends State<AvailableTasksScreen> {
   }
 
   void _loadTasks() {
-    _tasksFuture = AvailableTasksController.fetchPendingTasks(widget.id);
+    _tasksFuture = TaskService.fetchPendingTasks(widget.id);
   }
 
   @override

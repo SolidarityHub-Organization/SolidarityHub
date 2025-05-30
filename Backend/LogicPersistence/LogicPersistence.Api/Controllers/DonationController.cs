@@ -220,8 +220,20 @@ namespace LogicPersistence.Api.Controllers
         #endregion
         #region MonetaryDonation
         [HttpPost("monetary-donations")]
-        public async Task<IActionResult> CreateMonetaryDonationAsync(MonetaryDonationCreateDto donationCreateDto) {
+        public async Task<IActionResult> CreateMonetaryDonationAsync([FromBody] MonetaryDonationCreateDto donationCreateDto) {
             try {
+                if (donationCreateDto == null) {
+                    return BadRequest("La información de la donación no puede estar vacía.");
+                }
+
+                if (!donationCreateDto.volunteer_id.HasValue && !donationCreateDto.admin_id.HasValue) {
+                    return BadRequest("Se requiere especificar un volunteer_id o admin_id para crear una donación.");
+                }
+
+                if (string.IsNullOrEmpty(donationCreateDto.transaction_id)) {
+                    return BadRequest("Se requiere especificar un transaction_id para la donación.");
+                }
+
                 var donation = await _donationServices.CreateMonetaryDonationAsync(donationCreateDto);
                 return CreatedAtRoute(nameof(GetMonetaryDonationByIdAsync), new { id = donation.id }, donation);
             } catch (ArgumentNullException ex) {

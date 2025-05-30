@@ -3,7 +3,7 @@ namespace LogicPersistence.Api.Repositories;
 using Npgsql;
 
 public class GeneralRepository : IGeneralRepository {
-	private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+	private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
 	#region General
 	public async Task<bool> PopulateDatabaseAsync() {

@@ -1,3 +1,4 @@
+using LogicPersistence.Api.Models;
 using LogicPersistence.Api.Models.DTOs;
 using LogicPersistence.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -95,18 +96,16 @@ namespace LogicPersistence.Api.Controllers {
 			{
 				var (locations, totalCount) = await _locationServices.GetPaginatedLocationsAsync(page, size);
 
-				return Ok(new
+				var result = new PaginatedResultDto<Location>
 				{
 					Items = locations,
 					TotalCount = totalCount,
 					PageNumber = page,
 					PageSize = size,
 					TotalPages = (int)Math.Ceiling(totalCount / (double)size)
-				});
-			}
-			catch (ArgumentException ex)
-			{
-				return BadRequest(ex.Message);
+				};
+
+				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{

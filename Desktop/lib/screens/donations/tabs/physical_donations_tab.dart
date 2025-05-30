@@ -65,7 +65,9 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
   Future<void> showCreateDonationDialog() async {
     if (widget.volunteers.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles'), backgroundColor: Colors.orange));
       }
       return;
     }
@@ -80,11 +82,15 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
         final createdDonation = await DonationServices.createDonation(result);
         widget.onDonationCreated(createdDonation);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada con éxito')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Donación creada con éxito'), backgroundColor: Colors.green));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al crear la donación: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
         }
       }
     }
@@ -111,11 +117,15 @@ class _PhysicalDonationsTabState extends State<PhysicalDonationsTab> {
         );
         widget.onDonationAssigned(updatedDonation as Donation);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donación asignada correctamente'), backgroundColor: Colors.green),
+          );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al asignar donación: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
         }
       }
     }

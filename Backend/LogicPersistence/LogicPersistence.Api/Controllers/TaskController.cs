@@ -68,8 +68,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks")]
 		public async Task<IActionResult> GetAllTasksAsync() {
 			try {
-				var tasks = await _taskServices.GetAllTasksAsync();
-				return Ok(tasks);
+				return Ok(await _taskServices.GetAllTasksAsync());
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
@@ -80,8 +79,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks-with-details")]
 		public async Task<IActionResult> GetAllTasksWithDetailsAsync() {
 			try {
-				var tasks = await _taskServices.GetAllTasksWithDetailsAsync();
-				return Ok(tasks);
+				return Ok(await _taskServices.GetAllTasksWithDetailsAsync());
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
@@ -156,8 +154,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks/dashboard")]
 		public async Task<IActionResult> GetAllTasksForDashboardAsync([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
 			try {
-				var tasks = await _taskServices.GetAllTasksForDashboardAsync(fromDate, toDate);
-				return Ok(tasks);
+				return Ok(await _taskServices.GetAllTasksForDashboardAsync(fromDate, toDate));
 			} catch (InvalidOperationException ex) {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			} catch (Exception ex) {
@@ -168,8 +165,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks/by-state")]
 		public async Task<IActionResult> GetTasksByStateAsync([FromQuery] string state, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate) {
 			try {
-				var tasks = await _taskServices.GetTasksByStateAsync(state, fromDate, toDate);
-				return Ok(tasks);
+				return Ok(await _taskServices.GetTasksByStateAsync(state, fromDate, toDate));
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);
 			} catch (InvalidOperationException ex) {
@@ -183,8 +179,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks/assigned-to-volunteer/{volunteerId}")]
 		public async Task<IActionResult> GetTasksAssignedToVolunteerAsync(int volunteerId) {
 			try {
-				var tasks = await _taskServices.GetTasksAssignedToVolunteerAsync(volunteerId);
-				return Ok(tasks);
+				return Ok(await _taskServices.GetTasksAssignedToVolunteerAsync(volunteerId));
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);
 			} catch (InvalidOperationException ex) {
@@ -198,8 +193,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks/assigned-to-volunteer/pending/{volunteerId}")]
 		public async Task<IActionResult> GetPendingTasksAssignedToVolunteerAsync(int volunteerId) {
 			try {
-				var tasks = await _taskServices.GetPendingTasksAssignedToVolunteerAsync(volunteerId);
-				return Ok(tasks);
+				return Ok(await _taskServices.GetPendingTasksAssignedToVolunteerAsync(volunteerId));
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);
 			} catch (InvalidOperationException ex) {
@@ -212,8 +206,7 @@ namespace LogicPersistence.Api.Controllers {
 		[HttpGet("tasks/assigned-to-volunteer/assigned/{volunteerId}")]
 		public async Task<IActionResult> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
 			try {
-				var tasks = await _taskServices.GetAssignedTasksAssignedToVolunteerAsync(volunteerId);
-				return Ok(tasks);
+				return Ok(await _taskServices.GetAssignedTasksAssignedToVolunteerAsync(volunteerId));
 			} catch (ArgumentException ex) {
 				return BadRequest(ex.Message);
 			} catch (InvalidOperationException ex) {

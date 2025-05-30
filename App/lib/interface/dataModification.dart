@@ -89,6 +89,7 @@ class _DataModificationState extends State<DataModification> {
                             obscureText: true,
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.lock, color: Colors.black),
+                              helperText: 'Debe tener al menos 6 caracteres',
                               labelText: 'Contraseña',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                             ),
@@ -148,7 +149,7 @@ class _DataModificationState extends State<DataModification> {
                               labelText: 'Número de teléfono',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                             ),
-                            validator: validatePhone,
+                            validator: validatePhoneWithoutEmpty,
                           ),
                         ),
                         const SizedBox(height: 20),

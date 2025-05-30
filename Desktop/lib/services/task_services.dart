@@ -55,14 +55,13 @@ class TaskServices {
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
     );
-    Map<String, dynamic> tasks = {};
 
-    if (response.statusCode.ok) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      tasks = data.map((key, value) => MapEntry(key, value as int));
+    if (!response.statusCode.ok) {
+      return {};
     }
 
-    return tasks;
+    final Map<String, dynamic> data = json.decode(response.body);
+    return data.map((key, value) => MapEntry(key, value as int));
   }
 
   static Future<List<Map<String, dynamic>>> fetchAllTasks(DateTime startDate, DateTime endDate) async {
@@ -71,17 +70,21 @@ class TaskServices {
       '?fromDate=${startDate.toIso8601String()}'
       '&toDate=${endDate.toIso8601String()}',
     );
-    List<Map<String, dynamic>> tasks = [];
 
-    if (response.statusCode.ok) {
-      final List<dynamic> data = json.decode(response.body);
-      tasks = data.map((task) => task as Map<String, dynamic>).toList();
+    if (!response.statusCode.ok) {
+      return [];
     }
 
-    return tasks;
+    final List<dynamic> data = json.decode(response.body);
+    return data.map((task) => task as Map<String, dynamic>).toList();
   }
 
-  static Future<Map<String, dynamic>> fetchDateFilteredPaginatedTasks(DateTime startDate, DateTime endDate, int page, int size) async {
+  static Future<Map<String, dynamic>> fetchDateFilteredPaginatedTasks(
+    DateTime startDate,
+    DateTime endDate,
+    int page,
+    int size,
+  ) async {
     final response = await ApiServices.get(
       'tasks/dashboard/paginated'
       '?fromDate=${startDate.toIso8601String()}'
