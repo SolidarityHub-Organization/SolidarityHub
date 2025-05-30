@@ -193,7 +193,6 @@ class MapScreenController extends ChangeNotifier {
           _routePoints = _routeResult!.points;
           _routeDistance = _routeResult!.distance;
           _routeDuration = _routeResult!.duration;
-          print('Coordenadas que devuelve, $_routePoints');
           break;
         case TypeofRoute.walking:
           _routeResult = await RouteServices.fetchWalkingRoute(_routeStart!, _routeEnd!, zonasAEvitar);

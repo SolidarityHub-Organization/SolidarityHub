@@ -7,7 +7,13 @@ class AffectedZoneServices {
   AffectedZoneServices(this.baseUrl);
 
   static Future<List<Map<String, dynamic>>> fetchAffectedZones() async {
-    final response = await ApiServices.get('heatmap/mostrar');
+    final Map<String, dynamic> data = {
+      'description':'Obtener mapa de calor',
+      'Strategy':'heatmap'
+    };
+
+  final response = await ApiServices.post('map/mostrar', body: (data));
+
     List<Map<String, dynamic>> affectedZones = [];
 
     if (response.statusCode.ok) {
@@ -32,7 +38,12 @@ class AffectedZoneServices {
   }
   
   static Future<List<List<LatLng>>> fetchAffectedZonesPoints() async {
-  final response = await ApiServices.get('heatmap/mostrar');
+    final Map<String, String> data = {
+      'description': 'Obtener mapa de calor',
+      'Strategy': 'heatmap'
+    };
+
+  final response = await ApiServices.post('map/mostrar', body: (data));
   List<List<LatLng>> affectedZonesPoints = [];
 
   if (response.statusCode == 200) {

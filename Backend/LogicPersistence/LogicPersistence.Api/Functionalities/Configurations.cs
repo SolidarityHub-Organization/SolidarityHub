@@ -136,8 +136,9 @@ public static class BackendConfiguration {
 		builder.Services.AddScoped<IDashboardServices, DashboardServices>();
 		builder.Services.AddScoped<IPointServices, PointServices>();
 		builder.Services.AddScoped<IPointRepository, PointRepository>();
+		builder.Services.AddScoped<IMapServices, MapServices>();
 		builder.Services.AddScoped<IMapStrategy<AffectedZoneWithPointsDTO>, HeatMapStrategy>();
-		builder.Services.AddScoped<StrategyContext<AffectedZoneWithPointsDTO>>();
+		builder.Services.AddScoped<MapStrategyServices>();
 		builder.Services.AddScoped<INotificationService, NotificationService>();
 		builder.Services.AddScoped<VolunteerNotificationObserver>();
 		builder.Services.AddScoped<IPaginationRepository, PaginationRepository>();
