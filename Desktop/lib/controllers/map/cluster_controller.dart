@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:solidarityhub/models/imap_component.dart';
-import 'package:solidarityhub/models/mapMarker.dart';
 import 'package:solidarityhub/models/mapMarkerCluster.dart';
 
 class ClusterController {
@@ -70,12 +69,6 @@ class ClusterController {
     double clusterClusterDistance = 0.02,
     int maxLevels = 2,
   }) {
-    // Calculate distances based on zoom
-    double baseDistance = 0.02;
-    double zoomFactor = pow(2, 16 - currentZoom) / 125;
-    double markerDist = baseDistance * zoomFactor;
-    double clusterDist = markerDist * 1.5;
-
     if (components.isEmpty) return [];
 
     // start with all components (markers and clusters)
@@ -123,9 +116,9 @@ class ClusterController {
       if (clusterItems.length == 1) {
         result.add(current);
       } else {
-        // Before creating a new cluster, check if there's only one existing cluster
-        // and everything else is single markers - in that case, just add items to 
-        // the existing cluster rather than creating a brand new one
+        // before creating a new cluster, check if there's only one cluster
+        // and everything else is single markers
+        // in that case add items to the existing cluster rather than creating a new one
 
         MapMarkerCluster? existingCluster;
         int clusterCount = 0;
@@ -137,9 +130,9 @@ class ClusterController {
           }
         }
         
-        // If there's exactly one cluster among the items, expand it
+        // if there's  one cluster among the items, expand it
         if (clusterCount == 1 && existingCluster != null) {
-          // Add all non-cluster items to the existing cluster
+          // add all non-cluster to the existing cluster
           List<IMapComponent> newChildren = [...existingCluster.getChildren()];
           for (var item in clusterItems) {
             if (item != existingCluster) {
