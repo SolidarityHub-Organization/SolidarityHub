@@ -420,16 +420,33 @@ public class TaskRepository : ITaskRepository {
     public async Task<IEnumerable<TaskWithLocationInfoDto>> GetAssignedTasksAssignedToVolunteerAsync(int volunteerId) {
         using var connection = new NpgsqlConnection(connectionString);
         const string sql = @"
-
-		SELECT t.*,
-        l.latitude,
-        l.longitude
-		FROM task t
-		JOIN volunteer_task vt ON t.id = vt.task_id
-		join location l on t.location_id = l.id
+        SELECT t.*,
+               l.latitude,
+               l.longitude
+        FROM task t
+        JOIN volunteer_task vt ON t.id = vt.task_id
+        JOIN location l ON t.location_id = l.id
         WHERE vt.volunteer_id = @volunteerId AND vt.state = 'Assigned'";
 
-        return await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId });
+        var tasks = (await connection.QueryAsync<TaskWithLocationInfoDto>(sql, new { volunteerId })).ToList();
+
+        // Fetch all task times for these tasks in a single query
+        if (tasks.Count > 0) {
+            var taskIds = tasks.Select(t => t.id).ToArray();
+            const string timesSql = @"SELECT id, start_time::text as start_time, end_time::text as end_time, date, task_id FROM task_time WHERE task_id = ANY(@taskIds)";
+            var timesRaw = (await connection.QueryAsync<dynamic>(timesSql, new { taskIds })).ToList();
+            var times = timesRaw.Select(tr => new TaskTimeDisplayDto {
+                id = tr.id,
+                start_time = TimeOnly.Parse((string)tr.start_time),
+                end_time = TimeOnly.Parse((string)tr.end_time),
+                date = DateOnly.FromDateTime((DateTime)tr.date),
+                task_id = tr.task_id
+            }).ToList();
+            foreach (var task in tasks) {
+                task.times = times.Where(tt => tt.task_id == task.id).ToList();
+            }
+        }
+        return tasks;
     }
 
     public async Task<Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state) {
