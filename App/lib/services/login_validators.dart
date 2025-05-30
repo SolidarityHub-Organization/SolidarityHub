@@ -30,15 +30,15 @@ String? validatePhone(String? value){
 }
 
 String? validatePhoneWithoutEmpty(String? value){
-  if(validateIsEmpty(value) != null) return null;
-  else{
-  final RegExp phoneRegex = RegExp(r'^[0-9]$');
-    if(!phoneRegex.hasMatch(value!)){
-      return 'Introduce un número válido de 9 dígitos';
-    }
+  if (value == null || value.trim().isEmpty) return null;
+
+  final RegExp phoneRegex = RegExp(r'^[0-9]{9}$');
+  if (!phoneRegex.hasMatch(value)) {
+    return 'Introduce un número válido de 9 dígitos';
   }
   return null;
 }
+
 
 String? validateIdentification(String? value){
   final dniRegExp = RegExp(r'^\d{8}[A-Z]$');
