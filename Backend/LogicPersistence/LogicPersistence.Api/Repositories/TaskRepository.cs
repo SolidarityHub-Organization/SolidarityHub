@@ -6,6 +6,7 @@ using Npgsql;
 using LogicPersistence.Api.Models.DTOs;
 using Newtonsoft.Json;
 using LogicPersistence.Api.Services;
+using Task = LogicPersistence.Api.Models.Task;
 
 public class TaskRepository : ITaskRepository {
     private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
