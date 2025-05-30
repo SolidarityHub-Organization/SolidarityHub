@@ -213,17 +213,13 @@ class TaskTableController {
   }
 
   void applyFilters() {
-    final filteredList =
-        tasks.where((task) {
-          final nameMatches = nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase());
+    bool matchesAllFilters(TaskWithDetails task) {
+      return (nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase())) &&
+          (statusFilter == 'Todos' || getTaskStatus(task) == statusFilter) &&
+          (priorityFilter == 'Todas' || getTaskPriority(task) == priorityFilter);
+    }
 
-          final statusMatches = statusFilter == 'Todos' || getTaskStatus(task) == statusFilter;
-
-          final priorityMatches = priorityFilter == 'Todas' || getTaskPriority(task) == priorityFilter;
-
-          return nameMatches && statusMatches && priorityMatches;
-        }).toList();
-
+    final filteredList = tasks.where(matchesAllFilters).toList();
     filteredTasksNotifier.value = filteredList;
     _sortTasks();
   }
