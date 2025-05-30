@@ -4,18 +4,46 @@ import 'package:flutter/material.dart';
 import 'ajustes.dart';
 import '../controllers/homeScreenController.dart';
 import '../models/button_creator.dart';
+import '../services/notification_service.dart';
+import '../models/notification.dart';
 
-class HomeScreenVoluntario extends StatelessWidget {
+class HomeScreenVoluntario extends StatefulWidget {
   final String userName;
   final int id;
   final String role;
-  final HomeScreenController homeScreenController = HomeScreenController();
 
-  HomeScreenVoluntario({
+  const HomeScreenVoluntario({
+    super.key,
     required this.id,
     required this.userName,
     required this.role,
   });
+
+  @override
+  State<HomeScreenVoluntario> createState() => _HomeScreenVoluntarioState();
+}
+
+class _HomeScreenVoluntarioState extends State<HomeScreenVoluntario> {
+  final HomeScreenController homeScreenController = HomeScreenController();
+  int newNotificationCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationCount();
+  }
+
+  Future<void> _loadNotificationCount() async {
+    try {
+      final notifications =
+      await NotificationService.fetchNotifications(widget.id);
+      setState(() {
+        newNotificationCount = notifications.length;
+      });
+    } catch (e) {
+      print('Error al cargar notificaciones: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +52,6 @@ class HomeScreenVoluntario extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // Botón de logout (esquina superior izquierda)
             Positioned(
               top: 16,
               left: 16,
@@ -34,42 +61,71 @@ class HomeScreenVoluntario extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 hoverColor: Colors.white.withOpacity(0.1),
-                child: Icon(Icons.logout, color: Colors.white, size: 28),
+                child: const Icon(Icons.logout, color: Colors.white, size: 28),
               ),
             ),
 
-            // Botón de notificaciones (esquina superior derecha)
+            // Botón de notificaciones con badge
             Align(
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.only(top: 16, right: 16),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationScreen(id: id),
+                child: Stack(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NotificationScreen(id: widget.id),
+                          ),
+                        ).then((_) => _loadNotificationCount());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                        backgroundColor: Colors.red,
+                        elevation: 4,
+                        shadowColor: Colors.black26,
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(8),
-                    backgroundColor: Colors.red,
-                    elevation: 4,
-                    shadowColor: Colors.black26,
-                  ),
-                  child: const Icon(Icons.mail_outline, color: Colors.white, size: 24),
+                      child: const Icon(Icons.mail_outline,
+                          color: Colors.white, size: 24),
+                    ),
+                    if (newNotificationCount > 0)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                          decoration: BoxDecoration(
+                            color: Colors.red[400],
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white, width: 1.5),
+                          ),
+                          child: Text(
+                            newNotificationCount > 9 ? '9+' : '$newNotificationCount',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+
+                  ],
                 ),
               ),
             ),
 
-            // Contenedor principal centrado
             Align(
               alignment: Alignment.center,
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
@@ -77,22 +133,22 @@ class HomeScreenVoluntario extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Text(
-                      "BIENVENIDO $userName".toUpperCase(),
-                      style: TextStyle(
+                      "BIENVENIDO ${widget.userName}".toUpperCase(),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       "Eres un voluntario",
                       style: TextStyle(fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
@@ -100,28 +156,30 @@ class HomeScreenVoluntario extends StatelessWidget {
                             () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TaskListScreen(id: id),
+                            builder: (context) =>
+                                TaskListScreen(id: widget.id),
                           ),
                         ),
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
-                        icon: Icon(Icons.newspaper, color: Colors.white),
+                        icon: const Icon(Icons.newspaper, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
                         "Ver tareas disponibles",
-                        homeScreenController.onVerTareasPressed(context, id),
+                        homeScreenController.onVerTareasPressed(
+                            context, widget.id),
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
-                        icon: Icon(Icons.check, color: Colors.white),
+                        icon: const Icon(Icons.check, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
@@ -130,22 +188,24 @@ class HomeScreenVoluntario extends StatelessWidget {
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
-                        icon: Icon(Icons.help_center, color: Colors.white),
+                        icon:
+                        const Icon(Icons.help_center, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
                         "Ajustes",
-                        homeScreenController.onSettingsPressed(context, id, role),
+                        homeScreenController.onSettingsPressed(
+                            context, widget.id, widget.role),
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
-                        icon: Icon(Icons.settings, color: Colors.white),
+                        icon: const Icon(Icons.settings, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     SizedBox(
                       width: double.infinity,
                       child: buildCustomButton(
@@ -154,7 +214,7 @@ class HomeScreenVoluntario extends StatelessWidget {
                         verticalPadding: 14,
                         horizontalPadding: 0,
                         backgroundColor: Colors.red,
-                        icon: Icon(Icons.logout, color: Colors.white),
+                        icon: const Icon(Icons.logout, color: Colors.white),
                       ),
                     ),
                   ],
