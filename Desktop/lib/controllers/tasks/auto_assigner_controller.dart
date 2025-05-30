@@ -87,9 +87,7 @@ class ProximityAssignmentStrategy implements AssignmentStrategy {
         return distA.compareTo(distB);
       });
 
-      final toAssign = availableVolunteers.take(needed);
-
-      task.assignedVolunteers.addAll(toAssign);
+      task.assignedVolunteers.addAll(availableVolunteers.take(needed));
     }
 
     return tasks;
@@ -122,9 +120,7 @@ class SkillBasedAssignmentStrategy implements AssignmentStrategy {
         return distA.compareTo(distB);
       });
 
-      final toAssign = matchingVolunteers.take(needed);
-
-      task.assignedVolunteers.addAll(toAssign);
+      task.assignedVolunteers.addAll(matchingVolunteers.take(needed));
     }
 
     return tasks;
