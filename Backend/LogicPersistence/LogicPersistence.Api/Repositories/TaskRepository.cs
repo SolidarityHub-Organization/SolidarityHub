@@ -6,9 +6,10 @@ using Npgsql;
 using LogicPersistence.Api.Models.DTOs;
 using Newtonsoft.Json;
 using LogicPersistence.Api.Services;
+using Task = LogicPersistence.Api.Models.Task;
 
 public class TaskRepository : ITaskRepository {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
     public async Task<Task> CreateTaskAsync(Task task, int[] volunteerIds, int[] victimIds) {
         using var connection = new NpgsqlConnection(connectionString);

@@ -11,7 +11,6 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inicializar la localización para fechas en español
   initializeDateFormatting('es_ES', null).then((_) {
     runApp(const MyApp());
   });
@@ -31,15 +30,12 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('es', 'ES'), // Español
-      ],
-      locale: const Locale('es', 'ES'), // Forzar español como idioma predeterminado
+      supportedLocales: const [Locale('es', 'ES')],
+      locale: const Locale('es', 'ES'),
     );
   }
 }
 
-// Simple wrapper to enforce minimum size
 class MinSizeContainer extends StatelessWidget {
   final Widget child;
   final double minWidth;
@@ -68,6 +64,16 @@ class MinSizeContainer extends StatelessWidget {
   }
 }
 
+class MenuOption {
+  final int index;
+  final IconData icon;
+  final String title;
+  final Widget Function()? builder;
+  final void Function(BuildContext)? action;
+
+  const MenuOption({required this.index, required this.icon, required this.title, this.builder, this.action});
+}
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -77,23 +83,65 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Inicializamos con Dashboard en lugar de contenido vacío
   Widget _currentContent = const Dashboard();
-  int _selectedIndex = 0; // 0 indica Dashboard (seleccionado por defecto)
+  int _selectedIndex = 0;
   bool _isExpanded = true;
   final ScrollController _sidebarScrollController = ScrollController();
 
-  void _onMenuItemSelected(int index, Widget content) {
-    setState(() {
-      _selectedIndex = index;
-      _currentContent = content;
-    });
-  }
+  final List<MenuOption> _menuOptions = [
+    MenuOption(index: 0, icon: Icons.dashboard, title: 'Dashboard', builder: () => const Dashboard()),
+    MenuOption(index: 1, icon: Icons.login, title: 'Iniciar sesión Admin', builder: () => const Loginadmin()),
+    MenuOption(index: 2, icon: Icons.map, title: 'Mapa', builder: () => const MapScreen()),
+    MenuOption(index: 3, icon: Icons.task, title: 'Crear tareas', builder: () => const TasksScreen()),
+    MenuOption(
+      index: 4,
+      icon: Icons.book,
+      title: 'Donaciones',
+      builder: () => const DonationsPage(baseUrl: 'http://localhost:5170'),
+    ),
+    MenuOption(
+      index: -2,
+      icon: Icons.add_box,
+      title: 'Poblar Base de Datos',
+      action: (ctx) {
+        Logger.runAsync(DatabaseServices.populateDatabase);
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Poblando base de datos...'), backgroundColor: Colors.green));
+      },
+    ),
+    MenuOption(
+      index: -4,
+      icon: Icons.add_box,
+      title: 'Superpoblar Base de Datos',
+      action: (ctx) {
+        Logger.runAsync(DatabaseServices.superPopulateDatabase);
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Superpoblando base de datos...'), backgroundColor: Colors.green));
+      },
+    ),
+    MenuOption(
+      index: -3,
+      icon: Icons.delete,
+      title: 'Limpiar Base de Datos',
+      action: (ctx) {
+        Logger.runAsync(DatabaseServices.clearDatabase);
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Limpiando base de datos...'), backgroundColor: Colors.red));
+      },
+    ),
+  ];
 
-  void _toggleSidebar() {
+  void _onMenuOptionTap(MenuOption opt) {
     setState(() {
-      _isExpanded = !_isExpanded;
+      _selectedIndex = opt.index;
+      if (opt.builder != null) {
+        _currentContent = opt.builder!();
+      }
     });
+    opt.action?.call(context);
   }
 
   @override
@@ -107,15 +155,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Row(
         children: [
-          // Barra lateral con ancho dinámico
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             width: _isExpanded ? 280 : 70,
             color: Colors.white,
-            // Añadimos clipBehavior para recortar cualquier contenido desbordado durante la animación
             clipBehavior: Clip.hardEdge,
-
             child: SafeArea(
               child: Column(
                 children: [
@@ -148,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     maxLines: 1,
                                   ),
                                   const SizedBox(height: 8),
-
                                   Text(
                                     'Plataforma de ayuda humanitaria',
                                     style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -181,102 +225,37 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-
-                  // Botones del menú (scrollable)
                   Expanded(
                     child: Scrollbar(
-                      thumbVisibility: true, // Siempre mostrar la barra de desplazamiento
-                      controller: _sidebarScrollController, // <-- Add this
+                      thumbVisibility: true,
+                      controller: _sidebarScrollController,
                       child: ListView(
-                        controller: _sidebarScrollController, // <-- And this
+                        controller: _sidebarScrollController,
                         padding: EdgeInsets.symmetric(vertical: 8.0),
-                        children: [
-                          _buildMenuItem(
-                            index: 0,
-                            icon: Icons.dashboard,
-                            title: 'Dashboard',
-                            onTap: () => _onMenuItemSelected(0, const Dashboard()),
-                          ),
-                          _buildMenuItem(
-                            index: 1,
-                            icon: Icons.login,
-                            title: 'Iniciar sesión Admin',
-                            onTap: () => _onMenuItemSelected(1, const Loginadmin()),
-                          ),
-                          _buildMenuItem(
-                            index: 2,
-                            icon: Icons.map,
-                            title: 'Mapa',
-                            onTap: () => _onMenuItemSelected(2, const MapScreen()),
-                          ),
-                          _buildMenuItem(
-                            index: 3,
-                            icon: Icons.task,
-                            title: 'Crear tareas',
-                            onTap: () => _onMenuItemSelected(3, const TasksScreen()),
-                          ),
-                          _buildMenuItem(
-                            index: 4,
-                            icon: Icons.book,
-                            title: 'Donaciones',
-                            onTap: () => _onMenuItemSelected(4, const DonationsPage(baseUrl: 'http://localhost:5170')),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            child: Divider(height: 1),
-                          ),
-                          _buildMenuItem(
-                            index: -2,
-                            icon: Icons.add_box,
-                            title: 'Poblar Base de Datos',
-                            onTap: () {
-                              Logger.runAsync(DatabaseServices.populateDatabase);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Poblando base de datos...'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            },
-                          ),
-                          _buildMenuItem(
-                            index: -4,
-                            icon: Icons.add_box,
-                            title: 'Superpoblar Base de Datos',
-                            onTap: () {
-                              Logger.runAsync(DatabaseServices.superPopulateDatabase);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Superpoblando base de datos...'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            },
-                          ),
-                          _buildMenuItem(
-                            index: -3,
-                            icon: Icons.delete,
-                            title: 'Limpiar Base de Datos',
-                            onTap: () {
-                              Logger.runAsync(DatabaseServices.clearDatabase);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Limpiando base de datos...'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                        children:
+                            _menuOptions
+                                .expand(
+                                  (opt) => [
+                                    _buildMenuItem(opt),
+                                    if (opt.index == 4)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        child: Divider(height: 1),
+                                      ),
+                                  ],
+                                )
+                                .toList(),
                       ),
                     ),
                   ),
-
-                  // Botón para expandir/colapsar la barra lateral (no scrollable)
                   Material(
                     color: Colors.red.withOpacity(0.1),
                     child: InkWell(
-                      onTap: _toggleSidebar,
+                      onTap: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
                       child: Container(
                         height: 48,
                         width: double.infinity,
@@ -285,13 +264,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         child:
                             _isExpanded
                                 ? Row(
-                                  mainAxisSize: MainAxisSize.min, // para evitar desbordamiento
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const SizedBox(width: 16),
                                     Icon(Icons.chevron_left, color: Colors.red),
                                     const SizedBox(width: 12),
                                     Flexible(
-                                      // Hace que el texto se ajuste al espacio disponible
                                       child: Text(
                                         'Colapsar menú',
                                         style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
@@ -308,32 +286,23 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-
           Container(width: 1, color: Colors.grey.shade300),
-
           Expanded(child: _currentContent),
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem({
-    required int index,
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    final bool isSelected = index == _selectedIndex;
-
+  Widget _buildMenuItem(MenuOption opt) {
+    final bool isSelected = opt.index == _selectedIndex;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-
         clipBehavior: Clip.hardEdge,
         child: InkWell(
-          onTap: onTap,
+          onTap: () => _onMenuOptionTap(opt),
           borderRadius: BorderRadius.circular(8),
           child: Ink(
             decoration: BoxDecoration(
@@ -345,14 +314,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child:
                   _isExpanded
                       ? Row(
-                        mainAxisSize: MainAxisSize.min, //para evitar desbordamiento
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(icon, color: isSelected ? Colors.red : Colors.red.withOpacity(0.7), size: 22),
+                          Icon(opt.icon, color: isSelected ? Colors.red : Colors.red.withOpacity(0.7), size: 22),
                           const SizedBox(width: 12),
                           Flexible(
-                            // Hace que el texto se ajuste al espacio disponible
                             child: Text(
-                              title,
+                              opt.title,
                               style: TextStyle(
                                 color: isSelected ? Colors.red : Colors.black87,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -362,12 +330,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               maxLines: 1,
                             ),
                           ),
-                          // Añadimos un pequeño espacio al final para evitar que toque el borde
                           const SizedBox(width: 2),
                         ],
                       )
                       : Center(
-                        child: Icon(icon, color: isSelected ? Colors.red : Colors.red.withOpacity(0.7), size: 24),
+                        child: Icon(opt.icon, color: isSelected ? Colors.red : Colors.red.withOpacity(0.7), size: 24),
                       ),
             ),
           ),

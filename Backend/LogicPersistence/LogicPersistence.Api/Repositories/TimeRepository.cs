@@ -13,7 +13,7 @@ public class DuplicateTimeException : Exception
 
 public class TimeRepository : ITimeRepository
 {
-    private readonly string connectionString = DatabaseConfiguration.GetConnectionString();
+    private readonly string connectionString = DatabaseConfiguration.Instance.GetConnectionString();
 
     // Task Time Methods
     public async Task<TaskTime> UpdateTaskTimeAsync(TaskTime taskTime)

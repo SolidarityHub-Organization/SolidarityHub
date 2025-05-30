@@ -7,6 +7,7 @@ using LogicPersistence.Api.Repositories.Interfaces;
 using LogicPersistence.Api.Services;
 using LogicPersistence.Api.Services.Interfaces;
 using LogicPersistence.Api.Services.ObserverPattern;
+using Task = LogicPersistence.Api.Models.Task;
 
 namespace LogicPersistence.Api.Services {
 	public class TaskServices : ITaskServices {
