@@ -46,6 +46,21 @@ class TaskCard extends StatelessWidget {
                         style: const TextStyle(fontSize: 13, color: Colors.black87),
                       ),
                     )),
+                    Text('Descripción:', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        task.description,
+                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                      ),
+                    ),
+
                   ],
                 ),
               ),
