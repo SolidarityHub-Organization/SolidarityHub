@@ -21,8 +21,8 @@ public class NeedRepository : INeedRepository {
 
 		try {
 			const string insertNeedSql = @"
-                INSERT INTO need (name, description, urgency_level, victim_id, admin_id)
-                VALUES (@name, @description, 'Unknown', @victim_id, @admin_id)
+                INSERT INTO need (name, description, urgency_level, victim_id, admin_id, status)
+                VALUES (@name, @description, 'Unknown', @victim_id, @admin_id, 'InProgress')
 				RETURNING * ";
 
 			var createdNeed = await connection.QuerySingleAsync<Need>(
