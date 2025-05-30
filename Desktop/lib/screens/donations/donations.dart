@@ -56,12 +56,13 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         setState(() {
           _donations = donations;
           _isLoading = false;
+          _errorMessage = null;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = e.toString().replaceAll('Exception: ', '');
           _isLoading = false;
         });
       }
@@ -78,12 +79,13 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         setState(() {
           _monetaryDonations = donations;
           _isLoading = false;
+          _errorMessage = null;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = e.toString().replaceAll('Exception: ', '');
           _isLoading = false;
         });
       }
@@ -96,12 +98,13 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       if (mounted) {
         setState(() {
           _volunteers = volunteers.cast<Volunteer>();
+          _errorMessage = null;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = e.toString().replaceAll('Exception: ', '');
         });
       }
     }
@@ -110,6 +113,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
   void handleDonationCreated(Donation donation) {
     setState(() {
       _donations.add(donation);
+      _errorMessage = null;
     });
   }
 
@@ -119,6 +123,7 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
       if (index != -1) {
         _donations[index] = donation;
       }
+      _errorMessage = null;
     });
   }
 
@@ -140,50 +145,50 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
   }
 
   Future<void> _deleteDonation(Donation donation) async {
-    final confirm =
-        await showDialog<bool>(
-          context: context,
-          builder:
-              (context) => AlertDialog(
-                title: const Text('Confirmar eliminación'),
-                content: Text('¿Eliminar recurso "${donation.itemName}"?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                    child: const Text('Cancelar'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                    child: const Text('Eliminar'),
-                  ),
-                ],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirmar eliminación'),
+            content: Text('¿Está seguro de que desea eliminar la donación "${donation.itemName}"?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text('Eliminar'),
               ),
-        ) ??
-        false;
+            ],
+          ),
+    );
 
-    if (!confirm) return;
-
-    try {
-      await DonationServices.deleteDonation(donation.id);
-      await _fetchDonations();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación eliminada correctamente')));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
+    if (confirmed == true) {
+      try {
+        await DonationServices.deleteDonation(donation.id);
+        await _fetchDonations();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donación eliminada correctamente'), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
+        }
       }
     }
   }
 
   Future<void> _showCreateDonationDialog() async {
     if (_volunteers.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No hay voluntarios disponibles para crear donaciones')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay voluntarios disponibles para crear donaciones'),
+          backgroundColor: Colors.orange,
+        ),
+      );
       return;
     }
 
@@ -197,12 +202,15 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         await DonationServices.createDonation(newDonation);
         await _fetchDonations();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación creada correctamente')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Donación creada correctamente'), backgroundColor: Colors.green));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al crear: $e')));
-          debugPrint('Error al crear donación: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
         }
       }
     }
@@ -229,11 +237,15 @@ class _DonationsPageState extends State<DonationsPage> with SingleTickerProvider
         await DonationServices.assignDonation(selectedDonation.id, selectedVictim.id, quantity, selectedDate);
         await _fetchDonations();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación asignada correctamente')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donación asignada correctamente'), backgroundColor: Colors.green),
+          );
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al asignar donación: $e')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
         }
       }
     }

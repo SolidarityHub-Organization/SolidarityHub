@@ -60,14 +60,53 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
         final createdDonation = await DonationServices.createMonetaryDonation(result);
         widget.onRefresh();
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Donación monetaria creada exitosamente')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donación monetaria creada exitosamente'), backgroundColor: Colors.green),
+          );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al crear la donación monetaria: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _deleteMonetaryDonation(MonetaryDonation donation) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirmar eliminación'),
+            content: Text(
+              '¿Está seguro de que desea eliminar la donación monetaria de ${donation.amount} ${donation.currency.name}?',
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text('Eliminar'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await DonationServices.deleteMonetaryDonation(donation.id);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donación eliminada exitosamente'), backgroundColor: Colors.green),
+          );
+          widget.onRefresh();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
           );
         }
       }
@@ -93,7 +132,7 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => _showDeleteConfirmationDialog(donation),
+                  onPressed: () => _deleteMonetaryDonation(donation),
                   icon: const Icon(Icons.delete, color: Colors.white),
                   label: const Text('Eliminar', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
@@ -134,44 +173,6 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
     );
   }
 
-  Future<void> _showDeleteConfirmationDialog(MonetaryDonation donation) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmar eliminación'),
-          content: Text(
-            '¿Estás seguro de que deseas eliminar esta donación de ${getCurrencySymbol(donation.currency)}${donation.amount.toStringAsFixed(2)}?',
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancelar')),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Eliminar'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed == true) {
-      try {
-        await DonationServices.deleteMonetaryDonation(donation.id);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Donación eliminada exitosamente')));
-          widget.onRefresh();
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error al eliminar la donación: $e'), backgroundColor: Colors.red));
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.isLoading) {
@@ -183,7 +184,8 @@ class _MonetaryDonationsTabState extends State<MonetaryDonationsTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(widget.errorMessage!),
+            Text(widget.errorMessage!, style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+            const SizedBox(height: 16),
             ElevatedButton(onPressed: widget.onRefresh, child: const Text('Reintentar')),
           ],
         ),
