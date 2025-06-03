@@ -12,63 +12,56 @@ using Task = LogicPersistence.Api.Models.Task;
 namespace LogicPersistence.Api.Services {
 	public class TaskServices : ITaskServices {
 		private readonly ITaskRepository _taskRepository;
-        private readonly ILocationRepository _locationRepository;
-        private readonly IVictimRepository _victimRepository;
-        private readonly IVolunteerRepository _volunteerRepository;
-        private readonly IAffectedZoneRepository _affectedZoneRepository;
-        private readonly IPointRepository _pointRepository;
-        private readonly IPaginationService _paginationService;
-        private readonly List<ITaskAssignmentObserver> _observers = new();
+		private readonly ILocationRepository _locationRepository;
+		private readonly IVictimRepository _victimRepository;
+		private readonly IVolunteerRepository _volunteerRepository;
+		private readonly IAffectedZoneRepository _affectedZoneRepository;
+		private readonly IPointRepository _pointRepository;
+		private readonly IPaginationService _paginationService;
+		private readonly List<ITaskAssignmentObserver> _observers = new();
 
-        public void RegisterObserver(ITaskAssignmentObserver observer) {
-            _observers.Add(observer);
-        }
-        public void UnregisterObserver(ITaskAssignmentObserver observer) {
-            _observers.Remove(observer);
-        }
-        private void NotifyTaskAssigned(int volunteerId, int taskId, string taskName) {
-            foreach (var observer in _observers) {
-                observer.OnTaskAssigned(volunteerId, taskId, taskName);
-            }
-        }
-
-		public TaskServices(
-            ITaskRepository taskRepository,
-            ILocationRepository locationRepository,
-            IVictimRepository victimRepository,
-            IVolunteerRepository volunteerRepository,
-            IAffectedZoneRepository affectedZoneRepository,
-            IPointRepository pointRepository,
-            IPaginationService paginationService)
-		{
-            _taskRepository = taskRepository;
-            _locationRepository = locationRepository;
-            _victimRepository = victimRepository;
-            _volunteerRepository = volunteerRepository;
-            _affectedZoneRepository = affectedZoneRepository;
-            _pointRepository = pointRepository;
-            _paginationService = paginationService;
+		public void RegisterObserver(ITaskAssignmentObserver observer) {
+			_observers.Add(observer);
+		}
+		public void UnregisterObserver(ITaskAssignmentObserver observer) {
+			_observers.Remove(observer);
+		}
+		private void NotifyTaskAssigned(int volunteerId, int taskId, string taskName) {
+			foreach (var observer in _observers) {
+				observer.OnTaskAssigned(volunteerId, taskId, taskName);
+			}
 		}
 
-        protected virtual void ValidateDateRange(DateTime fromDate, DateTime toDate) {
-            if (fromDate > toDate) {
-                throw new ArgumentException("La fecha de inicio debe ser menor o igual que la fecha de finalización.");
-            }
-        }
+		public TaskServices(
+			ITaskRepository taskRepository,
+			ILocationRepository locationRepository,
+			IVictimRepository victimRepository,
+			IVolunteerRepository volunteerRepository,
+			IAffectedZoneRepository affectedZoneRepository,
+			IPointRepository pointRepository,
+			IPaginationService paginationService) {
+			_taskRepository = taskRepository;
+			_locationRepository = locationRepository;
+			_victimRepository = victimRepository;
+			_volunteerRepository = volunteerRepository;
+			_affectedZoneRepository = affectedZoneRepository;
+			_pointRepository = pointRepository;
+			_paginationService = paginationService;
+		}
 
-        protected virtual void ValidateState(string stateString) {
-            if (!Enum.TryParse<State>(stateString, true, out _)) {
-                throw new ArgumentException($"Valor de estado no válido: {stateString}");
-            }
-        }
+		protected virtual void ValidateState(string stateString) {
+			if (!Enum.TryParse<State>(stateString, true, out _)) {
+				throw new ArgumentException($"Valor de estado no válido: {stateString}");
+			}
+		}
 
-        protected virtual async Task<T> ExecuteWithValidation<T>(Func<Task<T>> operation, string errorMessage) where T : class {
-            var result = await operation();
-            if (result == null) {
-                throw new InvalidOperationException(errorMessage);
-            }
-            return result;
-        }
+		protected virtual async Task<T> ExecuteWithValidation<T>(Func<Task<T>> operation, string errorMessage) where T : class {
+			var result = await operation();
+			if (result == null) {
+				throw new InvalidOperationException(errorMessage);
+			}
+			return result;
+		}
 
 		public async Task<Models.Task> CreateTaskAsync(TaskCreateDto taskCreateDto) {
 			if (taskCreateDto == null) {
@@ -150,9 +143,7 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<Dictionary<State, int>> GetAllTaskCountByStateAsync(DateTime fromDate, DateTime toDate) {
-			if (fromDate > toDate) {
-				throw new ArgumentException("From date must be less than or equal to to date.");
-			}
+			GeneralServices.ValidateDates(fromDate, toDate);
 			var taskCounts = await _taskRepository.GetAllTaskCountByStateAsync(fromDate, toDate);
 			if (taskCounts == null) {
 				throw new InvalidOperationException("Failed to retrieve task counts by state.");
@@ -183,13 +174,13 @@ namespace LogicPersistence.Api.Services {
 		}
 
 		public async Task<IEnumerable<Models.Task>> GetTasksByStateAsync(string stateString, DateTime fromDate, DateTime toDate) {
-			ValidateDateRange(fromDate, toDate);
+			GeneralServices.ValidateDates(fromDate, toDate);
 			ValidateState(stateString);
 
 			var tasksIds = await GetTaskIdsByStateAsync(stateString);
 			var tasks = await GetAllTasksAsync();
 			tasks = tasks.Where(t => tasksIds.Contains(t.id) && t.created_at >= fromDate && t.created_at <= toDate).ToList();
-			
+
 			if (!tasks.Any()) {
 				throw new InvalidOperationException($"No tasks found for state {stateString} in the specified date range.");
 			}
@@ -207,35 +198,16 @@ namespace LogicPersistence.Api.Services {
 
 
 		public async Task<IEnumerable<TaskForDashboardDto>> GetAllTasksForDashboardAsync(DateTime fromDate, DateTime toDate) {
-			if (fromDate > toDate) {
-				throw new ArgumentException("From date must be less than or equal to to date.");
-			}
-			var tasks = await _taskRepository.GetAllTasksAsync();
-			if (tasks == null) {
-				throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
-			}
+			GeneralServices.ValidateDates(fromDate, toDate);
+			var tasks = await _taskRepository.GetAllTasksAsync() ?? throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
+
 			tasks = tasks.Where(t => t.created_at >= fromDate && t.created_at <= toDate).ToList();
 			if (tasks.Count() == 0) {
 				throw new InvalidOperationException("No tasks found for the specified date range.");
 			}
 
 			var result = new List<TaskForDashboardDto>();
-			foreach (var task in tasks) {
-				var state = await _taskRepository.GetTaskStateByIdAsync(task.id);
-				var urgencyLevel =  await GetMaxUrgencyLevelForTaskAsync(task.id);
-				var location = await _taskRepository.GetTaskLocationAsync(task.id);
-
-				var taskForDashboard = new TaskForDashboardDto {
-					id = task.id,
-					name = task.name,
-					urgency_level = urgencyLevel,
-					state = state.GetDisplayName(),
-					affected_zone = GetAffectedZoneForTasks(task).Result,
-					latitude = location.latitude,
-					longitude = location.longitude,
-				};
-				result.Add(taskForDashboard);
-			}
+			foreach (var task in tasks) { result.Add(await CreateTaskForDashboardDto(task)); }
 
 			return result;
 		}
@@ -288,15 +260,25 @@ namespace LogicPersistence.Api.Services {
 				"created_at DESC, id DESC");
 		}
 
-		public async Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
-			return await _paginationService.GetPaginatedByDateRangeAsync<Models.Task>(
-				page, 
-				size, 
-				"task", 
-				fromDate, 
-				toDate, 
-				"created_at DESC, id DESC", 
-				"created_at");
+		public async Task<(IEnumerable<TaskForDashboardDto> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
+			GeneralServices.ValidateDates(fromDate, toDate);
+			var tasks = await _taskRepository.GetAllTasksAsync() ?? throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
+
+			var filteredTasks = tasks.Where(t => t.created_at >= fromDate && t.created_at <= toDate).ToList();
+			var totalCount = filteredTasks.Count;
+
+			if (totalCount == 0) { return (Enumerable.Empty<TaskForDashboardDto>(), 0); }
+
+			var paginatedTasks = filteredTasks
+				.OrderByDescending(t => t.created_at)
+				.Skip((page - 1) * size)
+				.Take(size)
+				.ToList();
+
+			var result = new List<TaskForDashboardDto>();
+			foreach (var task in paginatedTasks) { result.Add(await CreateTaskForDashboardDto(task)); }
+
+			return (result, totalCount);
 		}
 
 		public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetTaskVolunteersPaginatedByDateRangeAsync(
@@ -343,6 +325,24 @@ namespace LogicPersistence.Api.Services {
 			}
 
 			return null;
+		}
+
+		internal async Task<TaskForDashboardDto> CreateTaskForDashboardDto(Models.Task task) {
+			var state = await _taskRepository.GetTaskStateByIdAsync(task.id);
+			var urgencyLevel = await GetMaxUrgencyLevelForTaskAsync(task.id);
+			var location = await _taskRepository.GetTaskLocationAsync(task.id);
+
+			return new TaskForDashboardDto {
+				id = task.id,
+				name = task.name,
+				urgency_level = urgencyLevel,
+				state = state.GetDisplayName(),
+				affected_zone = await GetAffectedZoneForTasks(task),
+				start_date = task.start_date,
+				end_date = task.end_date,
+				latitude = location.latitude,
+				longitude = location.longitude,
+			};
 		}
 		#endregion
 	}
