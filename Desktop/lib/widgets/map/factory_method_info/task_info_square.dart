@@ -131,32 +131,71 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
   List<dynamic> _volunteers = [];
   final DateTime _fromDate = DateTime(2000, 1, 1);
   final DateTime _toDate = DateTime(2100, 1, 1);
+  // Keep track of the previous taskId to detect changes
+  int? _previousTaskId;
 
   @override
   void initState() {
     super.initState();
-    _fetchVolunteers();
+    _fetchVolunteers(reset: true);
   }
 
-  Future<void> _fetchVolunteers() async {
+  @override
+  void didUpdateWidget(PaginatedVolunteersList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Check if taskId changed
+    if (widget.taskId != oldWidget.taskId) {
+      // Reset and refetch data
+      _resetAndFetch();
+    }
+  }
+
+  void _resetAndFetch() {
+    setState(() {
+      _pageNumber = 1;
+      _totalCount = 0;
+      _volunteers = [];
+    });
+    _fetchVolunteers(reset: true);
+  }
+
+  Future<void> _fetchVolunteers({bool reset = false}) async {
     if (_isLoading) return;
+    
     setState(() => _isLoading = true);
     try {
+      // If we're resetting, use page 1, otherwise use current page
+      final pageToFetch = reset ? 1 : _pageNumber;
+      
       final data = await TaskServices.fetchTaskVolunteersFilteredPaginated(
         taskId: widget.taskId,
         fromDate: _fromDate,
         toDate: _toDate,
-        page: _pageNumber,
+        page: pageToFetch,
         size: _pageSize,
       );
+      
       final items = data['items'] as List<dynamic>? ?? [];
+      
       setState(() {
-        _volunteers.addAll(items);
+        // If resetting, replace volunteers; otherwise add to them
+        if (reset) {
+          _volunteers = items;
+          _pageNumber = 2; // Next page will be 2
+        } else {
+          _volunteers.addAll(items);
+          _pageNumber++;
+        }
+        
         _totalCount = data['totalCount'] ?? 0;
-        _pageNumber++;
+        _previousTaskId = widget.taskId;
       });
+    } catch (e) {
+      print('Error fetching volunteers: $e');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -180,7 +219,14 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
               ],
             ),
             const SizedBox(height: 8),
-            if (_volunteers.isEmpty && !_isLoading)
+            if (_isLoading && _volunteers.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            else if (_volunteers.isEmpty)
               const Text('No hay voluntarios registrados.'),
             ..._volunteers.map((v) => ListTile(
                   dense: true,
@@ -192,7 +238,7 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: _isLoading ? null : _fetchVolunteers,
+                  onPressed: _isLoading ? null : () => _fetchVolunteers(reset: false),
                   child: _isLoading
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Text('Cargar más'),
