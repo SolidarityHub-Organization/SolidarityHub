@@ -29,5 +29,14 @@ namespace LogicPersistence.Api.Services {
 				throw new InvalidOperationException("Failed to super populate database.");
 			}
 		}
+
+		public static void ValidateDates(DateTime fromDate, DateTime toDate) {
+			if (fromDate > toDate) {
+				throw new ArgumentException("La fecha de inicio debe ser menor o igual que la fecha de finalización.");
+			}
+			if (fromDate < DateTime.MinValue || toDate > DateTime.MaxValue) {
+				throw new ArgumentOutOfRangeException("Las fechas están fuera del rango válido.");
+			}
+		}
 	}
 }
