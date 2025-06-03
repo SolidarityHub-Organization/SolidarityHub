@@ -79,13 +79,13 @@ class _TaskTabState extends State<TaskTab> {
           .map((task) => task as Map<String, dynamic>)
           .toList();
 
-      /*
+      
       print("Tasks list: $tasks");
       
       for (var task in tasks) {
         print("Task: $task");
       }
-      */
+      
 
       var totalCountKey = response.containsKey('TotalCount') ? 'TotalCount' : 'totalCount';
       var pageNumberKey = response.containsKey('PageNumber') ? 'PageNumber' : 'pageNumber';

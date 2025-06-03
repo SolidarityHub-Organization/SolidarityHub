@@ -156,4 +156,26 @@ class TaskServices {
 
     return state;
   }
+
+  static Future<Map<String, dynamic>> fetchTaskVolunteersFilteredPaginated({
+    required int taskId,
+    required DateTime fromDate,
+    required DateTime toDate,
+    int page = 1,
+    int size = 10,
+  }) async {
+    final response = await ApiServices.get(
+      'tasks/$taskId/volunteers/paginated'
+      '?fromDate=${fromDate.toIso8601String()}'
+      '&toDate=${toDate.toIso8601String()}'
+      '&page=$page'
+      '&size=$size',
+    );
+
+    if (response.statusCode.ok) {
+      return json.decode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Failed to fetch paginated volunteers for task');
+    }
+  }
 }

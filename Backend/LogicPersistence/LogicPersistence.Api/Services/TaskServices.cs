@@ -299,6 +299,28 @@ namespace LogicPersistence.Api.Services {
 				"created_at");
 		}
 
+		public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetTaskVolunteersPaginatedByDateRangeAsync(
+			int taskId, 
+			DateTime fromDate, 
+			DateTime toDate, 
+			int pageNumber, 
+			int pageSize)
+		{
+			return await _paginationService.GetPaginatedRelatedEntitiesByDateRangeAsync<Volunteer>(
+				pageNumber,
+				pageSize,
+				"volunteer_task",
+				"task_id",
+				taskId,
+				"volunteer",
+				"volunteer_id",
+				fromDate,
+				toDate,
+				"created_at",
+				"created_at DESC, id DESC"
+			);
+		}
+
 		#region Internal Methods
 		//devuelve la zona afectada a la que pertenece la tarea en caso de que exista, en caso contrario devuelve null
 		//chapuza de método	//el chapuzador que bien chapuzee, buen chapuzeador será

@@ -23,5 +23,11 @@ namespace LogicPersistence.Api.Services {
 		Task<string> GetMaxUrgencyLevelForTaskAsync(int taskId);
 		Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksAsync(int pageNumber, int pageSize);
 		Task<(IEnumerable<Models.Task> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size);
+		Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetTaskVolunteersPaginatedByDateRangeAsync(
+            int taskId,
+            DateTime fromDate,
+            DateTime toDate,
+            int pageNumber,
+            int pageSize);
 	}
 }
