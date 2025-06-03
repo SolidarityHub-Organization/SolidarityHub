@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.red), useMaterial3: true),
-      home: const MinSizeContainer(child: MyHomePage(title: 'Solidarity Hub')),
+      home: const MinSizeContainer(child: LoginScreen()),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -64,6 +64,23 @@ class MinSizeContainer extends StatelessWidget {
   }
 }
 
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Loginadmin(
+        onLoginSuccess: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MinSizeContainer(child: MyHomePage(title: 'Solidarity Hub'))),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class MenuOption {
   final int index;
   final IconData icon;
@@ -90,46 +107,55 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<MenuOption> _menuOptions = [
     MenuOption(index: 0, icon: Icons.dashboard, title: 'Dashboard', builder: () => const Dashboard()),
-    MenuOption(index: 1, icon: Icons.login, title: 'Iniciar sesión Admin', builder: () => const Loginadmin()),
-    MenuOption(index: 2, icon: Icons.map, title: 'Mapa', builder: () => const MapScreen()),
-    MenuOption(index: 3, icon: Icons.task, title: 'Crear tareas', builder: () => const TasksScreen()),
+    MenuOption(index: 1, icon: Icons.map, title: 'Mapa', builder: () => const MapScreen()),
+    MenuOption(index: 2, icon: Icons.task, title: 'Crear tareas', builder: () => const TasksScreen()),
     MenuOption(
-      index: 4,
+      index: 3,
       icon: Icons.book,
       title: 'Donaciones',
       builder: () => const DonationsPage(baseUrl: 'http://localhost:5170'),
     ),
+    // MenuOption(
+    //   index: 4,
+    //   icon: Icons.add_box,
+    //   title: 'Poblar Base de Datos',
+    //   action: (ctx) {
+    //     Logger.runAsync(DatabaseServices.populateDatabase);
+    //     ScaffoldMessenger.of(
+    //       ctx,
+    //     ).showSnackBar(const SnackBar(content: Text('Poblando base de datos...'), backgroundColor: Colors.green));
+    //   },
+    // ),
+    // MenuOption(
+    //   index: 5,
+    //   icon: Icons.add_box,
+    //   title: 'Superpoblar Base de Datos',
+    //   action: (ctx) {
+    //     Logger.runAsync(DatabaseServices.superPopulateDatabase);
+    //     ScaffoldMessenger.of(
+    //       ctx,
+    //     ).showSnackBar(const SnackBar(content: Text('Superpoblando base de datos...'), backgroundColor: Colors.green));
+    //   },
+    // ),
+    // MenuOption(
+    //   index: 6,
+    //   icon: Icons.delete,
+    //   title: 'Limpiar Base de Datos',
+    //   action: (ctx) {
+    //     Logger.runAsync(DatabaseServices.clearDatabase);
+    //     ScaffoldMessenger.of(
+    //       ctx,
+    //     ).showSnackBar(const SnackBar(content: Text('Limpiando base de datos...'), backgroundColor: Colors.red));
+    //   },
+    // ),
     MenuOption(
-      index: -2,
-      icon: Icons.add_box,
-      title: 'Poblar Base de Datos',
+      index: 7,
+      icon: Icons.logout,
+      title: 'Cerrar sesión',
       action: (ctx) {
-        Logger.runAsync(DatabaseServices.populateDatabase);
-        ScaffoldMessenger.of(
+        Navigator.of(
           ctx,
-        ).showSnackBar(const SnackBar(content: Text('Poblando base de datos...'), backgroundColor: Colors.green));
-      },
-    ),
-    MenuOption(
-      index: -4,
-      icon: Icons.add_box,
-      title: 'Superpoblar Base de Datos',
-      action: (ctx) {
-        Logger.runAsync(DatabaseServices.superPopulateDatabase);
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Superpoblando base de datos...'), backgroundColor: Colors.green));
-      },
-    ),
-    MenuOption(
-      index: -3,
-      icon: Icons.delete,
-      title: 'Limpiar Base de Datos',
-      action: (ctx) {
-        Logger.runAsync(DatabaseServices.clearDatabase);
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Limpiando base de datos...'), backgroundColor: Colors.red));
+        ).pushReplacement(MaterialPageRoute(builder: (context) => const MinSizeContainer(child: LoginScreen())));
       },
     ),
   ];

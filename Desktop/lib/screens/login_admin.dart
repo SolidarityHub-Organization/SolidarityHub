@@ -3,7 +3,9 @@ import 'package:solidarityhub/screens/dashboard/dashboard.dart';
 import 'package:http/http.dart' as http;
 
 class Loginadmin extends StatefulWidget {
-  const Loginadmin({super.key});
+  final Function? onLoginSuccess;
+
+  const Loginadmin({Key? key, this.onLoginSuccess}) : super(key: key);
 
   @override
   State<Loginadmin> createState() => _LoginadminState();
@@ -59,7 +61,12 @@ class _LoginadminState extends State<Loginadmin> {
       if (!mounted) return; // make sure widget is still in the tree
 
       if (response.statusCode == 200) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Dashboard()));
+        if (widget.onLoginSuccess != null) {
+          widget.onLoginSuccess!();
+        } else {
+          // Solo navegamos directamente si no hay callback de éxito definido
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Dashboard()));
+        }
       } else if (response.statusCode == 401) {
         setState(() {
           _errorMessage = 'El usuario o la contraseña son incorrectos';
@@ -80,7 +87,7 @@ class _LoginadminState extends State<Loginadmin> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFF44336),
+        backgroundColor: const Color(0xFFF44336),
         body: Stack(
           children: [
             Center(
@@ -90,16 +97,14 @@ class _LoginadminState extends State<Loginadmin> {
                   child: IntrinsicHeight(
                     child: Column(
                       children: [
-                        //Spacer(),
                         Image.asset('assets/images/logo.png', height: 100, alignment: Alignment.center),
-                        Text(
+                        const Text(
                           "Solidarity Hub",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                         ),
 
-                        //SizedBox(height: 100),
-                        Spacer(),
+                        const Spacer(),
 
                         Container(
                           height: 400,
@@ -108,49 +113,47 @@ class _LoginadminState extends State<Loginadmin> {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                SizedBox(height: 20),
-                                Text(
+                                const SizedBox(height: 20),
+                                const Text(
                                   "Log in Admin",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Color(0xFFF44336), fontSize: 30, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 20),
-                                Text(
+                                const SizedBox(height: 20),
+                                const Text(
                                   "Bienvenido a Solidarity Hub",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 _userTextField(),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 _passwordTextField(),
-                                SizedBox(height: 40),
+                                const SizedBox(height: 40),
                                 if (_errorMessage.isNotEmpty)
                                   Text(
                                     _errorMessage,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFFF44336),
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 _loginButton(),
                               ],
                             ),
                           ),
                         ),
 
-                        Spacer(),
+                        const Spacer(),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
-            // Botón de volver atrás eliminado
           ],
         ),
       ),
@@ -158,75 +161,60 @@ class _LoginadminState extends State<Loginadmin> {
   }
 
   Widget _userTextField() {
-    return StreamBuilder(
-      stream: null,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          color: Colors.white,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              icon: Icon(Icons.email),
-              hintText: 'ejemplo@correo.com',
-              labelText: 'Correo electronico',
-            ),
-            onChanged: (value) {},
-            onSubmitted: (_) {
-              if (_isFormValid) {
-                _attemptLogin();
-              }
-            },
-          ),
-        );
-      },
+    return Container(
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: TextField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        decoration: const InputDecoration(
+          icon: Icon(Icons.email),
+          hintText: 'ejemplo@correo.com',
+          labelText: 'Correo electrónico',
+        ),
+        onChanged: (value) {},
+        onSubmitted: (_) {
+          if (_isFormValid) {
+            _attemptLogin();
+          }
+        },
+      ),
     );
   }
 
   Widget _passwordTextField() {
-    return StreamBuilder(
-      stream: null,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          color: Colors.white,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: TextField(
-            controller: _passwordController,
-            keyboardType: TextInputType.emailAddress,
-            obscureText: true,
-            decoration: InputDecoration(icon: Icon(Icons.lock), hintText: 'Contraseña', labelText: 'Contraseña'),
-            onChanged: (value) {},
-            onSubmitted: (_) {
-              if (_isFormValid) {
-                _attemptLogin();
-              }
-            },
-          ),
-        );
-      },
+    return Container(
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: TextField(
+        controller: _passwordController,
+        keyboardType: TextInputType.emailAddress,
+        obscureText: true,
+        decoration: const InputDecoration(icon: Icon(Icons.lock), hintText: 'Contraseña', labelText: 'Contraseña'),
+        onChanged: (value) {},
+        onSubmitted: (_) {
+          if (_isFormValid) {
+            _attemptLogin();
+          }
+        },
+      ),
     );
   }
 
   Widget _loginButton() {
-    return StreamBuilder(
-      stream: null,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFF44336),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-            disabledBackgroundColor: Colors.grey,
-          ),
-          onPressed: !_isFormValid ? null : _attemptLogin,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-            child: Text('Iniciar Sesion', style: TextStyle(color: Colors.white)),
-          ),
-        );
-      },
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFF44336),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        disabledBackgroundColor: Colors.grey,
+      ),
+      onPressed: !_isFormValid ? null : _attemptLogin,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+        child: const Text('Iniciar Sesión', style: TextStyle(color: Colors.white)),
+      ),
     );
   }
 }
