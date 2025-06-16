@@ -17,12 +17,18 @@ class TaskTableController {
 
   final ValueNotifier<List<TaskTableColumnData>> columnsNotifier = ValueNotifier<List<TaskTableColumnData>>([]);
 
+  final ValueNotifier<int> currentPageNotifier = ValueNotifier<int>(1);
+  final ValueNotifier<int> itemsPerPageNotifier = ValueNotifier<int>(10);
+  final ValueNotifier<List<TaskWithDetails>> paginatedTasksNotifier = ValueNotifier<List<TaskWithDetails>>([]);
+  final ValueNotifier<int> totalPagesNotifier = ValueNotifier<int>(1);
+
   final Map<int, int> _taskStatuses = {};
   final Map<int, String> _taskPriorities = {};
   TaskWithDetails? _lastDeletedTask;
 
   List<TaskWithDetails> get tasks => tasksNotifier.value;
   List<TaskWithDetails> get filteredTasks => filteredTasksNotifier.value;
+  List<TaskWithDetails> get paginatedTasks => paginatedTasksNotifier.value;
   bool get isLoading => isLoadingNotifier.value;
 
   String get nameFilter => nameFilterNotifier.value;
@@ -34,6 +40,10 @@ class TaskTableController {
 
   List<TaskTableColumnData> get columns => columnsNotifier.value;
 
+  int get currentPage => currentPageNotifier.value;
+  int get itemsPerPage => itemsPerPageNotifier.value;
+  int get totalPages => totalPagesNotifier.value;
+  int get totalItems => filteredTasks.length;
   set nameFilter(String value) {
     nameFilterNotifier.value = value;
     applyFilters();
@@ -59,6 +69,21 @@ class TaskTableController {
     _sortTasks();
   }
 
+  set currentPage(int value) {
+    if (value >= 1 && value <= totalPages) {
+      currentPageNotifier.value = value;
+      _updatePaginatedTasks();
+    }
+  }
+
+  set itemsPerPage(int value) {
+    if (value > 0) {
+      itemsPerPageNotifier.value = value;
+      currentPageNotifier.value = 1;
+      _updatePaginatedTasks();
+    }
+  }
+
   TaskTableController() {
     _initColumns();
 
@@ -68,8 +93,9 @@ class TaskTableController {
 
     sortFieldNotifier.addListener(_sortTasks);
     sortAscendingNotifier.addListener(_sortTasks);
-  }
 
+    filteredTasksNotifier.addListener(_updatePaginatedTasks);
+  }
   void dispose() {
     nameFilterNotifier.dispose();
     statusFilterNotifier.dispose();
@@ -80,6 +106,10 @@ class TaskTableController {
     filteredTasksNotifier.dispose();
     isLoadingNotifier.dispose();
     columnsNotifier.dispose();
+    currentPageNotifier.dispose();
+    itemsPerPageNotifier.dispose();
+    paginatedTasksNotifier.dispose();
+    totalPagesNotifier.dispose();
   }
 
   void _initColumns() {
@@ -212,6 +242,27 @@ class TaskTableController {
     filteredTasksNotifier.value = sorted;
   }
 
+  void _updatePaginatedTasks() {
+    final filteredList = filteredTasksNotifier.value;
+    final totalItems = filteredList.length;
+
+    final totalPagesCount = totalItems == 0 ? 1 : (totalItems / itemsPerPage).ceil();
+    totalPagesNotifier.value = totalPagesCount;
+
+    if (currentPage > totalPagesCount) {
+      currentPageNotifier.value = totalPagesCount;
+    }
+
+    final startIndex = (currentPage - 1) * itemsPerPage;
+    final endIndex = (startIndex + itemsPerPage).clamp(0, totalItems);
+
+    if (startIndex < totalItems) {
+      paginatedTasksNotifier.value = filteredList.sublist(startIndex, endIndex);
+    } else {
+      paginatedTasksNotifier.value = [];
+    }
+  }
+
   void applyFilters() {
     bool matchesAllFilters(TaskWithDetails task) {
       return (nameFilter.isEmpty || task.name.toLowerCase().contains(nameFilter.toLowerCase())) &&
@@ -221,8 +272,36 @@ class TaskTableController {
 
     final filteredList = tasks.where(matchesAllFilters).toList();
     filteredTasksNotifier.value = filteredList;
+    currentPageNotifier.value = 1;
     _sortTasks();
   }
+
+  void goToFirstPage() {
+    currentPage = 1;
+  }
+
+  void goToLastPage() {
+    currentPage = totalPages;
+  }
+
+  void goToPreviousPage() {
+    if (currentPage > 1) {
+      currentPage = currentPage - 1;
+    }
+  }
+
+  void goToNextPage() {
+    if (currentPage < totalPages) {
+      currentPage = currentPage + 1;
+    }
+  }
+
+  void goToPage(int page) {
+    currentPage = page;
+  }
+
+  bool get canGoToPrevious => currentPage > 1;
+  bool get canGoToNext => currentPage < totalPages;
 
   String getTaskStatus(TaskWithDetails task) {
     final status = _taskStatuses[task.id] ?? 'Desconocido';

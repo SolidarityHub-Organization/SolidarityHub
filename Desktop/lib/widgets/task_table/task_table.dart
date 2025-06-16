@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solidarityhub/controllers/tasks/task_table_controller.dart';
 import 'package:solidarityhub/widgets/task_table/task_table_cell.dart';
+import 'package:solidarityhub/widgets/task_table/pagination_controls.dart';
 import 'package:solidarityhub/models/task_table.dart';
 
 class TaskTableHeader extends StatefulWidget {
@@ -117,7 +118,6 @@ class _TaskTableHeaderState extends State<TaskTableHeader> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Drag handle
                       Icon(
                         Icons.drag_handle,
                         size: 16,
@@ -224,12 +224,14 @@ class _TaskTableState extends State<TaskTable> {
     super.initState();
     widget.controller.filteredTasksNotifier.addListener(_onFilteredTasksChanged);
     widget.controller.columnsNotifier.addListener(_onColumnsChanged);
+    widget.controller.paginatedTasksNotifier.addListener(_onPaginatedTasksChanged);
   }
 
   @override
   void dispose() {
     widget.controller.filteredTasksNotifier.removeListener(_onFilteredTasksChanged);
     widget.controller.columnsNotifier.removeListener(_onColumnsChanged);
+    widget.controller.paginatedTasksNotifier.removeListener(_onPaginatedTasksChanged);
     _horizontalScrollController.dispose();
     _verticalScrollController.dispose();
     super.dispose();
@@ -243,6 +245,10 @@ class _TaskTableState extends State<TaskTable> {
     setState(() {});
   }
 
+  void _onPaginatedTasksChanged() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final tableWidth = MediaQuery.of(context).size.width - 32;
@@ -253,29 +259,36 @@ class _TaskTableState extends State<TaskTable> {
       child: Container(
         width: tableWidth,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-        child: Scrollbar(
-          controller: _horizontalScrollController,
-          thumbVisibility: true,
-          notificationPredicate: (notification) => notification.depth == 0,
-          child: SingleChildScrollView(
-            controller: _horizontalScrollController,
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              children: [
-                ValueListenableBuilder<List<TaskTableColumnData>>(
-                  valueListenable: widget.controller.columnsNotifier,
-                  builder: (context, columns, child) {
-                    return TaskTableHeader(
-                      controller: widget.controller,
-                      onTaskChanged: widget.onTaskChanged,
-                      tableWidth: tableWidth,
-                    );
-                  },
+        child: Column(
+          children: [
+            Expanded(
+              child: Scrollbar(
+                controller: _horizontalScrollController,
+                thumbVisibility: true,
+                notificationPredicate: (notification) => notification.depth == 0,
+                child: SingleChildScrollView(
+                  controller: _horizontalScrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    children: [
+                      ValueListenableBuilder<List<TaskTableColumnData>>(
+                        valueListenable: widget.controller.columnsNotifier,
+                        builder: (context, columns, child) {
+                          return TaskTableHeader(
+                            controller: widget.controller,
+                            onTaskChanged: widget.onTaskChanged,
+                            tableWidth: tableWidth,
+                          );
+                        },
+                      ),
+                      Expanded(child: _buildTableContent(tableWidth)),
+                    ],
+                  ),
                 ),
-                Expanded(child: _buildTableContent(tableWidth)),
-              ],
+              ),
             ),
-          ),
+            PaginationControls(controller: widget.controller),
+          ],
         ),
       ),
     );
@@ -295,11 +308,13 @@ class _TaskTableState extends State<TaskTable> {
       );
     }
 
+    final tasksToShow = widget.controller.paginatedTasks;
+
     return SingleChildScrollView(
       controller: _verticalScrollController,
       child: Column(
-        children: List.generate(widget.controller.filteredTasks.length, (rowIndex) {
-          final task = widget.controller.filteredTasks[rowIndex];
+        children: List.generate(tasksToShow.length, (rowIndex) {
+          final task = tasksToShow[rowIndex];
           return Container(
             color:
                 rowIndex % 2 == 0
