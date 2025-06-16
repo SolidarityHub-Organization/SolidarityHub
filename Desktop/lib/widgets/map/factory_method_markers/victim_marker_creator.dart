@@ -38,13 +38,31 @@ class VictimMarkerCreator implements MapMarkerCreator {
 
       return Marker(
         point: mapMarker.position,
-        width: 50,
-        height: 50,
+        width: 30,
+        height: 30,
         child: GestureDetector(
           onTap: () {
             onMarkerTap(mapMarker);
           },
-          child: Icon(Icons.location_pin, color: markerColor, size: 40),
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: markerColor, width: 2),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(0),
+              ),
+            ),
+            child: Center(child: Icon(
+            Icons.person,
+            color: markerColor,
+            size: 20,
+          ),)
+          ),
         ),
       );
     } catch (e) {
@@ -56,7 +74,19 @@ class VictimMarkerCreator implements MapMarkerCreator {
           onTap: () {
             onMarkerTap(mapMarker);
           },
-          child: Icon(Icons.location_pin, color: Colors.grey, size: 40),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.red, width: 2),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(0),
+              ),
+            ),
+            child: Icon(Icons.location_pin, color: Colors.grey, size: 40),
+          ),
         ),
       );
     }
