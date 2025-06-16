@@ -5,6 +5,6 @@ namespace LogicPersistence.Api.Services
 {
     public interface IDashboardServices
     {
-        Task<IEnumerable<ActivityLogDto>> GetActivityLogDataAsync(DateTime fromDate, DateTime toDate);
+        Task<(IEnumerable<ActivityLogDto> activityLog, int totalCount)> GetPaginatedActivityLogDataAsync(DateTime fromDate, DateTime toDate, int pageNumber, int pageSize);
     }
 }
