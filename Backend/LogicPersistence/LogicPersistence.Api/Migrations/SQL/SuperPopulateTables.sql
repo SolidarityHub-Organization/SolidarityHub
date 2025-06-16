@@ -1,46 +1,46 @@
 -- VALENCIA CITY LOCATIONS (Centro, Barrios principales)
 INSERT INTO "location" ("latitude", "longitude") VALUES
 -- Victimas
-  (39.4699, -0.3763),  -- Plaza del Ayuntamiento
-  (39.4698, -0.3779),  -- Plaza de la Reina
-  (39.4697, -0.3774),  -- Plaza de la Virgen
-  (39.4715, -0.3677),  -- Mercado Central
-  (39.4735, -0.3787),  -- Torres de Serranos
-  (39.4744, -0.3798),  -- Torres de Quart
-  (39.4751, -0.3815),  -- IVAM
-  (39.4706, -0.3751),  -- Catedral de Valencia
-  (39.4720, -0.3695),  -- Lonja de la Seda
-  (39.4725, -0.3803),  -- Puente de Serranos
-  (39.4650, -0.3773),  -- Estación del Norte
-  (39.4632, -0.3795),  -- Plaza de Toros
-  (39.4675, -0.3690),  -- Mercado Colón
-  (39.4740, -0.3750),  -- Plaza del Mercado
-  (39.4680, -0.3740),  -- Calle Colón
-  (39.4699, -0.3763),  -- Plaza del Ayuntamiento
-  (39.4698, -0.3779),  -- Plaza de la Reina
-  (39.4697, -0.3774),  -- Plaza de la Virgen
-  (39.4715, -0.3677),  -- Mercado Central
-  (39.4735, -0.3787),  -- Torres de Serranos
-  (39.4744, -0.3798),  -- Torres de Quart
-  (39.4751, -0.3815),  -- IVAM
-  (39.4706, -0.3751),  -- Catedral de Valencia
-  (39.4720, -0.3695),  -- Lonja de la Seda
-  (39.4725, -0.3803),  -- Puente de Serranos
-  (39.4650, -0.3773),  -- Estación del Norte
-  (39.4632, -0.3795),  -- Plaza de Toros
-  (39.4675, -0.3690),  -- Mercado Colón
-  (39.4740, -0.3750),  -- Plaza del Mercado
-  (39.4680, -0.3740),  -- Calle Colón
-  (39.4860, -0.3557),  -- Plaza de Benimaclet
-  (39.4845, -0.3571),  -- Calle Emilio Baró
-  (39.4853, -0.3543),  -- Estación de Benimaclet
-  (39.4870, -0.3565),  -- Mercado de Benimaclet
-  (39.4855, -0.3580),  -- Calle Primado Reig
-  (39.4852, -0.3504),  -- Playa de la Malvarrosa
-  (39.4803, -0.3407),  -- Playa de las Arenas
-  (39.4820, -0.3520),  -- Paseo Marítimo
-  (39.4840, -0.3480),  -- Playa Patacona
-  (39.4830, -0.3440),  -- Las Arenas Centro
+  (39.501109022796584, -0.3483796039079292),  
+  (39.496934679876865, -0.34873685054174824),  -- Plaza de la Reina
+  (39.49567445161854, -0.34965548474299707),  -- Plaza de la Virgen
+  (39.49854931394395, -0.353074845380979),  -- Mercado Central
+  (39.4848342309245, -0.3292022050584556),  -- Torres de Serranos
+  (39.479040780327594, -0.3301404764085365),  -- Torres de Quart
+  (39.47736950297403, -0.3259543426927907),  -- IVAM
+  (39.47385968982746, -0.32826393370837464),  -- Catedral de Valencia
+  (39.469458245315835, -0.32602651741202776),  -- Lonja de la Seda
+  (39.47118542762147, -0.32934655449692957),  -- Puente de Serranos
+  (39.47079542246138, -0.32516042078118373),  -- Estación del Norte
+  (39.46539084020894, -0.3245830230272879),  -- Plaza de Toros
+  (39.4709068527302, -0.32999612697006253),  -- Mercado Colón
+  (39.47876223689057, -0.3327387663010683),  -- Plaza del Mercado
+  (39.465056522366496, -0.3333883387742013),  -- Calle Colón
+  (39.47352541267323, -0.33389356180886026),  -- Plaza del Ayuntamiento
+  (39.49536147801349, -0.3518650664684217),  -- Plaza de la Reina
+  (39.492576647060666, -0.3277587106042569),  -- Plaza de la Virgen
+  (39.465223681353464, -0.3281917589793549),  -- Mercado Central
+  (39.469458245180824, -0.33230571797586367),  -- Torres de Serranos
+  (39.50410701998848, -0.4062455317255808),  -- Torres de Quart
+  (39.507103963731026, -0.41049393411306406),  -- IVAM
+  (39.51281652971347, -0.41692722915696734),  -- Catedral de Valencia
+  (39.506129465794416, -0.4193550084258673),  -- Lonja de la Seda
+  (39.49989225596892, -0.3491290075171078),  -- Puente de Serranos
+  (39.4866521278421, -0.3282866348607206),  -- Estación del Norte
+  (39.473545448486135, -0.3772742708618767),  -- Plaza de Toros
+  (39.471181706909015, -0.37502872059215725),  -- Mercado Colón
+  (39.47508183744618, -0.3774784117954876),  -- Plaza del Mercado
+  (39.47244237907726, -0.3735486988234785),  -- Calle Colón
+  (39.48506866267562, -0.4396152885143246),  -- Plaza de Benimaclet
+  (39.47908135329259, -0.4356345403089128),  -- Calle Emilio Baró
+  (39.480341882311706, -0.4477809258587589),  -- Estación de Benimaclet
+  (39.48152360751997, -0.452067885464587),  -- Mercado de Benimaclet
+  (39.478214726340646, -0.4364511040433562),  -- Calle Primado Reig
+  (39.48443844385506, -0.4446167413877906),  -- Playa de la Malvarrosa
+  (39.47845108021654, -0.43522625844169105),  -- Playa de las Arenas
+  (39.48097213825473, -0.441146345516406),  -- Paseo Marítimo
+  (39.47490568775273, -0.4329807081719716),  -- Playa Patacona
+  (39.484832331287194, -0.44369810718654173),  -- Las Arenas Centro
 --Fin Victimas
 -- Inicio volunteer
   (39.4840, -0.4000),  -- Valencia - Campanar Centro
@@ -85,62 +85,62 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (39.5050, -0.4470),  -- Paterna Oeste (zona afectada: Metropolitana Sur)
 --Fin volunteer
 -- Inicio task
-  (39.4782, -0.3768),  -- Valencia - Plaza del Ayuntamiento
-  (39.4667, -0.3770),  -- Valencia - Ruzafa
-  (39.4840, -0.3557),  -- Valencia - Benimaclet
-  (39.4700, -0.3320),  -- Valencia - Malvarrosa
-  (39.4845, -0.4000),  -- Valencia - Campanar
-  (39.4699, -0.3763),  -- Valencia - Centro Histórico
-  (39.4715, -0.3677),  -- Valencia - Mercado Central
-  (39.4744, -0.3798),  -- Valencia - Torres de Quart
-  (39.4751, -0.3815),  -- Valencia - IVAM
-  (39.4706, -0.3751),  -- Valencia - Catedral
-  (39.4720, -0.3695),  -- Valencia - Lonja de la Seda
-  (39.4725, -0.3803),  -- Valencia - Puente de Serranos
-  (39.4650, -0.3773),  -- Valencia - Estación del Norte
-  (39.4632, -0.3795),  -- Valencia - Plaza de Toros
-  (39.4675, -0.3690),  -- Valencia - Mercado Colón
-  (39.4740, -0.3750),  -- Valencia - Plaza del Mercado
-  (39.4680, -0.3740),  -- Valencia - Calle Colón
-  (39.4860, -0.3557),  -- Valencia - Plaza de Benimaclet
-  (39.4845, -0.3571),  -- Valencia - Calle Emilio Baró
-  (39.4853, -0.3543),  -- Valencia - Estación de Benimaclet
-  (39.4870, -0.3565),  -- Valencia - Mercado de Benimaclet
-  (39.4855, -0.3580),  -- Valencia - Calle Primado Reig
-  (39.4852, -0.3504),  -- Valencia - Playa de la Malvarrosa
-  (39.4803, -0.3407),  -- Valencia - Playa de las Arenas
-  (39.4820, -0.3520),  -- Valencia - Paseo Marítimo
-  (39.4840, -0.3480),  -- Valencia - Playa Patacona
-  (39.4830, -0.3440),  -- Valencia - Las Arenas Centro
-  (39.4580, -0.3420),  -- Valencia - Centro Algirós
-  (39.4370, -0.4670),  -- Torrent Centro (Metropolitana Sur)
-  (39.4050, -0.4100),  -- Catarroja Centro (Metropolitana Sur)
-  (39.3717, -0.4215),  -- Picassent Centro (Metropolitana Sur)
-  (39.6850, -0.2660),  -- Sagunto Centro (Zona Norte Sagunto)
-  (39.6150, -0.2870),  -- Puçol Playa (Zona Norte Sagunto)
-  (39.1520, -0.4350),  -- Alzira Centro (Zona Interior Ribera)
-  (38.9900, -0.5200),  -- Xàtiva Centro (Zona Interior Ribera)
-  (39.1670, -0.2510),  -- Cullera Centro (Zona Costera Sur)
-  (38.9670, -0.1800),  -- Gandia Centro (Zona Costera Sur)
-  (38.9200, -0.1200),  -- Oliva Centro (Zona Costera Sur)
-  (39.6100, -0.5940),  -- Llíria Centro (Zona Montañosa Interior)
-  (39.8500, -0.4900),  -- Segorbe Centro (Zona Montañosa Interior)
-  (39.4200, -0.7900),  -- Buñol Centro (Zona Montañosa Interior)
-  (39.5084, -0.4147),  -- Burjassot Centro (Metropolitana Sur)
-  (39.5200, -0.4050),  -- Godella Centro (Metropolitana Sur)
-  (39.5350, -0.4200),  -- Rocafort Centro (Metropolitana Sur)
-  (39.5700, -0.4450),  -- Bétera Centro (Metropolitana Sur)
-  (39.4920, -0.4610),  -- Manises Centro (Metropolitana Sur)
-  (39.4810, -0.4330),  -- Quart de Poblet Centro (Metropolitana Sur)
-  (39.4800, -0.4350),  -- Quart de Poblet Sur (Metropolitana Sur)
-  (39.1200, -0.4500),  -- Carcaixent Centro
-  (39.1950, -0.4350),  -- Algemesí Centro
-  (39.2050, -0.3100),  -- Sueca Centro
-  (39.2070, -0.3080),  -- Sueca Norte
-  (39.2750, -0.3450),  -- Sollana Centro
-  (39.2850, -0.4180),  -- Almussafes Centro
-  (38.9650, -0.1780),  -- Gandia Playa
-  (38.9690, -0.1820),  -- Gandia Norte
+(39.4745, -0.3784),    -- Plaza del Ayuntamiento
+(39.4786, -0.3761),    -- Plaza de la Virgen
+(39.4691, -0.3851),    -- Mercado Central
+(39.4763, -0.3833),    -- La Lonja de la Seda
+(39.4792, -0.3694),    -- Catedral de Valencia
+(39.4889, -0.3828),    -- Torres de Serranos
+(39.4706, -0.3917),    -- Torres de Quart
+(39.4636, -0.3828),    -- Barrio del Carmen
+(39.4694, -0.3686),    -- Palacio del Marqués de Dos Aguas
+(39.4667, -0.3764),    -- Plaza Redonda
+(39.4752, -0.3669),    -- Estación del Norte
+(39.4748, -0.3715),    -- Calle Colón
+(39.4728, -0.3642),    -- Plaza de Toros
+(39.4897, -0.3764),    -- Mercado de Colón
+(39.4653, -0.3625),    -- Gran Vía Marqués del Turia
+(39.4714, -0.3550),    -- Zona Exposición
+(39.4842, -0.3719),    -- La Alameda
+(39.4819, -0.3903),    -- Jardín Botánico
+(39.4607, -0.3736),    -- Centro de Russafa
+(39.4583, -0.3594),    -- Monteolivete
+(39.4569, -0.3661),    -- Quatre Carreres
+(39.4522, -0.3861),    -- Jesús
+(39.4553, -0.3806),    -- Patraix
+(39.4464, -0.3717),    -- San Marcelino
+(39.4442, -0.3486),    -- Castellar-Oliveral
+(39.4422, -0.3653),    -- La Torre
+(39.4547, -0.3484),    -- Ciudad de las Artes y las Ciencias
+(39.4533, -0.3542),    -- Oceanogràfic
+(39.4514, -0.3442),    -- Palau de les Arts Reina Sofía
+(39.4686, -0.3486),    -- Nazaret
+(39.4486, -0.3542),    -- La Punta
+(39.4824, -0.3246),    -- Playa de la Malvarrosa
+(39.4917, -0.3306),    -- Playa de la Patacona
+(39.4736, -0.3578),    -- Puerto de Valencia
+(39.4625, -0.3472),    -- La Creu del Grau
+(39.4942, -0.3536),    -- Beteró
+(39.4847, -0.3361),    -- Algirós
+(39.4803, -0.3417),    -- El Pla del Real
+(39.4861, -0.3597),    -- Jardines del Real
+(39.4931, -0.3661),    -- Benimaclet
+(39.4875, -0.3472),    -- Ciutat Universitària
+(39.4969, -0.3764),    -- Sant Llorenç
+(39.4997, -0.3628),    -- Orriols
+(39.4919, -0.3903),    -- Marxalenes
+(39.4892, -0.4000),    -- Benimàmet
+(39.4769, -0.3961),    -- Campanar
+(39.4828, -0.4000),    -- Benicalap
+(39.4661, -0.3903),    -- Nou Moles
+(39.4508, -0.3653),    -- Malilla
+(39.4778, -0.3472),    -- Estadio de Mestalla
+(39.4875, -0.3550),    -- Zona Mestalla
+(39.4845, -0.3600),    -- Benimaclet Sur
+(39.4950, -0.3450),    -- Poblats Marítims Norte
+(39.4600, -0.3900),    -- La Xerea
+(39.4720, -0.3900),    -- Sant Francesc
+(39.4850, -0.3750),    -- Zaidía
 --Fin task
 --Inicio pickup points
   (39.4699, -0.3763),  -- Valencia - Plaza del Ayuntamiento (Zona Centro Valencia)
@@ -425,13 +425,13 @@ UPDATE "location" SET "volunteer_id" = 40 WHERE "id" = 80;
 -- CREATE 10 AFFECTED ZONES
 INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") VALUES
   ('Zona Centro Valencia', 'Centro histórico y comercial afectado por inundaciones', 'High', 1),
-  ('Zona Russafa-Eixample', 'Área residencial y comercial con daños estructurales', 'Medium', 1),
+  ('Zona Marítima Malvarrosa', 'Área residencial y comercial con daños estructurales', 'Medium', 1),
   ('Zona Benimaclet Norte', 'Barrio universitario con cortes de suministros', 'Medium', 1),
   ('Zona Marítima Malvarrosa', 'Zona costera afectada por temporal marítimo', 'High', 1),
   ('Zona Industrial Campanar', 'Polígono industrial con daños en infraestructuras', 'Medium', 1),
-  ('Zona Metropolitana Sur', 'Municipios del área metropolitana sur', 'High', 1),
-  ('Zona Norte Sagunto', 'Área industrial y portuaria del norte', 'Critical', 1),
-  ('Zona Interior Ribera', 'Poblaciones del interior afectadas', 'Medium', 1),
+  ('Zona Metropolitana Sur', 'Municipios del área metropolitana sur', 'None', 1),
+  ('Zona Norte Sagunto', 'Área industrial y portuaria del norte', 'None', 1),
+  ('Zona Interior Ribera', 'Poblaciones del interior afectadas', 'None', 1),
   ('Zona Costera Sur', 'Costa sur de la provincia', 'None', 1),
   ('Zona Montañosa Interior', 'Área montañosa del interior', 'None', 1);
 
