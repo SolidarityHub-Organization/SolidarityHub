@@ -252,8 +252,6 @@ class TaskTableController {
     _lastDeletedTask = task;
 
     try {
-      // give the user time to revert the deletion
-      await Future.delayed(const Duration(seconds: 10));
       await TaskServices.deleteTask(task.id);
       await fetchTasks();
       if (onComplete != null) {
