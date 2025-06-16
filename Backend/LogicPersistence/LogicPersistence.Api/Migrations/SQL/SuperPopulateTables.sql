@@ -246,10 +246,10 @@ INSERT INTO "location" ("latitude", "longitude") VALUES
   (38.7052, -0.4752), (38.8202, -0.6052), (38.7452, -0.4352);
 
 INSERT INTO "admin" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "jurisdiction") VALUES
-  ('John', 'Smith', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 1, '5551234567', '123 Admin St, New York, NY 10001', 'ADM-001-2025', 'New York State'),
-  ('Maria', 'Garcia', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 1, '5552345678', '456 Admin Ave, Los Angeles, CA 90001', 'ADM-002-2025', 'California'),
-  ('David', 'Johnson', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 1, '5553456789', '789 Admin Blvd, Chicago, IL 60601', 'ADM-003-2025', 'Illinois'),
-  ('Admin', 'Admin', 'admin@admin.com','admin', 1, '5554567890', '123 Admin St, New York, NY 10001', 'ADM-004-2025', 'New York State');
+  ('Carlos', 'Ruiz', 'admin1@solidarityhub.org', '$2a$12$tzXOz0COG7QQnANfJK3peuSsC1Eu2UvE/jBZLWrZkT7XhY6GD7Cji', 34, '963100001', 'Plaza del Ayuntamiento 1, Valencia', 'ADM-001-2025', 'Valencia Centro'),
+  ('María', 'Pérez', 'admin2@solidarityhub.org', '$2a$12$MDiUeuDPHxOQ1szQ1bdYoOQuV9AfBnY99CwgZA7brFoJMdT.JiWXO', 34, '963100002', 'Av. del Puerto 25, Valencia', 'ADM-002-2025', 'Valencia Marítimo'),
+  ('José', 'Martínez', 'admin3@solidarityhub.org', '$2a$12$8kP5X1y/rH6LYOQnRtNY3uXjOBDw9T4k0tC0TtndTqgf7hOESOUWa', 34, '963100003', 'C/ Benimaclet 50, Valencia', 'ADM-003-2025', 'Valencia Norte'),
+  ('Admin', 'Admin', 'admin@admin.com','admin', 34, '963100000', 'Plaza del Ayuntamiento 1, Valencia', 'ADM-004-2025', 'Valencia General');
 
 -- CREATE 40 VICTIMS
 INSERT INTO "victim" ("name", "surname", "email", "password", "prefix", "phone_number", "address", "identification", "location_id") VALUES
@@ -425,15 +425,15 @@ UPDATE "location" SET "volunteer_id" = 40 WHERE "id" = 80;
 -- CREATE 10 AFFECTED ZONES
 INSERT INTO "affected_zone" ("name", "description", "hazard_level", "admin_id") VALUES
   ('Zona Centro Valencia', 'Centro histórico y comercial afectado por inundaciones', 'High', 1),
-  ('Zona Marítima Malvarrosa', 'Área residencial y comercial con daños estructurales', 'Medium', 1),
-  ('Zona Benimaclet Norte', 'Barrio universitario con cortes de suministros', 'Medium', 1),
+  ('Zona Russafa-Eixample', 'Área residencial y comercial con daños estructurales', 'Medium', 2),
+  ('Zona Benimaclet Norte', 'Barrio universitario con cortes de suministros', 'Medium', 3),
   ('Zona Marítima Malvarrosa', 'Zona costera afectada por temporal marítimo', 'High', 1),
-  ('Zona Industrial Campanar', 'Polígono industrial con daños en infraestructuras', 'Medium', 1),
-  ('Zona Metropolitana Sur', 'Municipios del área metropolitana sur', 'None', 1),
-  ('Zona Norte Sagunto', 'Área industrial y portuaria del norte', 'None', 1),
-  ('Zona Interior Ribera', 'Poblaciones del interior afectadas', 'None', 1),
-  ('Zona Costera Sur', 'Costa sur de la provincia', 'None', 1),
-  ('Zona Montañosa Interior', 'Área montañosa del interior', 'None', 1);
+  ('Zona Industrial Campanar', 'Polígono industrial con daños en infraestructuras', 'Medium', 2),
+  ('Zona Metropolitana Sur', 'Municipios del área metropolitana sur afectados por DANA', 'Critical', 3),
+  ('Zona Norte Sagunto', 'Área industrial y portuaria del norte de Valencia', 'Low', 1),
+  ('Zona Interior Ribera', 'Poblaciones del interior de la Ribera afectadas', 'Medium', 2),
+  ('Zona Costera Sur', 'Costa sur de la provincia de Valencia', 'Low', 3),
+  ('Zona Montañosa Interior', 'Área montañosa del interior valenciano', 'Low', 1);
 
 -- ASSIGN LOCATIONS TO AFFECTED ZONES (3 locations per zone)
 INSERT INTO "affected_zone_location" ("affected_zone_id", "location_id") VALUES
@@ -547,31 +547,37 @@ INSERT INTO "monetary_donation" ("amount", "currency", "payment_status", "transa
 
 
 INSERT INTO "place" ("name", "admin_id") VALUES
-  ('Centro Comunitario Russafa', 1),
-  ('Refugio Temporal Benimaclet', 2),
-  ('Punto de Asistencia Malvarrosa', 3),
-  ('Almacén de Suministros Campanar', 1),
-  ('Base de Operaciones Metropolitana Sur', 2),
-  ('Centro de Coordinación Sagunto', 3),
-  ('Puesto de Socorro Ribera', 1),
-  ('Unidad de Apoyo Costera Sur', 2),
-  ('Refugio Montaña Interior', 3),
-  ('Oficina de Enlace Centro', 1),
-  ('Punto de Información El Carmen', 2);
+  ('Centro Comunitario Russafa', 2),
+  ('Refugio Temporal Benimaclet', 3),
+  ('Punto de Asistencia Malvarrosa', 1),
+  ('Almacén de Suministros Campanar', 2),
+  ('Base de Operaciones Torrent', 3),
+  ('Centro de Coordinación Sagunto', 1),
+  ('Puesto de Socorro Alzira', 2),
+  ('Unidad de Apoyo Gandia', 3),
+  ('Refugio Chiva', 1),
+  ('Oficina de Enlace Plaza Ayuntamiento', 1),
+  ('Punto de Información Mercado Central', 2),
+  ('Centro de Acopio Torres Serranos', 3),
+  ('Refugio de Emergencia Ciudad Artes', 1),
+  ('Almacén Temporal Puerto Valencia', 2);
 
 -- Associate places with affected zones
 INSERT INTO "place_affected_zone" ("place_id", "affected_zone_id") VALUES
-  (1, 2),
-  (2, 3),
-  (3, 4),
-  (4, 5),
-  (5, 6),
-  (6, 7),
-  (7, 8),
-  (8, 9),
-  (9, 10),
-  (10, 1),
-  (11, 1);
+  (1, 2),   -- Centro Comunitario Russafa -> Zona Russafa-Eixample
+  (2, 3),   -- Refugio Temporal Benimaclet -> Zona Benimaclet Norte
+  (3, 4),   -- Punto de Asistencia Malvarrosa -> Zona Marítima Malvarrosa
+  (4, 5),   -- Almacén de Suministros Campanar -> Zona Industrial Campanar
+  (5, 6),   -- Base de Operaciones Torrent -> Zona Metropolitana Sur
+  (6, 7),   -- Centro de Coordinación Sagunto -> Zona Norte Sagunto
+  (7, 8),   -- Puesto de Socorro Alzira -> Zona Interior Ribera
+  (8, 9),   -- Unidad de Apoyo Gandia -> Zona Costera Sur
+  (9, 10),  -- Refugio Chiva -> Zona Montañosa Interior
+  (10, 1),  -- Oficina de Enlace Plaza Ayuntamiento -> Zona Centro Valencia
+  (11, 1),  -- Punto de Información Mercado Central -> Zona Centro Valencia
+  (12, 1),  -- Centro de Acopio Torres Serranos -> Zona Centro Valencia
+  (13, 9),  -- Refugio de Emergencia Ciudad Artes -> Zona Costera Sur
+  (14, 4);  -- Almacén Temporal Puerto Valencia -> Zona Marítima Malvarrosa
 
 
 
@@ -588,62 +594,56 @@ INSERT INTO "skill" ("name", "level", "admin_id") VALUES
 
 
 INSERT INTO "task" ("name", "description", "admin_id", "location_id", "start_date", "end_date") VALUES
-  ('Distribuir Agua Centro Valencia', 'Repartir agua embotellada en el centro histórico', 1, 81, '2025-05-25 08:00:00', NULL),
-  ('Asistencia Médica Russafa', 'Atención médica básica en Russafa', 2, 82, '2025-05-25 09:00:00', NULL),
-  ('Limpieza Escombros Benimaclet', 'Retirar escombros en Benimaclet', 3, 83, '2025-05-25 10:00:00', NULL),
-  ('Servicio Comida Malvarrosa', 'Preparar comida en Malvarrosa', 1, 84, '2025-05-25 11:00:00', NULL),
-  ('Cuidado Infantil Campanar', 'Cuidado de niños en Campanar', 2, 85, '2025-05-25 12:00:00', NULL),
-  ('Distribuir Medicamentos Torrent', 'Entrega de medicamentos en Torrent', 1, 86, '2025-05-25 13:00:00', NULL),
-  ('Recolección Donaciones Sagunto', 'Recibir donaciones en Sagunto', 2, 87, '2025-05-25 14:00:00', NULL),
-  ('Apoyo Psicológico Xàtiva', 'Apoyo emocional en Xàtiva', 3, 88, '2025-05-25 15:00:00', NULL),
-  ('Organización Suministros Gandia', 'Ordenar suministros en Gandia', 1, 89, '2025-05-25 16:00:00', NULL),
-  ('Transporte Víctimas Alcoy', 'Traslado de víctimas en Alcoy', 2, 90, '2025-05-25 17:00:00', NULL),
-  ('Distribución Ropa Valencia Norte', 'Entrega de ropa en Valencia Norte', 3, 91, '2025-05-25 18:00:00', NULL),
-  ('Asistencia Veterinaria Valencia Sur', 'Cuidado de animales en Valencia Sur', 1, 92, '2025-05-25 19:00:00', NULL),
-  ('Mantenimiento Refugio Valencia Este', 'Mantenimiento en Valencia Este', 2, 93, '2025-05-25 20:00:00', NULL),
-  ('Comunicación Afectados Valencia Oeste', 'Informar a afectados en Valencia Oeste', 3, 94, '2025-05-25 21:00:00', NULL),
-  ('Distribución Kits Paterna', 'Entrega de kits en Paterna', 1, 95, '2025-05-25 22:00:00', NULL),
-  ('Apoyo Tercera Edad Burjassot', 'Asistencia a mayores en Burjassot', 2, 96, '2025-05-25 23:00:00', NULL),
-  ('Organización Eventos Mislata', 'Eventos en Mislata', 3, 97, '2025-05-26 00:00:00', NULL),
-  ('Transporte Suministros Aldaia', 'Traslado a Aldaia', 1, 98, '2025-05-26 01:00:00', NULL),
-  ('Distribución Alimentos Picassent', 'Entrega de alimentos en Picassent', 2, 99, '2025-05-26 02:00:00', NULL),
-  ('Asistencia Discapacidad Catarroja', 'Apoyo a discapacitados en Catarroja', 3, 100, '2025-05-26 03:00:00', NULL),
-  ('Mantenimiento Equipos Massanassa', 'Mantenimiento en Massanassa', 1, 101, '2025-05-26 04:00:00', NULL),
-  ('Comunicación Familias Paiporta', 'Informar a familias en Paiporta', 2, 102, '2025-05-26 05:00:00', NULL),
-  ('Distribución Material Quart Poblet', 'Entrega de material en Quart de Poblet', 3, 103, '2025-05-26 06:00:00', NULL),
-  ('Apoyo Madres Manises', 'Apoyo a madres en Manises', 1, 104, '2025-05-26 07:00:00', NULL),
-  ('Organización Actividades Godella', 'Actividades en Godella', 2, 105, '2025-05-26 08:00:00', NULL),
-  ('Transporte Personal Rocafort', 'Traslado personal en Rocafort', 3, 106, '2025-05-26 09:00:00', NULL),
-  ('Distribución Juguetes Bétera', 'Entrega de juguetes en Bétera', 1, 107, '2025-05-26 10:00:00', NULL),
-  ('Asistencia Refugiados Llíria', 'Apoyo a refugiados en Llíria', 2, 108, '2025-05-26 11:00:00', NULL),
-  ('Construcción Refugios Alzira', 'Construcción en Alzira', 3, 109, '2025-05-26 12:00:00', NULL),
-  ('Comunicación Voluntarios Cullera', 'Coordinar voluntarios en Cullera', 1, 110, '2025-05-26 13:00:00', NULL),
-  ('Distribución Libros Carcaixent', 'Entrega de libros en Carcaixent', 2, 111, '2025-05-26 14:00:00', NULL),
-  ('Apoyo Familias Algemesí', 'Apoyo a familias en Algemesí', 3, 112, '2025-05-26 15:00:00', NULL),
-  ('Organización Talleres Sueca', 'Talleres en Sueca', 1, 113, '2025-05-26 16:00:00', NULL),
-  ('Transporte Equipos Sollana', 'Traslado equipos en Sollana', 2, 114, '2025-05-26 17:00:00', NULL),
-  ('Distribución Baterías Almussafes', 'Entrega de baterías en Almussafes', 3, 115, '2025-05-26 18:00:00', NULL),
-  ('Asistencia Sin Hogar Oliva', 'Apoyo a sin hogar en Oliva', 1, 116, '2025-05-26 19:00:00', NULL),
-  ('Mantenimiento Vehículos Tavernes', 'Reparación vehículos en Tavernes', 2, 117, '2025-05-26 20:00:00', NULL),
-  ('Comunicación Donantes Canals', 'Informar a donantes en Canals', 3, 118, '2025-05-26 21:00:00', NULL),
-  ('Distribución Velas Alcúdia', 'Entrega de velas en Alcúdia', 1, 119, '2025-05-26 22:00:00', NULL),
-  ('Apoyo Víctimas Ontinyent', 'Apoyo a víctimas en Ontinyent', 2, 120, '2025-05-26 23:00:00', NULL),
-  ('Organización Charlas Albaida', 'Charlas en Albaida', 3, 121, '2025-05-27 00:00:00', NULL),
-  ('Transporte Alimentos Cocentaina', 'Traslado alimentos a Cocentaina', 1, 122, '2025-05-27 01:00:00', NULL),
-  ('Distribución Cargadores Muro', 'Entrega cargadores en Muro', 2, 123, '2025-05-27 02:00:00', NULL),
-  ('Asistencia Desplazados Segorbe', 'Apoyo a desplazados en Segorbe', 3, 124, '2025-05-27 03:00:00', NULL),
-  ('Mantenimiento Sistemas Altura', 'Reparación sistemas en Altura', 1, 125, '2025-05-27 04:00:00', NULL),
-  ('Comunicación Medios Jérica', 'Informar a medios en Jérica', 2, 126, '2025-05-27 05:00:00', NULL),
-  ('Distribución Pañales Chiva', 'Entrega pañales en Chiva', 3, 127, '2025-05-27 06:00:00', NULL),
-  ('Apoyo Refugiados Buñol', 'Apoyo a refugiados en Buñol', 1, 128, '2025-05-27 07:00:00', NULL),
-  ('Organización Juegos Chelva', 'Juegos en Chelva', 2, 129, '2025-05-27 08:00:00', NULL),
-  ('Transporte Agua Villamarxant', 'Traslado agua en Villamarxant', 3, 130, '2025-05-27 09:00:00', NULL),
-  ('Distribución Toallas Benaguasil', 'Entrega toallas en Benaguasil', 1, 131, '2025-05-27 10:00:00', NULL),
-  ('Asistencia Aislados Alboraya', 'Apoyo a aislados en Alboraya', 2, 132, '2025-05-27 11:00:00', NULL),
-  ('Mantenimiento Iluminación Xirivella', 'Reparación luces en Xirivella', 3, 133, '2025-05-27 12:00:00', NULL),
-  ('Comunicación Autoridades Tavernes Blanques', 'Informar a autoridades en Tavernes Blanques', 1, 134, '2025-05-27 13:00:00', NULL),
-  ('Distribución Cepillos Port Saplaya', 'Entrega cepillos en Port Saplaya', 2, 135, '2025-05-27 14:00:00', NULL),
-  ('Apoyo Puçol', 'Asistencia general en Puçol', 3, 136, '2025-05-27 15:00:00', NULL);
+  ('Distribuir Agua Centro Valencia', 'Repartir agua embotellada en Plaza del Ayuntamiento', 1, 88, '2025-05-25 08:00:00', NULL),
+  ('Asistencia Médica Russafa', 'Atención médica básica en Centro de Russafa', 2, 106, '2025-05-25 09:00:00', NULL),
+  ('Limpieza Escombros Benimaclet', 'Retirar escombros en barrio Benimaclet', 3, 127, '2025-05-25 10:00:00', NULL),
+  ('Servicio Comida Malvarrosa', 'Preparar comida en Playa de la Malvarrosa', 1, 119, '2025-05-25 11:00:00', NULL),
+  ('Cuidado Infantil Campanar', 'Cuidado de niños en barrio Campanar', 2, 132, '2025-05-25 12:00:00', NULL),
+  ('Distribuir Medicamentos Mercado Central', 'Entrega de medicamentos cerca del Mercado Central', 1, 90, '2025-05-25 13:00:00', NULL),
+  ('Recolección Donaciones Torres Serranos', 'Recibir donaciones en Torres de Serranos', 2, 93, '2025-05-25 14:00:00', NULL),
+  ('Apoyo Psicológico Jardín Botánico', 'Apoyo emocional cerca del Jardín Botánico', 3, 105, '2025-05-25 15:00:00', NULL),
+  ('Organización Suministros Ciudad Artes', 'Ordenar suministros en Ciudad de las Artes y Ciencias', 1, 114, '2025-05-25 16:00:00', NULL),
+  ('Transporte Víctimas Puerto Valencia', 'Traslado de víctimas desde Puerto de Valencia', 2, 121, '2025-05-25 17:00:00', NULL),  ('Distribución Ropa Torres Quart', 'Entrega de ropa cerca de Torres de Quart', 3, 94, '2025-05-25 18:00:00', NULL),
+  ('Asistencia Veterinaria Oceanogràfic', 'Cuidado de animales zona Oceanogràfic', 1, 115, '2025-05-25 19:00:00', NULL),
+  ('Mantenimiento Refugio Estación Norte', 'Mantenimiento cerca de Estación del Norte', 2, 98, '2025-05-25 20:00:00', NULL),
+  ('Comunicación Afectados Barrio Carmen', 'Informar a afectados en Barrio del Carmen', 3, 95, '2025-05-25 21:00:00', NULL),
+  ('Distribución Kits La Xerea', 'Entrega de kits en barrio La Xerea', 1, 137, '2025-05-25 22:00:00', NULL),  ('Apoyo Tercera Edad Benimàmet', 'Asistencia a mayores en Benimàmet', 2, 131, '2025-05-25 23:00:00', NULL),
+  ('Organización Eventos Algirós', 'Eventos comunitarios en Algirós', 3, 124, '2025-05-26 00:00:00', NULL),
+  ('Transporte Suministros Nazaret', 'Traslado de suministros a Nazaret', 1, 117, '2025-05-26 01:00:00', NULL),
+  ('Distribución Alimentos Patraix', 'Entrega de alimentos en Patraix', 2, 110, '2025-05-26 02:00:00', NULL),
+  ('Asistencia Discapacidad Jesús', 'Apoyo a discapacitados en barrio Jesús', 3, 109, '2025-05-26 03:00:00', NULL),  ('Mantenimiento Equipos Mestalla', 'Reparación equipos zona Mestalla', 1, 135, '2025-05-26 04:00:00', NULL),
+  ('Comunicación Familias Quatre Carreres', 'Informar a familias en Quatre Carreres', 2, 108, '2025-05-26 05:00:00', NULL),
+  ('Distribución Material Plaza Redonda', 'Entrega de material en Plaza Redonda', 3, 97, '2025-05-26 06:00:00', NULL),
+  ('Apoyo Madres Monteolivete', 'Apoyo a madres en Monteolivete', 1, 107, '2025-05-26 07:00:00', NULL),
+  ('Organización Actividades Viveros', 'Actividades en Jardines del Real', 2, 126, '2025-05-26 08:00:00', NULL),  ('Transporte Personal Ciudad Artes', 'Traslado personal zona Ciudad de las Artes', 3, 114, '2025-05-26 09:00:00', NULL),
+  ('Distribución Juguetes San Marcelino', 'Entrega de juguetes en San Marcelino', 1, 111, '2025-05-26 10:00:00', NULL),
+  ('Asistencia Refugiados La Torre', 'Apoyo a refugiados en La Torre', 2, 113, '2025-05-26 11:00:00', NULL),
+  ('Construcción Refugios Castellar', 'Construcción refugios en Castellar-Oliveral', 3, 112, '2025-05-26 12:00:00', NULL),
+  ('Comunicación Voluntarios Malilla', 'Coordinar voluntarios en Malilla', 1, 134, '2025-05-26 13:00:00', NULL),  ('Distribución Libros Mercado Colón', 'Entrega de libros en Mercado de Colón', 2, 101, '2025-05-26 14:00:00', NULL),
+  ('Apoyo Familias Gran Vía', 'Apoyo a familias en Gran Vía Marqués del Turia', 3, 102, '2025-05-26 15:00:00', NULL),
+  ('Organización Talleres Zona Exposición', 'Talleres en Zona de Exposición', 1, 103, '2025-05-26 16:00:00', NULL),
+  ('Transporte Equipos Puerto Valencia', 'Traslado equipos al Puerto de Valencia', 2, 121, '2025-05-26 17:00:00', NULL),
+  ('Distribución Baterías Poblats Marítims', 'Entrega de baterías en Poblats Marítims', 3, 136, '2025-05-26 18:00:00', NULL),
+  ('Asistencia Sin Hogar Sant Francesc', 'Apoyo a sin hogar en Sant Francesc', 1, 138, '2025-05-26 19:00:00', NULL),
+  ('Mantenimiento Vehículos Zaidía', 'Reparación vehículos en Zaidía', 2, 139, '2025-05-26 20:00:00', NULL),
+  ('Comunicación Donantes La Alameda', 'Informar a donantes en La Alameda', 3, 104, '2025-05-26 21:00:00', NULL),
+  ('Distribución Velas Calle Colón', 'Entrega de velas en Calle Colón', 1, 99, '2025-05-26 22:00:00', NULL),
+  ('Apoyo Víctimas Plaza Toros', 'Apoyo a víctimas cerca Plaza de Toros', 2, 100, '2025-05-26 23:00:00', NULL),
+  ('Organización Charlas Marxalenes', 'Charlas en Marxalenes', 3, 130, '2025-05-27 00:00:00', NULL),
+  ('Transporte Alimentos Benicalap', 'Traslado alimentos a Benicalap', 1, 133, '2025-05-27 01:00:00', NULL),
+  ('Distribución Cargadores Sant Llorenç', 'Entrega cargadores en Sant Llorenç', 2, 128, '2025-05-27 02:00:00', NULL),
+  ('Asistencia Desplazados Orriols', 'Apoyo a desplazados en Orriols', 3, 129, '2025-05-27 03:00:00', NULL),
+  ('Mantenimiento Sistemas Beteró', 'Reparación sistemas en Beteró', 1, 123, '2025-05-27 04:00:00', NULL),
+  ('Comunicación Medios Creu del Grau', 'Informar a medios en La Creu del Grau', 2, 122, '2025-05-27 05:00:00', NULL),
+  ('Distribución Pañales Benimaclet Sur', 'Entrega pañales en Benimaclet Sur', 3, 136, '2025-05-27 06:00:00', NULL),
+  ('Apoyo Refugiados Nou Moles', 'Apoyo a refugiados en Nou Moles', 1, 134, '2025-05-27 07:00:00', NULL),
+  ('Organización Juegos El Pla Real', 'Juegos en El Pla del Real', 2, 125, '2025-05-27 08:00:00', NULL),
+  ('Transporte Agua Patacona', 'Traslado agua a Playa de la Patacona', 3, 120, '2025-05-27 09:00:00', NULL),
+  ('Distribución Toallas Ciutat Universitària', 'Entrega toallas en Ciutat Universitària', 1, 128, '2025-05-27 10:00:00', NULL),
+  ('Asistencia Aislados La Punta', 'Apoyo a aislados en La Punta', 2, 118, '2025-05-27 11:00:00', NULL),
+  ('Mantenimiento Iluminación Palau Arts', 'Reparación luces Palau de les Arts', 3, 116, '2025-05-27 12:00:00', NULL),  ('Comunicación Autoridades Mestalla', 'Informar a autoridades zona Mestalla', 1, 135, '2025-05-27 13:00:00', NULL),
+  ('Distribución Cepillos Playa Malvarrosa', 'Entrega cepillos en Playa de la Malvarrosa', 2, 119, '2025-05-27 14:00:00', NULL),
+  ('Apoyo General Valencia Centro', 'Asistencia general en centro de Valencia', 3, 88, '2025-05-27 15:00:00', NULL);
 
 INSERT INTO "task_time" ("start_time", "end_time", "date", "task_id") VALUES
   ('09:00', '14:00', '2025-05-28', 1),   -- Task 1 uses Morning Slot
@@ -846,57 +846,79 @@ INSERT INTO "need_task" ("need_id", "task_id") VALUES
   (10, 5),  -- Need 'Pañales y Fórmula' associated with task 'Cuidado Infantil Paiporta'
   (11, 1),  -- Need 'Agua y Alimentos Familia' associated with task 'Distribuir Agua Xirivella'
   (12, 2),  -- Need 'Vendajes y Desinfectante' associated with task 'Asistencia Médica Aldaia'
-  (13, 3),  -- Need 'Lugar Seguro para Dormir' associated with task 'Limpieza Escombros Catarroja'
-  (14, 10), -- Need 'Transporte Persona Mayor' associated with task 'Transporte Víctimas Llíria'
+  (12, 6),  -- Need 'Vendajes y Desinfectante' associated with task 'Médico'
+  (13, 4),  -- Need 'Lugar Seguro para Dormir' associated with task 'Limpieza Escombros Catarroja'
+  (14, 7),  -- Need 'Transporte Persona Mayor' associated with task 'Transporte Víctimas Llíria'
   (15, 5),  -- Need 'Cuidado Niño Discapacidad' associated with task 'Cuidado Infantil Paiporta'
-  (16, 4),  -- Need 'Alimentos Sin Gluten' associated with task 'Servicio Comida Massanassa'
-  (17, 6),  -- Need 'Analgésicos para Dolor' associated with task 'Distribuir Medicamentos Burjassot'
-  (18, 3),  -- Need 'Tienda de Campaña' associated with task 'Limpieza Escombros Catarroja'
-  (19, 10), -- Need 'Transporte Mascota Herida' associated with task 'Transporte Víctimas Llíria'
+  (15, 8),  -- Need 'Cuidado Niño Discapacidad' associated with task 'Consejería'
+  (16, 3),  -- Need 'Alimentos Sin Gluten' associated with task 'Servicio Comida Massanassa'
+  (17, 1),  -- Need 'Analgésicos para Dolor' associated with task 'Distribuir Medicamentos Burjassot'
+  (17, 6),  -- Need 'Analgésicos para Dolor' associated with task 'Médico'
+  (18, 4),  -- Need 'Tienda de Campaña' associated with task 'Limpieza Escombros Catarroja'
+  (19, 7),  -- Need 'Transporte Mascota Herida' associated with task 'Transporte Víctimas Llíria'
+  (19, 6),  -- Need 'Transporte Mascota Herida' associated with task 'Médico'
   (20, 5),  -- Need 'Cuidado de Gemelos' associated with task 'Cuidado Infantil Paiporta'
-  (21, 1),  -- Need 'Leche y Cereales Bebé' associated with task 'Distribuir Agua Xirivella'
-  (22, 2),  -- Need 'Antibióticos Infección' associated with task 'Asistencia Médica Aldaia'
-  (23, 3),  -- Need 'Colchón Inflable' associated with task 'Limpieza Escombros Catarroja'
-  (24, 10), -- Need 'Transporte Movilidad Reducida' associated with task 'Transporte Víctimas Llíria'
+  (21, 3),  -- Need 'Leche y Cereales Bebé' associated with task 'Distribuir Agua Xirivella'
+  (21, 5),  -- Need 'Leche y Cereales Bebé' associated with task 'Cuidado Infantil Paiporta'
+  (22, 1),  -- Need 'Antibióticos Infección' associated with task 'Asistencia Médica Aldaia'
+  (22, 6),  -- Need 'Antibióticos Infección' associated with task 'Médico'
+  (23, 4),  -- Need 'Colchón Inflable' associated with task 'Limpieza Escombros Catarroja'
+  (24, 7),  -- Need 'Transporte Movilidad Reducida' associated with task 'Transporte Víctimas Llíria'
+  (24, 8),  -- Need 'Transporte Movilidad Reducida' associated with task 'Consejería'
   (25, 5),  -- Need 'Cuidado Niño Alergias' associated with task 'Cuidado Infantil Paiporta'
-  (26, 4),  -- Need 'Comida Enlatada y Frutas' associated with task 'Servicio Comida Massanassa'
-  (27, 6),  -- Need 'Gasas y Esparadrapo' associated with task 'Distribuir Medicamentos Burjassot'
-  (28, 3),  -- Need 'Almohada y Ropa Cama' associated with task 'Limpieza Escombros Catarroja'
-  (29, 10), -- Need 'Transporte Grupo Familiar' associated with task 'Transporte Víctimas Llíria'
+  (25, 6),  -- Need 'Cuidado Niño Alergias' associated with task 'Médico'
+  (26, 3),  -- Need 'Comida Enlatada y Frutas' associated with task 'Servicio Comida Massanassa'
+  (27, 1),  -- Need 'Gasas y Esparadrapo' associated with task 'Distribuir Medicamentos Burjassot'
+  (27, 6),  -- Need 'Gasas y Esparadrapo' associated with task 'Médico'
+  (28, 4),  -- Need 'Almohada y Ropa Cama' associated with task 'Limpieza Escombros Catarroja'
+  (29, 7),  -- Need 'Transporte Grupo Familiar' associated with task 'Transporte Víctimas Llíria'
   (30, 5),  -- Need 'Cuidado Niño Autismo' associated with task 'Cuidado Infantil Paiporta'
-  (31, 1),  -- Need 'Agua Purificada y Barras' associated with task 'Distribuir Agua Xirivella'
-  (32, 2),  -- Need 'Solución Salina Ojos' associated with task 'Asistencia Médica Aldaia'
-  (33, 3),  -- Need 'Saco de Dormir Frío' associated with task 'Limpieza Escombros Catarroja'
-  (34, 10), -- Need 'Transporte con Equipaje' associated with task 'Transporte Víctimas Llíria'
+  (30, 8),  -- Need 'Cuidado Niño Autismo' associated with task 'Consejería'
+  (31, 3),  -- Need 'Agua Purificada y Barras' associated with task 'Distribuir Agua Xirivella'
+  (32, 1),  -- Need 'Solución Salina Ojos' associated with task 'Asistencia Médica Aldaia'
+  (32, 6),  -- Need 'Solución Salina Ojos' associated with task 'Médico'
+  (33, 4),  -- Need 'Saco de Dormir Frío' associated with task 'Limpieza Escombros Catarroja'
+  (34, 7),  -- Need 'Transporte con Equipaje' associated with task 'Transporte Víctimas Llíria'
   (35, 5),  -- Need 'Cuidado Niño Respiratorio' associated with task 'Cuidado Infantil Paiporta'
-  (36, 4),  -- Need 'Alimentos Diabéticos' associated with task 'Servicio Comida Massanassa'
-  (37, 6),  -- Need 'Crema para Quemaduras' associated with task 'Distribuir Medicamentos Burjassot'
-  (38, 3),  -- Need 'Hamaca para Descansar' associated with task 'Limpieza Escombros Catarroja'
-  (39, 10), -- Need 'Transporte con Mascota' associated with task 'Transporte Víctimas Llíria'
+  (35, 6),  -- Need 'Cuidado Niño Respiratorio' associated with task 'Médico'
+  (36, 3),  -- Need 'Alimentos Diabéticos' associated with task 'Servicio Comida Massanassa'
+  (37, 1),  -- Need 'Crema para Quemaduras' associated with task 'Distribuir Medicamentos Burjassot'
+  (37, 6),  -- Need 'Crema para Quemaduras' associated with task 'Médico'
+  (38, 4),  -- Need 'Hamaca para Descansar' associated with task 'Limpieza Escombros Catarroja'
+  (39, 7),  -- Need 'Transporte con Mascota' associated with task 'Transporte Víctimas Llíria'
   (40, 5),  -- Need 'Cuidado de Trillizos' associated with task 'Cuidado Infantil Paiporta'
-  (41, 2),  -- Need 'Lugar Seguro Tranquilo' associated with task 'Asistencia Médica Aldaia'
-  (42, 4),  -- Need 'Alimentos Proteínas' associated with task 'Servicio Comida Massanassa'
+  (41, 8),  -- Need 'Lugar Seguro Tranquilo' associated with task 'Asistencia Médica Aldaia'
+  (42, 3),  -- Need 'Alimentos Proteínas' associated with task 'Servicio Comida Massanassa'
   (43, 5),  -- Need 'Apoyo Cuidado Hijos' associated with task 'Cuidado Infantil Paiporta'
-  (44, 2),  -- Need 'Atención Médica Especializada' associated with task 'Asistencia Médica Aldaia'
-  (45, 10), -- Need 'Transporte Urgente Hospital' associated with task 'Transporte Víctimas Llíria'
-  (46, 3),  -- Need 'Espacio para Descansar' associated with task 'Limpieza Escombros Catarroja'
-  (47, 1),  -- Need 'Agua y Alimentos Nutritivos' associated with task 'Distribuir Agua Xirivella'
+  (43, 8),  -- Need 'Apoyo Cuidado Hijos' associated with task 'Consejería'
+  (44, 6),  -- Need 'Atención Médica Especializada' associated with task 'Asistencia Médica Aldaia'
+  (45, 7),  -- Need 'Transporte Urgente Hospital' associated with task 'Transporte Víctimas Llíria'
+  (45, 6),  -- Need 'Transporte Urgente Hospital' associated with task 'Médico'
+  (46, 4),  -- Need 'Espacio para Descansar' associated with task 'Limpieza Escombros Catarroja'
+  (47, 3),  -- Need 'Agua y Alimentos Nutritivos' associated with task 'Distribuir Agua Xirivella'
   (48, 5),  -- Need 'Ayuda Cuidado Nietos' associated with task 'Cuidado Infantil Paiporta'
-  (49, 2),  -- Need 'Medicamentos Enfermedad' associated with task 'Asistencia Médica Aldaia'
-  (50, 10), -- Need 'Transporte Tratamiento Médico' associated with task 'Transporte Víctimas Llíria'
-  (51, 3),  -- Need 'Refugio Temporal Seguro' associated with task 'Limpieza Escombros Catarroja'
-  (52, 4),  -- Need 'Alimentos Personas Mayores' associated with task 'Servicio Comida Massanassa'
+  (48, 8),  -- Need 'Ayuda Cuidado Nietos' associated with task 'Consejería'
+  (49, 1),  -- Need 'Medicamentos Enfermedad' associated with task 'Asistencia Médica Aldaia'
+  (49, 6),  -- Need 'Medicamentos Enfermedad' associated with task 'Médico'
+  (50, 7),  -- Need 'Transporte Tratamiento Médico' associated with task 'Transporte Víctimas Llíria'
+  (50, 6),  -- Need 'Transporte Tratamiento Médico' associated with task 'Médico'
+  (51, 4),  -- Need 'Refugio Temporal Seguro' associated with task 'Limpieza Escombros Catarroja'
+  (52, 3),  -- Need 'Alimentos Personas Mayores' associated with task 'Servicio Comida Massanassa'
   (53, 5),  -- Need 'Apoyo Cuidado Padres' associated with task 'Cuidado Infantil Paiporta'
-  (54, 2),  -- Need 'Atención Médica Domiciliaria' associated with task 'Asistencia Médica Aldaia'
-  (55, 10), -- Need 'Transporte para Trámites' associated with task 'Transporte Víctimas Llíria'
-  (56, 3),  -- Need 'Lugar para Asearse' associated with task 'Limpieza Escombros Catarroja'
-  (57, 1),  -- Need 'Alimentos con Alergias' associated with task 'Distribuir Agua Xirivella'
+  (53, 8),  -- Need 'Apoyo Cuidado Padres' associated with task 'Consejería'
+  (54, 6),  -- Need 'Atención Médica Domiciliaria' associated with task 'Asistencia Médica Aldaia'
+  (55, 7),  -- Need 'Transporte para Trámites' associated with task 'Transporte Víctimas Llíria'
+  (56, 4),  -- Need 'Lugar para Asearse' associated with task 'Limpieza Escombros Catarroja'
+  (57, 3),  -- Need 'Alimentos con Alergias' associated with task 'Distribuir Agua Xirivella'
+  (57, 6),  -- Need 'Alimentos con Alergias' associated with task 'Médico'
   (58, 5),  -- Need 'Ayuda Cuidado Animales' associated with task 'Cuidado Infantil Paiporta'
-  (59, 2),  -- Need 'Atención Psicológica Trauma' associated with task 'Asistencia Médica Aldaia'
-  (60, 10), -- Need 'Transporte Reunión Familiar' associated with task 'Transporte Víctimas Llíria'
-  (61, 2),  -- Need 'Atención Médica Urgente' associated with task 'Asistencia Médica Aldaia'
-  (62, 10), -- Need 'Transporte Lugar Seguro' associated with task 'Transporte Víctimas Llíria'
-  (63, 3);  -- Need 'Ropa de abrigo' associated with task 'Limpieza Escombros Catarroja'
+  (59, 8),  -- Need 'Atención Psicológica Trauma' associated with task 'Consejería'
+  (59, 6),  -- Need 'Atención Psicológica Trauma' associated with task 'Médico'
+  (60, 7),  -- Need 'Transporte Reunión Familiar' associated with task 'Conducción de Camiones'
+  (61, 1),  -- Need 'Atención Médica Urgente' associated with task 'Primeros Auxilios'
+  (61, 6),  -- Need 'Atención Médica Urgente' associated with task 'Médico'
+  (62, 7),  -- Need 'Transporte Lugar Seguro' associated with task 'Conducción de Camiones'
+  (63, 4);  -- Need 'Ropa de abrigo' associated with task 'Limpieza Escombros Catarroja'
 
 
 INSERT INTO "volunteer_skill" ("volunteer_id", "skill_id") VALUES
