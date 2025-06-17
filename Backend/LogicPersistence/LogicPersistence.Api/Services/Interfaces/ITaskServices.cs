@@ -29,5 +29,6 @@ namespace LogicPersistence.Api.Services {
             DateTime toDate,
             int pageNumber,
             int pageSize);
+		System.Threading.Tasks.Task AssignVolunteersToTaskAsync(int taskId, List<int> volunteerIds, State state);
 	}
 }

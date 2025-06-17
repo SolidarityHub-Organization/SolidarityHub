@@ -100,7 +100,6 @@ class TaskInfoSquare implements InfoSquare {
           rows: rows,
         );
 
-        // Add the paginated volunteers list below the info card
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -114,7 +113,6 @@ class TaskInfoSquare implements InfoSquare {
   }
 }
 
-// PaginatedVolunteersList widget
 class PaginatedVolunteersList extends StatefulWidget {
   final int taskId;
   const PaginatedVolunteersList({required this.taskId, Key? key}) : super(key: key);
@@ -125,13 +123,12 @@ class PaginatedVolunteersList extends StatefulWidget {
 
 class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
   int _pageNumber = 1;
-  final int _pageSize = 5;
+  final int _pageSize = 1;
   int _totalCount = 0;
   bool _isLoading = false;
   List<dynamic> _volunteers = [];
   final DateTime _fromDate = DateTime(2000, 1, 1);
   final DateTime _toDate = DateTime(2100, 1, 1);
-  // Keep track of the previous taskId to detect changes
   int? _previousTaskId;
 
   @override
@@ -143,9 +140,7 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
   @override
   void didUpdateWidget(PaginatedVolunteersList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if taskId changed
     if (widget.taskId != oldWidget.taskId) {
-      // Reset and refetch data
       _resetAndFetch();
     }
   }
@@ -164,8 +159,16 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
     
     setState(() => _isLoading = true);
     try {
-      // If we're resetting, use page 1, otherwise use current page
       final pageToFetch = reset ? 1 : _pageNumber;
+      
+      /*
+      print('=== FETCH VOLUNTEERS DEBUG ===');
+      print('Task ID: ${widget.taskId}');
+      print('Page to fetch: $pageToFetch');
+      print('Page size: $_pageSize');
+      print('Current volunteers count: ${_volunteers.length}');
+      print('Current total count: $_totalCount');
+      */
       
       final data = await TaskServices.fetchTaskVolunteersFilteredPaginated(
         taskId: widget.taskId,
@@ -175,23 +178,63 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
         size: _pageSize,
       );
       
+      print('=== API RESPONSE ===');
+      print('Full response: $data');
+      print('Response type: ${data.runtimeType}');
+      
+      if (data['items'] != null) {
+        print('Items type: ${data['items'].runtimeType}');
+        print('Items length: ${data['items'].length}');
+        print('Items content:');
+        for (int i = 0; i < data['items'].length; i++) {
+          print('  Item $i: ${data['items'][i]}');
+        }
+      } else {
+        print('Items is null!');
+      }
+      
+      if (data['totalCount'] != null) {
+        print('Total count: ${data['totalCount']} (type: ${data['totalCount'].runtimeType})');
+      } else {
+        print('Total count is null!');
+      }
+      
+      //print('=== PROCESSING ===');
       final items = data['items'] as List<dynamic>? ?? [];
+      final totalCount = data['totalCount'] as int? ?? 0;
+      
+      //print('Processed items length: ${items.length}');
+      //print('Processed total count: $totalCount');
+      
+      // final limitedItems = items.take(_pageSize).toList();
+      final limitedItems = items;
       
       setState(() {
-        // If resetting, replace volunteers; otherwise add to them
         if (reset) {
-          _volunteers = items;
-          _pageNumber = 2; // Next page will be 2
+          _volunteers = limitedItems;
+          _pageNumber = 2;
         } else {
-          _volunteers.addAll(items);
+          _volunteers.addAll(limitedItems);
           _pageNumber++;
         }
         
-        _totalCount = data['totalCount'] ?? 0;
+        _totalCount = totalCount;
         _previousTaskId = widget.taskId;
       });
+      
+      /*
+      print('=== STATE AFTER UPDATE ===');
+      print('Volunteers in state: ${_volunteers.length}');
+      print('Next page number: $_pageNumber');
+      print('Total count: $_totalCount');
+      print('Has more: $_hasMore');
+      print('=== END DEBUG ===\n');
+      */
+      
     } catch (e) {
       print('Error fetching volunteers: $e');
+      print('Error type: ${e.runtimeType}');
+      print('Stack trace: ${StackTrace.current}');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -199,7 +242,11 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
     }
   }
 
-  bool get _hasMore => _volunteers.length < _totalCount;
+  bool get _hasMore {
+    final hasMore = _volunteers.length < _totalCount && _totalCount > 0;
+    //print('_hasMore check: volunteers=${_volunteers.length}, total=$_totalCount, hasMore=$hasMore');
+    return hasMore;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -219,6 +266,7 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
               ],
             ),
             const SizedBox(height: 8),
+            
             if (_isLoading && _volunteers.isEmpty)
               const Center(
                 child: Padding(
@@ -226,24 +274,43 @@ class _PaginatedVolunteersListState extends State<PaginatedVolunteersList> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               )
-            else if (_volunteers.isEmpty)
-              const Text('No hay voluntarios registrados.'),
+            else if (_volunteers.isEmpty && !_isLoading)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('No hay voluntarios registrados.'),
+              ),
+            
             ..._volunteers.map((v) => ListTile(
                   dense: true,
                   leading: const Icon(Icons.person),
                   title: Text(v['name'] ?? 'Voluntario'),
                   subtitle: v['email'] != null ? Text(v['email']) : null,
                 )),
-            if (_hasMore)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: _isLoading ? null : () => _fetchVolunteers(reset: false),
-                  child: _isLoading
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Cargar más'),
+            
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Center(
+                child: ElevatedButton.icon(
+                  onPressed: (_isLoading || !_hasMore) ? null : () => _fetchVolunteers(reset: false),
+                  icon: _isLoading 
+                      ? const SizedBox(
+                          width: 16, 
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                        )
+                      : const Icon(Icons.refresh),
+                  label: Text(_isLoading ? 'Cargando...' : 'Cargar más'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _hasMore ? Colors.orange : Colors.grey,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                    disabledBackgroundColor: Colors.grey.shade400,
+                    disabledForegroundColor: Colors.grey.shade600,
+                  ),
                 ),
               ),
+            ),
           ],
         ),
       ),

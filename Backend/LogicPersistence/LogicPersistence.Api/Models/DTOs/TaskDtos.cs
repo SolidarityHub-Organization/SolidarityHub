@@ -136,3 +136,9 @@ public class TaskWithLocationAndTimesDto {
     public double longitude { get; set; }
     public List<TaskTimeDisplayDto> times { get; set; } = new();
 }
+
+public class AssignVolunteersRequest
+{
+    public List<int> volunteer_ids { get; set; } = new();
+    public State state { get; set; }
+}
