@@ -10,6 +10,8 @@ class CustomLineChart extends StatelessWidget {
   final String title;
   final EdgeInsetsGeometry padding;
   final double titleBottomMargin;
+  // Add this new parameter
+  final int maxVisibleXLabels;
 
   final double rotation = 45.0; // in degrees
 
@@ -22,6 +24,7 @@ class CustomLineChart extends StatelessWidget {
     this.title = '',
     this.padding = const EdgeInsets.fromLTRB(60.0, 0.0, 60.0, 50.0),
     this.titleBottomMargin = 8.0,
+    this.maxVisibleXLabels = 12, // Default to show about 12 labels
   });
 
   double _calculateMaxTitleWidth(BuildContext context, List<String> labels) {
@@ -38,13 +41,17 @@ class CustomLineChart extends StatelessWidget {
     }
 
     return maxWidth * 1.4;  // simple version
-    //final double rotationAngle = rotation * (math.pi / 180); // convert to radians
-    //return maxWidth * math.cos(rotationAngle) + maxWidth * math.sin(rotationAngle);
   } 
   
   double _calculateMaxYLabelWidth(double maxY, double interval) {
     int maxDigits = maxY.toInt().toString().length;
     return (maxDigits * 8.0) + 10.0;
+  }
+
+  // New method to calculate which labels to show
+  int _calculateLabelInterval(int totalLabels, int maxVisible) {
+    if (totalLabels <= maxVisible) return 1; // Show all labels if fewer than max
+    return (totalLabels / maxVisible).ceil();
   }
 
   @override
@@ -118,6 +125,7 @@ class CustomLineChart extends StatelessWidget {
       );
     }
     
+    final labelInterval = _calculateLabelInterval(xLabels.length, maxVisibleXLabels);
     final bottomReservedSize = _calculateMaxTitleWidth(context, xLabels);
 
     final maxY = spots.isNotEmpty
@@ -218,7 +226,8 @@ class CustomLineChart extends StatelessWidget {
                       reservedSize: bottomReservedSize,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index >= 0 && index < xLabels.length) {
+                        // Only show labels at interval points
+                        if (index >= 0 && index < xLabels.length && index % labelInterval == 0) {
                           return Container(
                             width: 0,
                             height: 100,
@@ -242,6 +251,7 @@ class CustomLineChart extends StatelessWidget {
                         }
                         return const SizedBox.shrink();
                       },
+                      // Use the calculated interval instead of showing every single label
                       interval: 1,
                     ),
                   ),
@@ -256,7 +266,11 @@ class CustomLineChart extends StatelessWidget {
                     return FlLine(color: Colors.grey.withOpacity(0.5), strokeWidth: 1, dashArray: [5, 5]);
                   },
                   getDrawingVerticalLine: (value) {
-                    return FlLine(color: Colors.grey.withOpacity(0.5), strokeWidth: 1, dashArray: [5, 5]);
+                    // Only draw vertical lines at the same interval as labels
+                    if (value.toInt() % labelInterval == 0) {
+                      return FlLine(color: Colors.grey.withOpacity(0.5), strokeWidth: 1, dashArray: [5, 5]);
+                    }
+                    return FlLine(color: Colors.transparent);
                   },
                 ),
                 borderData: FlBorderData(show: true),
@@ -267,6 +281,13 @@ class CustomLineChart extends StatelessWidget {
                     tooltipMargin: 8,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
+                        final index = spot.x.toInt();
+                        if (index >= 0 && index < xLabels.length) {
+                          return LineTooltipItem(
+                            '${xLabels[index]}\n${spot.y.toInt()}',
+                            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          );
+                        }
                         return LineTooltipItem(
                           '${spot.y.toInt()}',
                           const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

@@ -61,6 +61,20 @@ class _VictimsTabState extends State<VictimsTab> {
     }
   }
 
+  DateTime? _parseDate(String dateStr) {
+    try {
+      final parts = dateStr.split('-');
+      if (parts.length == 3) {
+        // Convert from DD-MM-YYYY to YYYY-MM-DD for proper parsing
+        return DateTime.parse('${parts[2]}-${parts[1]}-${parts[0]}');
+      }
+      return null;
+    } catch (e) {
+      print('Error parsing date: $dateStr, error: $e');
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -83,7 +97,17 @@ class _VictimsTabState extends State<VictimsTab> {
                   return const Center(child: Text('No hay datos para mostrar.'));
                 } else {
                   final lineData = snapshotCount.data!;
-                  final sortedLineData = lineData..sort((a, b) => (a['date'] ?? '').compareTo(b['date'] ?? ''));
+                  final sortedLineData = List<Map<String, dynamic>>.from(lineData)
+                    ..sort((a, b) {
+                      DateTime? dateA = _parseDate(a['date'] ?? '');
+                      DateTime? dateB = _parseDate(b['date'] ?? '');
+
+                      if (dateA == null && dateB == null) return 0;
+                      if (dateA == null) return -1;
+                      if (dateB == null) return 1;
+
+                      return dateA.compareTo(dateB);
+                    });
 
                   final startDate = _adjustStartDate(widget.fechaInicio);
                   final endDate = _adjustEndDate(widget.fechaFin);
