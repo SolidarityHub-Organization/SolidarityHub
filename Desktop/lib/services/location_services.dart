@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'api_services.dart';
+import 'package:http/http.dart' as http;
 
 class LocationServices {
   static Future<Map<String, dynamic>> fetchLocationById(int id) async {
@@ -144,4 +145,85 @@ class LocationServices {
 
     return locations;
   }
+
+  static Future<bool> createLocationsForZone(int zoneId, List<Map<String, dynamic>> points) async {
+    try {
+      final response = await ApiServices.post(
+        'affected-zones/$zoneId/locations',
+        body: points,
+      );
+
+      if (response.statusCode.ok) {
+        return true;
+      } else {
+        print('Failed to create locations: ${response.statusCode} - ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error creating locations for zone: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> createZoneWithLocations(
+    Map<String, dynamic> zoneData,
+    List<Map<String, dynamic>> points,
+  ) async {
+    try {
+      // 1. Create the affected zone
+      final zoneResponse = await ApiServices.post(
+        'affected-zones',
+        body: zoneData,
+      );
+
+      if (zoneResponse.statusCode.ok) {
+        // parse the JSON response first
+        final zone = jsonDecode(zoneResponse.body);
+        final int? zoneId = zone['id'];
+        
+        if (zoneId == null) {
+          print('Zone ID not found in response.');
+          return false;
+        }
+
+        // 2. Create the locations for the new zone
+        final locationsResponse = await ApiServices.post(
+          'affected-zones/$zoneId/locations',
+          body: points,
+        );
+
+        return locationsResponse.statusCode.ok;
+      } else {
+        print('Failed to create zone: ${zoneResponse.statusCode} - ${zoneResponse.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error creating zone with locations: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> deleteZoneWithLocations(int zoneId) async {
+  try {
+    // 1. Delete all locations for the zone
+    final locationsResponse = await ApiServices.delete('affected-zones/$zoneId/locations');
+    if (!locationsResponse.statusCode.ok && locationsResponse.statusCode != 404) {
+      print('Failed to delete locations: ${locationsResponse.statusCode} - ${locationsResponse.body}');
+      return false;
+    }
+
+    // 2. Delete the zone itself
+    final zoneResponse = await ApiServices.delete('affected-zones/$zoneId');
+    if (zoneResponse.statusCode.ok || zoneResponse.statusCode == 404) {
+      print('Zone and all associated locations deleted successfully');
+      return true;
+    } else {
+      print('Failed to delete zone: ${zoneResponse.statusCode} - ${zoneResponse.body}');
+      return false;
+    }
+  } catch (e) {
+    print('Error deleting zone with locations: $e');
+    return false;
+  }
+}
 }

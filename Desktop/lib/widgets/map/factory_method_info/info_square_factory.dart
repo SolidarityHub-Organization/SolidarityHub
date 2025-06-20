@@ -5,6 +5,7 @@ import 'volunteer_info_square.dart';
 import 'task_info_square.dart';
 import 'meeting_point_info_square.dart';
 import 'pickup_point_info_square.dart';
+import 'affected_zone_info_square.dart';
 
 // Interfaz base para todos los cuadros de información
 abstract class InfoSquare {
@@ -25,6 +26,8 @@ class InfoSquareFactory {
         return MeetingPointInfoSquare();
       case 'pickup_point':
         return PickupPointInfoSquare();
+      case 'affected_zone':
+        return AffectedZoneInfoSquare();
       default:
         return EmptyInfoSquare();
     }

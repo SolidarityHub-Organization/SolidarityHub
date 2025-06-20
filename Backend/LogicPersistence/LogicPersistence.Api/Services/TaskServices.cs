@@ -348,5 +348,16 @@ namespace LogicPersistence.Api.Services {
 			};
 		}
 		#endregion
+
+		public async System.Threading.Tasks.Task AssignVolunteersToTaskAsync(int taskId, List<int> volunteerIds, State state) {
+			// Add any business logic validation here
+			if (!volunteerIds.Any())
+				throw new ArgumentException("At least one volunteer ID must be provided");
+
+			if (taskId <= 0)
+				throw new ArgumentException("Invalid task ID");
+
+			await _taskRepository.AssignVolunteersToTaskAsync(taskId, volunteerIds, state);
+		}
 	}
 }

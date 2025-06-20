@@ -327,5 +327,33 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpPost("tasks/{taskId}/assign-volunteers")]
+		public async Task<IActionResult> AssignVolunteersToTask(
+			int taskId, 
+			[FromBody] AssignVolunteersRequest request)
+		{
+			try
+			{
+				// Add validation logging
+				Console.WriteLine($"TaskId: {taskId}");
+				Console.WriteLine($"VolunteerIds: [{string.Join(", ", request.volunteer_ids)}]");
+				Console.WriteLine($"State: {request.state}");
+
+				await _taskServices.AssignVolunteersToTaskAsync(taskId, request.volunteer_ids, request.state);
+				return Ok(new { message = "Volunteers assigned successfully" });
+			}
+			catch (ArgumentException ex)
+			{
+				Console.WriteLine($"ArgumentException: {ex.Message}");
+				return BadRequest(new { error = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Exception: {ex.Message}");
+				Console.WriteLine($"StackTrace: {ex.StackTrace}");
+				return StatusCode(500, new { error = ex.Message }); // Return actual error message
+			}
+		}
 	}
 }

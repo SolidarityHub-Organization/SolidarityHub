@@ -538,4 +538,23 @@ public class TaskRepository : ITaskRepository {
 
         return (tasks, totalCount);
     }
+    
+    public async System.Threading.Tasks.Task AssignVolunteersToTaskAsync(int taskId, List<int> volunteerIds, State st)
+    {
+        using var connection = new NpgsqlConnection(connectionString);
+        
+        foreach (int volunteerId in volunteerIds)
+        {
+            const string sql = @"
+                INSERT INTO volunteer_task (volunteer_id, task_id, state)
+                VALUES (@volunteerId, @taskId, @state::state)
+                ON CONFLICT (volunteer_id, task_id) DO NOTHING";
+            
+            await connection.ExecuteAsync(sql, new { 
+                volunteerId, 
+                taskId, 
+                state = st.ToString()
+            });
+        }
+    }
 }

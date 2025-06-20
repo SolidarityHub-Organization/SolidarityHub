@@ -116,5 +116,40 @@ namespace LogicPersistence.Api.Controllers {
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		[HttpPost("affected-zones/{zoneId}/locations")]
+		public async Task<IActionResult> CreateLocationsForZoneAsync(int zoneId, [FromBody] IEnumerable<Location> locations)
+		{
+			var result = await _locationServices.CreateLocationsByAffectedZoneIdAsync(zoneId, locations);
+			if (result)
+				return Ok();
+			return StatusCode(500, "Failed to create locations for the affected zone.");
+		}
+
+		[HttpDelete("affected-zones/{zoneId}/locations")]
+		public async Task<IActionResult> DeleteLocationsForZoneAsync(int zoneId)
+		{
+			try
+			{
+				var result = await _locationServices.DeleteLocationsByAffectedZoneIdAsync(zoneId);
+				
+				if (result)
+					return NoContent(); // 204 No Content - successful deletion
+					
+				return StatusCode(500, "Failed to delete locations for the affected zone.");
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message); // 404 Not Found
+			}
+			catch (InvalidOperationException ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 	}
 }

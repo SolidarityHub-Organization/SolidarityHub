@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/custom_form_builder.dart';
 import '../models/button_creator.dart';
 import '../services/login_validators.dart';
@@ -35,7 +36,11 @@ class _DataModificationState extends State<DataModification> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/logo.png', height: 100),
+                  Image.asset(
+                    'assets/logo.png',
+                    height: 100,
+                    errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                  ),
                   SizedBox(height: 20),
                   Container(
                     padding: EdgeInsets.all(20),
@@ -44,78 +49,48 @@ class _DataModificationState extends State<DataModification> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: CustomFormBuilder(
-                      formKey: _formKey,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          buildTextField(
                             controller: controller.nombreController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.person, color: Colors.black),
-                              labelText: 'Nombre',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
+                            label: 'Nombre',
+                            icon: Icons.person,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.apellidosController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.person, color: Colors.black),
-                              labelText: 'Apellidos',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
+                            label: 'Apellidos',
+                            icon: Icons.person,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.correoController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.email, color: Colors.black),
-                              labelText: 'Correo electrónico',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-
-                            ),
+                            label: 'Correo electrónico',
+                            icon: Icons.email,
                             validator: validateEmailWithoutEmpty,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.passwordController,
+                            label: 'Contraseña',
+                            icon: Icons.lock,
                             obscureText: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock, color: Colors.black),
-                              helperText: 'Debe tener al menos 6 caracteres',
-                              labelText: 'Contraseña',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
+                            helperText: 'Debe tener al menos 6 caracteres',
                             validator: validatePasswordWithoutEmpty,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.repetirPasswordController,
+                            label: 'Repite Contraseña',
+                            icon: Icons.lock_outline,
                             obscureText: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock_outline, color: Colors.black),
-                              labelText: 'Repite Contraseña',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
                             validator: (value) => validateConfirmPasswordWithoutEmpty(
                               controller.passwordController.text,
                               value,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.fechaNacimientoController,
+                            label: 'Fecha de nacimiento',
+                            icon: Icons.calendar_today,
                             readOnly: true,
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
@@ -125,62 +100,57 @@ class _DataModificationState extends State<DataModification> {
                                 lastDate: DateTime.now(),
                               );
                               if (pickedDate != null) {
-                                String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/"
-                                    "${pickedDate.month.toString().padLeft(2, '0')}/"
-                                    "${pickedDate.year}";
+                                String formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
                                 setState(() {
                                   controller.fechaNacimientoController.text = formattedDate;
                                 });
                               }
                             },
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.calendar_today, color: Colors.black),
-                              labelText: 'Fecha de nacimiento',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: TextFormField(
+                          buildTextField(
                             controller: controller.telefonoController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.phone, color: Colors.black),
-                              labelText: 'Número de teléfono',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
+                            label: 'Número de teléfono',
+                            icon: Icons.phone,
                             validator: validatePhoneWithoutEmpty,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        buildCustomButton(
-                          "Guardar y Salir",
-                              () {
-                            if (_formKey.currentState!.validate()) {
-                              controller.saveData(context, widget.id, widget.role);
-                            }
-                          },
-                          verticalPadding: 15,
-                          horizontalPadding: 50,
-                        )
-                      ],
+                          const SizedBox(height: 20),
+                          buildCustomButton(
+                            "Guardar y Salir",
+                                () {
+                              if (_formKey.currentState!.validate()) {
+                                final noChanges = controller.nombreController.text.trim().isEmpty &&
+                                    controller.apellidosController.text.trim().isEmpty &&
+                                    controller.correoController.text.trim().isEmpty &&
+                                    controller.passwordController.text.trim().isEmpty &&
+                                    controller.repetirPasswordController.text.trim().isEmpty &&
+                                    controller.fechaNacimientoController.text.trim().isEmpty &&
+                                    controller.telefonoController.text.trim().isEmpty;
 
+                                if (noChanges) {
+                                  Navigator.pop(context);
+                                  return;
+                                }
+
+                                controller.saveData(context, widget.id, widget.role);
+                              }
+                            },
+                            verticalPadding: 15,
+                            horizontalPadding: 50,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-
-          // Botón de retroceso arriba a la izquierda
           Positioned(
             top: 16,
             left: 16,
             child: InkWell(
               borderRadius: BorderRadius.circular(40),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/ajustes'); // Ajusta la ruta si es necesario
-              },
+              onTap: () => Navigator.pop(context),
               hoverColor: Colors.white.withOpacity(0.1),
               child: Icon(Icons.arrow_back, color: Colors.white, size: 28),
             ),
@@ -190,4 +160,31 @@ class _DataModificationState extends State<DataModification> {
     );
   }
 
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    bool readOnly = false,
+    String? helperText,
+    FormFieldValidator<String>? validator,
+    GestureTapCallback? onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        readOnly: readOnly,
+        onTap: onTap,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.black),
+          labelText: label,
+          helperText: helperText,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        validator: validator,
+      ),
+    );
+  }
 }

@@ -13,7 +13,7 @@ public class VictimRepository : IVictimRepository {
             INSERT INTO victim (email, password, name, surname, prefix, phone_number, address, identification, location_id) 
             VALUES (@email, @password, @name, @surname, @prefix, @phone_number, @address, @identification, @location_id)
             RETURNING *";
-		
+
 		return await connection.QuerySingleAsync<Victim>(sql, victim);
 	}
 
@@ -22,7 +22,7 @@ public class VictimRepository : IVictimRepository {
 		const string sql = "DELETE FROM victim WHERE id = @id";
 
 		int rowsAffected = await connection.ExecuteAsync(sql, new { id });
-        return rowsAffected > 0;
+		return rowsAffected > 0;
 	}
 
 	public async Task<IEnumerable<Victim>> GetAllVictimsAsync() {
@@ -40,9 +40,9 @@ public class VictimRepository : IVictimRepository {
 		const string sql = "SELECT * FROM victim WHERE email = @email";
 
 		return await connection.QuerySingleOrDefaultAsync<Victim>(sql, new { email });
-		
+
 	}
-		public async Task<Victim> UpdateVictimAsync(Victim victim) {
+	public async Task<Victim> UpdateVictimAsync(Victim victim) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
             UPDATE victim 
@@ -57,12 +57,11 @@ public class VictimRepository : IVictimRepository {
 				location_id = @location_id
             WHERE id = @id
             RETURNING *";
-		
+
 		return await connection.QuerySingleAsync<Victim>(sql, victim);
 	}
 
-	public async Task<UrgencyLevel> GetVictimMaxUrgencyLevelByIdAsync(int victimId)
-	{
+	public async Task<UrgencyLevel> GetVictimMaxUrgencyLevelByIdAsync(int victimId) {
 		using var connection = new NpgsqlConnection(connectionString);
 		const string sql = @"
 			SELECT COALESCE(MAX(n.urgency_level::text), 'Unknown')
@@ -72,5 +71,5 @@ public class VictimRepository : IVictimRepository {
 
 		var result = await connection.QuerySingleOrDefaultAsync<string>(sql, new { victimId });
 		return Enum.Parse<UrgencyLevel>(result);
-    }
+	}
 }

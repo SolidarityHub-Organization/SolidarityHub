@@ -17,12 +17,18 @@ namespace LogicPersistence.Api.Controllers
         }
 
         [HttpGet("dashboard/activity-log")]
-        public async Task<IActionResult> GetActivityLogData([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        public async Task<IActionResult> GetActivityLogData([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             try
             {
-                var data = await _dashboardServices.GetActivityLogDataAsync(fromDate, toDate);
-                return Ok(data);
+                var (activityLog, totalCount) = await _dashboardServices.GetPaginatedActivityLogDataAsync(fromDate, toDate, page, size);
+                return Ok(new {
+                    activityLog,
+                    totalCount,
+                    page,
+                    size,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)size)
+                });
             }
             catch (InvalidOperationException ex)
             {

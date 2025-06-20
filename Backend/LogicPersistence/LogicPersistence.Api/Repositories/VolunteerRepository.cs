@@ -80,17 +80,21 @@ public class VolunteerRepository : IVolunteerRepository {
         ),
         volunteer_time AS (
             SELECT
-                vt.volunteer_id,
-                json_agg(
-                    json_build_object(
-                        'id', vt.id,
-                        'start_time', vt.start_time,
-                        'end_time', vt.end_time,
-                        'day', vt.day
-                    )
-                ) FILTER (WHERE vt.id IS NOT NULL) AS times
-            FROM volunteer_time vt
-            GROUP BY vt.volunteer_id
+                v.id as volunteer_id,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id', vt.id,
+                            'start_time', vt.start_time,
+                            'end_time', vt.end_time,
+                            'day', vt.day
+                        )
+                    ) FILTER (WHERE vt.id IS NOT NULL),
+                    '[]'
+                ) AS times
+            FROM volunteer v
+            LEFT JOIN volunteer_time vt ON v.id = vt.volunteer_id
+            GROUP BY v.id
         ),
         volunteer_locations AS (
             SELECT
