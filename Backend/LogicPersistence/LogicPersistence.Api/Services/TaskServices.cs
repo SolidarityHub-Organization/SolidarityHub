@@ -260,34 +260,37 @@ namespace LogicPersistence.Api.Services {
 				"created_at DESC, id DESC");
 		}
 
+		// public async Task<(IEnumerable<TaskForDashboardDto> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
+		// 	GeneralServices.ValidateDates(fromDate, toDate);
+
+		// 	var tasks = await _taskRepository.GetAllTasksAsync() ?? throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
+		// 	var filteredTasks = tasks.Where(t => t.created_at >= fromDate && t.created_at <= toDate).ToList();
+
+		// 	var totalCount = filteredTasks.Count;
+		// 	if (totalCount == 0) { return (Enumerable.Empty<TaskForDashboardDto>(), 0); }
+
+		// 	var paginatedTasks = filteredTasks
+		// 		.OrderByDescending(t => t.created_at)
+		// 		.Skip((page - 1) * size)
+		// 		.Take(size)
+		// 		.ToList();
+
+		// 	var result = new List<TaskForDashboardDto>();
+		// 	foreach (var task in paginatedTasks) { result.Add(await CreateTaskForDashboardDto(task)); }
+
+		// 	return (result, totalCount);
+		// }
+		
 		public async Task<(IEnumerable<TaskForDashboardDto> Tasks, int TotalCount)> GetPaginatedTasksForDashboardAsync(DateTime fromDate, DateTime toDate, int page, int size) {
-			GeneralServices.ValidateDates(fromDate, toDate);
-			var tasks = await _taskRepository.GetAllTasksAsync() ?? throw new InvalidOperationException("Failed to retrieve tasks for dashboard.");
-
-			var filteredTasks = tasks.Where(t => t.created_at >= fromDate && t.created_at <= toDate).ToList();
-			var totalCount = filteredTasks.Count;
-
-			if (totalCount == 0) { return (Enumerable.Empty<TaskForDashboardDto>(), 0); }
-
-			var paginatedTasks = filteredTasks
-				.OrderByDescending(t => t.created_at)
-				.Skip((page - 1) * size)
-				.Take(size)
-				.ToList();
-
-			var result = new List<TaskForDashboardDto>();
-			foreach (var task in paginatedTasks) { result.Add(await CreateTaskForDashboardDto(task)); }
-
-			return (result, totalCount);
+			return await _taskRepository.GetTasksForDashboardPaginatedByDateRangeAsync(fromDate, toDate, page, size);
 		}
 
 		public async Task<(IEnumerable<Volunteer> Volunteers, int TotalCount)> GetTaskVolunteersPaginatedByDateRangeAsync(
-			int taskId, 
-			DateTime fromDate, 
-			DateTime toDate, 
-			int pageNumber, 
-			int pageSize)
-		{
+			int taskId,
+			DateTime fromDate,
+			DateTime toDate,
+			int pageNumber,
+			int pageSize) {
 			return await _paginationService.GetPaginatedRelatedEntitiesByDateRangeAsync<Volunteer>(
 				pageNumber,
 				pageSize,

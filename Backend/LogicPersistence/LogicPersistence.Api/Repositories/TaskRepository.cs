@@ -486,6 +486,58 @@ public class TaskRepository : ITaskRepository {
 
         return await connection.QueryAsync<Skill>(sql, new { taskId });
     }
+
+    public async Task<(IEnumerable<TaskForDashboardDto> Items, int TotalCount)> GetTasksForDashboardPaginatedByDateRangeAsync(DateTime fromDate, DateTime toDate, int pageNumber, int pageSize) {
+        using var connection = new NpgsqlConnection(connectionString);
+    
+        const string sql = @"
+        SELECT 
+            t.id,
+            t.name,
+            t.start_date,
+            t.end_date,
+            l.latitude,
+            l.longitude,
+            COALESCE(MAX(n.urgency_level::text), 'Unknown') as urgency_level,
+            COALESCE(
+                (SELECT DISTINCT state::text
+                 FROM (
+                     SELECT vt.state
+                     FROM volunteer_task vt
+                     WHERE vt.task_id = t.id AND vt.state IS NOT NULL
+                     UNION
+                     SELECT vit.state
+                     FROM victim_task vit
+                     WHERE vit.task_id = t.id AND vit.state IS NOT NULL
+                 ) combined
+                 LIMIT 1), 'Unknown'
+            ) as state
+        FROM task t
+        JOIN location l ON t.location_id = l.id
+        LEFT JOIN need_task nt ON t.id = nt.task_id
+        LEFT JOIN need n ON nt.need_id = n.id
+        WHERE t.created_at BETWEEN @fromDate AND @toDate
+        GROUP BY t.id, t.name, t.start_date, t.end_date, 
+                 l.latitude, l.longitude
+        ORDER BY t.start_date DESC, t.id DESC
+        LIMIT @pageSize OFFSET @offset";
+
+        var tasks = (await connection.QueryAsync<TaskForDashboardDto>(sql, new { 
+            fromDate, 
+            toDate, 
+            pageSize, 
+            offset = (pageNumber - 1) * pageSize 
+        })).ToList();
+
+        const string countSql = @"
+        SELECT COUNT(DISTINCT t.id)
+        FROM task t
+        WHERE t.created_at BETWEEN @fromDate AND @toDate";
+
+        var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { fromDate, toDate });
+
+        return (tasks, totalCount);
+    }
     
     public async System.Threading.Tasks.Task AssignVolunteersToTaskAsync(int taskId, List<int> volunteerIds, State st)
     {

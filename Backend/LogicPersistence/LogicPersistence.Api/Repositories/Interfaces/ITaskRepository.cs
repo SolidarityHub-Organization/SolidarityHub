@@ -23,4 +23,6 @@ public interface ITaskRepository {
 	Task<Location> GetTaskLocationAsync(int taskId);
 	Task<IEnumerable<Skill>> GetTaskSkillsAsync(int taskId);
 	System.Threading.Tasks.Task AssignVolunteersToTaskAsync(int taskId, List<int> volunteerIds, State st);
+	Task<(IEnumerable<TaskForDashboardDto> Items, int TotalCount)> GetTasksForDashboardPaginatedByDateRangeAsync(DateTime fromDate, DateTime toDate, int pageNumber, int pageSize);
+	
 }
