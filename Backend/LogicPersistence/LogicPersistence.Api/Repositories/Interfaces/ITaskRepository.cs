@@ -22,5 +22,6 @@ public interface ITaskRepository {
 	Task<Models.Task> UpdateTaskStateForVolunteerAsync(int volunteerId, int taskId, string state);
 	Task<Location> GetTaskLocationAsync(int taskId);
 	Task<IEnumerable<Skill>> GetTaskSkillsAsync(int taskId);
+	Task<(IEnumerable<TaskForDashboardDto> Items, int TotalCount)> GetTasksForDashboardPaginatedByDateRangeAsync(DateTime fromDate, DateTime toDate, int pageNumber, int pageSize);
 	
 }
