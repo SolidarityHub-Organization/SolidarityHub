@@ -15,12 +15,21 @@ public class AffectedZoneRepository : IAffectedZoneRepository {
 
 	public async Task<AffectedZone> CreateAffectedZoneAsync(AffectedZone affectedZone) {
 		using var connection = new NpgsqlConnection(connectionString);
+    
+		// Create parameters manually
+		var parameters = new DynamicParameters();
+		parameters.Add("name", affectedZone.name);
+		parameters.Add("description", affectedZone.description);
+		parameters.Add("hazard_level", affectedZone.hazard_level.ToString());  // Convert enum to string
+		parameters.Add("admin_id", affectedZone.admin_id);
+    
+		// Add explicit cast to hazard_level enum type
 		const string sql = @"
-            INSERT INTO affected_zone (name, description, hazard_level, admin_id)
-            VALUES (@name, @description, @hazard_level, @admin_id)
-            RETURNING *";
+			INSERT INTO affected_zone (name, description, hazard_level, admin_id)
+			VALUES (@name, @description, @hazard_level::hazard_level, @admin_id)
+			RETURNING *";
 
-		return await connection.QuerySingleAsync<AffectedZone>(sql, affectedZone);
+		return await connection.QuerySingleAsync<AffectedZone>(sql, parameters);
 	}
 
 	public async Task<bool> DeleteAffectedZoneAsync(int id) {

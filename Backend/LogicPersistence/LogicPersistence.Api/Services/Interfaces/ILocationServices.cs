@@ -10,6 +10,7 @@ namespace LogicPersistence.Api.Services {
 		Task<IEnumerable<Location>> GetAllLocationsAsync();
 		Task<IEnumerable<AffectedZone>> GetAffectedZoneByLocationIdAsync(int id);
 		Task<(IEnumerable<Location> Locations, int TotalCount)> GetPaginatedLocationsAsync(int pageNumber, int pageSize);
-
+		Task<bool> CreateLocationsByAffectedZoneIdAsync(int affectedZoneId, IEnumerable<Location> locations);
+		Task<bool> DeleteLocationsByAffectedZoneIdAsync(int affectedZoneId);
 		}
 	}

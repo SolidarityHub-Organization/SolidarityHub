@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -66,10 +68,44 @@ class MapScreenController extends ChangeNotifier {
 
   // Polígonos para el mapa de calor
   List<MapPolygon> _polygons = [];
+  // Add these new variables for drawing
+  bool _isDrawingMode = false;
+  List<LatLng> _currentDrawingPoints = [];
+  List<List<LatLng>> _drawnPolygons = [];
+  String _selectedHazardLevel = 'medium'; // default hazard level
+
+  // For tracking timestamps of drawn points
+  List<DateTime> _pointTimestamps = [];
+  
+  // Mock functionality properties
+  List<String> _mockMessages = [];
+  List<Map<String, dynamic>> _mockZones = [];
+
+  // Add these fields to your controller class
+  bool _showSuccessAnimation = false;
+  Timer? _successAnimationTimer;
+  double _animationOpacity = 1.0;
+
+  // Add this property
+  LatLng? _previewPoint;
+
+  // Add near the other boolean flags
+  bool _isDeleteZoneMode = false;
+
+  // Add these properties to your controller
+  bool _isZoneButtonExpanded = false;
+  bool get isZoneButtonExpanded => _isZoneButtonExpanded;
+
   // Getters
   Set<MapViewMode> get selectedModes => _selectedModes;
   IMapComponent? get selectedMarker => _selectedMarker;
   bool get isHeatMapActive => _isHeatMapActive;
+  void set isHeatMapActive(bool value) {
+    if (_isHeatMapActive != value) {
+      _isHeatMapActive = value;
+      notifyListeners();
+    }
+  }
   bool get isRouteMapActive => _isRouteMapActive;
   double get currentZoom => _currentZoom;
   List<MapPolygon> get polygons => _polygons;
@@ -79,8 +115,17 @@ class MapScreenController extends ChangeNotifier {
   TypeofRoute? get selectedRouteType => _selectedRouteType;
   double? get routeDistance => _routeDistance;
   double? get routeDuration => _routeDuration;
-  RouteResult? get routeResult => _routeResult;
-  
+  RouteResult? get routeResult => _routeResult;  // Make sure these getters are properly exposing the state
+  bool get isDrawingMode => _isDrawingMode;
+  bool get showSuccessAnimation => _showSuccessAnimation;
+  double get animationOpacity => _animationOpacity;
+  List<LatLng> get currentDrawingPoints => _currentDrawingPoints;
+  List<List<LatLng>> get drawnPolygons => _drawnPolygons;
+  String get selectedHazardLevel => _selectedHazardLevel;
+  List<String> get mockMessages => _mockMessages;
+  List<Map<String, dynamic>> get mockZones => _mockZones;
+  LatLng? get previewPoint => _previewPoint; // Add a getter
+  bool get isDeleteZoneMode => _isDeleteZoneMode; // Add to getters
 
   // Constructor
   MapScreenController();
@@ -131,21 +176,24 @@ class MapScreenController extends ChangeNotifier {
 
   // Generar los polígonos para el mapa de calor
   Future<void> _generateHeatMap() async {
-    try {
-      // Obtener las zonas afectadas del servicio
-      final List<Map<String, dynamic>> affectedZones = await AffectedZoneServices.fetchAffectedZones();
+  try {
+    // Obtener las zonas afectadas del servicio
+    final List<Map<String, dynamic>> zones = await AffectedZoneServices.fetchAffectedZones();
+    
+    // Set the affectedZones property for use in other places
+    affectedZones = zones;
+    
+    // Convertir las zonas afectadas a polígonos para el mapa
+    _polygons = _convertAffectedZonesToPolygons(zones);
 
-      // Convertir las zonas afectadas a polígonos para el mapa
-      _polygons = _convertAffectedZonesToPolygons(affectedZones);
-
-      // Notificar a los oyentes para actualizar la UI
-      notifyListeners();
-    } catch (e) {
-      print('Error cargando zonas afectadas: $e');
-      // Si hay error, usar polígonos de ejemplo como fallback
-      _polygons = _createSampleHeatMap();
-      notifyListeners();
-    }
+    // Notificar a los oyentes para actualizar la UI
+    notifyListeners();
+  } catch (e) {
+    print('Error cargando zonas afectadas: $e');
+    // Si hay error, usar polígonos de ejemplo como fallback
+    _polygons = _createSampleHeatMap();
+    notifyListeners();
+  }
   }
 
   void setRouteType(TypeofRoute type) {
@@ -244,6 +292,11 @@ bool _isPointInAffectedZone(LatLng point, List<List<LatLng>> affectedZones) {
     }
   }
   return false;
+}
+
+// Helper method to compare two LatLng points for equality
+bool _pointsAreEqual(LatLng a, LatLng b) {
+  return a.latitude == b.latitude && a.longitude == b.longitude;
 }
 
 // Add this method for point-in-polygon calculation
@@ -631,9 +684,717 @@ bool _isPointInPolygon(LatLng point, List<LatLng> polygonPoints) {
       print('Error cargando puntos de recogida: $e');
     }
   }
+  // Toggle drawing mode
+  void toggleDrawingMode(BuildContext context) {
+    _isDrawingMode = !_isDrawingMode;
+    if (_isDrawingMode) {
+      _currentDrawingPoints.clear();
+    } else {
+      _currentDrawingPoints.clear();
+    }
+    notifyListeners();
+  }
+
+  // Set hazard level
+  void setHazardLevel(String level) {
+    _selectedHazardLevel = level;
+    notifyListeners();
+  }
+  // Handle tap when in drawing mode (legacy, consider removing if not needed)
+    void handleDrawingTap(LatLng point, BuildContext context) {
+      if (_isDrawingMode) {
+        // Check for intersections
+        if (_currentDrawingPoints.isNotEmpty && _wouldCreateSelfIntersection(point)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('La línea no puede cruzarse con otra línea existente'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      
+        _currentDrawingPoints.add(point);
+        notifyListeners();
+      }
+    }
+
+    // Check if adding a new point would create ANY self-intersection in the polygon
+    bool _wouldCreateSelfIntersection(LatLng newPoint) {
+      print("\n---- CHECKING FOR INTERSECTIONS ----");
+      print("New point: ${newPoint.latitude}, ${newPoint.longitude}");
+      print("Total existing points: ${_currentDrawingPoints.length}");
+      
+      // We need at least 2 points to check for intersections
+      if (_currentDrawingPoints.length < 2) {
+        print("Not enough points to check for intersections");
+        return false;
+      }
+      
+      LatLng lastPoint = _currentDrawingPoints.last;
+      LatLng firstPoint = _currentDrawingPoints.first;
+      
+      // Print all existing segments
+      print("\nEXISTING SEGMENTS:");
+      for (int i = 0; i < _currentDrawingPoints.length - 1; i++) {
+        print("Segment $i: point[$i] to point[${i+1}]");
+      }
+      
+      int lastSegmentIndex = _currentDrawingPoints.length - 2;
+      print("\nLast segment index: $lastSegmentIndex");
+      
+      // CHECK 1: Line from last point to new point
+      print("\nCHECK 1: Line from last point to new point");
+      for (int i = 0; i < _currentDrawingPoints.length - 1; i++) {
+        // Skip ONLY the last segment (which ends at lastPoint - they share an endpoint)
+        if (i == lastSegmentIndex) {
+          print("Skipping segment $i (it ends at the last point - shared endpoint)");
+          continue;
+        }
+        
+        LatLng segStart = _currentDrawingPoints[i];
+        LatLng segEnd = _currentDrawingPoints[i + 1];
+        
+        bool intersects = _lineSegmentsIntersect(lastPoint, newPoint, segStart, segEnd);
+        print("Check new line against segment $i: " + (intersects ? "INTERSECTS ⚠️" : "clear"));
+        
+        if (intersects) {
+          print("INTERSECTION FOUND: New line crosses segment $i");
+          return true;
+        }
+      }
+      
+      // CHECK 2: Line from new point to first point (closing segment)
+      print("\nCHECK 2: Line from new point to first point (closing segment)");
+      for (int i = 0; i < _currentDrawingPoints.length - 1; i++) {
+        // For the closing segment (newPoint → firstPoint), we only skip:
+        // - Segment 0: because it STARTS from firstPoint (shared endpoint with closing line)
+        // - We do NOT skip the last segment because the closing line doesn't share any endpoints with it
+    
+        if (i == 0) {
+          print("Skipping segment $i (starts from first point - shared endpoint with closing line)");
+          continue;
+        }
+        
+        // DO NOT SKIP THE LAST SEGMENT - it should be checked!
+        LatLng segStart = _currentDrawingPoints[i];
+        LatLng segEnd = _currentDrawingPoints[i + 1];
+        
+        bool intersects = _lineSegmentsIntersect(newPoint, firstPoint, segStart, segEnd);
+        print("Check closing line against segment $i: " + (intersects ? "INTERSECTS ⚠️" : "clear"));
+        
+        if (intersects) {
+          print("INTERSECTION FOUND: Closing line crosses segment $i");
+          return true;
+        }
+      }
+      
+      print("\nNO INTERSECTIONS DETECTED ✓");
+      return false;
+    }
+
+    // Finish drawing and save polygon
+  Future<void> finishDrawing(BuildContext context) async {
+    if (_currentDrawingPoints.length >= 3) {
+      // Show dialog to get zone details
+      await _showZoneDetailsDialog(context);
+    }
+  }
+
+  // Show dialog to get zone details
+  Future<void> _showZoneDetailsDialog(BuildContext context) async {
+    String zoneName = '';
+    String zoneDescription = '';
+    
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Detalles de la Zona Afectada'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Nombre de la zona',
+                  hintText: 'Ej: Zona inundada centro',
+                ),
+                onChanged: (value) => zoneName = value,
+              ),
+              SizedBox(height: 16),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Descripción',
+                  hintText: 'Describe el tipo de afectación',
+                ),
+                maxLines: 3,
+                onChanged: (value) => zoneDescription = value,
+              ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedHazardLevel,
+                decoration: InputDecoration(labelText: 'Nivel de peligro'),
+                items: [
+                  DropdownMenuItem(value: 'low', child: Text('Bajo')),
+                  DropdownMenuItem(value: 'medium', child: Text('Medio')),
+                  DropdownMenuItem(value: 'high', child: Text('Alto')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    _selectedHazardLevel = value;
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _cancelDrawing();
+              },
+              child: Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                if (zoneName.isNotEmpty) {
+                  await _saveAffectedZone(context, zoneName, zoneDescription);
+                }
+              },
+              child: Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  // Mock save affected zone (doesn't save to database)
+  Future<void> _saveAffectedZone(BuildContext context, String name, String description) async {
+    try {
+      // Create zone data
+      Map<String, dynamic> zoneData = {
+        'name': name,
+        'description': description,
+        'hazard_level': _selectedHazardLevel, // String values "Low", "Medium", etc.
+        'admin_id': 1,
+      };
+
+      // Create points data
+      List<Map<String, dynamic>> points = _currentDrawingPoints.map((point) => {
+        'latitude': point.latitude,
+        'longitude': point.longitude,
+      }).toList();
+
+      // Call the API service to create the zone with locations
+      bool success = await LocationServices.createZoneWithLocations(zoneData, points);
+
+      if (success) {
+        print("Zone created successfully, starting animation"); // Debug print
+        
+        // Start animation - MAKE SURE THIS IS CALLED
+        _startSuccessAnimation();
+        _isDrawingMode = false;
+        
+        // Refresh to show the newly created zone
+        if (_isHeatMapActive) {
+          _generateHeatMap();
+        }
+        
+        notifyListeners();
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al crear la zona afectada'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error creating affected zone: $e');
+    }
+  }
+
+  // Convert string hazard levels to integers
+  int getHazardLevelValue(String level) {
+    switch(level) {
+      case 'low': return 1;
+      case 'medium': return 2;
+      case 'high': return 3;
+      default: return 1;
+    }
+  }
+
+  // Add mock message to the list
+  void _addMockMessage(String message, {bool isSuccess = true}) {
+    String timestamp = DateTime.now().toString().substring(11, 19); // HH:MM:SS
+    String formattedMessage = '[$timestamp] $message';
+    _mockMessages.add(formattedMessage);
+    
+    // Keep only the last 10 messages
+    if (_mockMessages.length > 10) {
+      _mockMessages.removeAt(0);
+    }
+    
+    notifyListeners();
+  }
+
+  // Clear all mock messages
+  void clearMockMessages() {
+    _mockMessages.clear();
+    notifyListeners();
+  }
+
+  // Clear all mock zones
+  void clearMockZones() {
+    _mockZones.clear();
+    _drawnPolygons.clear();
+    notifyListeners();
+  }
+
+  // Cancel current drawing
+  void _cancelDrawing() {
+    _currentDrawingPoints.clear();
+    _isDrawingMode = false;
+    notifyListeners();
+  }
+
+  // Undo last point
+  void undoLastPoint(BuildContext context) {
+    if (_currentDrawingPoints.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No hay puntos para deshacer')),
+      );
+      return;
+    }
+    
+    _currentDrawingPoints.removeLast();
+    notifyListeners();
+  }
 
   @override
   void dispose() {
+    _successAnimationTimer?.cancel();
     super.dispose();
   }
+
+  // Refresh affected zones data
+  Future<void> refreshAffectedZones() async {
+    if (_isHeatMapActive) {
+      await _generateHeatMap();
+    }
+  }
+
+  // Animation control methods
+void _startSuccessAnimation() {
+  _showSuccessAnimation = true;
+  _animationOpacity = 1.0;
+  
+  // Start with an immediate refresh of the heatmap
+  _generateHeatMap();
+  
+  notifyListeners();
+  
+  // Cancel any existing timer
+  _successAnimationTimer?.cancel();
+  
+  // Use a faster animation (10 steps over 0.8 seconds = 80ms per step)
+  final totalSteps = 10;
+  final fadeTime = 800; // 0.8 seconds
+  final stepTime = fadeTime ~/ totalSteps;
+  int currentStep = 0;
+  
+  _successAnimationTimer = Timer.periodic(Duration(milliseconds: stepTime), (timer) {
+    currentStep++;
+    // Calculate opacity based on remaining steps (smooth fade out)
+    _animationOpacity = 1.0 - (currentStep / totalSteps);
+    notifyListeners();
+    
+    if (currentStep >= totalSteps) {
+      // When fully transparent, clean up
+      _successAnimationTimer?.cancel();
+      _successAnimationTimer = null;
+      _showSuccessAnimation = false;
+      _currentDrawingPoints = [];
+      notifyListeners();
+    }
+  });
+}
+
+// Add this new animation method near _startSuccessAnimation
+void _startDeleteAnimation(List<LatLng> zonePoints) {
+  // Store the polygons to animate
+  selectedZonePolygon = zonePoints;
+  _showDeleteAnimation = true;
+  _animationOpacity = 1.0;
+  
+  // Start with an immediate refresh of the heatmap data in the background
+  // This ensures the data is updated even if animation fails
+  _generateHeatMap();
+  
+  notifyListeners();
+  
+  // Cancel any existing timer
+  _deleteAnimationTimer?.cancel();
+  
+  // Use a faster animation (10 steps over 0.8 seconds = 80ms per step)
+  final totalSteps = 10;
+  final fadeTime = 800; // 0.8 seconds
+  final stepTime = fadeTime ~/ totalSteps;
+  int currentStep = 0;
+  
+  _deleteAnimationTimer = Timer.periodic(Duration(milliseconds: stepTime), (timer) {
+    currentStep++;
+    // Calculate opacity based on remaining steps (smooth fade out)
+    _animationOpacity = 1.0 - (currentStep / totalSteps);
+    notifyListeners();
+    
+    if (currentStep >= totalSteps) {
+      // When fully transparent, clean up
+      _deleteAnimationTimer?.cancel();
+      _deleteAnimationTimer = null;
+      _showDeleteAnimation = false;
+      selectedZonePolygon = null;
+      notifyListeners();
+    }
+  });
+}
+
+// Add these properties near the other animation properties
+bool _showDeleteAnimation = false;
+Timer? _deleteAnimationTimer;
+
+// Add these getters
+bool get showDeleteAnimation => _showDeleteAnimation;
+
+  // More accurate line segment intersection detection
+bool _lineSegmentsIntersect(LatLng p1, LatLng p2, LatLng p3, LatLng p4) {
+  // Skip if endpoints are the same (connected segments)
+  if ((p1.latitude == p3.latitude && p1.longitude == p3.longitude) ||
+      (p1.latitude == p4.latitude && p1.longitude == p4.longitude) ||
+      (p2.latitude == p3.latitude && p2.longitude == p3.longitude) ||
+      (p2.latitude == p4.latitude && p2.longitude == p4.longitude)) {
+    return false;
+  }
+  
+  // Direction vectors
+  double d1x = p2.longitude - p1.longitude;
+  double d1y = p2.latitude - p1.latitude;
+  double d2x = p4.longitude - p3.longitude;
+  double d2y = p4.latitude - p3.latitude;
+  
+  // Calculate determinant
+  double det = d1x * d2y - d1y * d2x;
+  
+  // If determinant is zero, lines are parallel
+  if (det.abs() < 1e-10) return false;
+  
+  // Calculate parameters of intersection
+  double dx = p3.longitude - p1.longitude;
+  double dy = p3.latitude - p1.latitude;
+  
+  double t = (dx * d2y - dy * d2x) / det;
+  double s = (dx * d1y - dy * d1x) / det;
+  
+  // Check if intersection is within both line segments
+  return (t > 0 && t < 1 && s > 0 && s < 1);
+}
+
+// Delete an affected zone by ID
+Future<bool> deleteAffectedZone(int zoneId, BuildContext context, {List<LatLng>? zonePoints}) async {
+  try {
+    print("Deleting zone $zoneId"); // Debug print
+    
+    // Call the service to delete the zone
+    bool success = await LocationServices.deleteZoneWithLocations(zoneId);
+    print("Delete success: $success"); // Debug print
+    
+    if (success) {
+      // 1. Clear selected marker first
+      clearSelectedMarker();
+      
+      // 2. Start delete animation if we have the zone points
+      if (zonePoints != null && zonePoints.isNotEmpty) {
+        _startDeleteAnimation(zonePoints);
+      } else {
+        // If no points provided, just refresh the heatmap
+        await _generateHeatMap();
+      }
+      return true;
+    }
+    return false;
+  } catch (e) {
+    print('Error deleting zone: $e');
+    return false;
+  }
+}
+
+// Get all affected zones with details for management
+Future<List<Map<String, dynamic>>> getAllAffectedZones() async {
+  try {
+    return await AffectedZoneServices.fetchAffectedZones();
+  } catch (e) {
+    print('Error fetching affected zones: $e');
+    return [];
+  }
+}
+
+// Show dialog to manage (view/delete) affected zones
+Future<void> showZoneManagementDialog(BuildContext context) async {
+  List<Map<String, dynamic>> zones = await getAllAffectedZones();
+  
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Gestionar Zonas Afectadas'),
+            content: Container(
+              width: double.maxFinite,
+              height: 400,
+              child: zones.isEmpty 
+                ? Center(child: Text('No hay zonas afectadas'))
+                : ListView.builder(
+                    itemCount: zones.length,
+                    itemBuilder: (context, index) {
+                      final zone = zones[index];
+                      final hazardLevel = zone['hazard_level']?.toString() ?? 'unknown';
+                      
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 4),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: _getHazardColor(hazardLevel),
+                            child: Icon(
+                              Icons.warning,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                          title: Text(zone['name'] ?? 'Sin nombre'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(zone['description'] ?? 'Sin descripción'),
+                              Text(
+                                'Nivel: ${_translateHazardLevel(hazardLevel)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _getHazardColor(hazardLevel),
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              // Confirm deletion
+                              bool confirm = await _showDeleteConfirmation(
+                                context, 
+                                zone['name'] ?? 'esta zona'
+                              );
+                              
+                              if (confirm) {
+                                bool deleted = await deleteAffectedZone(
+                                  zone['id'], 
+                                  context
+                                );
+                                
+
+                                if (deleted) {
+                                  // Remove from local list and refresh dialog
+                                  setState(() {
+                                    zones.removeAt(index);
+                                  });
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Cerrar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
+// Show confirmation dialog for deletion
+Future<bool> _showDeleteConfirmation(BuildContext context, String zoneName) async {
+  return await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Confirmar Eliminación'),
+        content: Text('¿Estás seguro de que quieres eliminar "$zoneName"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('Eliminar'),
+          ),
+        ],
+      );
+    },
+  ) ?? false;
+}
+
+// Helper method to get hazard level color
+Color _getHazardColor(String hazardLevel) {
+  switch (hazardLevel.toLowerCase()) {
+    case 'high':
+    case 'alto':
+    case '3':
+      return Colors.red;
+    case 'medium':
+    case 'medio':
+    case '2':
+      return Colors.orange;
+    case 'low':
+    case 'bajo':
+    case '1':
+      return Colors.yellow;
+    default:
+      return Colors.grey;
+  }
+}
+
+// Helper method to translate hazard level
+String _translateHazardLevel(String hazardLevel) {
+  switch (hazardLevel.toLowerCase()) {
+    case 'high':
+    case '3':
+      return 'Alto';
+    case 'medium':
+    case '2':
+      return 'Medio';
+    case 'low':
+    case '1':
+      return 'Bajo';
+    default:
+      return 'Desconocido';
+  }
+}
+
+List<LatLng>? selectedZonePolygon;
+
+void selectZonePolygon(List<LatLng> polygon) {
+  selectedZonePolygon = polygon;
+  notifyListeners();
+}
+
+void clearSelectedZonePolygon() {
+  selectedZonePolygon = null;
+  notifyListeners();
+}
+
+Future<void> regenerateHeatMap() async {
+  await _generateHeatMap();
+}
+
+List<Map<String, dynamic>> affectedZones = [];
+
+// Add this method
+void toggleZoneMode(BuildContext context) {
+  // If we were in delete mode, exit it
+  if (_isDeleteZoneMode) {
+    _isDeleteZoneMode = false;
+    _isDrawingMode = false;
+    clearSelectedZonePolygon();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Modo normal activado'))
+    );
+  }
+  // If we were in draw mode, switch to delete mode
+  else if (_isDrawingMode) {
+    _isDrawingMode = false;
+    _isDeleteZoneMode = true;
+    _currentDrawingPoints.clear();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Modo eliminar zona activado. Toca una zona para eliminarla.'))
+    );
+  }
+  // If we were in normal mode, switch to draw mode
+  else {
+    _isDrawingMode = true;
+    _isDeleteZoneMode = false;
+    _currentDrawingPoints.clear();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Modo dibujar zona activado. Toca el mapa para añadir puntos.'))
+    );
+  }
+  notifyListeners();
+}
+
+// Add this method to handle clicks on zones for deletion
+Future<void> handleZoneClick(int zoneId, String zoneName, BuildContext context, {List<LatLng>? zonePoints}) async {
+  if (!_isDeleteZoneMode) return;
+  
+  // Show confirmation dialog
+  bool confirmed = await _showDeleteConfirmation(context, zoneName);
+  
+  if (confirmed) {
+    bool success = await deleteAffectedZone(zoneId, context, zonePoints: zonePoints);
+    
+    if (success) {
+      // No snackbar needed since we have a visual animation
+      clearSelectedZonePolygon();
+      // Stay in delete mode so user can delete more zones if needed
+    }
+  }
+}
+
+// Add these methods to your controller
+void toggleZoneButtonExpanded() {
+  _isZoneButtonExpanded = !_isZoneButtonExpanded;
+  notifyListeners();
+}
+
+void startDrawingMode() {
+  _isDrawingMode = true;
+  _isDeleteZoneMode = false;
+  _currentDrawingPoints.clear();
+  notifyListeners();
+}
+
+void startDeleteMode() {
+  _isDeleteZoneMode = true;
+  _isDrawingMode = false;
+  _currentDrawingPoints.clear();
+  notifyListeners();
+}
+
+void cancelDrawing() {
+  _isDrawingMode = false;
+  _currentDrawingPoints.clear();
+  notifyListeners();
+}
+
+void cancelDeleteMode() {
+  _isDeleteZoneMode = false;
+  notifyListeners();
+}
+
+void cancelAllZoneModes() {
+  _isDrawingMode = false;
+  _isDeleteZoneMode = false;
+  _isZoneButtonExpanded = false;
+  _currentDrawingPoints.clear();
+  notifyListeners();
+}
 }

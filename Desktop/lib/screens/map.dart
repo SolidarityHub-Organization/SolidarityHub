@@ -11,6 +11,7 @@ import 'package:solidarityhub/widgets/map/factory_method_markers/marker_factory.
 import 'package:solidarityhub/models/imap_component.dart';
 import 'package:solidarityhub/models/mapMarkerCluster.dart';
 import 'package:solidarityhub/models/mapMarker.dart';
+import 'package:solidarityhub/widgets/map/drawing_controls.dart';
 
 class MapScreen extends StatefulWidget {
   final double? lat;
@@ -79,24 +80,29 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
           _isDataLoaded ? _buildResponsiveLayout(context, infoPanelWidth) : Center(child: CircularProgressIndicator()),
     );
   }
-
   Widget _buildResponsiveLayout(BuildContext context, double infoPanelWidth) {
-    return Row(
-      children: [        // Contenedor principal del mapa que se ajusta cuando se abre el panel
-        Expanded(child: _buildMapWithOverlays(context, _screenController)),
+    return Column(
+      children: [
+        // Main map area
+        Expanded(
+          child: Row(
+            children: [              // Contenedor principal del mapa que se ajusta cuando se abre el panel
+              Expanded(child: _buildMapWithOverlays(context, _screenController)),
 
-        // Panel de información con animación
-        AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          width: _screenController.selectedMarker != null ? infoPanelWidth : 0,
-          curve: Curves.easeInOut,
-          child:
-              _screenController.selectedMarker != null
-                  ? MapInfoPanel(
-                      component: _screenController.selectedMarker!,
-                      onClose: () => _screenController.clearSelectedMarker(),
-                    )
-                  : Container(), // Contenedor vacío cuando no hay marcador seleccionado
+              // Panel de información con animación
+              AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                width: _screenController.selectedMarker != null ? infoPanelWidth : 0,
+                curve: Curves.easeInOut,
+                child:
+                    _screenController.selectedMarker != null
+                        ? MapInfoPanel(
+                            component: _screenController.selectedMarker!,
+                            onClose: () => _screenController.clearSelectedMarker(),
+                          )                        : Container(), // Contenedor vacío cuando no hay marcador seleccionado
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -186,9 +192,69 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                   }
                 },
                 onTap: (tapPosition, point) {
-                  if (controller.isRouteMapActive) {
-                    // Si el mapa de rutas está activo, generamos la ruta
+                  // First priority: Check which interaction mode we're in
+                  if (controller.isDeleteZoneMode) {
+                    // Look for a zone that contains the tapped point for deletion
+                    for (final zone in controller.affectedZones) {
+                      final polygon = (zone['points'] as List)
+                          .map((p) => p is LatLng ? p : LatLng(p['latitude'] ?? p['lat'], p['longitude'] ?? p['lng']))
+                          .toList();
+                      
+                      if (_isPointInPolygon(point, polygon)) {
+                        // Found a zone to delete - handle it
+                        controller.handleZoneClick(
+                          zone['id'],
+                          zone['name'] ?? 'Zona sin nombre',
+                          context,
+                          zonePoints: polygon
+                        );
+                        return; // Exit early after finding a match
+                      }
+                    }
+                  }
+                  else if (controller.isDrawingMode) {
+                    controller.handleDrawingTap(point, context);
+                    return;
+                  }
+                  else if (controller.isRouteMapActive) {
                     controller.generateRouteMap(tapPosition, point, context);
+                    return;
+                  }
+                  
+                  // Second priority: Check for taps in existing polygons (if not in a special mode)
+                  if (controller.isHeatMapActive || controller.drawnPolygons.isNotEmpty) {
+                    // Check if tap is inside any affected zone polygon
+                    for (final zone in controller.affectedZones) {
+                      final polygon = (zone['points'] as List)
+                          .map((p) => p is LatLng ? p : LatLng(p['latitude'] ?? p['lat'], p['longitude'] ?? p['lng']))
+                          .toList();
+                      
+                      if (_isPointInPolygon(point, polygon)) {
+                        // Create a MapMarker for this zone and show info panel
+                        final mapMarker = MapMarker(
+                          id: zone['id'].toString(),
+                          name: zone['name'] ?? 'Zona Afectada',
+                          position: point,
+                          type: 'affected_zone',
+                          urgencyLevel: (zone['hazard_level'] ?? 'medium').toString(),
+                          state: zone['description'] ?? 'Sin descripción',
+                        );
+                        
+                        // Show the info panel
+                        controller.selectMarker(mapMarker);
+                        return;
+                      }
+                    }
+                  }
+                  
+                  // Last priority: Default tap behavior (clear selection)
+                  if (controller.selectedMarker != null) {
+                    controller.clearSelectedMarker();
+                  }
+                },
+                onLongPress: (tapPosition, point) {
+                  if (controller.isDrawingMode && controller.currentDrawingPoints.length >= 3) {
+                    controller.finishDrawing(context);
                   }
                 },
               ),
@@ -198,31 +264,105 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                   subdomains: ['a', 'b', 'c', 'd'],
                   retinaMode: RetinaMode.isHighDensity(context),
                 ),
-                // Convertimos los polígonos de nuestro modelo a polígonos de flutter_map
+                
+                // Existing heat map polygon layer
                 PolygonLayer(
-                  polygons:
-                      controller.isHeatMapActive
-                          ? controller.polygons
-                              .map(
-                                (poly) => Polygon(
-                                  points: poly.points,
-                                  color: poly.color,
-                                  borderColor: poly.borderColor,
-                                  borderStrokeWidth: poly.borderStrokeWidth,
-                                  isFilled: true,
-                                ),
-                              )
-                              .toList()
-                          : [],
+                  polygons: controller.isHeatMapActive
+                      ? controller.polygons.map((polygon) {
+                          // Create the polygon without onTap
+                          return Polygon(
+                            points: polygon.points,
+                            color: polygon.color,
+                            borderStrokeWidth: polygon.borderStrokeWidth,
+                            borderColor: polygon.borderColor,
+                            isFilled: true,
+                            // Remove the onTap parameter - it's not supported
+                          );
+                        }).toList()
+                      : [],
+                ),                // NEW: Drawing overlay polygon
+                if (controller.isDrawingMode)
+                  PolygonLayer(
+                    polygons: [
+                      if (controller.currentDrawingPoints.length >= 2)
+                        Polygon(
+                          points: controller.currentDrawingPoints,
+                          color: _getHazardColor(controller.selectedHazardLevel).withOpacity(0.3),
+                          borderColor: _getHazardColor(controller.selectedHazardLevel),
+                          borderStrokeWidth: 2,
+                          isDotted: true,
+                        ),
+                    ],
+                  ),
+
+                // NEW: Mock drawn polygons layer (persistent)
+                PolygonLayer(
+                  polygons: controller.drawnPolygons.map((drawnPolygon) {
+                    return Polygon(
+                      points: drawnPolygon,
+                      color: Colors.purple.withOpacity(0.4), // Mock zones are purple
+                      borderColor: Colors.purple,
+                      borderStrokeWidth: 2,
+                      isFilled: true,
+                    );
+                  }).toList(),
                 ),
 
+                // Existing route polyline
                 PolylineLayer(
-                  polylines:
-                      controller.isRouteMapActive
-                          ? [Polyline(points: controller.routePoints, strokeWidth: 5.0, color: Colors.blue)]
-                          : [],
+                  polylines: controller.isRouteMapActive
+                      ? [Polyline(points: controller.routePoints, strokeWidth: 5.0, color: Colors.blue)]
+                      : [],
                 ),
+                
+                // Existing markers
                 MarkerLayer(markers: [...flutterMapMarkers, ...specialRouteMarkers]),
+                
+                // NEW: Drawing points markers
+                if (controller.isDrawingMode)
+                  MarkerLayer(
+                    markers: controller.currentDrawingPoints.asMap().entries.map((entry) {
+                      return Marker(
+                        point: entry.value,
+                        width: 20,
+                        height: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${entry.key + 1}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                // NEW: Drawing success/failure polygon
+                if (controller.currentDrawingPoints.isNotEmpty) 
+                  PolygonLayer(
+                    polygons: [
+                      Polygon(
+                        points: controller.currentDrawingPoints,
+                        color: controller.showSuccessAnimation 
+                            ? Colors.green.withOpacity(controller.animationOpacity * 0.5) 
+                            : Colors.purple.withOpacity(0.4),
+                        borderColor: controller.showSuccessAnimation
+                            ? Colors.green.withOpacity(controller.animationOpacity)
+                            : Colors.purple,
+                        borderStrokeWidth: controller.showSuccessAnimation ? 4.0 : 2.0,
+                        isFilled: true,
+                      ),
+                    ],
+                  ),
               ],
             ),
             // Barra de búsqueda
@@ -387,9 +527,155 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                 right: 16,
                 child: TaskLegend(),
               ),
+            // Drawing controls
+            if (controller.isDrawingMode)
+              Positioned(
+                top: 90,
+                right: 16,
+                child: DrawingControls(
+                  onToggleDrawing: () => controller.toggleDrawingMode(context),
+                  onUndoPoint: () => controller.undoLastPoint(context),
+                  onFinishDrawing: () => controller.finishDrawing(context),
+                  isDrawingMode: controller.isDrawingMode,
+                  currentPointsCount: controller.currentDrawingPoints.length,
+                  selectedHazardLevel: controller.selectedHazardLevel,
+                  onHazardLevelChanged: (level) => controller.setHazardLevel(level),
+                ),
+              ),
+
+            // Replace the existing button with this expandable button group
+            Positioned(
+              bottom: 16,
+              left: 344,
+              child: _buildExpandableZoneControls(controller),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildExpandableZoneControls(MapScreenController controller) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // Draw Zone Button - Only visible when expanded or in drawing mode
+        if (controller.isDrawingMode || controller.isZoneButtonExpanded)
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            margin: EdgeInsets.only(bottom: 8),
+            child: MapFilterButton(
+              label: controller.isDrawingMode ? 'Cancelar Dibujo' : 'Dibujar Zona',
+              isSelected: controller.isDrawingMode,
+              onPressed: () {
+                if (controller.isDrawingMode) {
+                  controller.cancelDrawing();
+                } else {
+                  controller.startDrawingMode();
+                  controller.toggleZoneButtonExpanded();
+                }
+              },
+              icon: controller.isDrawingMode ? Icons.close : Icons.draw,
+              color: Colors.orange,
+            ),
+          ),
+        
+        // Delete Zone Button - Only visible when expanded in delete mode
+        if (controller.isDeleteZoneMode || controller.isZoneButtonExpanded)
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            margin: EdgeInsets.only(bottom: 8),
+            child: MapFilterButton(
+              label: controller.isDeleteZoneMode ? 'Cancelar Eliminación' : 'Eliminar Zona',
+              isSelected: controller.isDeleteZoneMode,
+              onPressed: () {
+                if (controller.isDeleteZoneMode) {
+                  controller.cancelDeleteMode();
+                } else {
+                  controller.startDeleteMode();
+                  controller.toggleZoneButtonExpanded();
+                }
+              },
+              icon: controller.isDeleteZoneMode ? Icons.close : Icons.delete,
+              color: Colors.red,
+            ),
+          ),
+        
+        // Main toggle button
+        MapFilterButton(
+          label: 'Zonas',
+          isSelected: controller.isZoneButtonExpanded,
+          onPressed: () {
+            // Only toggle expansion if we're not already in a mode
+            if (!controller.isDrawingMode && !controller.isDeleteZoneMode) {
+              controller.toggleZoneButtonExpanded();
+            } else {
+              // If in a mode, cancel it
+              controller.cancelAllZoneModes();
+            }
+          },
+          icon: controller.isZoneButtonExpanded ? Icons.close : Icons.edit_location_alt,
+          color: Colors.purple,
+        ),
+      ],
+    );
+  }
+
+  // Helper method for hazard colors
+  Color _getHazardColor(String hazardLevel) {
+    switch (hazardLevel) {
+      case 'high':
+        return Colors.red;
+      case 'medium':
+        return Colors.orange;
+      case 'low':
+        return Colors.yellow;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Check if a point is inside a polygon using ray-casting algorithm
+  bool _isPointInPolygon(LatLng point, List<LatLng> polygon) {
+    // Ray-casting algorithm to determine if point is in polygon
+    bool isInside = false;
+    int i = 0, j = polygon.length - 1;
+    
+    for (i = 0; i < polygon.length; i++) {
+      if (((polygon[i].latitude > point.latitude) != (polygon[j].latitude > point.latitude)) &&
+          (point.longitude < (polygon[j].longitude - polygon[i].longitude) * 
+          (point.latitude - polygon[i].latitude) / (polygon[j].latitude - polygon[i].latitude) + 
+          polygon[i].longitude)) {
+        isInside = !isInside;
+      }
+      j = i;
+    }
+    
+    return isInside;
+  }
+
+  // Add this helper function to compare polygons
+  bool _polygonsEqual(List<LatLng> poly1, List<LatLng> poly2) {
+    if (poly1.length != poly2.length) return false;
+    
+    // Compare a few points to see if they match (exact match isn't necessary)
+    const tolerance = 0.0001; // Adjust based on your precision needs
+    
+    // Check first, middle, and last points
+    final checkPoints = [0, poly1.length ~/ 2, poly1.length - 1];
+    
+    for (final idx in checkPoints) {
+      final p1 = poly1[idx];
+      final p2 = poly2[idx];
+      
+      if ((p1.latitude - p2.latitude).abs() > tolerance ||
+          (p1.longitude - p2.longitude).abs() > tolerance) {
+        return false;
+      }
+    }
+    
+    return true;
   }
 }
