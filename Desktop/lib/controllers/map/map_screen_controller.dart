@@ -1397,4 +1397,13 @@ void cancelAllZoneModes() {
   _currentDrawingPoints.clear();
   notifyListeners();
 }
+
+  void resetRoute() {
+    _routeStart = null;
+    _routeEnd = null;
+    _routePoints = [];
+    _routeDistance = null;
+    _routeDuration = null;
+    notifyListeners();
+  }
 }

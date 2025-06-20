@@ -192,45 +192,86 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                   }
                 },
                 onTap: (tapPosition, point) {
-                  // First priority: Check which interaction mode we're in
-                  if (controller.isDeleteZoneMode) {
-                    // Look for a zone that contains the tapped point for deletion
+                  // First priority: Handle zone deletion mode
+                  if (controller.isDeleteZoneMode && controller.isHeatMapActive) {
                     for (final zone in controller.affectedZones) {
                       final polygon = (zone['points'] as List)
-                          .map((p) => p is LatLng ? p : LatLng(p['latitude'] ?? p['lat'], p['longitude'] ?? p['lng']))
-                          .toList();
+                        .map((p) => LatLng(
+                          double.parse(p['latitude'].toString()),
+                          double.parse(p['longitude'].toString())
+                        ))
+                        .toList();
                       
                       if (_isPointInPolygon(point, polygon)) {
-                        // Found a zone to delete - handle it
                         controller.handleZoneClick(
                           zone['id'],
                           zone['name'] ?? 'Zona sin nombre',
                           context,
                           zonePoints: polygon
                         );
-                        return; // Exit early after finding a match
+                        return;
                       }
                     }
                   }
-                  else if (controller.isDrawingMode) {
+                  
+                  // Second priority: Handle drawing mode
+                  if (controller.isDrawingMode) {
                     controller.handleDrawingTap(point, context);
                     return;
                   }
-                  else if (controller.isRouteMapActive) {
-                    controller.generateRouteMap(tapPosition, point, context);
-                    return;
+                  
+                  // Third priority: Handle route mode
+                  if (controller.isRouteMapActive) {
+                    // If we don't have both start and end points yet, prioritize setting those
+                    if (controller.routeStart == null || controller.routeEnd == null) {
+                      controller.generateRouteMap(tapPosition, point, context);
+                      return;
+                    }
+                    
+                    // If both route points are already set, then we can check for zone clicks
+                    if (controller.isHeatMapActive) {
+                      for (final zone in controller.affectedZones) {
+                        final polygon = (zone['points'] as List)
+                          .map((p) => LatLng(
+                            double.parse(p['latitude'].toString()),
+                            double.parse(p['longitude'].toString())
+                          ))
+                          .toList();
+                        
+                        if (_isPointInPolygon(point, polygon)) {
+                          final mapMarker = MapMarker(
+                            id: zone['id'].toString(),
+                            name: zone['name'] ?? 'Zona Afectada',
+                            position: point,
+                            type: 'affected_zone',
+                            urgencyLevel: (zone['hazard_level'] ?? 'medium').toString(),
+                            state: zone['description'] ?? 'Sin descripción',
+                          );
+                          
+                          controller.selectMarker(mapMarker);
+                          return;
+                        }
+                      }
+                      
+                      // If we clicked somewhere else in route mode with both points set,
+                      // reset the route and start a new one
+                      controller.resetRoute();
+                      controller.generateRouteMap(tapPosition, point, context);
+                      return;
+                    }
                   }
                   
-                  // Second priority: Check for taps in existing polygons (if not in a special mode)
-                  if (controller.isHeatMapActive || controller.drawnPolygons.isNotEmpty) {
-                    // Check if tap is inside any affected zone polygon
+                  // Fourth priority: Handle normal zone viewing (not in route mode)
+                  if (controller.isHeatMapActive) {
                     for (final zone in controller.affectedZones) {
                       final polygon = (zone['points'] as List)
-                          .map((p) => p is LatLng ? p : LatLng(p['latitude'] ?? p['lat'], p['longitude'] ?? p['lng']))
-                          .toList();
+                        .map((p) => LatLng(
+                          double.parse(p['latitude'].toString()),
+                          double.parse(p['longitude'].toString())
+                        ))
+                        .toList();
                       
                       if (_isPointInPolygon(point, polygon)) {
-                        // Create a MapMarker for this zone and show info panel
                         final mapMarker = MapMarker(
                           id: zone['id'].toString(),
                           name: zone['name'] ?? 'Zona Afectada',
@@ -240,14 +281,13 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                           state: zone['description'] ?? 'Sin descripción',
                         );
                         
-                        // Show the info panel
                         controller.selectMarker(mapMarker);
                         return;
                       }
                     }
                   }
                   
-                  // Last priority: Default tap behavior (clear selection)
+                  // Last priority: Clear selected marker when tapping elsewhere
                   if (controller.selectedMarker != null) {
                     controller.clearSelectedMarker();
                   }
